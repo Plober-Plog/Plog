@@ -9,12 +9,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // GitLab에서 제공하는 환경 변수로 브랜치 이름을 가져옴
                     def branch = env.gitlabSourceBranch ?: 'develop-be'  // 기본 브랜치 설정
                     if (branch != env.TARGET_BRANCH) {
                         error "This build is only for the '${env.TARGET_BRANCH}' branch, but was run on '${branch}'"
                     }
-                    // Git SCM을 사용하여 체크아웃
                     checkout scm
                 }
             }
@@ -27,19 +25,19 @@ pipeline {
                 }
             }
         }
-        stage('Save JAR to Volume') {
-            steps {
-                script {
-                    // JAR 파일을 공유 볼륨에 복사
-                    sh 'cp backend-realtime/build/libs/plog-realtime.jar /path/to/shared/volume/backend_realtime_data/plog-realtime.jar'
-                }
-            }
-        }
         stage('Build Docker Image') {
             steps {
                 script {
                     // backend-realtime 디렉토리에 위치한 Dockerfile을 사용하여 Docker 이미지 빌드
                     docker.build("backend-realtime:${env.BUILD_ID}", 'backend-realtime/.')
+                }
+            }
+        }
+        stage('Save JAR to Volume') {
+            steps {
+                script {
+                    // JAR 파일을 공유 볼륨에 복사
+                    sh 'cp backend-realtime/build/libs/plog-realtime.jar /path/to/shared/volume/backend_realtime_data/plog-realtime.jar'
                 }
             }
         }
