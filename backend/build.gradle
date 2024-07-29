@@ -54,6 +54,8 @@ dependencies {
     // 테스트 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'javax.servlet:javax.servlet-api:4.0.1'
+    testImplementation 'org.mockito:mockito-core:5.8.0'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // Lombok (필요한 경우)
     compileOnly 'org.projectlombok:lombok'
