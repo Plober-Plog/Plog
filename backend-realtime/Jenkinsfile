@@ -22,6 +22,7 @@ pipeline {
         stage('Build with Gradle') {
             steps {
                 dir('backend-realtime') {
+                    sh 'chmod +x ./gradlew'  // 실행 권한 추가
                     sh './gradlew clean build --no-daemon'
                 }
             }
