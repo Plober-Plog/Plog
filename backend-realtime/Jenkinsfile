@@ -29,7 +29,8 @@ pipeline {
             steps {
                 script {
                     // Docker 이미지 빌드
-                    sh 'docker build -t backend-realtime:${env.BUILD_ID} backend-realtime/'
+                    def buildId = env.BUILD_ID
+                    sh "docker build -t backend-realtime:${buildId} backend-realtime/"
                 }
             }
         }
