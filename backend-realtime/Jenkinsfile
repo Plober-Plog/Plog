@@ -28,8 +28,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // backend-realtime 디렉토리에 위치한 Dockerfile을 사용하여 Docker 이미지 빌드
-                    docker.build("backend-realtime:${env.BUILD_ID}", 'backend-realtime/.')
+                    // Docker 이미지 빌드
+                    sh 'docker build -t backend-realtime:${env.BUILD_ID} backend-realtime/'
                 }
             }
         }
