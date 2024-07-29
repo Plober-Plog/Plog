@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    environment {
+        TARGET_BRANCH = 'develop-be'  // 목표 브랜치 이름 설정
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    def branch = env.gitlabSourceBranch ?: 'develop-be'  // 기본 브랜치 설정
+                    if (branch != env.TARGET_BRANCH) {
+                        error "This build is only for the '${env.TARGET_BRANCH}' branch, but was run on '${branch}'"
+                    }
+                    checkout scm
+                }
+            }
+        }
+        stage('Build with Gradle') {
+            steps {
+                dir('backend-realtime') {
+                    sh 'chmod +x ./gradlew'  // 실행 권한 추가
+                    sh './gradlew clean build --no-daemon'
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Docker 이미지 빌드
+                    def buildId = env.BUILD_ID
+                    sh "docker build -t backend-realtime:${buildId} backend-realtime/"
+                }
+            }
+        }
+        stage('Save JAR to Volume') {
+            steps {
+                script {
+                    // JAR 파일을 공유 볼륨에 복사
+                    sh 'cp backend-realtime/build/libs/plog-realtime.jar /path/to/shared/volume/backend_realtime_data/plog-realtime.jar'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    // docker-compose를 사용하여 최신 이미지를 기반으로 컨테이너 실행
+                    sh 'docker-compose down'
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            junit '**/backend-realtime/build/test-results/test/*.xml'
+            archiveArtifacts artifacts: '**/backend-realtime/build/libs/*.jar', fingerprint: true
+        }
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
