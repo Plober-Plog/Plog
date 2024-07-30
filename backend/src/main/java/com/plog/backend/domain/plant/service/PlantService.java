@@ -1,7 +1,8 @@
 package com.plog.backend.domain.plant.service;
 
 import com.plog.backend.domain.plant.dto.request.PlantAddRequest;
+import com.plog.backend.domain.plant.entity.Plant;
 
 public interface PlantService {
-//    void addPlant(PlantAddRequest plantAddRequest);
+    Plant addPlant(PlantAddRequest plantAddRequest);
 }
