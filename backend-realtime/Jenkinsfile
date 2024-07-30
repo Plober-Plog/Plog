@@ -45,7 +45,7 @@ pipeline {
                 script {
                     withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-ssh-key-id', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
                         sh '''
-                            ssh -o StrictHostKeyChecking=no -i $SSH_KEY_FILE $SSH_USER@your-host-ip "
+                            ssh -o StrictHostKeyChecking=no -i $SSH_KEY_FILE $SSH_USER@i11b308.p.ssafy.io "
                             cd /home/ubuntu/plog &&
                             docker-compose down &&
                             docker-compose up -d"
