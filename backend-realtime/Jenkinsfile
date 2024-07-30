@@ -14,11 +14,13 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    def branch = env.gitlabSourceBranch ?: 'develop-be'  // 기본 브랜치 설정
-                    if (branch != env.TARGET_BRANCH) {
-                        error "This build is only for the '${env.TARGET_BRANCH}' branch, but was run on '${branch}'"
-                    }
-                    checkout scm
+                    checkout([$class: 'GitSCM', 
+                              branches: [[name: '*/develop-be']],
+                              doGenerateSubmoduleConfigurations: false,
+                              extensions: [[$class: 'CleanCheckout']],
+                              userRemoteConfigs: [[url: 'https://lab.ssafy.com/s11-webmobile2-sub2/S11P12B308.git',
+                              credentialsId: 'gitlab-token']]  // credentialsId를 올바르게 설정
+                    ])
                 }
             }
         }
