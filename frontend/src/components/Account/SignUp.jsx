@@ -3,7 +3,7 @@ import React from 'react';
 function App() {
   return (
     <div className="App">
-      Plog 앱을 만들자!
+      <h1>회원가입</h1>
     </div>
   );
 }
