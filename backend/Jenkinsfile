@@ -24,6 +24,17 @@ pipeline {
                 }
             }
         }
+        stage('Copy application.properties') {
+            steps {
+                script {
+                    // Jenkins Credentials에서 secret file 가져오기
+                    def backendProperties = credentials('application-backend-properties')
+                    
+                    // 파일 복사
+                    sh 'echo "$backendProperties" > ${WORKSPACE}/backend/src/main/resources/application.properties'
+                }
+            }
+        }
         stage('Build with Gradle') {
             steps {
                 dir('backend') {
