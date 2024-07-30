@@ -11,10 +11,10 @@ public class PlantType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int plantTypeId;
+    @Column(nullable = false)
+    String plantName;
     @Column
     String guide;
-    @Column
-    String plantName;
 
     @Column
     int waterInterval;
