@@ -1,22 +1,22 @@
 package com.plog.backend.domain.plant.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@ToString
 public class PlantAddRequest {
     int plantTypeId;
     int otherPlantTypeId;
     String profile;
+    String bio;
     String nickname;
-    LocalDateTime birthDate;
+    Date birthDate;
     boolean hasNotified;
     boolean isFixed;
 }
