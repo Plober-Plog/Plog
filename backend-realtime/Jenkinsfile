@@ -45,12 +45,12 @@ pipeline {
                 script {
                     // SSH 키를 사용하여 원격 서버에 연결하고 명령을 실행
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/jenkins_rsa ubuntu@i11b308.p.ssafy.io << EOF
-                        cd /home/ubuntu/plog
-                        docker-compose stop backend-realtime
-                        docker-compose rm -f backend-realtime
+                        ssh -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/jenkins_rsa ubuntu@i11b308.p.ssafy.io '
+                        cd /home/ubuntu/plog &&
+                        docker-compose stop backend-realtime &&
+                        docker-compose rm -f backend-realtime &&
                         docker-compose up -d backend-realtime
-                        EOF
+                        '
                     '''
                 }
             }
