@@ -28,17 +28,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Docker 이미지 빌드
-                    def buildId = env.BUILD_ID
-                    sh "docker build -t backend-realtime:${buildId} backend-realtime/"
-                }
-            }
-        }
-        stage('Save JAR to Volume') {
-            steps {
-                script {
-                    // JAR 파일을 공유 볼륨에 복사
-                    sh 'cp backend-realtime/build/libs/plog-realtime.jar /path/to/shared/volume/backend_realtime_data/plog-realtime.jar'
+                    // JAR 파일을 이용하여 Docker 이미지 빌드
+                    sh 'docker build -t backend-realtime:latest -f backend-realtime/Dockerfile backend-realtime/.'
                 }
             }
         }
