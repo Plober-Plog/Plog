@@ -29,11 +29,6 @@ public class JwtTokenUtil {
         this.expirationTime = expirationTime;
     }
 
-    public void setExpirationTime() {
-        //JwtTokenUtil.expirationTime = Integer.parseInt(expirationTime);
-        JwtTokenUtil.expirationTime = expirationTime;
-    }
-
     public static JWTVerifier getVerifier() {
         return JWT
                 .require(Algorithm.HMAC256(secretKey.getBytes()))
