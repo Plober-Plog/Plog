@@ -13,7 +13,7 @@ FROM amazoncorretto:17-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*.jar /app/plog-realtime.jar
+COPY --from=build /app/build/libs/plog-realtime.jar /app/plog-realtime.jar
 
 EXPOSE 8082
 
