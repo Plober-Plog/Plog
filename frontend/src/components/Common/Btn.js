@@ -6,7 +6,7 @@ const Btn = ({ content, onClick }) => {
       <button
         onClick={onClick}
       >
-        {children}
+        {}
       </button>
     );
   };
