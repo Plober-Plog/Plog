@@ -4,7 +4,7 @@ import PlantDetail from './pages/PlantDetail';
 function App() {
   return (
     <div className="App">
-      <PlantDetail />
+
     </div>
   );
 }

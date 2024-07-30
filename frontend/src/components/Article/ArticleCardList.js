@@ -7,26 +7,26 @@ import ArticleCard from './ArticleCard';
 // || '',
 
 const ArticleCardList = ({ articles = [] }) => {
-    if (articles.length === 0) {
-        return (
-            <div>
-                <p>현재 보여줄 Article이 없습니다.</p>
-            </div>
-        )
-    };
-    
+  if (articles.length === 0) {
     return (
-        <div>
-            {articles.map(article => (
-                <ArticleCard 
-                    key={article.id}
-                    id={article.id}
-                    log={article.log}
-                    thumbnail={article.thumbnail}
-                />
-            ))}
-        </div>
+      <div>
+        <p>현재 보여줄 Article이 없습니다.</p>
+      </div>
     )
+  };
+  
+  return (
+    <div>
+      {articles.map(article => (
+        <ArticleCard 
+          key={article.id}
+          id={article.id}
+          log={article.log}
+          thumbnail={article.thumbnail}
+        />
+      ))}
+    </div>
+  )
 }
 
 export default ArticleCardList;

@@ -1,5 +1,11 @@
 function PlantPanorama(){
-    return
+  return (
+    <div>
+      <span>
+        Panorama
+      </span>
+    </div>
+  )
 }
 
 export default PlantPanorama;

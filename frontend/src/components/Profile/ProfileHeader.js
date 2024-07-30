@@ -20,32 +20,32 @@ import ProfileBio from './ProfileBio';
 // || '',
 const ProfileHeader = ({ data = {}, type }) => {
 
-    const profileData = type === 'plant' ? {
-        imgSrc: data.profile || '',
-        title: data.plantTypeId || 'Unknown Plant',
-        nickname: data.nickname || 'Unknown Nickname',
-        bio: data.bio || '자기소개가 비어 있습니다.',
-    } : {
-        imgSrc: data.profile || '',
-        title: data.title || 'Unknown Plant',
-        nickname: data.nickname || 'Unknown Nickname',
-        bio: data.bio || '자기소개가 비어 있습니다.',
-    };
+  const profileData = type === 'plant' ? {
+    imgSrc: data.profile || '',
+    title: data.plantTypeId || 'Unknown Plant',
+    nickname: data.nickname || 'Unknown Nickname',
+    bio: data.bio || '자기소개가 비어 있습니다.',
+  } : {
+    imgSrc: data.profile || '',
+    title: data.title || 'Unknown Plant',
+    nickname: data.nickname || 'Unknown Nickname',
+    bio: data.bio || '자기소개가 비어 있습니다.',
+  };
 
 
-    return (
-        <div>
-            <ProfileImgAndTitle 
-                imgSrc={profileData.profile}
-                title={profileData.plantTypeId}
-                nickname={profileData.nickname}
-            />
-            <ProfileBio 
-                bio={profileData.bio}
-                type={type}
-            />
-        </div>
-    );
+  return (
+    <div>
+      <ProfileImgAndTitle 
+        imgSrc={profileData.profile}
+        title={profileData.plantTypeId}
+        nickname={profileData.nickname}
+      />
+      <ProfileBio 
+        bio={profileData.bio}
+        type={type}
+      />
+    </div>
+  );
 };
 
 export default ProfileHeader;

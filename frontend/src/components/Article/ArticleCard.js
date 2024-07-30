@@ -4,12 +4,12 @@ import React from 'react';
 // 일지의 경우 일지 detail, sns의 경우 sns detail
 
 const ArticleCard = ({ id, log, thumbnail }) => {
-    return (
-        <div>
-            <img src={thumbnail} alt="thumbnail" />
-            <p>{log}</p>
-        </div>
-    )
+  return (
+    <div>
+      <img src={thumbnail} alt="thumbnail" />
+      <p>{log}</p>
+    </div>
+  )
 }
 
 export default ArticleCard;
