@@ -19,7 +19,7 @@ FROM amazoncorretto:17-alpine
 WORKDIR /app
 
 # 빌드 스테이지에서 JAR 파일 복사
-COPY --from=build_stage /app/build/libs/plog-realtime.jar /app/plog-realtime.jar
+COPY --from=build_stage /app/build/libs/realtime-0.0.1-SNAPSHOT.jar /app/plog-realtime.jar
 
 EXPOSE 8082
 
