@@ -6,6 +6,11 @@ pipeline {
     }
 
     stages {
+        stage('Cleanup Workspace') {
+            steps {
+                deleteDir() // 작업 공간 초기화
+            }
+        }
         stage('Checkout') {
             steps {
                 script {
