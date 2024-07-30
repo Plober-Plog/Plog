@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     // 필요한 디렉토리 생성
-                    sh 'mkdir -p ${WORKSPACE}/backend-realtime/src/main/resources'
+                    sh 'mkdir -p ${WORKSPACE}/backend/src/main/resources'
                 }
             }
         }
