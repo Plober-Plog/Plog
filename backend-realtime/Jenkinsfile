@@ -43,14 +43,14 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-ssh-key-id', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
-                        sh '''
-                            ssh -o StrictHostKeyChecking=no -i $SSH_KEY_FILE $SSH_USER@i11b308.p.ssafy.io "
-                            cd /home/ubuntu/plog &&
-                            docker-compose down &&
-                            docker-compose up -d"
-                        '''
-                    }
+                    // SSH 키를 사용하여 원격 서버에 연결하고 명령을 실행
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/jenkins_rsa ubuntu@i11b308.p.ssafy.io << EOF
+                        cd /home/ubuntu/plog
+                        docker-compose down
+                        docker-compose up -d
+                        EOF
+                    '''
                 }
             }
         }
