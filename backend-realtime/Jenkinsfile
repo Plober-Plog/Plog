@@ -47,8 +47,9 @@ pipeline {
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/jenkins_rsa ubuntu@i11b308.p.ssafy.io << EOF
                         cd /home/ubuntu/plog
-                        docker-compose down
-                        docker-compose up -d
+                        docker-compose stop backend-realtime
+                        docker-compose rm -f backend-realtime
+                        docker-compose up -d backend-realtime
                         EOF
                     '''
                 }
