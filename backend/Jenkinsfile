@@ -39,7 +39,7 @@ pipeline {
                     def backendProperties = credentials('application-backend-properties')
                     
                     // 파일 복사
-                    sh 'echo "$backendProperties" > ${WORKSPACE}/backend/src/main/resources/application.properties'
+                    writeFile file: 'backend/src/main/resources/application.properties', text: backendProperties
 
                     sh 'cat ${WORKSPACE}/backend/src/main/resources/application.properties' // 복사된 파일 내용 확인
                 }
