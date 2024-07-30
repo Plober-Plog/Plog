@@ -35,13 +35,13 @@ pipeline {
         stage('Copy application.properties') {
             steps {
                 script {
-                    // Jenkins Credentials에서 secret file 가져오기
-                    def backendProperties = credentials('application-backend-properties')
-                    
-                    // 파일 복사
-                    writeFile file: 'backend/src/main/resources/application.properties', text: backendProperties
+                    withCredentials([file(credentialsId: 'application-backend-properties', variable: 'APP_PROPERTIES')]) {
+                        // 파일 복사
+                        sh 'cp $APP_PROPERTIES backend/src/main/resources/application.properties'
 
-                    sh 'cat ${WORKSPACE}/backend/src/main/resources/application.properties' // 복사된 파일 내용 확인
+                        // 복사된 파일 내용 확인
+                        sh 'cat backend/src/main/resources/application.properties'
+                    }
                 }
             }
         }
