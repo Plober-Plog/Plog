@@ -8,12 +8,18 @@ COPY gradle ./gradle
 COPY src ./src
 RUN ./gradlew build --no-daemon
 
+# Gradle 빌드 및 로그 출력
+RUN ./gradlew clean build --no-daemon && \
+    echo "Gradle build completed successfully" && \
+    ls -la /app/build/libs
+
 # 빌드 결과물을 실행 이미지로 복사
 FROM amazoncorretto:17-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/plog.jar /app/plog.jar
+# 빌드 스테이지에서 JAR 파일 복사
+COPY --from=build /app/build/libs/plog-0.0.1-SNAPSHOT.jar /app/plog.jar
 
 EXPOSE 8081
 

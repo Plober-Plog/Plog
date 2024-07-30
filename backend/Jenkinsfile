@@ -1,0 +1,72 @@
+pipeline {
+    agent any
+
+    environment {
+        TARGET_BRANCH = 'develop-be'  // 목표 브랜치 이름 설정
+    }
+
+    stages {
+        stage('Cleanup Workspace') {
+            steps {
+                deleteDir() // 작업 공간 초기화
+            }
+        }
+        stage('Checkout') {
+            steps {
+                script {
+                    checkout([$class: 'GitSCM',
+                              branches: [[name: '*/develop-be']],
+                              doGenerateSubmoduleConfigurations: false,
+                              extensions: [[$class: 'CleanCheckout']],
+                              userRemoteConfigs: [[url: 'https://lab.ssafy.com/s11-webmobile2-sub2/S11P12B308.git',
+                              credentialsId: 'gitlab-token']]  // credentialsId를 올바르게 설정
+                    ])
+                }
+            }
+        }
+        stage('Build with Gradle') {
+            steps {
+                dir('backend') {
+                    sh 'chmod +x ./gradlew'  // 실행 권한 추가
+                    sh './gradlew clean build --no-daemon'
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // JAR 파일을 이용하여 Docker 이미지 빌드
+                    sh 'docker build -t backend:latest -f backend/Dockerfile backend/.'
+                }
+            }
+        }
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    // SSH 키를 사용하여 원격 서버에 연결하고 명령을 실행
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/jenkins_rsa ubuntu@i11b308.p.ssafy.io '
+                        cd /home/ubuntu/plog &&
+                        docker-compose stop backend &&
+                        docker-compose rm -f backend &&
+                        docker-compose up -d backend
+                        '
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            junit '**/backend/build/test-results/test/*.xml'
+            archiveArtifacts artifacts: '**/backend/build/libs/*.jar', fingerprint: true
+        }
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
