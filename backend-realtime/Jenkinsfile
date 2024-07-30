@@ -44,8 +44,8 @@ pipeline {
             steps {
                 script {
                     // docker-compose를 사용하여 최신 이미지를 기반으로 컨테이너 실행
-                    sh 'docker-compose down'
-                    sh 'docker-compose up -d'
+                    sh 'docker-compose -f /home/ubuntu/plog/docker-compose.yml down'
+                    sh 'docker-compose -f /home/ubuntu/plog/docker-compose.yml up -d'
                 }
             }
         }
