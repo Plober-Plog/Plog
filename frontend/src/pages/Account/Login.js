@@ -1,16 +1,15 @@
 import React from 'react';
-import LogInForm from '../../components/Account/LogInForm';
+import LoginForm from '../../components/Account/LoginForm';
 import SocialLogIn from '../../components/Account/SocialLogIn';
 
-function logIn() {
+function login() {
   return (
     <div>
       <h1>로그인</h1>
-      <LogInForm />
-      
+      <LoginForm />
       <SocialLogIn />
     </div>
   );
 }
 
-export default logIn;
+export default login;
