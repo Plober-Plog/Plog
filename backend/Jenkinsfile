@@ -41,7 +41,7 @@ pipeline {
                     // 파일 복사
                     sh 'echo "$backendProperties" > ${WORKSPACE}/backend/src/main/resources/application.properties'
 
-                    sh 'cat ${WORKSPACE}/backend-realtime/src/main/resources/application.properties' // 복사된 파일 내용 확인
+                    sh 'cat ${WORKSPACE}/backend/src/main/resources/application.properties' // 복사된 파일 내용 확인
                 }
             }
         }
