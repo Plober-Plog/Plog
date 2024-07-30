@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     // SSH를 통해 호스트의 docker-compose를 사용하여 최신 이미지를 기반으로 컨테이너 실행
-                    sshagent(['ssh-node']) {  // 여기서 'jenkins-ssh-key-id'는 실제 자격 증명의 ID로 변경
+                    sshagent(['jenkins-ssh-key-id']) {  // 여기서 'jenkins-ssh-key-id'는 실제 자격 증명의 ID로 변경
                         sh 'ssh -o StrictHostKeyChecking=no ubuntu@i11b308.p.ssafy.io "cd /home/ubuntu/plog && docker-compose down && docker-compose up -d"'
                     }
                 }
