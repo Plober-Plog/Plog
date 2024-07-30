@@ -6,19 +6,26 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
 @Builder
 @AllArgsConstructor
 public class User {
     @Id
     private Integer userId;
+
+    @Column
+    private String email;
+
+    @Column
+    private String searchId
+
     @Column(nullable = false)
     String nickname;
+
     @Column(nullable = false)
     String password;
-    @Column(nullable = false, unique = true)
-    String searchId;
+
+    @Column
+    Date birthDate
 
     public User() {
 

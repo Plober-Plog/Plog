@@ -1,4 +1,4 @@
 package com.plog.backend.domain.user.dto;
 
-public class Dummy {
+public class RequestDto {
 }
