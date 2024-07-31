@@ -20,6 +20,6 @@ public class PlantController {
     @PostMapping
     public ResponseEntity<BaseResponseBody> addPlant(@RequestBody PlantAddRequest plantAddRequest) {
         plantService.addPlant(plantAddRequest);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 등록이 완료되었습니다."));
     }
 }
