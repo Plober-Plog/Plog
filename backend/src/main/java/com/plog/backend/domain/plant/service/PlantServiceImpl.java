@@ -8,21 +8,22 @@ import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.entity.PlantType;
 import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 import com.plog.backend.domain.plant.repository.PlantRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service("plantService")
 public class PlantServiceImpl implements PlantService {
 
-    private static final Logger log = LoggerFactory.getLogger(PlantServiceImpl.class);
+    private static PlantRepository plantRepository;
+    private static ImageService imageService;
+
     @Autowired
-    private PlantRepository plantRepository;
-    @Autowired
-    private ImageService imageService;
+    PlantServiceImpl(PlantRepository plantRepository, ImageService imageService) {
+        PlantServiceImpl.plantRepository = plantRepository;
+        PlantServiceImpl.imageService = imageService;
+    }
 
     @Override
     public Plant addPlant(PlantAddRequest plantAddRequest) throws NotValidPlantTypeIdsException {

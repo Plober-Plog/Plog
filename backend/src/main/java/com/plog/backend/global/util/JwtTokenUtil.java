@@ -24,9 +24,9 @@ public class JwtTokenUtil {
     public static final String ISSUER = "plog.com";
 
     @Autowired
-    public JwtTokenUtil(@Value("${jwt.secret}") String secretKey, @Value("${jwt.expiration}") Integer expirationTime) {
-        this.secretKey = secretKey;
-        this.expirationTime = expirationTime;
+    JwtTokenUtil(@Value("${jwt.secret}") String secretKey, @Value("${jwt.expiration}") Integer expirationTime) {
+        JwtTokenUtil.secretKey = secretKey;
+        JwtTokenUtil.expirationTime = expirationTime;
     }
 
     public static JWTVerifier getVerifier() {

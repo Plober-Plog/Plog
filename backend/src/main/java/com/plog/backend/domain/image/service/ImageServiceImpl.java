@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 @Service("imageService")
 public class ImageServiceImpl implements ImageService {
 
+    private static ImageRepository imageRepository;
+
     @Autowired
-    private ImageRepository imageRepository;
+    ImageServiceImpl(ImageRepository imageRepository) {
+        ImageServiceImpl.imageRepository = imageRepository;
+    }
 
     @Override
     public Image uploadImage(String url) {

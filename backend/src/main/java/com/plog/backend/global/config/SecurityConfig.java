@@ -15,17 +15,20 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private PloberUserDetailService ploberUserDetailService;
+    private static PloberUserDetailService ploberUserDetailService;
+
+    private static UserService userService;
 
     @Autowired
-    private UserService userService;
+    SecurityConfig(PloberUserDetailService ploberUserDetailService, UserService userService) {
+        SecurityConfig.ploberUserDetailService = ploberUserDetailService;
+        SecurityConfig.userService = userService;
+    }
 
     // Password 인코딩 방식에 BCrypt 암호화 방식 사용
     @Bean
@@ -58,7 +61,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/api/user/**").hasRole("USER")
-                        .anyRequest().permitAll()
+                                .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

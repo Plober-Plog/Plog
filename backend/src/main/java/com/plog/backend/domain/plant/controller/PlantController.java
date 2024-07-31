@@ -5,8 +5,6 @@ import com.plog.backend.domain.plant.exception.NotValidRequestException;
 import com.plog.backend.domain.plant.service.PlantService;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,8 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user/plant")
 public class PlantController {
 
+    private static PlantService plantService;
+
     @Autowired
-    PlantService plantService;
+    PlantController(PlantService plantService) {
+        PlantController.plantService = plantService;
+    }
 
     @PostMapping
     public ResponseEntity<BaseResponseBody> addPlant(@RequestBody PlantAddRequest plantAddRequest) {

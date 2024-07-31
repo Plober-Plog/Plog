@@ -10,13 +10,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PloberUserDetailService implements UserDetailsService {
+    private static UserService userService;
+
     @Autowired
-    UserService userService;
+    PloberUserDetailService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.getUserBySearchId(username);
-        if(user != null) {
+        if (user != null) {
             PloberUserDetails userDetails = new PloberUserDetails(user);
             return userDetails;
         }

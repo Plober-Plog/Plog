@@ -33,14 +33,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class PlantControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
+    private final MockMvc mockMvc;
+    private final ObjectMapper objectMapper;
 
     @MockBean
     private PlantService plantService;
+
+    @Autowired
+    PlantControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
+        this.mockMvc = mockMvc;
+        this.objectMapper = objectMapper;
+    }
 
     @Nested
     @DisplayName("식물 등록")
@@ -74,7 +77,7 @@ public class PlantControllerTest {
                 BaseResponseBody expectedResponse = BaseResponseBody.of(200, "식물 등록이 완료되었습니다.");
 
                 // when - then
-                mockMvc.perform(MockMvcRequestBuilders.post("/api/user/plant")
+                mockMvc.perform(MockMvcRequestBuilders.post("/user/plant")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(plantAddRequest))
                                 .with(csrf()))
@@ -110,13 +113,13 @@ public class PlantControllerTest {
                 plantAddRequest.setBirthDate(birthDate);
 
                 // when - then
-                mockMvc.perform(MockMvcRequestBuilders.post("/api/user/plant")
+                mockMvc.perform(MockMvcRequestBuilders.post("/user/plant")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(plantAddRequest))
                                 .with(csrf()))
                         .andExpect(status().isBadRequest())
                         .andExpect(jsonPath("$.httpMethod").value("POST"))
-                        .andExpect(jsonPath("$.requestURL").value("/api/user/plant"))
+                        .andExpect(jsonPath("$.requestURL").value("/user/plant"))
                         .andExpect(jsonPath("$.httpStatus").value(400))
                         .andExpect(jsonPath("$.message").value("nickname 은 필수 필드입니다."))
                         .andExpect(jsonPath("$.timestamp").exists());
@@ -130,13 +133,13 @@ public class PlantControllerTest {
                 plantAddRequest.setNickname("nickname");
 
                 // when - then
-                mockMvc.perform(MockMvcRequestBuilders.post("/api/user/plant")
+                mockMvc.perform(MockMvcRequestBuilders.post("/user/plant")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(plantAddRequest))
                                 .with(csrf()))
                         .andExpect(status().isBadRequest())
                         .andExpect(jsonPath("$.httpMethod").value("POST"))
-                        .andExpect(jsonPath("$.requestURL").value("/api/user/plant"))
+                        .andExpect(jsonPath("$.requestURL").value("/user/plant"))
                         .andExpect(jsonPath("$.httpStatus").value(400))
                         .andExpect(jsonPath("$.message").value("birthDate 는 필수 필드입니다."))
                         .andExpect(jsonPath("$.timestamp").exists());

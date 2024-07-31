@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class PlantType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
