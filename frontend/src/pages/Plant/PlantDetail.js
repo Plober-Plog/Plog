@@ -1,6 +1,6 @@
 import React from 'react';
 import ProfileHeader from "../../components/Profile/ProfileHeader";
-import Calander from "../../components/Plant/Calander";
+import Calender from "../../components/Plant/Calender";
 import ArticleCardList from "../../components/Article/ArticleCardList";
 import ReportBanner from "../../components/Plant/ReportBanner";
 import Btn from "../../components/Common/Btn";
@@ -30,7 +30,7 @@ const PlantDetail = () => {
         data={plantData}
         type="plant"
       />
-      <Calander />
+      <Calender />
       <ArticleCardList 
         articles={articles}
         type="plant"

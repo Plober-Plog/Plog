@@ -1,0 +1,52 @@
+[
+  {
+    "plantDiaryId": 1,
+    "recordDate": "2024-07-03T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail1.jpg"
+  },
+  {
+    "plantDiaryId": 2,
+    "recordDate": "2024-07-15T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail2.jpg"
+  },
+  {
+    "plantDiaryId": 3,
+    "recordDate": "2024-07-22T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail3.jpg"
+  },
+  {
+    "plantDiaryId": 4,
+    "recordDate": "2024-07-05T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail4.jpg"
+  },
+  {
+    "plantDiaryId": 5,
+    "recordDate": "2024-07-07T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail5.jpg"
+  },
+  {
+    "plantDiaryId": 6,
+    "recordDate": "2024-07-10T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail6.jpg"
+  },
+  {
+    "plantDiaryId": 7,
+    "recordDate": "2024-07-18T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail7.jpg"
+  },
+  {
+    "plantDiaryId": 8,
+    "recordDate": "2024-07-25T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail8.jpg"
+  },
+  {
+    "plantDiaryId": 9,
+    "recordDate": "2024-07-27T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail9.jpg"
+  },
+  {
+    "plantDiaryId": 10,
+    "recordDate": "2024-07-29T00:00:00.000Z",
+    "thumbnail": "https://example.com/thumbnail10.jpg"
+  }
+]

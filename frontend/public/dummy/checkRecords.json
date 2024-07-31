@@ -1,0 +1,62 @@
+[
+  {
+    "isWatered": true,
+    "isFertilized": false,
+    "isRepotted": true,
+    "checkDate": "2024-07-05T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": true,
+    "isRepotted": false,
+    "checkDate": "2024-07-12T00:00:00.000Z"
+  },
+  {
+    "isWatered": false,
+    "isFertilized": true,
+    "isRepotted": true,
+    "checkDate": "2024-07-20T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": false,
+    "isRepotted": false,
+    "checkDate": "2024-07-08T00:00:00.000Z"
+  },
+  {
+    "isWatered": false,
+    "isFertilized": true,
+    "isRepotted": false,
+    "checkDate": "2024-07-10T00:00:00.000Z"
+  },
+  {
+    "isWatered": false,
+    "isFertilized": false,
+    "isRepotted": true,
+    "checkDate": "2024-07-14T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": true,
+    "isRepotted": true,
+    "checkDate": "2024-07-17T00:00:00.000Z"
+  },
+  {
+    "isWatered": false,
+    "isFertilized": true,
+    "isRepotted": false,
+    "checkDate": "2024-07-19T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": false,
+    "isRepotted": true,
+    "checkDate": "2024-07-24T00:00:00.000Z"
+  },
+  {
+    "isWatered": false,
+    "isFertilized": true,
+    "isRepotted": false,
+    "checkDate": "2024-07-28T00:00:00.000Z"
+  }
+]
