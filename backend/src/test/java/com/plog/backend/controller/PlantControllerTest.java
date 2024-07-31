@@ -9,18 +9,19 @@ import com.plog.backend.global.model.response.BaseResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(PlantController.class)
@@ -47,7 +48,7 @@ public class PlantControllerTest {
         when(plantService.addPlant(any(PlantAddRequest.class))).thenReturn(plant);
 
         // expected response body
-        BaseResponseBody expectedResponse = BaseResponseBody.of(200, "Success");
+        BaseResponseBody expectedResponse = BaseResponseBody.of(200, "식물 등록이 완료되었습니다.");
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user/plant")
