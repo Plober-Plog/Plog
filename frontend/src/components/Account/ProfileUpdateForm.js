@@ -19,8 +19,8 @@ const ProfileUpdateForm = ({ userData }) => {
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    setIsFormValid(id);
-  }, [id]);
+    setIsFormValid(id && nickname);
+  }, [id, nickname]);
 
   const handleProfileUpdate = () => {
     console.log('업데이트 정보 받기성공!');
