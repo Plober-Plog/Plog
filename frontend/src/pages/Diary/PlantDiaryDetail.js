@@ -27,18 +27,22 @@ const PlantDiaryDetail = () => {
 
   return (
     <div>
+      <div>
        <DateDisplay date={date} />
        <DiaryTodoIcon src={pencilIcon} />
-       <ImageSlider images={images} />
+      </div>
+      <ImageSlider images={images} />
+      <div>
        <DiaryTodoIcon src={waterIcon} /> 물주기 완료! 
        <DiaryTodoIcon src={fertilizedIcon} /> 영양제주기 완료!
-       <div>
-        <DiaryTodoIcon src={weatherIcon} />
-        <DiaryTodoIcon src={humidityIcon} />
-        <DiaryTodoIcon src={temperatureIcon} />
-        <DiaryWeather weather={weather} temperature={temperature} humidity={humidity} content={content} />
-       </div>
-       <DiaryDetailContent detailContent={content}/>
+      </div>
+      <div>
+       <DiaryTodoIcon src={weatherIcon} />
+       <DiaryTodoIcon src={humidityIcon} />
+       <DiaryTodoIcon src={temperatureIcon} />
+       <DiaryWeather weather={weather} temperature={temperature} humidity={humidity} content={content} />
+      </div>
+      <DiaryDetailContent detailContent={content}/>
     </div>
     
   );
