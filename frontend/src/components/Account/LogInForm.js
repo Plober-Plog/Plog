@@ -34,10 +34,12 @@ const LoginForm = () => {
       </div>
       <Btn
         content="로그인"
+        disabled={!email && !password}
         onClick={
           () => {
-            console.log('Email:', email);
-            console.log('Password:', password);
+            // console.log('Email:', email);
+            // console.log('Password:', password);
+            console.log('로그인 정보 받기 성공!')
           }
         }
       />

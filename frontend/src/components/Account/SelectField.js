@@ -1,6 +1,6 @@
 import React from 'react';
 
-function SelectField({ value, onChange, options, isRequired }) {
+const SelectField = ({ value, onChange, options, isRequired }) => {
   return (
     <div>
       <select

@@ -1,8 +1,8 @@
 import React from 'react';
-import LoginForm from '../../components/Account/LoginForm';
+import LoginForm from '../../components/LoginForm';
 import SocialLogIn from '../../components/Account/SocialLogIn';
 
-function login() {
+const Login = () => {
   return (
     <div>
       <h1>로그인</h1>
@@ -12,4 +12,4 @@ function login() {
   );
 }
 
-export default login;
+export default Login;

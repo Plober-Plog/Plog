@@ -1,6 +1,6 @@
 import React from 'react';
 
-const socialLogin = () => {
+const SocialLogin = () => {
   return (
     <div className="social-login">
       <p>간편로그인</p>
@@ -13,4 +13,4 @@ const socialLogin = () => {
   );
 }
 
-export default socialLogin;
+export default SocialLogin;
