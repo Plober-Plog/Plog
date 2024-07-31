@@ -8,9 +8,7 @@ import ProfileUpdate from './pages/Account/ProfileUpdate';
 function App() {
   return (
     <div className="App">
-      Plog 앱을 만들자!
-      <ProfileUpdate />
-
+ 
     </div>
   );
 }
