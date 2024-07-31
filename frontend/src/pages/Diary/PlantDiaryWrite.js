@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DateDisplay from '../../components/Common/DateDisplay';
 import Btn from '../../components/Common/Btn';
 import Content from '../../components/Common/Content';
@@ -18,8 +19,10 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
   const [isRepotted, setIsRepotted] = useState(false);
   const [isExistingDiary, setIsExistingDiary] = useState(false);
   
+  const navigate = useNavigate();
+
   const writerInfoData = {
-    profile: 'https://via.placeholder.com/150', 
+    profile: 'https://via.placeholder.com/50', 
     nickname: '조이',
     plantTypeId: '몬스테라'
   };
@@ -42,15 +45,21 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
   }, [date, diaries]);
 
   const toggleWatered = () => {
-    setIsWatered(!isWatered);
+    const newState = !isWatered;
+    setIsWatered(newState);
+    console.log('Watered:', newState);
   };
 
   const toggleFertilized = () => {
-    setIsFertilized(!isFertilized);
+    const newState = !isFertilized;
+    setIsFertilized(newState);
+    console.log('Fertilized:', newState);
   };
 
   const toggleRepotted = () => {
-    setIsRepotted(!isRepotted);
+    const newState = !isRepotted;
+    setIsRepotted(newState);
+    console.log('Repotted:', newState);
   };
 
   const handleSave = () => {
@@ -65,6 +74,9 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
     const updatedDiaries = diaries.filter(diary => diary.date !== date).concat(diaryData);
     setDiaries(updatedDiaries);
     console.log('다이어리 저장:', diaryData);
+
+    const dummyDiaryId = 'dummy-id'; // 임의의 ID 
+    navigate(`/diary/${dummyDiaryId}`, { state: { diaryData } });
   };
 
   return (
