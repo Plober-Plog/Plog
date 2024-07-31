@@ -40,6 +40,7 @@ const Calander = ({plantId}) =>{
   // diaryRecords 기록이 있다면 -> 해당 날짜와 함께 PlantDiaryDetail 페이지로 이동
   // diaryRecords 기록이 없다면 -> 해당 날짜와 함께 PlantDiaryWrite 페이지로 이동
   // checkReCords 기록과는 무관합니다.
+  // 이후 PlantDiaryDetail, PlantDiaryWrite 페이지를 pull 받아본 뒤 test 할 예정입니다.
   // const handleClickDay = (date) => {
   // };
 
@@ -74,6 +75,8 @@ const Calander = ({plantId}) =>{
     );
   };
 
+
+  // 임시 styles
   const styles = {
     box: {
       position: 'relative',
