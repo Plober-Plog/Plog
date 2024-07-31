@@ -51,20 +51,20 @@ public class PlantServiceImpl implements PlantService {
                 );
                 return plantRepository.save(plantByOtherPlantType);
             default:
-                throw new NotValidPlantTypeIdsException(HttpMethod.POST, HttpStatus.BAD_REQUEST, "/api/user/plant");
+                throw new NotValidPlantTypeIdsException();
         }
     }
 
     public int checkPlantType(int plantTypeId, int otherPlantTypeId) throws NotValidPlantTypeIdsException {
         if (plantTypeId > 0 && otherPlantTypeId > 0) {
-            throw new NotValidPlantTypeIdsException(HttpMethod.POST, HttpStatus.BAD_REQUEST, "/api/user/plant");
+            throw new NotValidPlantTypeIdsException();
         }
         if (plantTypeId > 0) {
             return 1;
         } else if (otherPlantTypeId > 0) {
             return 2;
         } else {
-            throw new NotValidPlantTypeIdsException(HttpMethod.POST, HttpStatus.BAD_REQUEST, "/api/user/plant");
+            throw new NotValidPlantTypeIdsException();
         }
     }
 }
