@@ -6,6 +6,16 @@ pipeline {
     }
 
     stages {
+        stage('Check Branch') { // 내가 원하는 브랜치인지 필터링 진행
+            when {
+                expression {
+                    return env.GIT_BRANCH == "origin/${TARGET_BRANCH}"
+                }
+            }
+            steps {
+                echo "Building branch: ${env.GIT_BRANCH}"
+            }
+        }
         stage('Cleanup Workspace') {
             steps {
                 deleteDir() // 작업 공간 초기화
