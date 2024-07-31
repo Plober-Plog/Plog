@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Image = ({ src, alt }) => {
+const Img = ({ src, alt }) => {
     return (
       <div>
         <img src={src} alt={alt} />
@@ -9,4 +9,9 @@ const Image = ({ src, alt }) => {
     )
 };
 
-export default Image;
+Img.propTypes = {
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+};
+
+export default Img;
