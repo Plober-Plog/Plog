@@ -8,7 +8,7 @@ import ProfileUpdate from './pages/Account/ProfileUpdate';
 function App() {
   return (
     <div className="App">
- 
+      <Login />
     </div>
   );
 }

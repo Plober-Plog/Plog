@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import sha256 from 'js-sha256';
+
 import Btn from '../Common/Btn';
 import InputField from './InputField';
 import AccountBtn from './AccountBtn';
@@ -12,8 +14,13 @@ const LoginForm = () => {
   const handleSignUpComplete = (event) => {
     event.preventDefault();
 
-    // console.log('이메일 :', email, '비밀번호 :', password);
+    const userInfo = {
+      email,
+      password: sha256(password),
+    }
+
     console.log('로그인 정보 받기 성공!')
+    console.log(userInfo)
   };
 
   return (
