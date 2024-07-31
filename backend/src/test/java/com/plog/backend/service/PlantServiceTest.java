@@ -1,13 +1,12 @@
 package com.plog.backend.service;
 
 import com.plog.backend.domain.image.entity.Image;
-import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.plant.dto.request.PlantAddRequest;
 import com.plog.backend.domain.plant.entity.OtherPlantType;
 import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.entity.PlantType;
-import com.plog.backend.domain.plant.exception.ConflictingPlantTypeIdsException;
+import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 import com.plog.backend.domain.plant.repository.PlantRepository;
 import com.plog.backend.domain.plant.service.PlantServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -145,7 +144,7 @@ public class PlantServiceTest {
                 Throwable thrown = catchThrowable(() -> plantService.addPlant(plantAddRequest));
 
                 // then
-                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
+                assertThat(thrown).isInstanceOf(NotValidPlantTypeIdsException.class);
             }
 
             @Test
@@ -163,7 +162,7 @@ public class PlantServiceTest {
                 Throwable thrown = catchThrowable(() -> plantService.addPlant(plantAddRequest));
 
                 // then
-                assertThat(thrown).isInstanceOf(ConflictingPlantTypeIdsException.class);
+                assertThat(thrown).isInstanceOf(NotValidPlantTypeIdsException.class);
             }
 
             @Test
@@ -181,7 +180,7 @@ public class PlantServiceTest {
                 Throwable thrown = catchThrowable(() -> plantService.addPlant(plantAddRequest));
 
                 // then
-                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
+                assertThat(thrown).isInstanceOf(NotValidPlantTypeIdsException.class);
             }
         }
     }
