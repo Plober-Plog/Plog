@@ -81,6 +81,7 @@ const SignUpForm = () => {
     }
     
     const userInfo = {
+      // TODO default 이미지 추가하기
       searchId,
       email,
       password: sha256(password),
