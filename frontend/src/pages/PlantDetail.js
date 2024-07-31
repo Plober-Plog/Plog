@@ -7,7 +7,8 @@ import Btn from "../components/Common/Btn";
 
 const PlantDetail = () => {
 
-  // 가라 데이터... API 만들어지면 수정
+  // FE 체크를 위한 더미 데이터
+  // 이후 API 만들어지면 수정할 것
   const plantData = {
     profile: "",
     plantTypeId: "튤립",
