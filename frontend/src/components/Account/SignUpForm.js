@@ -3,13 +3,16 @@ import axios from 'axios';
 
 import Btn from '../Common/Btn';
 import InputField from './InputField';
-import SelectField from './SelectField';
-import AccountBtn from './AccountBtn';
 import RadioField from './RadioField';
+import SelectField from './SelectField';
 import ModalComplete from './ModalComplete';
 
 const SignUpForm = () => {
+  // 아이디
   const [searchId, setSearchID] = useState('');
+  const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(false);
+  const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -26,26 +29,36 @@ const SignUpForm = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  const API_URL = 'http://localhost:3000/user';
-
-  const userInfo = {
-    searchId,
-    email,
-    password,
-    nickname,
-    birthdate,
-    source,
-    gender,
-    sido,
-    gugun,
-  }
+  const API_URL = 'http://localhost:3000/api/user';
 
 
   useEffect(() => {
     setIsFormValid(searchId && email && password && nickname && passwordConfirm);
   }, [searchId, email, password, nickname, passwordConfirm, agreePersonal]);
 
-  const handleSignUp = () => {
+
+  // 아이디 중복확인
+  const handleCheckSearchId = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/${searchId}`);
+
+      if (response.data.result) {
+        setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
+        setIsSearchIdAvailable(false);
+      } else {
+        setSearchIdCheckMsg('사용 가능한 아이디입니다.');
+        setIsSearchIdAvailable(true);
+      }
+    } catch (error) {
+      console.error('아이디 중복확인 실패: ', error);
+      setSearchIdCheckMsg('아이디 중복확인 중 오류가 발생했습니다.');
+      setIsSearchIdAvailable(false);
+    }
+  };
+
+
+  // 회원가입
+  const handleSignUp = async () => {
     if (password !== passwordConfirm) {
       alert('비밀번호가 일치하지 않습니다.');
       return;
@@ -54,11 +67,21 @@ const SignUpForm = () => {
       alert('개인정보 수집 동의를 완료해주세요');
       return;
     }
-    
+
     // console.log('성별 :', gender)
     console.log('정보 받기 성공!');
 
-    setOpenModal(true);
+    const userInfo = {
+      searchId,
+      email,
+      password,
+      nickname,
+      birthdate,
+      source,
+      gender,
+      sido,
+      gugun,
+    }
   };
 
   const closeModal = () => {
@@ -79,7 +102,9 @@ const SignUpForm = () => {
             onChange={(e) => setSearchID(e.target.value)}
             isRequired={true}
           />
-          <AccountBtn content="중복확인" />
+          <Btn content="중복확인" onClick={handleCheckSearchId}/>
+          {/* TODO 모달로 넣기 */}
+          {searchIdCheckMsg}
         </div>
         <div>
           <InputField
@@ -89,7 +114,7 @@ const SignUpForm = () => {
             onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
           />
-          <AccountBtn content="인증하기" />
+          <Btn content="인증하기" />
         </div>
         <div>
           <InputField
@@ -99,7 +124,7 @@ const SignUpForm = () => {
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true}
           />
-          <AccountBtn
+          <Btn
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
@@ -112,7 +137,7 @@ const SignUpForm = () => {
             onChange={(e) => setPasswordConfirm(e.target.value)}
             isRequired={true}
           />
-          <AccountBtn
+          <Btn
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
@@ -125,7 +150,7 @@ const SignUpForm = () => {
             onChange={(e) => setNickname(e.target.value)}
             isRequired={false}
           />
-          <AccountBtn content="추천받기" />
+          <Btn content="추천받기" />
         </div>
         <div>
           <InputField
