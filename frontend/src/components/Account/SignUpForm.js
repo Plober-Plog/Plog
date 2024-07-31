@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import sha256 from 'js-sha256';
+import AWS from 'aws-sdk';
 
 import Btn from '../Common/Btn';
 import InputField from './InputField';
@@ -33,8 +35,17 @@ const SignUpForm = () => {
 
 
   useEffect(() => {
-    setIsFormValid(searchId && email && password && nickname && passwordConfirm);
-  }, [searchId, email, password, nickname, passwordConfirm, agreePersonal]);
+    // TODO 테스트 끝난 후 아이디 중복확인 여부 추가하기
+    setIsFormValid(
+      searchId && 
+      // isSearchIdAvailable &&
+      email && 
+      password && 
+      passwordConfirm && 
+      password === passwordConfirm &&
+      agreePersonal
+    );
+  }, [searchId, email, password, passwordConfirm, agreePersonal]);
 
 
   // 아이디 중복확인
@@ -57,8 +68,9 @@ const SignUpForm = () => {
   };
 
 
-  // 회원가입
+  // 회원가입 버튼 클릭
   const handleSignUp = async () => {
+
     if (password !== passwordConfirm) {
       alert('비밀번호가 일치하지 않습니다.');
       return;
@@ -67,28 +79,34 @@ const SignUpForm = () => {
       alert('개인정보 수집 동의를 완료해주세요');
       return;
     }
-
-    // console.log('성별 :', gender)
-    console.log('정보 받기 성공!');
-
+    
     const userInfo = {
       searchId,
       email,
-      password,
+      password: sha256(password),
       nickname,
       birthdate,
       source,
       gender,
       sido,
       gugun,
+    };
+
+    console.log('정보 받기 성공!');
+    console.log(userInfo);
+
+    // 회원가입 요청
+    try {
+      await axios.post(API_URL, userInfo);
+      setOpenModal(true);
+    } catch (error) {
+      console.error('회원가입 실패: ', error);
     }
   };
 
   const closeModal = () => {
     setOpenModal(false);
   };
-
-  // 이메일 중복확인 버튼 누르면 인증 inputfield 추가하기
 
   return (
     <div>
@@ -103,8 +121,7 @@ const SignUpForm = () => {
             isRequired={true}
           />
           <Btn content="중복확인" onClick={handleCheckSearchId}/>
-          {/* TODO 모달로 넣기 */}
-          {searchIdCheckMsg}
+          {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -172,8 +189,8 @@ const SignUpForm = () => {
           onChange={setGender}
           options={[
             { value: 0, label: '선택하지 않음' },
-            { value: 2, label: '여자' },
             { value: 1, label: '남자' },
+            { value: 2, label: '여자' },
           ]}
           isRequired={false}
         />
