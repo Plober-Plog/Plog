@@ -3,11 +3,11 @@ pipeline {
 
     environment {
         TARGET_BRANCH = 'develop-be'  // 목표 브랜치 이름 설정
-        MYSQL_HOST = 'mysql'
-        MYSQL_PORT = '3306'
-        MYSQL_DATABASE = 'plog'
-        MYSQL_USER = 'root'
-        MYSQL_PASSWORD = 'plog'
+        // MYSQL_HOST = 'mysql'
+        // MYSQL_PORT = '3306'
+        // MYSQL_DATABASE = 'plog'
+        // MYSQL_USER = 'root'
+        // MYSQL_PASSWORD = 'plog'
     }
 
     stages {
@@ -62,7 +62,8 @@ pipeline {
             steps {
                 script {
                     // JAR 파일을 이용하여 Docker 이미지 빌드
-                    sh 'docker build --build-arg MYSQL_HOST=${MYSQL_HOST} --build-arg MYSQL_PORT=${MYSQL_PORT} --build-arg MYSQL_DATABASE=${MYSQL_DATABASE} --build-arg MYSQL_USER=${MYSQL_USER} --build-arg MYSQL_PASSWORD=${MYSQL_PASSWORD} -t backend:latest -f backend/Dockerfile backend/.'
+                    // sh 'docker build --build-arg MYSQL_HOST=${MYSQL_HOST} --build-arg MYSQL_PORT=${MYSQL_PORT} --build-arg MYSQL_DATABASE=${MYSQL_DATABASE} --build-arg MYSQL_USER=${MYSQL_USER} --build-arg MYSQL_PASSWORD=${MYSQL_PASSWORD} -t backend:latest -f backend/Dockerfile backend/.'
+                    sh 'docker build -t backend:latest -f backend/Dockerfile backend/.'
                 }
             }
         }
