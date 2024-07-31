@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
 import Btn from '../Common/Btn';
 import InputField from './InputField';
 import SelectField from './SelectField';
@@ -7,7 +9,7 @@ import RadioField from './RadioField';
 import ModalComplete from './ModalComplete';
 
 const SignUpForm = () => {
-  const [id, setId] = useState('');
+  const [searchId, setSearchID] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -18,15 +20,30 @@ const SignUpForm = () => {
   const [gender, setGender] = useState(0);
   const [sido, setSido] = useState('');
   const [gugun, setGugun] = useState('');
+
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeAdvertisement, setAgreeAdvertisement] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  
+
+  const API_URL = 'http://localhost:3000/user';
+
+  const userInfo = {
+    searchId,
+    email,
+    password,
+    nickname,
+    birthdate,
+    source,
+    gender,
+    sido,
+    gugun,
+  }
+
 
   useEffect(() => {
-    setIsFormValid(id && email && password && nickname && passwordConfirm);
-  }, [id, email, password, nickname, passwordConfirm, agreePersonal]);
+    setIsFormValid(searchId && email && password && nickname && passwordConfirm);
+  }, [searchId, email, password, nickname, passwordConfirm, agreePersonal]);
 
   const handleSignUp = () => {
     if (password !== passwordConfirm) {
@@ -58,8 +75,8 @@ const SignUpForm = () => {
           <InputField
             type="text"
             placeholder="아이디"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
+            value={searchId}
+            onChange={(e) => setSearchID(e.target.value)}
             isRequired={true}
           />
           <AccountBtn content="중복확인" />
