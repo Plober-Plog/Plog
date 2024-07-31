@@ -147,6 +147,9 @@ public class PlantServiceTest {
                 assertThat(thrown).isInstanceOf(NotValidPlantTypeIdsException.class);
             }
 
+            //TODO [강윤서]
+            // - int말고 다른 타입이 들어오는 테스트 코드 작성하기
+
             @Test
             @DisplayName("plantTypeId와 otherPlantTypeId 값이 둘 다 유효하여 등록 실패")
             void addPlantWithConflictingPlantTypeIdsThrowsException() {
