@@ -58,5 +58,59 @@
     "isFertilized": true,
     "isRepotted": false,
     "checkDate": "2024-07-28T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": false,
+    "isRepotted": true,
+    "checkDate": "2024-06-02T00:00:00.000Z"
+  },
+  {
+    "isWatered": false,
+    "isFertilized": true,
+    "isRepotted": false,
+    "checkDate": "2024-06-04T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": false,
+    "isRepotted": false,
+    "checkDate": "2024-06-07T00:00:00.000Z"
+  },
+  {
+    "isWatered": false,
+    "isFertilized": true,
+    "isRepotted": true,
+    "checkDate": "2024-06-09T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": true,
+    "isRepotted": false,
+    "checkDate": "2024-06-11T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": false,
+    "isRepotted": true,
+    "checkDate": "2024-06-13T00:00:00.000Z"
+  },
+  {
+    "isWatered": false,
+    "isFertilized": true,
+    "isRepotted": false,
+    "checkDate": "2024-06-15T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": false,
+    "isRepotted": false,
+    "checkDate": "2024-06-18T00:00:00.000Z"
+  },
+  {
+    "isWatered": true,
+    "isFertilized": true,
+    "isRepotted": true,
+    "checkDate": "2024-06-20T00:00:00.000Z"
   }
 ]
