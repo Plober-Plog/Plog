@@ -4,20 +4,25 @@ import PropTypes from 'prop-types';
 
 const WriterInfo = ({ data = {}, type }) => {
   const defaultImg = '../../assets/icon/default.png';
-  const writerInfoData = type === 'plant' ? {
-    img: data.profile || defaultImg,
-    nickname: data.nickname || 'Unknown Plant',
-    info: data.plantTypeId || 'Unknown Nickname',
-  } : {
-    img: data.profile || defaultImg,
-    nickname: data.nickname || 'Unknown Nickname',
-    info: data.recordDate || 'Unknown Date',
-  };
+  const writerInfoData = {}
+
+  if (type === 'plant') {
+    writerInfoData.imgSrc = data.profile || defaultImg;
+    writerInfoData.nickname = data.nickname || 'Unknown Nickname';
+    writerInfoData.info = data.plantTypeId || 'Unknown Plant';
+  } else if (type === 'user') {
+    writerInfoData.imgSrc = data.profile || defaultImg;
+    writerInfoData.nickname = data.nickname || 'Unknown Nickname';
+    writerInfoData.info = data.recordDate || 'Unknown Date';
+  } else {
+    console.error(`Unexpected type: ${type}`)
+  }
+  
 
   return (
     <div>
       <div>
-        <img src={writerInfoData.img} alt='profile img' />
+        <img src={writerInfoData.imgSrc} alt='profile img' />
       </div>
       <div>
         {writerInfoData.nickname}
