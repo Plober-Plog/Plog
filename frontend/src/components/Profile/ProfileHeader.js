@@ -23,7 +23,7 @@ const ProfileHeader = ({ data = {}, type }) => {
     bio: data.bio || '자기소개가 비어 있습니다.',
   } : {
     imgSrc: data.profile || '',
-    title: data.title || 'Unknown Plant',
+    title: data.title || 'Unknown Title',
     nickname: data.nickname || 'Unknown Nickname',
     bio: data.bio || '자기소개가 비어 있습니다.',
   };
@@ -32,8 +32,8 @@ const ProfileHeader = ({ data = {}, type }) => {
   return (
     <div>
       <ProfileImgAndTitle 
-        imgSrc={profileData.profile}
-        title={profileData.plantTypeId}
+        imgSrc={profileData.imgSrc}
+        title={profileData.title}
         nickname={profileData.nickname}
       />
       <ProfileBio 

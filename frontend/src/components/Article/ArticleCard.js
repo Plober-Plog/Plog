@@ -1,14 +1,20 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-// id는 눌렀을 때 detail 페이지로 연결하는 데에 씀
-// 일지의 경우 일지 detail, sns의 경우 sns detail
+const ArticleCard = ({ id, log, thumbnail, type }) => {
 
-// id : ArticleCard 컴포넌트를 눌렀을 때에 detail 페이지로 연결하는 데에 사용
-// 일지의 경우 plantDiaryId, sns의 경우 articleId
+  const navigate = useNavigate();
 
-const ArticleCard = ({ id, log, thumbnail }) => {
+  const handleClick = () => {
+    if (type === 'plant') {
+      navigate(`/api/user/diary/${id}`);
+    } else if (type === 'sns') {
+      navigate(`/api/user/sns/${id}`);
+    }
+  };
+
   return (
-    <div>
+    <div onClick={handleClick}>
       <img src={thumbnail} alt="thumbnail" />
       <p>{log}</p>
     </div>
