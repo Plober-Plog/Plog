@@ -21,10 +21,13 @@ const PlantDiaryWrite = () => {
     <div>
       <DateDisplay date={date} />
       <WriterInfo />
-      <h2>오늘 한 일</h2>
-      <DiaryTodoIcon src={waterIcon} />
-      <DiaryTodoIcon src={fertilizedIcon} />
-      <DiaryTodoIcon src={repottedIcon} />
+      {/* 사진 첨부하기 컴포넌트 추가해야함 */}
+      <div>
+        <h2>오늘 한 일</h2>
+        <DiaryTodoIcon src={waterIcon} />
+        <DiaryTodoIcon src={fertilizedIcon} />
+        <DiaryTodoIcon src={repottedIcon} />
+      </div>
       <Content content={content} setContent={setContent} />
       <Btn content="저장하기" onClick={handleSave} />
     </div>
