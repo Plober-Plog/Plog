@@ -97,7 +97,7 @@ public class PlantControllerTest {
                         .isFixed(false).build();
             }
 
-            //TODO
+            //TODO [강윤서]
             // - 권한이 없는 회원의 요청에 대한 401 예외 테스트
 
             @Test
