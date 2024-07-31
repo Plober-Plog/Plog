@@ -6,12 +6,17 @@ WORKDIR /app
 COPY build.gradle settings.gradle gradlew ./
 COPY gradle ./gradle
 COPY src ./src
-RUN ./gradlew build --no-daemon
+
+# 환경 변수 설정
+ARG MYSQL_HOST=mysql
+
+# Gradle 빌드 시 환경 변수 사용
+RUN ./gradlew build --no-daemon -DMYSQL_HOST=${MYSQL_HOST}
 
 # Gradle 빌드 및 로그 출력
-# RUN ./gradlew clean build --no-daemon && \
-#     echo "Gradle build completed successfully" && \
-#     ls -la /app/build/libs
+RUN ./gradlew clean build --no-daemon && \
+    echo "Gradle build completed successfully" && \
+    ls -la /app/build/libs
 
 # 빌드 결과물을 실행 이미지로 복사
 FROM amazoncorretto:17-alpine
