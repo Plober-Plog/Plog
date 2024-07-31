@@ -7,11 +7,15 @@ COPY build.gradle settings.gradle gradlew ./
 COPY gradle ./gradle
 COPY src ./src
 
-# 환경 변수 설정
-ARG MYSQL_HOST=mysql
+# 빌드 시점의 ARG 설정
+ARG MYSQL_HOST
+ARG MYSQL_PORT
+ARG MYSQL_DATABASE
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
 
-# Gradle 빌드 시 환경 변수 사용
-RUN ./gradlew build --no-daemon -DMYSQL_HOST=${MYSQL_HOST}
+# Gradle 빌드 시 환경 변수로 ARG 전달
+RUN ./gradlew build --no-daemon -DMYSQL_HOST=${MYSQL_HOST} -DMYSQL_PORT=${MYSQL_PORT} -DMYSQL_DATABASE=${MYSQL_DATABASE} -DMYSQL_USER=${MYSQL_USER} -DMYSQL_PASSWORD=${MYSQL_PASSWORD}
 
 # Gradle 빌드 및 로그 출력
 RUN ./gradlew clean build --no-daemon && \
