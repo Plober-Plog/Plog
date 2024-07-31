@@ -18,7 +18,7 @@ COPY src ./src
 # RUN ./gradlew -i build --no-daemon -DMYSQL_HOST=${MYSQL_HOST} -DMYSQL_PORT=${MYSQL_PORT} -DMYSQL_DATABASE=${MYSQL_DATABASE} -DMYSQL_USER=${MYSQL_USER} -DMYSQL_PASSWORD=${MYSQL_PASSWORD}
 
 # Gradle 빌드 및 로그 출력
-RUN ./gradlew clean -i build --no-daemon && \
+RUN ./gradlew clean build --no-daemon && \
     echo "Gradle build completed successfully" && \
     ls -la /app/build/libs
 
