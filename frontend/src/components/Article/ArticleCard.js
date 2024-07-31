@@ -10,6 +10,8 @@ const ArticleCard = ({ id, log, thumbnail, type }) => {
       navigate(`/api/user/diary/${id}`);
     } else if (type === 'sns') {
       navigate(`/api/user/sns/${id}`);
+    } else {
+      console.log(`type error${type}`);
     }
   };
 

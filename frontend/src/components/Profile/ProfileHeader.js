@@ -16,17 +16,23 @@ import ProfileBio from './ProfileBio';
 // 수정 시 data가 없거나 잘못 들어온 경우를 고려해야 함을 유의하기
 const ProfileHeader = ({ data = {}, type }) => {
 
-  const profileData = type === 'plant' ? {
-    imgSrc: data.profile || '',
-    title: data.plantTypeId || 'Unknown Plant',
-    nickname: data.nickname || 'Unknown Nickname',
-    bio: data.bio || '자기소개가 비어 있습니다.',
-  } : {
-    imgSrc: data.profile || '',
-    title: data.title || 'Unknown Title',
-    nickname: data.nickname || 'Unknown Nickname',
-    bio: data.bio || '자기소개가 비어 있습니다.',
-  };
+  const profileData = {}
+
+  if (type === 'plant') {
+    profileData.imgSrc = data.profile || '';
+    profileData.title = data.plantTypeId || 'Unknown Plant';
+    profileData.nickname = data.nickname || 'Unknown Nickname';
+    profileData.bio = data.bio || '자기소개가 비어 있습니다.';
+  } else if (type === 'user') {
+    profileData.imgSrc = data.profile || '';
+    profileData.title = data.title || 'Unknown Plant';
+    profileData.nickname = data.nickname || 'Unknown Nickname';
+    profileData.bio = data.bio || '자기소개가 비어 있습니다.';
+  } else {
+    console.error(`Unexpected type: ${type}`)
+  }
+
+
 
 
   return (
