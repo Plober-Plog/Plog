@@ -15,7 +15,7 @@ const PlantGuide = () => {
   return (
     <div>
       <h2>{plantData.plantName} 키우기</h2>
-      <Img src={plantData.profile} alt={`이미지`} />
+      <Img src={plantData.profile} alt={`식물이미지`} />
       <DiaryDetailContent detailContent={plantData.info} />
     </div>
   );
