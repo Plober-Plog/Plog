@@ -3,12 +3,27 @@ import { useState } from 'react';
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
 import AccountBtn from '../../components/Account/AccountBtn';
+import ModalComplete from '../../components/Account/ModalComplete';
 
 const PasswordUpdate = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
+  const handlePasswordUpdate = (event) => {
+    event.preventDefault();
+
+    // console.log('비밀번호:', password, '비밀번호확인:', passwordConfirm);
+    console.log('비밀번호 입력 받기 성공!')
+
+    setOpenModal(true);
+  };
+  
+  const closeModal = () => {
+    setOpenModal(false);
+  };
+  
   return (
     <div>
       <h2>비밀번호 변경</h2>
@@ -42,14 +57,10 @@ const PasswordUpdate = () => {
         <Btn
           content="비밀번호 변경"
           disabled={!password || !passwordConfirm}
-          onClick={
-            () => {
-              // console.log('비밀번호:', password, '비밀번호확인:', passwordConfirm);
-              console.log('비밀번호 입력 받기 성공!')
-            }
-          }
+          onClick={handlePasswordUpdate}
         />
       </form>
+      <ModalComplete title={'비밀번호 변경 완료'} content={'비밀번호 변경이 완료되었습니다'} open={openModal} onClose={closeModal}/>
     </div>
   )
 }
