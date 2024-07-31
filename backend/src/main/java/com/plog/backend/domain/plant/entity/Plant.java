@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @ToString
 public class Plant {
     @Id
@@ -22,15 +24,15 @@ public class Plant {
     int plantId;
 
     @OneToOne
-    @JoinColumn(name="image_id", referencedColumnName = "imageId")
+    @JoinColumn(name = "image_id", referencedColumnName = "imageId")
     Image image;
 
     @ManyToOne
-    @JoinColumn(name="plant_type_id", referencedColumnName = "plantTypeId", nullable = true)
+    @JoinColumn(name = "plant_type_id", referencedColumnName = "plantTypeId", nullable = true)
     PlantType plantType;
 
     @ManyToOne
-    @JoinColumn(name="other_plant_type_id", referencedColumnName = "otherPlantTypeId", nullable = true)
+    @JoinColumn(name = "other_plant_type_id", referencedColumnName = "otherPlantTypeId", nullable = true)
     OtherPlantType otherPlantType;
 
     @Column(nullable = false)
@@ -66,8 +68,7 @@ public class Plant {
     @Column
     LocalDate repotDate;
 
-
-    @Column
+    @Column(updatable = false)
     @CreatedDate
     LocalDateTime createdAt;
 
@@ -83,6 +84,7 @@ public class Plant {
         this.image = image;
         this.birthDate = DateUtil.getInstance().convertToLocalDate(birthDate);
     }
+
     // 기타 식물
     @Builder
     public Plant(OtherPlantType otherPlantType, String nickname, Image image, Date birthDate) {
