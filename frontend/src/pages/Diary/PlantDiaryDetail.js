@@ -13,10 +13,11 @@ import repottedIcon from '../../assets/icon/repotted.png';
 import weatherIcon from '../../assets/icon/weather.png'; 
 import humidityIcon from '../../assets/icon/humidity.png'; 
 import temperatureIcon from '../../assets/icon/temperature.png'; 
+import './PlantDiaryWrite.css';
 
 const PlantDiaryDetail = () => {
   const location = useLocation();
-  const { date, content, isWatered, isFertilized, isRepotted } = location.state.diaryData;
+  const { date, content, isWatered, isFertilized, isRepotted, imgs } = location.state.diaryData;
   const navigate = useNavigate();
 
   // 임시 데이터
@@ -24,36 +25,57 @@ const PlantDiaryDetail = () => {
   const temperature = '온도가 낮아요';
   const humidity = '습도가 높아요';
   const weathercontent = '강수량이 많고 습도가 높으니 어쩌구 하세요'
-  const images = [
-    { imageId: 1, url: 'https://via.placeholder.com/150', isThumbnail: true },
-    { imageId: 2, url: 'https://via.placeholder.com/150', isThumbnail: false },
-  ];
+
   const handleEdit = () => {
     navigate('/', { state: { diaryData: location.state.diaryData } });
   };
 
   return (
-    <div>
-      <div>
-        {date}
+    <div className="plant-diary-container">
+      <div className="section">
+        <h2>{date}</h2>
         <DiaryTodoIcon src={pencilIcon} onClick={handleEdit} />
         <Btn content="X" onClick={() => navigate(-1)} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
       </div>
-      <ImageSlider images={images} />
-      <div>
-        {isWatered && <div><DiaryTodoIcon src={waterIcon} /> 물주기 완료!</div>}
-        {isFertilized && <div><DiaryTodoIcon src={fertilizedIcon} /> 영양제주기 완료!</div>}
-        {isRepotted && <div><DiaryTodoIcon src={repottedIcon} /> 분갈이 완료!</div>}
+      <div className="section">
+        <ImageSlider imgs={imgs} />
       </div>
-      <div>
-        <DiaryTodoIcon src={weatherIcon} />
-        <DiaryTodoIcon src={humidityIcon} />
-        <DiaryTodoIcon src={temperatureIcon} />
-        <DiaryWeather weather={weather} temperature={temperature} humidity={humidity} content={weathercontent} />
+      <div className="section">
+        {isWatered && (
+          <div>
+            <DiaryTodoIcon src={waterIcon} /> 물주기 완료!
+          </div>
+        )}
+        {isFertilized && (
+          <div>
+            <DiaryTodoIcon src={fertilizedIcon} /> 영양제주기 완료!
+          </div>
+        )}
+        {isRepotted && (
+          <div>
+            <DiaryTodoIcon src={repottedIcon} /> 분갈이 완료!
+          </div>
+        )}
       </div>
-      <DiaryDetailContent detailContent={content}/>
+      <div className="section">
+        <div className="todo-icons">
+          <DiaryTodoIcon src={weatherIcon} />
+          <DiaryTodoIcon src={humidityIcon} />
+          <DiaryTodoIcon src={temperatureIcon} />
+        </div>
+        <DiaryWeather
+          weather={weather}
+          temperature={temperature}
+          humidity={humidity}
+          content={weathercontent}
+        />
+      </div>
+      <div className="section">
+        <DiaryDetailContent detailContent={content}/>
+      </div>
     </div>
   );
 };
+
 
 export default PlantDiaryDetail;

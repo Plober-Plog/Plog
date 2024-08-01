@@ -95,8 +95,7 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
     setDiaries(updatedDiaries);
     console.log('다이어리 저장:', diaryData);
 
-    const dummyDiaryId = 'dummy-id'; // 임의의 ID 
-    navigate(`/diary/${dummyDiaryId}`, { state: { diaryData } });
+    navigate(`/diary/${date}`, { state: { diaryData } });
   };
 
   return (
