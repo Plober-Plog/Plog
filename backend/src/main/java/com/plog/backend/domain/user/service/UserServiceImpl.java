@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service("userService")
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -63,5 +65,14 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(requestSignUpDto.getPassword()))
                 .build();
         return userRepository.save(user);
+    }
+
+    @Override
+    public Boolean checkUser(String searchId) {
+        Optional<User> user = userRepository.findUserBySearchId(searchId);
+
+        // 회원이 있다면 true
+        // 회원이 없다면 false
+        return user.isPresent();
     }
 }

@@ -8,4 +8,5 @@ public interface UserService {
     User getUserBySearchId(String searchId);
     String login(String email, String password);
     User createUser(RequestSignUpDto requestSignUpDto);
+    Boolean checkUser(String searchId);
 }

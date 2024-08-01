@@ -47,6 +47,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/{searchId}")
+    public ResponseEntity getUsers(@PathVariable String searchId) {
+        UserController.log.info("Received Request");
+        return ResponseEntity.ok(userService.checkUser(searchId));
+    }
+
     @PostMapping("/login")
     public ResponseEntity signIn(@Valid @RequestBody RequestSignInDto request) {
         try {
