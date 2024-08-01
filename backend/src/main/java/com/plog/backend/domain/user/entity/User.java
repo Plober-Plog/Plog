@@ -37,7 +37,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @ColumnDefault("1")
     private Gender gender;
 
     @Column
@@ -45,12 +44,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @ColumnDefault("1")
     private State state;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @ColumnDefault("1")
     private Role role;
 
     @Column(nullable = false, updatable = false)
@@ -74,7 +71,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @ColumnDefault("1")
     private ChatAuth chatAuth;
 
     @Column(nullable = false)
@@ -82,7 +78,7 @@ public class User {
     private String profileInfo;
 
     @Column
-    @ColumnDefault("'false")
+    @ColumnDefault("false")
     private boolean isAd;
 
     @Builder

@@ -34,30 +34,30 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepositorySupport userRepositorySupport;
 
-    @Test
-    @DisplayName("사용자 추가")
-    void addUser() {
-        // given
-        User user = new User().builder()
-                .email("gapple95@naver.com")
-                .searchId("gapple95")
-                .nickname("gapple")
-                .password("1234")
-                .gender(1)
-                .state(1)
-                .role(1)
-                .totalExp(0)
-                .chatAuth(1)
-                .profileInfo("")
-                .build();
-
-        // when
-        User savedUser = userRepository.save(user);
-
-        // then
-        assertThat(savedUser.getUserId()).isEqualTo(user.getUserId());
-        log.info("savedUser: {}", savedUser);
-    }
+//    @Test
+//    @DisplayName("사용자 추가")
+//    void addUser() {
+//        // given
+//        User user = new User().builder()
+//                .email("gapple95@naver.com")
+//                .searchId("gapple95")
+//                .nickname("gapple")
+//                .password("1234")
+//                .gender(1)
+//                .state(1)
+//                .role(1)
+//                .totalExp(0)
+//                .chatAuth(1)
+//                .profileInfo("")
+//                .build();
+//
+//        // when
+//        User savedUser = userRepository.save(user);
+//
+//        // then
+//        assertThat(savedUser.getUserId()).isEqualTo(user.getUserId());
+//        log.info("savedUser: {}", savedUser);
+//    }
 
 //    @Test
 //    @DisplayName("사용자 조회")

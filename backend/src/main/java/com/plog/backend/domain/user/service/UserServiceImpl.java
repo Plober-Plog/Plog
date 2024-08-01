@@ -12,11 +12,14 @@ import org.springframework.stereotype.Service;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public User createUser(RequestSignUpDto requestSignUpDto) {
         User user = User.builder()
@@ -29,7 +32,7 @@ public class UserServiceImpl implements UserService {
                 .totalExp(0)
                 .chatAuth(1)
                 .searchId(requestSignUpDto.getSearchId())
-                .password(requestSignUpDto.getPassword())
+                .password(passwordEncoder.encode(requestSignUpDto.getPassword()))
                 .build();
         return userRepository.save(user);
     }

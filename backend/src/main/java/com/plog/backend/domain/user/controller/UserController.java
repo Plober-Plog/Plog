@@ -16,8 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
+    private final UserServiceImpl userService;
+
     @Autowired
-    private UserServiceImpl userService;
+    public UserController(UserServiceImpl userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
     public ResponseEntity registerUser(@Valid @RequestBody RequestSignUpDto request) {
