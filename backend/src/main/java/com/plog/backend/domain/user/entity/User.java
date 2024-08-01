@@ -19,6 +19,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+    
+    //TODO
+    // 프로필사진, 시도,구군 추가
 
     @Column(nullable = false)
     private String email;

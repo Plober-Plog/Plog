@@ -4,15 +4,18 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.JWTVerifier;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtTokenUtil {
@@ -36,10 +39,10 @@ public class JwtTokenUtil {
                 .build();
     }
 
-    public static String getToken(String userId) {
+    public static String getToken(Long userId) {
         Date expires = JwtTokenUtil.getTokenExpiration(expirationTime);
         return JWT.create()
-                .withSubject(userId)
+                .withSubject(userId + "")
                 .withExpiresAt(expires)
                 .withIssuer(ISSUER)
                 .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
@@ -60,36 +63,32 @@ public class JwtTokenUtil {
         return new Date(now.getTime() + expirationTime);
     }
 
+    public static boolean validateToken(String token) {
+        JWTVerifier verifier = getVerifier();
+        try {
+            verifier.verify(token.replace(TOKEN_PREFIX, ""));
+            return true;
+        } catch (JWTVerificationException ex) {
+            return false;
+        }
+    }
+
+    public static Map<String, Object> jsonToMap(String json) {
+        Map<String, Object> map = new HashMap<>();
+        String[] pairs = json.replaceAll("[{}\"]", "").split(",");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split(":");
+            map.put(keyValue[0].trim(), keyValue[1].trim());
+        }
+        return map;
+    }
+
     public static void handleError(String token) {
         JWTVerifier verifier = JWT
                 .require(Algorithm.HMAC256(secretKey.getBytes()))
                 .withIssuer(ISSUER)
                 .build();
 
-        try {
-            verifier.verify(token.replace(TOKEN_PREFIX, ""));
-        } catch (AlgorithmMismatchException ex) {
-            throw ex;
-        } catch (InvalidClaimException ex) {
-            throw ex;
-        } catch (SignatureGenerationException ex) {
-            throw ex;
-        } catch (SignatureVerificationException ex) {
-            throw ex;
-        } catch (TokenExpiredException ex) {
-            throw ex;
-        } catch (JWTCreationException ex) {
-            throw ex;
-        } catch (JWTDecodeException ex) {
-            throw ex;
-        } catch (JWTVerificationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw ex;
-        }
-    }
-
-    public static void handleError(JWTVerifier verifier, String token) {
         try {
             verifier.verify(token.replace(TOKEN_PREFIX, ""));
         } catch (AlgorithmMismatchException ex) {

@@ -1,14 +1,22 @@
 package com.plog.backend.global.auth;
 
 import com.plog.backend.domain.user.entity.User;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Component
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@Setter
+@Getter
 public class PloberUserDetails implements UserDetails {
     User user;
     boolean accountNonExpired;
@@ -60,4 +68,5 @@ public class PloberUserDetails implements UserDetails {
     public void setAuthorities(List<GrantedAuthority> roles) {
         this.roles = roles;
     }
+
 }

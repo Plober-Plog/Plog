@@ -16,23 +16,23 @@ import org.springframework.context.annotation.Import;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(UserRepositoryTest.Config.class)
+//@Import(UserRepositoryTest.Config.class)
 public class UserRepositoryTest {
     private static final Logger log = LoggerFactory.getLogger(UserRepositoryTest.class);
 
-    @TestConfiguration
-    static class Config {
-        @Bean
-        public UserRepositorySupport userRepositorySupport() {
-            return new UserRepositorySupport();
-        }
-    }
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserRepositorySupport userRepositorySupport;
+//    @TestConfiguration
+//    static class Config {
+//        @Bean
+//        public UserRepositorySupport userRepositorySupport() {
+//            return new UserRepositorySupport();
+//        }
+//    }
+//
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    @Autowired
+//    private UserRepositorySupport userRepositorySupport;
 
 //    @Test
 //    @DisplayName("사용자 추가")
