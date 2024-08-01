@@ -17,8 +17,8 @@ FROM nginx:alpine
 # 빌드 결과물을 Nginx의 기본 경로로 복사
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Nginx 설정 파일을 복사 (옵션, 필요 시 설정)
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Nginx 설정 파일을 복사
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 3000번 포트를 노출
 EXPOSE 3000
