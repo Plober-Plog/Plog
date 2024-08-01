@@ -29,6 +29,10 @@ const PlantDiaryDetail = () => {
   const handleEdit = () => {
     navigate('/', { state: { diaryData: location.state.diaryData } });
   };
+  
+  const handleSNSUpload = () => {
+    navigate('/sns', { state: { diaryData: location.state.diaryData } });
+  };
 
   return (
     <div className="plant-diary-container">
@@ -73,6 +77,7 @@ const PlantDiaryDetail = () => {
       <div className="section">
         <DiaryDetailContent detailContent={content}/>
       </div>
+      <Btn content="SNS 업로드" onClick={handleSNSUpload}/> 
     </div>
   );
 };
