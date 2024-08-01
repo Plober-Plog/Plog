@@ -7,16 +7,20 @@ import WriterInfo from '../../components/Common/WriterInfo';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImgUpload from '../../components/Common/ImgUpload';
 
+import defaultImg from '../../assets/icon/default.png';
 import cameraIcon from '../../assets/icon/camera.png';
 import waterIcon from '../../assets/icon/water.png'; 
 import fertilizedIcon from '../../assets/icon/fertilized.png'; 
 import repottedIcon from '../../assets/icon/repotted.png'; 
 import './PlantDiaryWrite.css';
 
-const PlantDiaryWrite = ({ existingDiaries = [] }) => {
-  const [diaries, setDiaries] = useState(existingDiaries);
+const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => { 
+  //임시데이터
+  // const currentDate = new Date();  
+  // const plantId = '1'; 
+  const [diaries, setDiaries] = useState([]);
   const [content, setContent] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10)); 
+  const [date, setDate] = useState(currentDate.toISOString().slice(0, 10)); 
   const [isWatered, setIsWatered] = useState(false);
   const [isFertilized, setIsFertilized] = useState(false);
   const [isRepotted, setIsRepotted] = useState(false);
@@ -27,28 +31,64 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
 
   // 임시 데이터 
   const writerInfoData = {
-    profile: 'https://via.placeholder.com/50', 
+    profile: defaultImg, 
     nickname: '조이',
     plantTypeId: '몬스테라'
   };
+  const weather = '강수량 많음'
+  const humidity = '습함'
+  const temperature = '기온 높음'
 
-  useEffect(() => {
-    const diary = diaries.find(d => d.date === date);
-    if (diary) {
-      setContent(diary.content);
-      setIsWatered(diary.isWatered);
-      setIsFertilized(diary.isFertilized);
-      setIsRepotted(diary.isRepotted);
-      setIsExistingDiary(true);
-    } else {
-      setContent('');
-      setIsWatered(false);
-      setIsFertilized(false);
-      setIsRepotted(false);
-      setIsExistingDiary(false);
+  // 해당 날짜에 작성된 일지 확인 -> 날짜로 찾기 필요할듯..
+  const fetchDiary = async ({currentDate, plantId}) => {
+    try {
+      const response = await fetch(`/api/user/diary/${plantId}/${currentDate}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('일지 조회에 실패했습니다.');
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
     }
-  }, [date, diaries]);
+  };
 
+  // 이 부분 왜 useEffect 가 2개인지? 
+  // 날짜 변경하면 일지 작성 여부 확인
+  useEffect(() => {
+    const diary = fetchDiary({date, plantId});
+    if (diary) {
+      alert('이미 작성된 일기가 있습니다.');
+      console.log(diary)
+    }
+  }, [date]);
+
+
+  // 컴포넌트 로딩 및 날짜 변경 시 일지 조회
+  useEffect(() => {
+    const getDiary = async () => {
+      try {
+        const diary = await fetchDiary(date, plantId);
+        if (diary) {
+          alert('이미 작성된 일기가 있습니다.');
+        } 
+      } catch (error) {
+        console.error('일지 데이터를 불러오는 중 오류 발생:', error);
+      }
+    };
+    getDiary();
+  }, [date, plantId]);
+
+
+  // 정보 입력
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
     if (files.length + imgs.length > 5) {
@@ -81,21 +121,71 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
     console.log('Repotted:', newState);
   };
 
-  const handleSave = () => {
+  // 저장 버튼 클릭
+  const handleSave = async () => {
     const diaryData = {
-      date,
+      plantId,
+      weather,
+      temperature,
+      humidity,
       content,
+      image: imgs.map((img, index) => ({
+        url: img,
+        isThumbnail: index === 0 // 첫 번째 이미지를 대표 사진으로 설정
+      })),
+      recordDate: date,
+    };
+
+    const plantData = {
       isWatered,
       isFertilized,
       isRepotted,
-      imgs,
-    };
+      date
+    }
 
-    const updatedDiaries = diaries.filter(diary => diary.date !== date).concat(diaryData);
-    setDiaries(updatedDiaries);
-    console.log('다이어리 저장:', diaryData);
+    // 일지 작성 요청
+    try {
+      const response = await fetch('/api/user/diary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: diaryData,
+      });
 
-    navigate(`/diary/${date}`, { state: { diaryData } });
+      if (!response.ok) {
+        throw new Error('다이어리 저장에 실패했습니다.');
+      }
+
+      navigate(`/diary/${date}`, { state: { diaryData } });
+    } catch (error) {
+      console.error('Error:', error);
+      alert(error.message);
+    }
+    
+    // 식물 정보 저장 요청
+    try {
+      const response = await fetch(`/api/user/plant/${plantId}/check`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: plantData,
+      });
+
+      if (!response.ok) {
+        throw new Error('다이어리 저장에 실패했습니다.');
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert(error.message);
+    }
+
+    navigate(`/diary/${date}`, { state: { 
+      date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs
+     } });
+     
   };
 
   return (
@@ -104,9 +194,8 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
         <DateDisplay date={date} setDate={setDate} />
       </div>
       <div className="section">
-        <WriterInfo data={writerInfoData} type="plant"/>
+        <WriterInfo data={writerInfoData} type="plant" />
       </div>
-      {/* 사진 첨부하기 컴포넌트 추가해야함 */}
       <div className="section">
         <h2>사진 첨부하기</h2>
         <ImgUpload 

@@ -15,15 +15,12 @@ import humidityIcon from '../../assets/icon/humidity.png';
 import temperatureIcon from '../../assets/icon/temperature.png'; 
 import './PlantDiaryWrite.css';
 
-const PlantDiaryDetail = () => {
+const PlantDiaryDetail = ({ currentDate,plantId }) => {
   const location = useLocation();
-  const { date, content, isWatered, isFertilized, isRepotted, imgs } = location.state.diaryData;
+  const { date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state;
   const navigate = useNavigate();
 
   // 임시 데이터
-  const weather = '강수량이 많아요';
-  const temperature = '온도가 낮아요';
-  const humidity = '습도가 높아요';
   const weathercontent = '강수량이 많고 습도가 높으니 어쩌구 하세요'
 
   const handleEdit = () => {
@@ -32,6 +29,27 @@ const PlantDiaryDetail = () => {
   
   const handleSNSUpload = () => {
     navigate('/sns', { state: { diaryData: location.state.diaryData } });
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/user/diary/${plantId}/${currentDate}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('일지 삭제에 실패했습니다.');
+      }
+
+      alert('일지가 삭제되었습니다.');
+      navigate(-1); 
+    } catch (error) {
+      console.error('Error:', error);
+      alert('일지 삭제 중 오류가 발생했습니다.');
+    }
   };
 
   return (
@@ -77,7 +95,10 @@ const PlantDiaryDetail = () => {
       <div className="section">
         <DiaryDetailContent detailContent={content}/>
       </div>
-      <Btn content="SNS 업로드" onClick={handleSNSUpload}/> 
+      <div>
+        <Btn content="삭제하기" onClick={handleDelete}/> 
+        <Btn content="SNS 업로드" onClick={handleSNSUpload}/> 
+      </div>
     </div>
   );
 };

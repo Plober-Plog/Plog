@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-
+import '../../pages/Diary/PlantDiaryWrite.css';
 
 const WriterInfo = ({ data = {}, type }) => {
   const defaultImg = '../../assets/icon/default.png';
@@ -22,7 +22,7 @@ const WriterInfo = ({ data = {}, type }) => {
   return (
     <div>
       <div>
-        <img src={writerInfoData.imgSrc} alt='profile img' />
+        <img src={writerInfoData.imgSrc} alt='profile img' className="profile-pic" />
       </div>
       <div>
         {writerInfoData.nickname}

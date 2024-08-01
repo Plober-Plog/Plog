@@ -23,6 +23,13 @@
   padding: 10px 0;
 }
 
+.profile-pic {
+  width: 100px; 
+  height: 100px; 
+  border-radius: 50%; 
+  object-fit: cover;
+}
+
 h2 {
   font-size: 1.25rem;
   font-weight: bold;
