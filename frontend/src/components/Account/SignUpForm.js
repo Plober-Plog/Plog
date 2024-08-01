@@ -189,9 +189,9 @@ const SignUpForm = () => {
           selectedValue={gender}
           onChange={setGender}
           options={[
-            { value: 0, label: '선택하지 않음' },
-            { value: 1, label: '남자' },
-            { value: 2, label: '여자' },
+            { value: 1, label: '선택하지 않음' },
+            { value: 2, label: '남자' },
+            { value: 3, label: '여자' },
           ]}
           isRequired={false}
         />

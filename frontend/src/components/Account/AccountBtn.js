@@ -1,8 +1,10 @@
+import './Login.css'
+
 const AccountBtn = ({content, onClick}) => {
   return (
-    <button onClick={onClick}>
+    <a onClick={onClick}>
       {content}
-    </button>
+    </a>
   )
 }
 

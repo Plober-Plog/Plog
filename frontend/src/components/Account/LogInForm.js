@@ -3,6 +3,8 @@ import Btn from '../Common/Btn';
 import InputField from './InputField';
 import AccountBtn from './AccountBtn';
 
+import './Login.css'
+
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
