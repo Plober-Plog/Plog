@@ -21,7 +21,7 @@ COPY --from=build /app/build /usr/share/nginx/html
 # COPY nginx.conf /etc/nginx/nginx.conf
 
 # 기본 포트를 노출
-EXPOSE 80
+EXPOSE 3000
 
 # Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
