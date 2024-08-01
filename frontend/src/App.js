@@ -8,7 +8,13 @@ import PlantDetail from './pages/Plant/PlantDetail';
 function App() {
   return (
     <div>
-      <Setting />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Setting />} />
+          <Route path="/password-update" element={<PasswordUpdate />} />
+          <Route path="/profile-update" element={<ProfileUpdate />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
