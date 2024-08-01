@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 
-const Calander = ({plantId}) =>{
+const Calender = ({ plantId }) =>{
 
   const [value, setValue] = useState(new Date());
   const [checkRecords, setCheckRecords] = useState([]);
@@ -33,16 +33,19 @@ const Calander = ({plantId}) =>{
 
     fetchRecords();
   }, [value]);
-  
-/*TODO: 페이지 이동 함수
-  해당 날짜를 클릭했을 때,
-  diaryRecords 기록이 있다면 -> 해당 날짜와 함께 PlantDiaryDetail 페이지로 이동
-  diaryRecords 기록이 없다면 -> 해당 날짜와 함께 PlantDiaryWrite 페이지로 이동
-  checkReCords 기록과는 무관합니다.
-  이후 PlantDiaryDetail, PlantDiaryWrite 페이지를 pull 받아본 뒤 test 할 예정입니다.
+
+  // 상세페이지: 
+  // date로 클릭한 날짜를 찾고, 해당 날짜에 담긴 정보 중 plantDiaryId를 찾아 naviagte
+  // 작성페이지:
+  // date로 클릭한 날짜를 찾고, 해당 날짜 정보를 다이어리 작성 페이지에 함께 보냄
   const handleClickDay = (date) => {
+    const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
+    if (diaryRecord) {
+      navigate(`/api/user/diary/${diaryRecord.plantDiaryId}`);
+    } else {
+      navigate('/api/user/diary', {state: {date: date.toISOString().split('T')[0]}});
+    }
   };
-*/
 
   const colorBox = ({ date }) => {
     const checkRecord = checkRecords.find(record => new Date(record.checkDate).toDateString() === date.toDateString());
@@ -110,9 +113,10 @@ const Calander = ({plantId}) =>{
         onChange={setValue}
         value={value}
         tileContent={colorBox}
+        onClickDay={handleClickDay}
       />
     </div>
   );
 };
 
-export default Calander;
+export default Calender;
