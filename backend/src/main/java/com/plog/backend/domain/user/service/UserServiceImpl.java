@@ -31,23 +31,32 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserBySearchId(searchId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with searchId: " + searchId));
     }
-
     @Override
     public String login(String email, String password) {
         log.info("login1 : {}, {}", email, password);
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
-        );
-        log.info("login2 : {}, {}", email, password);
-        log.info("Authenticated user: {}", authentication.getPrincipal());
+
+        // 이메일로 사용자를 찾습니다.
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
-        // 인증 정보 SecurityContextHolder에 설정
+        // 비밀번호 인증을 수행합니다.
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password)
+        );
+
+        log.info("Authenticated user: {}", authentication.getPrincipal());
+
+        // 인증 정보를 SecurityContextHolder에 설정합니다.
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return jwtTokenProvider.generateAccessToken(authentication);
+        // JWT를 생성하여 반환합니다.
+        String jwtToken = "bearer " + jwtTokenProvider.generateAccessToken(authentication);
+
+        log.info("Generated JWT Token: {}", jwtToken);
+
+        return jwtToken;
     }
+
 
     @Override
     public User createUser(RequestSignUpDto requestSignUpDto) {
