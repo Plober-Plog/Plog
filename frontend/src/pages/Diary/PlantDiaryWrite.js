@@ -5,10 +5,13 @@ import Btn from '../../components/Common/Btn';
 import Content from '../../components/Common/Content';
 import WriterInfo from '../../components/Common/WriterInfo';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
+import ImgUpload from '../../components/Common/ImgUpload';
 
+import cameraIcon from '../../assets/icon/camera.png';
 import waterIcon from '../../assets/icon/water.png'; 
 import fertilizedIcon from '../../assets/icon/fertilized.png'; 
 import repottedIcon from '../../assets/icon/repotted.png'; 
+import './PlantDiaryWrite.css';
 
 const PlantDiaryWrite = ({ existingDiaries = [] }) => {
   const [diaries, setDiaries] = useState(existingDiaries);
@@ -18,9 +21,11 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
   const [isFertilized, setIsFertilized] = useState(false);
   const [isRepotted, setIsRepotted] = useState(false);
   const [isExistingDiary, setIsExistingDiary] = useState(false);
-  
+  const [imgs, setImgs] = useState([]);
+
   const navigate = useNavigate();
 
+  // 임시 데이터 
   const writerInfoData = {
     profile: 'https://via.placeholder.com/50', 
     nickname: '조이',
@@ -43,6 +48,20 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
       setIsExistingDiary(false);
     }
   }, [date, diaries]);
+
+  const handleImageUpload = (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length + imgs.length > 5) {
+      alert('최대 5장까지 업로드할 수 있습니다.');
+      return;
+    }
+    const newImgs = files.map(file => URL.createObjectURL(file));
+    setImgs(prevImgs => [...prevImgs, ...newImgs]);
+  };
+
+  const handleDeleteImage = (index) => {
+    setImgs(prevImgs => prevImgs.filter((_, i) => i !== index));
+  };
 
   const toggleWatered = () => {
     const newState = !isWatered;
@@ -69,6 +88,7 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
       isWatered,
       isFertilized,
       isRepotted,
+      imgs,
     };
 
     const updatedDiaries = diaries.filter(diary => diary.date !== date).concat(diaryData);
@@ -80,21 +100,38 @@ const PlantDiaryWrite = ({ existingDiaries = [] }) => {
   };
 
   return (
-    <div>
-      <DateDisplay date={date} setDate={setDate} />
-      <WriterInfo data={writerInfoData} type="plant"/>
-      {/* 사진 첨부하기 컴포넌트 추가해야함 */}
-      <div>
-        <h2>오늘 한 일</h2>
-        <DiaryTodoIcon src={waterIcon} active={isWatered} onClick={toggleWatered} />
-        <DiaryTodoIcon src={fertilizedIcon} active={isFertilized} onClick={toggleFertilized} />
-        <DiaryTodoIcon src={repottedIcon} active={isRepotted} onClick={toggleRepotted} />
+    <div className="plant-diary-container">
+      <div className="section">
+        <DateDisplay date={date} setDate={setDate} />
       </div>
-      <div>
+      <div className="section">
+        <WriterInfo data={writerInfoData} type="plant"/>
+      </div>
+      {/* 사진 첨부하기 컴포넌트 추가해야함 */}
+      <div className="section">
+        <h2>사진 첨부하기</h2>
+        <ImgUpload 
+          cameraIcon={cameraIcon} 
+          imgs={imgs} 
+          handleImageUpload={handleImageUpload} 
+          handleDeleteImage={handleDeleteImage} 
+        />
+      </div>
+      <div className="section">
+        <h2>오늘 한 일</h2>
+        <div className="todo-icons">
+          <DiaryTodoIcon src={waterIcon} active={isWatered} onClick={toggleWatered} />
+          <DiaryTodoIcon src={fertilizedIcon} active={isFertilized} onClick={toggleFertilized} />
+          <DiaryTodoIcon src={repottedIcon} active={isRepotted} onClick={toggleRepotted} />
+        </div>
+      </div>
+      <div className="section">
         <h2>일지 작성</h2>
         <Content content={content} setContent={setContent} />
       </div>
-      <Btn content={isExistingDiary ? "수정하기" : "작성하기"} onClick={handleSave} />
+      <div>
+        <Btn content={isExistingDiary ? "수정하기" : "작성하기"} onClick={handleSave} />
+      </div>
     </div>
   );
 };

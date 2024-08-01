@@ -1,13 +1,12 @@
 import React from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import DateDisplay from '../../components/Common/DateDisplay';
-import pencilIcon from '../../assets/icon/pencil.png'; 
+import { useLocation, useNavigate } from 'react-router-dom';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImageSlider from '../../components/Common/ImgSlider';
 import DiaryWeather from '../../components/Diary/DiaryWeather';
 import DiaryDetailContent from '../../components/Diary/DiaryDetailContent';
 import Btn from '../../components/Common/Btn';
 
+import pencilIcon from '../../assets/icon/pencil.png'; 
 import waterIcon from '../../assets/icon/water.png'; 
 import fertilizedIcon from '../../assets/icon/fertilized.png'; 
 import repottedIcon from '../../assets/icon/repotted.png'; 
@@ -16,7 +15,6 @@ import humidityIcon from '../../assets/icon/humidity.png';
 import temperatureIcon from '../../assets/icon/temperature.png'; 
 
 const PlantDiaryDetail = () => {
-  const { plantDiaryId } = useParams();
   const location = useLocation();
   const { date, content, isWatered, isFertilized, isRepotted } = location.state.diaryData;
   const navigate = useNavigate();
@@ -30,13 +28,16 @@ const PlantDiaryDetail = () => {
     { imageId: 1, url: 'https://via.placeholder.com/150', isThumbnail: true },
     { imageId: 2, url: 'https://via.placeholder.com/150', isThumbnail: false },
   ];
+  const handleEdit = () => {
+    navigate('/', { state: { diaryData: location.state.diaryData } });
+  };
 
   return (
     <div>
       <div>
-        <Btn content="뒤로가기" onClick={() => navigate(-1)} />
         {date}
-        <DiaryTodoIcon src={pencilIcon} />
+        <DiaryTodoIcon src={pencilIcon} onClick={handleEdit} />
+        <Btn content="X" onClick={() => navigate(-1)} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
       </div>
       <ImageSlider images={images} />
       <div>
