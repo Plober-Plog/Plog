@@ -9,6 +9,7 @@ import InputField from './InputField';
 import RadioField from './RadioField';
 import SelectField from './SelectField';
 import ModalComplete from './ModalComplete';
+import defaultProfile from '../../assets/image/defaultprofile.png';
 
 const SignUpForm = () => {
   // 회원 정보
@@ -31,11 +32,12 @@ const SignUpForm = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(false);
   const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
+  const [EmailCheckMsg, setEmailCheckMsg] = useState('');
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [passwordCheckMsg, setPasswordCheckMsg] = useState('');
   const [passwordConfirmCheckMsg, setPasswordConfirmCheckMsg] = useState('');
 
-  const API_URL = 'http://localhost:3000/api/user';
+  const API_URI = 'http://localhost:8080/api/user';
 
 
   useEffect(() => {
@@ -58,7 +60,7 @@ const SignUpForm = () => {
   // 아이디 중복확인
   const handleCheckSearchId = async () => {
     try {
-      const response = await axios.get(`${API_URL}/${searchId}`);
+      const response = await axios.get(`${API_URI}/${searchId}`);
 
       if (response.data.result) {
         setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
@@ -93,7 +95,7 @@ const SignUpForm = () => {
       searchId,
       password: sha256(password),
       nickname,
-      // profile: '',
+      profile: defaultProfile, // URL.createObjectURL(defaultProfile),
       gender,
       birthDate: birthdate,
       source,
@@ -107,7 +109,7 @@ const SignUpForm = () => {
 
     // 회원가입 요청
     try {
-      await axios.post(API_URL, userInfo);
+      await axios.post(API_URI, userInfo);
       setOpenModal(true);
     } catch (error) {
       console.error('회원가입 실패: ', error);
@@ -146,10 +148,19 @@ const SignUpForm = () => {
             type="email"
             placeholder="이메일"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setEmail(value)
+              if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+                setEmailCheckMsg('올바른 이메일 형식이 아닙니다.');
+              } else {
+                setEmailCheckMsg('');
+              }
+            }}
             isRequired={true}
           />
-          <ATag content="인증하기" />
+          <ATag content="인증하기" disabled={!setEmailCheckMsg}/>
+          {EmailCheckMsg && <p>{EmailCheckMsg}</p>}
         </div>
         <div>
           <InputField
