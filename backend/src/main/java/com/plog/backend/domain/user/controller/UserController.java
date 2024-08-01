@@ -1,19 +1,17 @@
 package com.plog.backend.domain.user.controller;
 
-import com.plog.backend.domain.user.dto.RequestSignUpDto;
+import com.plog.backend.domain.user.dto.Entity;
 import com.plog.backend.domain.user.entity.User;
-import com.plog.backend.domain.user.service.UserService;
 import com.plog.backend.domain.user.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
@@ -25,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity registerUser(@Valid @RequestBody RequestSignUpDto request) {
+    public ResponseEntity registerUser(@Valid @RequestBody Entity request) {
         // 디버그 로그 추가
         UserController.log.info("Received Request: " + request.toString());
 
@@ -34,7 +32,7 @@ public class UserController {
     }
 
     @PatchMapping
-    public ResponseEntity modifyUser(@Valid @RequestBody RequestSignUpDto request) {
+    public ResponseEntity modifyUser(@Valid @RequestBody Entity request) {
         // 디버그 로그 추가
         UserController.log.info("Received Request: " + request.toString());
 

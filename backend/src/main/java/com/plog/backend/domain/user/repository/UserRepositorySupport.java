@@ -14,7 +14,7 @@ public class UserRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = queryFactory;
     }
 
-    public User findBySearchId(String searchId) {
-        return null;
-    }
+//    public User findBySearchId(String searchId) {
+//        return null;
+//    }
 }

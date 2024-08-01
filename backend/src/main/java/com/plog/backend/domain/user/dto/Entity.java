@@ -1,6 +1,6 @@
 package com.plog.backend.domain.user.dto;
 
-import com.plog.backend.global.model.dto.BaseRequestDto;
+import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -13,7 +13,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestSignUpDto extends BaseRequestDto {
+public class Entity extends BaseEntity {
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
     @Email(message = "유효한 이메일 형식이 아닙니다.")
