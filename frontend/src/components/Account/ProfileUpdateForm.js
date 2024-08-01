@@ -3,7 +3,7 @@ import Btn from '../Common/Btn';
 import InputField from './InputField';
 import SelectField from './SelectField';
 import RadioField from './RadioField';
-import AccountBtn from './AccountBtn';
+import ATag from './ATag';
 import ModalComplete from '../../components/Account/ModalComplete';
 
 const ProfileUpdateForm = ({ userData }) => {
@@ -45,7 +45,7 @@ const ProfileUpdateForm = ({ userData }) => {
             onChange={(e) => setSearchId(e.target.value)}
             isRequired={true}
           />
-          <AccountBtn 
+          <ATag 
             content='중복확인'
           />
         </div>

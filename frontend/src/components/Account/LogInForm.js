@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Btn from '../Common/Btn';
 import InputField from './InputField';
-import AccountBtn from './AccountBtn';
+import ATag from './ATag';
 
 import './Login.css'
 
@@ -38,7 +38,7 @@ const LoginForm = () => {
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true} 
           />
-          <AccountBtn
+          <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />

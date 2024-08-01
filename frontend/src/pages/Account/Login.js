@@ -1,7 +1,7 @@
 import React from 'react';
 import LoginForm from '../../components/Account/LoginForm';
 import SocialLogIn from '../../components/Account/SocialLogIn';
-import AccountBtn from '../../components/Account/AccountBtn';
+import ATag from '../../components/Account/ATag';
 import Btn from '../../components/Common/Btn';
 // import '../../components/Account/Login.css';
 
@@ -10,7 +10,7 @@ const Login = () => {
     <div className="container">
       <h1>로그인</h1>
       <LoginForm />
-      <AccountBtn 
+      <ATag 
         content={'회원가입 하기'}
         onClick={
           () => {
@@ -18,7 +18,7 @@ const Login = () => {
           }
         }
       />
-      <AccountBtn 
+      <ATag 
         content={'비밀번호 찾기'}
         onClick={
           () => {

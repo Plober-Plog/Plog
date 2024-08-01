@@ -1,6 +1,6 @@
 import './Login.css'
 
-const AccountBtn = ({content, onClick}) => {
+const ATag = ({content, onClick}) => {
   return (
     <a onClick={onClick}>
       {content}
@@ -8,4 +8,4 @@ const AccountBtn = ({content, onClick}) => {
   )
 }
 
-export default AccountBtn;
+export default ATag;
