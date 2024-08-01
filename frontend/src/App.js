@@ -1,16 +1,22 @@
 import React from 'react';
-import PasswordFind from './pages/Account/PasswordFind';
-import SignUp from './pages/Account/SignUp';
-import Login from './pages/Account/Login';
-import PasswordUpdate from './pages/Account/PasswordUpdate';
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProfileUpdate from './pages/Account/ProfileUpdate';
+import PasswordUpdate from './pages/Account/PasswordUpdate';
+import Setting from './pages/Account/Setting';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import PlantDetail from './pages/Plant/PlantDetail';
 
 function App() {
   return (
-    <div className="App">
-      <Login />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/profile-update" element={<ProfileUpdate />} />
+        <Route path="/password-update" element={<PasswordUpdate />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
