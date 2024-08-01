@@ -45,6 +45,4 @@ public class PlantController {
         List<PlantGetResponse> response = plantService.getPlantList(searchId);
         return ResponseEntity.status(200).body(response);
     }
-
-
 }
