@@ -1,6 +1,6 @@
 import React from'react';
 import ProfileTitle from './ProfileTitle';
-
+import '../../pages/Plant/PlantDetail.css';
 
 /* TODO: 프로필 이미지 클릭 시, 프로필 이미지를 바꿀 수 있는 기능과 연결되어야 함
   1. 요청을 준 유저 === 유저(해당 유저 혹은 해당 PlantId의 유저) 확인 후
@@ -11,7 +11,7 @@ const ProfileImgAndTitle = ({ imgSrc, title, nickname }) => {
   return (
     <div>
       <div>
-        <img src={imgSrc} alt="profile img"/>
+        <img src={imgSrc} alt="profile img" className='profile-image'/>
       </div>
       <div>
         <ProfileTitle title={title}/>
