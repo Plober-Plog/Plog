@@ -1,6 +1,6 @@
 import React from 'react';
 import ProfileHeader from "../../components/Profile/ProfileHeader";
-import Calender from "../../components/Plant/Calender";
+import Calendar from "../../components/Plant/Calendar";
 import ArticleCardList from "../../components/Article/ArticleCardList";
 import ReportBanner from "../../components/Plant/ReportBanner";
 import Btn from "../../components/Common/Btn";
@@ -32,13 +32,15 @@ const PlantDetail = () => {
         data={plantData}
         type="plant"
       />
-      <Calender />
+      <Calendar />
       <ArticleCardList 
         articles={articles}
         type="plant"
       />
       <ReportBanner />
+      {/* /plant/{plantTypeId}/panorama */}
       <Btn content ="성장과정 보기"/>
+      {/* /plant/guide/{plantTypeId} */}
       <Btn content ="가이드"/>
     </div>
   )

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
+import './Calendar.css';
 
 const Calender = ({ plantId }) =>{
 
@@ -52,60 +53,14 @@ const Calender = ({ plantId }) =>{
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     
     return (
-      <div style={styles.box}>
-        <div style={{
-          ...styles.indicator,
-          ...(checkRecord && checkRecord.isWatered ? styles.watered : {})
-        }}>
-        </div>
-        <div style={{
-          ...styles.indicator,
-          ...(checkRecord && checkRecord.isFertilized ? styles.fertilized : {})
-        }}>
-        </div>
-        <div style={{
-          ...styles.indicator,
-          ...(checkRecord && checkRecord.isRepotted ? styles.repotted : {})
-        }}>
-        </div>
-        <div style={{
-          ...styles.indicator,
-          ...(diaryRecord ? styles.diary : {})
-        }}>
-        </div>
+      <div className="color-box">
+        <div className={`indicator ${checkRecord && checkRecord.isWatered ? 'watered' : ''}`}></div>
+        <div className={`indicator ${checkRecord && checkRecord.isFertilized ? 'fertilized' : ''}`}></div>
+        <div className={`indicator ${checkRecord && checkRecord.isRepotted ? 'repotted' : ''}`}></div>
+        <div className={`indicator ${diaryRecord ? 'diary' : ''}`}></div>
       </div>
     );
   };
-
-
-  // 임시 styles
-  const styles = {
-    box: {
-      position: 'relative',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
-    indicator: {
-      width: '80%',
-      height: '6px',
-      backgroundColor: 'white',
-    },
-    watered: {
-      backgroundColor: '#A8D8E7',
-    },
-    fertilized: {
-      backgroundColor: '#FFB9B9',
-    },
-    repotted: {
-      backgroundColor: '#99DA9B',
-    },
-    diary: {
-      backgroundColor: '#F7D98B',
-    }
-  };
-
 
   return (
     <div>
