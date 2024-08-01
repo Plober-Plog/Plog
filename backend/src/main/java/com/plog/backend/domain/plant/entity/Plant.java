@@ -16,23 +16,24 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @EntityListeners(AuditingEntityListener.class)
 @ToString
 public class Plant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int plantId;
+    Long plantId;
 
     @OneToOne
     @JoinColumn(name = "image_id", referencedColumnName = "imageId")
     Image image;
 
     @ManyToOne
-    @JoinColumn(name = "plant_type_id", referencedColumnName = "plantTypeId", nullable = true)
+    @JoinColumn(name = "plant_type_id", referencedColumnName = "plantTypeId")
     PlantType plantType;
 
     @ManyToOne
-    @JoinColumn(name = "other_plant_type_id", referencedColumnName = "otherPlantTypeId", nullable = true)
+    @JoinColumn(name = "other_plant_type_id", referencedColumnName = "otherPlantTypeId")
     OtherPlantType otherPlantType;
 
     @Column(nullable = false)
@@ -47,15 +48,15 @@ public class Plant {
     @Column
     LocalDate deadDate;
 
-    @Column
+    @Column(nullable = false)
     @ColumnDefault("true")
     boolean hasNotified;
 
-    @Column
+    @Column(nullable = false)
     @ColumnDefault("255")
     int fixed;
 
-    @Column
+    @Column(nullable = false)
     @ColumnDefault("false")
     boolean isDeleted;
 
@@ -68,26 +69,17 @@ public class Plant {
     @Column
     LocalDate repotDate;
 
-    @Column(updatable = false)
-    @CreatedDate
-    LocalDateTime createdAt;
+//    @Column(updatable = false)
+//    @CreatedDate
+//    LocalDateTime createdAt;
+//
+//    @Column
+//    @LastModifiedDate
+//    LocalDateTime modifiedAt;
 
-    @Column
-    @LastModifiedDate
-    LocalDateTime modifiedAt;
-
-    // 기본 식물
     @Builder
-    public Plant(PlantType plantType, String nickname, Image image, Date birthDate) {
+    public Plant(PlantType plantType, OtherPlantType otherPlantType, String nickname, Image image, Date birthDate) {
         this.plantType = plantType;
-        this.nickname = nickname;
-        this.image = image;
-        this.birthDate = DateUtil.getInstance().convertToLocalDate(birthDate);
-    }
-
-    // 기타 식물
-    @Builder
-    public Plant(OtherPlantType otherPlantType, String nickname, Image image, Date birthDate) {
         this.otherPlantType = otherPlantType;
         this.nickname = nickname;
         this.image = image;
