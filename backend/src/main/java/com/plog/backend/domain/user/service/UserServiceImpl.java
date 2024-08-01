@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserBySearchId(searchId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with searchId: " + searchId));
     }
+
     @Override
     public String login(String email, String password) {
         log.info("login1 : {}, {}", email, password);
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
-        // 비밀번호 인증을 수행합니다.
+        // 토큰 인증객체
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );

@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/{searchId}")
-    public ResponseEntity getUsers(@PathVariable String searchId) {
+    public ResponseEntity getUsers(@PathVariable("searchId") String searchId) {
         UserController.log.info("Received Request");
         return ResponseEntity.ok(userService.checkUser(searchId));
     }
