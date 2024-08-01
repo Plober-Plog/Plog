@@ -35,16 +35,25 @@ const Calender = ({ plantId }) =>{
     fetchRecords();
   }, [value]);
 
-  // 상세페이지: 
-  // date로 클릭한 날짜를 찾고, 해당 날짜에 담긴 정보 중 plantDiaryId를 찾아 naviagte
-  // 작성페이지:
-  // date로 클릭한 날짜를 찾고, 해당 날짜 정보를 다이어리 작성 페이지에 함께 보냄
+  /* TODO: 일지 작성 or 조회 페이지로 연결하는 부분 체크
+    해당 페이지에서 요구하는 방식으로 날짜 데이터가 전달되는지
+    console.log 찍어보고 대화하며 체크할 것
+  */
   const handleClickDay = (date) => {
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     if (diaryRecord) {
-      navigate(`/plant/diary/${diaryRecord.plantDiaryId}`);
+      console.log(state);
+      console.log(diaryRecord.plantDiaryId);
+      console.log(date);
+      navigate(`/plant/diary/${diaryRecord}`);
     } else {
-      navigate('/plant/diary/write', {state: {date: date.toISOString().split('T')[0]}});
+      console.log(state);
+      console.log(diaryRecord);
+      console.log(date);
+      navigate('/plant/diary/write',
+        {state: {date: date.toISOString().split('T')[0], plantId}}
+      );
+      console.log(state);
     }
   };
 
