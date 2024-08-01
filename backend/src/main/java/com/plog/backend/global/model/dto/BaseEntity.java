@@ -1,8 +1,22 @@
 package com.plog.backend.global.model.dto;
 
-import java.util.Date;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-public class BaseRequestDto {
-    private Date createdAt;
-    private Date updatedAt;
+import java.time.LocalDateTime;
+
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public class BaseEntity {
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime created_at;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updated_at;
 }
