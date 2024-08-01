@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-// import Setting from "./Setting";
+import ModalConfirm from "../../components/Common/ModalConfirm";
 
 const Setting = () => {
   const navigate = useNavigate();
@@ -24,7 +24,24 @@ const Setting = () => {
       </section>
       <section className="settings-section">
         <h2>로그아웃</h2>
-        <div className="settings-item">로그아웃</div>
+        <div
+          className="settings-item"
+          onClick={
+            () => {
+              ModalConfirm.show({
+                title: "회원�����",
+                content: "�����하시겠습니까?",
+                confirmText: "�����",
+                onConfirm: () => {
+                  // 로그아��
+                  navigate("/logout");
+                }
+              });
+            }
+          }
+        >
+          로그아웃
+        </div>
       </section>
       <section className="settings-section">
         <h2>회원탈퇴</h2>

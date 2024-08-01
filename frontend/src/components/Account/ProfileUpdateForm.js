@@ -4,7 +4,7 @@ import InputField from './InputField';
 import SelectField from './SelectField';
 import RadioField from './RadioField';
 import AccountBtn from './AccountBtn';
-import ModalComplete from '../../components/Account/ModalComplete';
+import ModalComplete from '../../components/Common/ModalComplete';
 
 const ProfileUpdateForm = ({ userData }) => {
   const [id, setId] = useState(userData.id);

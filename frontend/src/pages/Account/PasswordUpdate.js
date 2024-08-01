@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
 import AccountBtn from '../../components/Account/AccountBtn';
-import ModalComplete from '../../components/Account/ModalComplete';
+import ModalComplete from '../../components/Common/ModalComplete';
 
 const PasswordUpdate = () => {
   const [password, setPassword] = useState('');
