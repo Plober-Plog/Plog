@@ -4,17 +4,15 @@ import sha256 from 'js-sha256';
 import AWS from 'aws-sdk';
 
 import Btn from '../Common/Btn';
+import ATag from './ATag';
 import InputField from './InputField';
 import RadioField from './RadioField';
 import SelectField from './SelectField';
 import ModalComplete from './ModalComplete';
 
 const SignUpForm = () => {
-  // 아이디
+  // 회원 정보
   const [searchId, setSearchID] = useState('');
-  const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(false);
-  const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -25,11 +23,17 @@ const SignUpForm = () => {
   const [gender, setGender] = useState(0);
   const [sido, setSido] = useState('');
   const [gugun, setGugun] = useState('');
-
+  // 회원 동의
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeAdvertisement, setAgreeAdvertisement] = useState(false);
+  // 회원가입 조건 만족
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(false);
+  const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
+  const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
+  const [passwordCheckMsg, setPasswordCheckMsg] = useState('');
+  const [passwordConfirmCheckMsg, setPasswordConfirmCheckMsg] = useState('');
 
   const API_URL = 'http://localhost:3000/api/user';
 
@@ -37,15 +41,18 @@ const SignUpForm = () => {
   useEffect(() => {
     // TODO 테스트 끝난 후 아이디 중복확인 여부 추가하기
     setIsFormValid(
-      searchId && 
+      /^[a-z0-9]{5,15}$/.test(searchId) && 
       // isSearchIdAvailable &&
       email && 
       password && 
       passwordConfirm && 
       password === passwordConfirm &&
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/.test(password) &&
+      nickname.length >= 3 &&
+      nickname.length <= 10 &&
       agreePersonal
     );
-  }, [searchId, email, password, passwordConfirm, agreePersonal]);
+  }, [searchId, email, password, passwordConfirm, nickname, agreePersonal]);
 
 
   // 아이디 중복확인
@@ -82,15 +89,17 @@ const SignUpForm = () => {
     
     const userInfo = {
       // TODO default 이미지 추가하기
-      searchId,
       email,
+      searchId,
       password: sha256(password),
       nickname,
-      birthdate,
-      source,
+      // profile: '',
       gender,
-      sido,
-      gugun,
+      birthDate: birthdate,
+      source,
+      sidoCode: sido,
+      gugunCode: gugun,
+      isAd: agreeAdvertisement
     };
 
     console.log('정보 받기 성공!');
@@ -118,10 +127,18 @@ const SignUpForm = () => {
             type="text"
             placeholder="아이디"
             value={searchId}
-            onChange={(e) => setSearchID(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setSearchID(value)
+              if (!/^[a-z0-9]{5,15}$/.test(value)) {
+                setSearchIdCheckMsg('아이디는 5글자 이상 15이하여야 합니다.');
+              } else {
+                setSearchIdCheckMsg('');
+              }
+            }}
             isRequired={true}
           />
-          <Btn content="중복확인" onClick={handleCheckSearchId}/>
+          <ATag content="중복확인" onClick={handleCheckSearchId}/>
           {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
         </div>
         <div>
@@ -132,43 +149,70 @@ const SignUpForm = () => {
             onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
           />
-          <Btn content="인증하기" />
+          <ATag content="인증하기" />
         </div>
         <div>
           <InputField
             type={showPassword ? 'text' : 'password'}
             placeholder="비밀번호"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setPassword(value)
+              if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/.test(value)) {
+                setPasswordCheckMsg('비밀번호는 영어와 숫자를 포함해서 8글자 이상 12이하여야 합니다.');
+              } else {
+                setPasswordCheckMsg('');
+              }
+            }}
             isRequired={true}
           />
-          <Btn
+          <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
+          {passwordCheckMsg && <p>{passwordCheckMsg}</p>}
         </div>
         <div>
           <InputField
             type={showPassword ? 'text' : 'password'}
             placeholder="비밀번호 확인"
             value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setPasswordConfirm(value)
+              if (password !== value) {
+                setPasswordConfirmCheckMsg('비밀번호가 일치하지 않습니다.');
+              } else {
+                setPasswordConfirmCheckMsg('');
+              }
+            }}
             isRequired={true}
           />
-          <Btn
+          <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
+          {passwordConfirmCheckMsg && <p>{passwordConfirmCheckMsg}</p>}
         </div>
         <div>
           <InputField
             type="text"
             placeholder="닉네임"
             value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setNickname(value)
+              if (value.length < 3 || value.length > 10) {
+                setNicknameCheckMsg('닉네임은 3~10 글자여야 합니다.');
+              } else{
+                setNicknameCheckMsg('');
+              }
+            }}
             isRequired={false}
           />
-          <Btn content="추천받기" />
+          {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
+          <ATag content="추천받기" />
         </div>
         <div>
           <InputField
