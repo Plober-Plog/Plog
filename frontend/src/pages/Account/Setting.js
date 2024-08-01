@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+// import Setting from "./Setting";
 
 const Setting = () => {
   const navigate = useNavigate();

@@ -1,4 +1,5 @@
 import React from'react';
+import ProfileTitle from './ProfileTitle';
 
 const ProfileImgAndTitle = ({ imgSrc, title, nickname }) => {
   return (
@@ -7,9 +8,7 @@ const ProfileImgAndTitle = ({ imgSrc, title, nickname }) => {
         <img src={imgSrc} alt="profile img"/>
       </div>
       <div>
-        <span>
-          {title}
-        </span>
+        <ProfileTitle title={title}/>
       </div>
       <div>
         <span>
