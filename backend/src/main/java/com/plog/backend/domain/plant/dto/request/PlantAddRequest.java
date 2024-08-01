@@ -11,8 +11,8 @@ import java.util.Date;
 @Builder
 @ToString
 public class PlantAddRequest {
-    int plantTypeId;
-    int otherPlantTypeId;
+    Long plantTypeId;
+    Long otherPlantTypeId;
     String profile;
     String bio;
     String nickname;
