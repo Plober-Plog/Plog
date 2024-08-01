@@ -9,4 +9,5 @@ public interface UserService {
     String login(String email, String password);
     User createUser(RequestSignUpDto requestSignUpDto);
     Boolean checkUser(String searchId);
+    Boolean checkEmail(String email);
 }

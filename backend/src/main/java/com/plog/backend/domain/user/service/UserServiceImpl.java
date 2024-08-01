@@ -81,6 +81,17 @@ public class UserServiceImpl implements UserService {
     public Boolean checkUser(String searchId) {
         Optional<User> user = userRepository.findUserBySearchId(searchId);
 
+        // 아이디를 검색 했는데,
+        // 회원이 있다면 true
+        // 회원이 없다면 false
+        return user.isPresent();
+    }
+
+    @Override
+    public Boolean checkEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+
+        // 이메일을 검색 했는데,
         // 회원이 있다면 true
         // 회원이 없다면 false
         return user.isPresent();

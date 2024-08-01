@@ -29,39 +29,51 @@ public class UserController {
         this.userService = userService;
     }
 
+    // 회원 가입
     @PostMapping
     public ResponseEntity registerUser(@Valid @RequestBody RequestSignUpDto request) {
         // 디버그 로그 추가
-        UserController.log.info("Received Request: " + request.toString());
+        UserController.log.info("Register User Received Request: " + request.toString());
 
         User user = userService.createUser(request);
         return ResponseEntity.ok(user);
     }
 
+    // 회원 수정
     @PatchMapping
     public ResponseEntity modifyUser(@Valid @RequestBody RequestSignUpDto request) {
         // 디버그 로그 추가
-        UserController.log.info("Received Request: " + request.toString());
+        UserController.log.info("modify User Received Request: " + request.toString());
 
         User user = userService.createUser(request);
         return ResponseEntity.ok(user);
     }
 
+    // 아이디 확인
     @GetMapping("/{searchId}")
-    public ResponseEntity getUsers(@PathVariable("searchId") String searchId) {
-        UserController.log.info("Received Request");
+    public ResponseEntity checkSearchId(@PathVariable("searchId") String searchId) {
+        UserController.log.info("Check Search Id Received Request");
         return ResponseEntity.ok(userService.checkUser(searchId));
     }
 
+    // 로그인 JWT 적용
     @PostMapping("/login")
     public ResponseEntity signIn(@Valid @RequestBody RequestSignInDto request) {
         try {
-            log.info("Received Request: " + request.toString());
+            log.info("Login Received Request: " + request.toString());
             String token = userService.login(request.getEmail(), request.getPassword());
             log.info("Received Token: " + token);
             return ResponseEntity.ok(token);
         } catch (Exception e) {
             return ResponseEntity.status(401).body("Invalid email or password");
         }
+    }
+
+    // 이메일 중복 확인
+    @PostMapping("/email")
+    public ResponseEntity checkEmail(@Valid @RequestBody RequestSignInDto request) {
+        log.info("Check Email Received Request: " + request.toString());
+
+        return ResponseEntity.ok(userService.checkEmail(request.getEmail()));
     }
 }
