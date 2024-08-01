@@ -2,6 +2,8 @@ package com.plog.backend.global.config;
 
 import com.plog.backend.domain.user.service.UserService;
 import com.plog.backend.global.auth.PloberUserDetailService;
+import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,36 +14,23 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class SecurityConfig {
 
-    private static PloberUserDetailService ploberUserDetailService;
+    private final PloberUserDetailService ploberUserDetailService;
 
-    private static UserService userService;
-
-    @Autowired
-    SecurityConfig(PloberUserDetailService ploberUserDetailService, UserService userService) {
-        SecurityConfig.ploberUserDetailService = ploberUserDetailService;
-        SecurityConfig.userService = userService;
-    }
-
-    // Password 인코딩 방식에 BCrypt 암호화 방식 사용
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final EncodeConfig passwordEncoder;
 
     // DAO 기반으로 Authentication Provider를 생성
     // BCrypt Password Encoder와 UserDetailService 구현체를 설정
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder.passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(ploberUserDetailService);
         return daoAuthenticationProvider;
     }
