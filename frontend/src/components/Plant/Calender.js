@@ -41,9 +41,9 @@ const Calender = ({ plantId }) =>{
   const handleClickDay = (date) => {
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     if (diaryRecord) {
-      navigate(`/api/user/diary/${diaryRecord.plantDiaryId}`);
+      navigate(`/plant/diary/${diaryRecord.plantDiaryId}`);
     } else {
-      navigate('/api/user/diary', {state: {date: date.toISOString().split('T')[0]}});
+      navigate('/plant/diary/write', {state: {date: date.toISOString().split('T')[0]}});
     }
   };
 

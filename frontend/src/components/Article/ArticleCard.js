@@ -8,9 +8,9 @@ const ArticleCard = ({ id, log, thumbnail, type }) => {
 
   const handleClick = () => {
     if (type === 'plant') {
-      navigate(`/api/user/diary/${id}`);
+      navigate(`/plant/diary/${id}`);
     } else if (type === 'sns') {
-      navigate(`/api/user/sns/${id}`);
+      navigate(`/sns/${id}`);
     } else {
       console.log(`type error${type}`);
     }
