@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../pages/Plant/PlantDetail.css';
+import '../../../src/output.css';
 
 const ArticleCard = ({ id, log, thumbnail, type }) => {
 
@@ -17,7 +18,7 @@ const ArticleCard = ({ id, log, thumbnail, type }) => {
   };
 
   return (
-    <div onClick={handleClick} className='article-card'>
+    <div onClick={handleClick}>
       <img src={thumbnail} alt="thumbnail" className='article-thumbnail'/>
       <p>{log}</p>
     </div>

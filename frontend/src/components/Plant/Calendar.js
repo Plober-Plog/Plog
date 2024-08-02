@@ -42,18 +42,18 @@ const Calender = ({ plantId }) =>{
   const handleClickDay = (date) => {
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     if (diaryRecord) {
-      console.log(state);
+      // console.log(state);
       console.log(diaryRecord.plantDiaryId);
       console.log(date);
       navigate(`/plant/diary/${diaryRecord}`);
     } else {
-      console.log(state);
+      // console.log(state);
       console.log(diaryRecord);
       console.log(date);
       navigate('/plant/diary/write',
         {state: {date: date.toISOString().split('T')[0], plantId}}
       );
-      console.log(state);
+      // console.log(state);
     }
   };
 
@@ -62,7 +62,7 @@ const Calender = ({ plantId }) =>{
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     
     return (
-      <div className="color-box">
+      <div className="color-box min-h-screen bg-gray-100 flex items-center justify-center">
         <div className={`indicator ${checkRecord && checkRecord.isWatered ? 'watered' : ''}`}></div>
         <div className={`indicator ${checkRecord && checkRecord.isFertilized ? 'fertilized' : ''}`}></div>
         <div className={`indicator ${checkRecord && checkRecord.isRepotted ? 'repotted' : ''}`}></div>
