@@ -16,6 +16,8 @@ public class PlantGetResponse {
     String nickname;
     String profile;
     Date birthDate;
+    Date deathDate;
     boolean hasNotified;
     int fixed;
+    boolean isDeleted;
 }

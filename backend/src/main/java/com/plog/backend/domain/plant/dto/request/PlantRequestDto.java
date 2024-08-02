@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @Builder
 @ToString
-public class PlantAddRequest {
+public class PlantRequestDto {
     Long plantTypeId;
     Long otherPlantTypeId;
     String profile;
