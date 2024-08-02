@@ -50,20 +50,21 @@ const SignUpForm = () => {
 
   // 유효성 검사
   useEffect(() => {
-    // TODO 테스트 끝난 후 아이디 중복확인 여부 추가하기
     setIsFormValid(
-      /^[a-z0-9]{5,15}$/.test(searchId) && 
-      // isSearchIdAvailable &&
-      email && 
-      password && 
-      passwordConfirm && 
+      /^[a-z0-9]{5,15}$/.test(searchId) &&
+      isSearchIdAvailable &&
+      email &&
+      password &&
+      passwordConfirm &&
       password === passwordConfirm &&
       /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/.test(password) &&
       nickname.length >= 3 &&
       nickname.length <= 10 &&
-      agreePersonal
+      agreePersonal &&
+      isEmailVerified
     );
-  }, [searchId, email, password, passwordConfirm, nickname, agreePersonal]);
+  }, [searchId, isSearchIdAvailable, email, password, passwordConfirm, nickname, agreePersonal, isEmailVerified]);
+
 
 
   // 아이디 중복확인

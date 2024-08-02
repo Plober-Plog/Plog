@@ -9,7 +9,7 @@ import Setting from './pages/Account/Setting';
 function App() {
   return (
     <div>
-      <Signup />
+      <Login />
     </div>
   );
 }
