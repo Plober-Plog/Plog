@@ -1,7 +1,7 @@
 import React from "react";
 import Btn from "./Btn";
 
-const ModalConfirm = ({open, onClose, title, content}) => {
+const ModalConfirm = ({open, onClose, onConfirm, title, content, confirmText}) => {
   if (!open) {
     return null;
   }
@@ -16,8 +16,8 @@ const ModalConfirm = ({open, onClose, title, content}) => {
           onClick={onClose}
         />
         <Btn 
-          content='확인'
-          onClick={onClose}
+          content={confirmText}
+          onClick={onConfirm}
         />
       </div>
     </div>
