@@ -18,6 +18,11 @@ public interface PlantService {
     List<PlantGetResponse> getPlantList(String searchId);
 
     Plant updatePlant(Long plantId, PlantRequestDto plantUpdateRequestDto);
+
+    void deletePlant(Long plantId);
+
+    void farewellPlant(Long plantId);
+
     //TODO [강윤서]
     // - 1. isFixed(boolean) 을 fixed(int) 로 변환하는 로직
     // - 2. waterDate, fertilizeDate, repotDate 계산하는 로직
