@@ -11,7 +11,9 @@ build/
 #
 #### Out 폴더 제외 ###
 #out/
-#**/out/
+#**/ogit ut/
+#### genereated 폴더 제외
+**/src/main/generated
 
 ### STS ###
 .apt_generated
