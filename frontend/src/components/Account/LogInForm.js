@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from'react-router-dom';
 import axios from 'axios';
 import sha256 from 'js-sha256';
 
@@ -6,13 +7,17 @@ import Btn from '../Common/Btn';
 import InputField from './InputField';
 import AccountBtn from './AccountBtn';
 
-const API_URL = 'http://localhost:3000/api/user';
+// const API_URL = 'http://localhost:3000/api/user';
+const API_URL = 'https://i11b308.p.ssafy.io/api/user';
 
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // 로그인 확인
+  const [loginError, setLoginError] = useState('');
 
   const handleLogin = async(event) => {
     event.preventDefault();
@@ -37,7 +42,6 @@ const LoginForm = () => {
       console.log('로그인 성공!', response.data);
 
       // TODO 메인으로 이동
-
 
     } catch (error) {
       console.error('로그인 오류:', error);
@@ -70,6 +74,7 @@ const LoginForm = () => {
             content={showPassword ? '숨기기' : '보기'}
           />
         </div>
+        {loginError && <p>{loginError}</p>}
         <Btn
           content="로그인"
           disabled={!email || !password}
