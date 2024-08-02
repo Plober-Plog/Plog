@@ -36,10 +36,19 @@ const SignUpForm = () => {
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [passwordCheckMsg, setPasswordCheckMsg] = useState('');
   const [passwordConfirmCheckMsg, setPasswordConfirmCheckMsg] = useState('');
+  // 이메일 인증
+  const [emailVerificationCode, setEmailVerificationCode] = useState('');
+  const [emailVerificationInput, setEmailVerificationInput] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
+  const [timer, setTimer] = useState(0);
 
-  const API_URI = 'http://localhost:8080/api/user';
 
+  // const API_URI = 'http://localhost:8080/api/user';
+  const API_URI = 'https://i11b308.p.ssafy.io/api/user';
+  
 
+  // 유효성 검사
   useEffect(() => {
     // TODO 테스트 끝난 후 아이디 중복확인 여부 추가하기
     setIsFormValid(
@@ -73,6 +82,63 @@ const SignUpForm = () => {
       console.error('아이디 중복확인 실패: ', error);
       setSearchIdCheckMsg('아이디 중복확인 중 오류가 발생했습니다.');
       setIsSearchIdAvailable(false);
+    }
+  };
+
+
+  // 이메일 인증
+  const handleCheckEmail = async () => {
+    // 이메일 중복확인
+    try {
+      const response = await axios.post(`${API_URI}/email`, { email });
+      console.log('이메일 중복 확인 성공!')
+      if (response.data.result) {
+        setEmailCheckMsg('이미 사용 중인 이메일입니다.');
+        return
+      }
+    } catch(error) {
+      console.log('이메일 인증 실패 : ', error);
+    }
+    // 이메일 인증번호 전송
+    try {
+      const response = await axios.post(`${API_URI}/email/send`, { email });
+      console.log('이메일 인증번호 전송 성공!');
+      setIsEmailVerificationSent(true);
+      setTimer(300)
+    } catch(error) {
+      console.log('이메일 인증번호 전송 실패 : ', error);
+    }
+  }
+
+  // 타이머 변환
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
+  useEffect(() => {
+    let interval;
+    if (isEmailVerificationSent && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      clearInterval(interval);
+      setIsEmailVerificationSent(false);
+    }
+    return () => clearInterval(interval);
+  }, [isEmailVerificationSent, timer]);
+
+
+  // 이메일 인증 코드 확인
+  const handleVerifyEmailCode = async () => {
+    try {
+      const response = await axios.post(`${API_URI}/email/check`, { code: emailVerificationCode });
+      console.log('이메일 인증 성공!');
+      setIsEmailVerified(true);
+    } catch (error) {
+      console.error('이메일 인증 확인 실패: ', error);
     }
   };
 
@@ -158,10 +224,29 @@ const SignUpForm = () => {
               }
             }}
             isRequired={true}
+            disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
           />
-          <ATag content="인증하기" disabled={!setEmailCheckMsg}/>
+          <ATag
+            content="인증하기"
+            disabled={!setEmailCheckMsg}
+            onClick={handleCheckEmail}
+          />
           {EmailCheckMsg && <p>{EmailCheckMsg}</p>}
         </div>
+        {isEmailVerificationSent && (
+          <div>
+            <InputField
+              type="text"
+              placeholder="이메일 인증 코드"
+              value={emailVerificationInput}
+              onChange={(e) => setEmailVerificationInput(e.target.value)}
+              isRequired={true}
+              disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+            />
+            <p>{formatTime(timer)}</p>
+            <ATag content="인증 확인" onClick={handleVerifyEmailCode} />
+          </div>
+        )}
         <div>
           <InputField
             type={showPassword ? 'text' : 'password'}
