@@ -54,9 +54,9 @@ public class PlantController {
         return ResponseEntity.status(200).body(response);
     }
 
-    @PutMapping("/{plantId}")
+    @PatchMapping("/{plantId}")
     public ResponseEntity<BaseResponseBody> updatePlant(@PathVariable Long plantId, @RequestBody PlantAddRequestDto plantUpdateRequest) {
-        log.info(">>> [PUT] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequest);
+        log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequest);
         plantService.updatePlant(plantId, plantUpdateRequest);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 수정이 완료되었습니다."));
     }
@@ -68,9 +68,9 @@ public class PlantController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 삭제가 완료되었습니다."));
     }
 
-    @PutMapping("/{plantId}/farewell")
+    @PatchMapping("/{plantId}/farewell")
     public ResponseEntity<BaseResponseBody> farewellPlant(@PathVariable Long plantId) {
-        log.info(">>> [PUT] /user/plant/{}/farewell - 이별 ID: {}", plantId, plantId);
+        log.info(">>> [PATCH] /user/plant/{}/farewell - 이별 ID: {}", plantId, plantId);
         plantService.farewellPlant(plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물과 이별이 완료되었습니다."));
     }
@@ -83,9 +83,9 @@ public class PlantController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 기록이 완료되었습니다."));
     }
 
-    @PutMapping("/{plantId}/check")
+    @PatchMapping("/{plantId}/check")
     public ResponseEntity<BaseResponseBody> updatePlantCheck(@PathVariable Long plantId, @RequestBody PlantCheckDto plantCheckDto) {
-        log.info(">>> [PUT] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckDto);
+        log.info(">>> [PATCH] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckDto);
         plantService.updatePlantCheck(plantId, plantCheckDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 수정이 완료되었습니다."));
     }

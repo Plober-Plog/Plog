@@ -11,6 +11,7 @@ import java.util.Date;
 @Builder
 @ToString
 public class PlantAddRequestDto {
+    //TODO [강윤서] - user 연결
     Long plantTypeId;
     Long otherPlantTypeId;
     String profile;
