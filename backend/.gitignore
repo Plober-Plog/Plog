@@ -5,13 +5,13 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### Build 폴더 제외 ###
-build/
-**/build/
-
-### Out 폴더 제외 ###
-out/
-**/out/
+#### Build 폴더 제외 ###
+#build/
+#**/build/
+#
+#### Out 폴더 제외 ###
+#out/
+#**/out/
 
 ### STS ###
 .apt_generated
