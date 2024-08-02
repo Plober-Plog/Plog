@@ -45,7 +45,7 @@ const SignUpForm = () => {
 
 
   // const API_URI = 'http://localhost:8080/api/user';
-  const API_URI = 'https://i11b308.p.ssafy.io/api/user';
+  const API_URI = 'https://i11b308.p.ssafy.io/user';
   
 
   // 유효성 검사
@@ -78,6 +78,7 @@ const SignUpForm = () => {
       } else {
         setSearchIdCheckMsg('사용 가능한 아이디입니다.');
         setIsSearchIdAvailable(true);
+        console.log('아이디 중복확인 성공!')
       }
     } catch (error) {
       console.error('아이디 중복확인 실패: ', error);
@@ -89,6 +90,7 @@ const SignUpForm = () => {
 
   // 이메일 인증
   const handleCheckEmail = async () => {
+    
     // 이메일 중복확인
     try {
       const response = await axios.post(`${API_URI}/email`, { email });
@@ -99,7 +101,9 @@ const SignUpForm = () => {
       }
     } catch(error) {
       console.log('이메일 인증 실패 : ', error);
+      return
     }
+
     // 이메일 인증번호 전송
     try {
       const response = await axios.post(`${API_URI}/email/send`, { email });
