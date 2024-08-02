@@ -29,6 +29,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final EnumPath<Gender> gender = createEnum("gender", Gender.class);
 
+    public final NumberPath<Integer> gugunCode = createNumber("gugunCode", Integer.class);
+
     public final BooleanPath isAd = createBoolean("isAd");
 
     public final DatePath<java.time.LocalDate> modifiedAt = createDate("modifiedAt", java.time.LocalDate.class);
@@ -46,6 +48,8 @@ public class QUser extends EntityPathBase<User> {
     public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final StringPath searchId = createString("searchId");
+
+    public final NumberPath<Integer> sidoCode = createNumber("sidoCode", Integer.class);
 
     public final StringPath source = createString("source");
 

@@ -18,11 +18,11 @@ public class PloberUserDetailService implements UserDetailsService {
     private final UserRepositorySupport userRepositorySupport;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepositorySupport.findByEmail(username);
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        User user = userRepositorySupport.findByUserId(Long.parseLong(userId));
         if (user != null) {
             return new PloberUserDetails(user);
         }
-        throw new UsernameNotFoundException("User not found with username: " + username);
+        throw new UsernameNotFoundException("User not found with username: " + userId);
     }
 }

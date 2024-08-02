@@ -1,5 +1,6 @@
 package com.plog.backend.domain.user.repository;
 
+import com.plog.backend.domain.user.dto.RequestSignUpDto;
 import com.plog.backend.domain.user.entity.QUser;
 import com.plog.backend.domain.user.entity.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -9,6 +10,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserRepositorySupport extends QuerydslRepositorySupport {
     private final JPAQueryFactory queryFactory;
+
+    public User findByUserId(Long userId) {
+        QUser user = QUser.user;
+        return queryFactory.selectFrom(user)
+                .where(user.userId.eq(userId))
+                .fetchOne();
+    }
 
     public UserRepositorySupport(JPAQueryFactory queryFactory) {
         super(User.class);

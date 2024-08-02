@@ -3,6 +3,7 @@ package com.plog.backend.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,6 +15,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Getter
+@Setter
+@DynamicUpdate
 @ToString
 public class User {
     @Id
@@ -83,6 +86,12 @@ public class User {
     @Column
     @ColumnDefault("false")
     private boolean isAd;
+
+    @Column
+    private int sidoCode;
+
+    @Column
+    private int gugunCode;
 
     @Builder
     public User(String email,

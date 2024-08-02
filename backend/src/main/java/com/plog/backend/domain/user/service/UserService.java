@@ -10,4 +10,5 @@ public interface UserService {
     User createUser(RequestSignUpDto requestSignUpDto);
     Boolean checkUser(String searchId);
     Boolean checkEmail(String email);
+    public User updateUser(String token, RequestSignUpDto request);
 }

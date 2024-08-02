@@ -41,11 +41,15 @@ public class UserController {
 
     // 회원 수정
     @PatchMapping
-    public ResponseEntity modifyUser(@Valid @RequestBody RequestSignUpDto request) {
+    public ResponseEntity modifyUser(@RequestHeader("Authorization") String token, @Valid @RequestBody RequestSignUpDto request) {
         // 디버그 로그 추가
         UserController.log.info("modify User Received Request: " + request.toString());
 
-        User user = userService.createUser(request);
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7); // "Bearer " 문자열 제거
+        }
+
+        User user = userService.updateUser(token, request);
         return ResponseEntity.ok(user);
     }
 
