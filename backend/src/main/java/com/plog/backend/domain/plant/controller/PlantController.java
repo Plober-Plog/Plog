@@ -2,7 +2,7 @@ package com.plog.backend.domain.plant.controller;
 
 import com.plog.backend.domain.plant.dto.PlantCheckDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantRequestDto;
+import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
 import com.plog.backend.domain.plant.service.PlantService;
 import com.plog.backend.global.exception.NotValidRequestException;
@@ -28,7 +28,7 @@ public class PlantController {
 
     // 식물
     @PostMapping
-    public ResponseEntity<BaseResponseBody> addPlant(@RequestBody PlantRequestDto plantAddRequest) {
+    public ResponseEntity<BaseResponseBody> addPlant(@RequestBody PlantAddRequestDto plantAddRequest) {
         log.info(">>> [POST] /user/plant - 요청 데이터: {}", plantAddRequest);
         if (plantAddRequest.getNickname() == null || plantAddRequest.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
@@ -55,7 +55,7 @@ public class PlantController {
     }
 
     @PutMapping("/{plantId}")
-    public ResponseEntity<BaseResponseBody> updatePlant(@PathVariable Long plantId, @RequestBody PlantRequestDto plantUpdateRequest) {
+    public ResponseEntity<BaseResponseBody> updatePlant(@PathVariable Long plantId, @RequestBody PlantAddRequestDto plantUpdateRequest) {
         log.info(">>> [PUT] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequest);
         plantService.updatePlant(plantId, plantUpdateRequest);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 수정이 완료되었습니다."));

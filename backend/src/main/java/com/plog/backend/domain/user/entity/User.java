@@ -1,7 +1,5 @@
 package com.plog.backend.domain.user.entity;
 
-import com.plog.backend.domain.area.entity.Gugun;
-import com.plog.backend.domain.area.entity.Sido;
 import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

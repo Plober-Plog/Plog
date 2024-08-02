@@ -87,6 +87,9 @@ public class UserServiceImpl implements UserService {
                 .chatAuth(1)
                 .searchId(userSignUpDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpDto.getPassword()))
+                .sidoCode(userSignUpDto.getSidoCode())
+                .gugunCode(userSignUpDto.getGugunCode())
+                //TODO [장현준] - source, image, birthDate 추가
                 .build();
         User savedUser = userRepository.save(user);
         log.info(">>> createUser - 사용자 생성됨: {}", savedUser);

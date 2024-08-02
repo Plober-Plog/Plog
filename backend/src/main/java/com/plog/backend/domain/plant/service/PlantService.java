@@ -2,17 +2,15 @@ package com.plog.backend.domain.plant.service;
 
 import com.plog.backend.domain.plant.dto.PlantCheckDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantRequestDto;
+import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponse;
 import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 
-import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 public interface PlantService {
-    void addPlant(PlantRequestDto plantAddRequest) throws NotValidPlantTypeIdsException;
+    void addPlant(PlantAddRequestDto plantAddRequest) throws NotValidPlantTypeIdsException;
 
     PlantGetResponse getPlant(Long plantId);
 
@@ -20,7 +18,7 @@ public interface PlantService {
 
     List<PlantGetResponse> getPlantList(String searchId);
 
-    void updatePlant(Long plantId, PlantRequestDto plantUpdateRequestDto);
+    void updatePlant(Long plantId, PlantAddRequestDto plantUpdateRequestDto);
 
     void deletePlant(Long plantId);
 

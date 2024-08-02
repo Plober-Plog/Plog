@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
+@Table(name = "plant")
 @NoArgsConstructor
 @Getter
 @Setter
