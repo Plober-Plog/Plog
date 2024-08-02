@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProfileUpdateForm from '../../components/Account/ProfileUpdateForm';
 
 const ProfileUpdate = () => {
-  const userData = {}
+  const [userData, setUserData] = useState({});
+
+    // 프로필 정보 불러오기
+    useEffect(() => {
+      const fetchUserInfo = async () => {
+        try {
+          const userInfo = await getUserInfo();
+          setUserData(userInfo);
+        } catch (error) {
+          console.error('사용자 정보 불러오기 실패:', error);
+        }
+      };
+  
+      fetchUserInfo();
+    }, []);
 
   return (
     <div>

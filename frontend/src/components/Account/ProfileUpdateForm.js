@@ -22,28 +22,6 @@ const ProfileUpdateForm = ({ userData }) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  // 프로필 정보 불러오기
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const userInfo = await getUserInfo();
-        setUser(userInfo);
-        setId(userInfo.id);
-        setEmail(userInfo.email);
-        setNickname(userInfo.nickname);
-        setBirthdate(userInfo.birthdate);
-        setSource(userInfo.source);
-        setGender(userInfo.gender);
-        setSido(userInfo.sido);
-        setGugun(userInfo.gugun);
-      } catch (error) {
-        console.error('사용자 정보 불러오기 실패:', error);
-      }
-    };
-
-    fetchUserInfo();
-  }, [setUser]);
-
 
   // 아이디, 닉네임 유효성 검사
   useEffect(() => {
