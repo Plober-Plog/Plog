@@ -1,25 +1,70 @@
 import React from 'react';
+import axios from 'axios';
 import { useState } from 'react';
+import { updatePassword } from '../../api';
+
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
 import AccountBtn from '../../components/Account/AccountBtn';
 import ModalComplete from '../../components/Account/ModalComplete';
 
 const PasswordUpdate = () => {
+  // input fields
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  // 변경 버튼 클릭
   const [openModal, setOpenModal] = useState(false);
+  const [updateResult, setUpdateResult] = useState(null);
+  // 비밀번호 유효성 확인
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordConfirmError, setPasswordConfirmError] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  const handlePasswordUpdate = (event) => {
+
+
+  // 비밀번호 유효성 검사
+  useEffect(() => {
+    
+    const validatePassword = () => {
+      if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/.test(password)) {
+        setPasswordError('올바른 비밀번호 형식이 아닙니다');
+      } else {
+        setPasswordError('');
+      }
+    };
+
+    const validatePasswordConfirm = () => {
+      if (password !== passwordConfirm) {
+        setPasswordConfirmError('비밀번호가 일치하지 않습니다');
+      } else {
+        setPasswordConfirmError('');
+      }
+    };
+
+    validatePassword();
+    validatePasswordConfirm();
+
+    setIsFormValid(!passwordError && !passwordConfirmError && password && passwordConfirm);
+  }, [password, passwordConfirm, passwordError, passwordConfirmError]);
+
+
+  // 비밀번호 변경 버튼 클릭
+  const handlePasswordUpdate = async (event) => {
     event.preventDefault();
-
-    // console.log('비밀번호:', password, '비밀번호확인:', passwordConfirm);
-    console.log('비밀번호 입력 받기 성공!')
-
-    setOpenModal(true);
+    
+    // 비밀번호 변경 요청
+    try {
+      const result = await updatePassword(password);
+      setUpdateResult(result.result);
+      setOpenModal(true);
+    } catch (error) {
+      console.error('비밀번호 변경 실패:', error);
+    }
   };
   
+
+  // 모달
   const closeModal = () => {
     setOpenModal(false);
   };
@@ -40,6 +85,7 @@ const PasswordUpdate = () => {
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
+          {passwordError && <p>{passwordError}</p>}
         </div>
         <div>
           <InputField
@@ -53,10 +99,11 @@ const PasswordUpdate = () => {
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
+          {passwordConfirmError && <p>{passwordConfirmError}</p>}
         </div>
         <Btn
           content="비밀번호 변경"
-          disabled={!password || !passwordConfirm}
+          disabled={!isFormValid}
           onClick={handlePasswordUpdate}
         />
       </form>
