@@ -1,6 +1,7 @@
 package com.plog.backend.domain.plant.controller;
 
 import com.plog.backend.domain.plant.dto.PlantCheckDto;
+import com.plog.backend.domain.plant.dto.request.PlantCheckRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
 import com.plog.backend.domain.plant.service.PlantService;
@@ -94,5 +95,12 @@ public class PlantController {
         log.info(">>> [GET] /user/plant/{}/check - 요청 날짜: {}", plantId, checkDate);
         PlantCheckDto response = plantService.getPlantCheck(plantId, checkDate);
         return ResponseEntity.status(200).body(response);
+    }
+
+    @DeleteMapping("/{plantId}/check")
+    public ResponseEntity<BaseResponseBody> deletePlantCheck(@PathVariable Long plantId, @RequestBody PlantCheckRequestDto checkDate) {
+        log.info(">>> [DELETE] /user/plant/{}/check - 요청 데이터: {}", plantId, checkDate);
+        plantService.deletePlantCheck(plantId, checkDate);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 삭제가 완료되었습니다."));
     }
 }

@@ -3,6 +3,7 @@ package com.plog.backend.domain.plant.service;
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.service.ImageService;
 import com.plog.backend.domain.plant.dto.PlantCheckDto;
+import com.plog.backend.domain.plant.dto.request.PlantCheckRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponse;
@@ -267,8 +268,7 @@ public class PlantServiceImpl implements PlantService {
                 plantCheckRepository.save(pc);
                 log.info(">>> updatePlantCheck - 관리 기록 수정 완료, 식물 ID: {}, 관리 날짜: {}", plantId, checkDate);
             } else {
-                log.error(">>> updatePlantCheck - 관리 기록 없음, 식물 ID: {}, 관리 날짜: {}", plantId, checkDate);
-                throw new EntityNotFoundException();
+                throw new EntityNotFoundException("No PlantCheck record found for plant ID " + plantId + " and date " + checkDate);
             }
         } else {
             throw new EntityNotFoundException("Plant with ID " + plantId + " not found");
@@ -279,7 +279,7 @@ public class PlantServiceImpl implements PlantService {
     public PlantCheckDto getPlantCheck(Long plantId, String checkDate) {
         log.info(">>> getPlantCheck - 요청 ID: {}, 관리 날짜: {}", plantId, checkDate);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        LocalDate date = null;
+        LocalDate date;
         try {
             date = DateUtil.getInstance().convertToLocalDate(dateFormat.parse(checkDate));
         } catch (ParseException e) {
@@ -293,10 +293,22 @@ public class PlantServiceImpl implements PlantService {
             response.setWatered(pc.isWatered());
             response.setFertilized(pc.isFertilized());
             response.setRepotted(pc.isRepotted());
-            log.info(">>> getPlantCheck - 관리 기록 정보: {}", response);
             return response;
         } else {
             throw new EntityNotFoundException("No PlantCheck record found for plant ID " + plantId + " and date " + date);
+        }
+    }
+
+    @Override
+    public void deletePlantCheck(Long plantId, PlantCheckRequestDto checkDate) {
+        log.info(">>> deletePlantCheck - 요청 ID: {}", plantId);
+        LocalDate date = DateUtil.getInstance().convertToLocalDate(checkDate.getCheckDate());
+        Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantId, date);
+        if (plantCheck.isPresent()) {
+            plantCheckRepository.delete(plantCheck.get());
+            log.info(">>> deletePlantCheck - 관리 기록 삭제 완료, 식물 ID: {}, 관리 날짜: {}", plantId, date);
+        } else {
+            throw new NotValidRequestException("No PlantCheck record found to delete for plant ID " + plantId + " and date " + date);
         }
     }
 
