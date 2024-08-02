@@ -1,17 +1,20 @@
 -- 테이블이 존재하면 삭제
+DROP TABLE IF EXISTS plant_check;
 DROP TABLE IF EXISTS plant;
-DROP TABLE IF EXISTS other_plant_type;
 DROP TABLE IF EXISTS plant_type;
+DROP TABLE IF EXISTS other_plant_type;
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS image;
 DROP TABLE IF EXISTS gugun;
 DROP TABLE IF EXISTS sido;
+DROP TABLE IF EXISTS image;
 
 -- 테이블 생성
 CREATE TABLE image
 (
-    image_id  BIGINT AUTO_INCREMENT PRIMARY KEY,
-    image_url VARCHAR(255)
+    image_id   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    image_url  VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE sido
@@ -69,13 +72,17 @@ CREATE TABLE plant_type
     repot_mid          INT          DEFAULT 3,
     water_mid          INT          DEFAULT 3,
     fertilize_mid      INT          DEFAULT 3,
+    created_at         TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (image_id) REFERENCES image (image_id)
 );
 
 CREATE TABLE other_plant_type
 (
     other_plant_type_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    plant_name          VARCHAR(255) DEFAULT ''
+    plant_name          VARCHAR(255) DEFAULT '',
+    created_at          TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE plant
@@ -101,6 +108,20 @@ CREATE TABLE plant
     FOREIGN KEY (image_id) REFERENCES image (image_id),
     FOREIGN KEY (plant_type_id) REFERENCES plant_type (plant_type_id),
     FOREIGN KEY (other_plant_type_id) REFERENCES other_plant_type (other_plant_type_id)
+);
+
+CREATE TABLE plant_check
+(
+    plant_check_id      BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    plant_id      BIGINT  NOT NULL,
+    is_watered    BOOLEAN,
+    is_fertilized BOOLEAN,
+    is_repotted   BOOLEAN,
+    check_date    DATE NOT NULL COMMENT 'INDEX',
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (plant_id) REFERENCES plant (plant_id),
+    INDEX idx_check_date (check_date)
 );
 
 -- 데이터 삽입
@@ -368,27 +389,27 @@ VALUES ('Dummy');
 INSERT INTO other_plant_type (plant_name)
 VALUES ('Dummy');
 
-INSERT INTO plant_type (plant_name, guide, water_interval, repot_interval, fertilize_interval, repot_mid, water_mid, fertilize_mid, image_id)
-VALUES
-    ('페이토니아', '자주 물을 줘야 하는 식물입니다.', 7, 30, 60, 15, 20, 30, 1),
-    ('스파티필름', '햇볕을 좋아하며 습도가 높아야 합니다.', 10, 45, 30, 20, 30, 40, 1),
-    ('산세베리아', '강한 햇볕에서도 잘 자라는 식물입니다.', 14, 60, 90, 30, 50, 70, 1),
-    ('알로에', '건조한 환경을 잘 견딥니다.', 21, 60, 120, 40, 60, 80, 1),
-    ('아이비', '그늘에서도 잘 자라는 식물입니다.', 7, 30, 60, 10, 20, 30, 1),
-    ('몬스테라', '강한 햇볕을 좋아하며 자주 물을 줘야 합니다.', 10, 45, 60, 20, 30, 40, 1),
-    ('필로덴드론', '온도가 높은 환경에서 잘 자랍니다.', 14, 30, 90, 25, 40, 55, 1),
-    ('드라세나', '물빠짐이 좋은 흙에서 잘 자랍니다.', 21, 60, 120, 35, 50, 70, 1),
-    ('제라늄', '햇볕이 잘 드는 곳에서 자랍니다.', 10, 45, 60, 20, 30, 40, 1),
-    ('다육식물', '건조한 환경을 좋아하며 물주기가 드뭅니다.', 30, 90, 180, 40, 60, 80, 1),
-    ('커피나무', '실내에서 잘 자라며 정기적인 물주기가 필요합니다.', 14, 45, 90, 20, 30, 40, 1),
-    ('파키라', '강한 햇볕과 습도를 좋아합니다.', 7, 30, 60, 15, 25, 35, 1),
-    ('벵갈고무나무', '습도와 햇볕을 좋아하며, 자주 물을 줘야 합니다.', 10, 45, 90, 20, 30, 40, 1),
-    ('칼라디움', '온도와 습도가 높은 환경을 좋아합니다.', 7, 30, 60, 15, 25, 35, 1),
-    ('포인세티아', '겨울철에 잘 자라며 정기적인 물주기가 필요합니다.', 14, 30, 60, 20, 30, 40, 1),
-    ('루비', '햇볕이 잘 드는 곳에서 자라며 자주 물을 줍니다.', 10, 45, 90, 25, 35, 45, 1),
-    ('송악', '건조한 환경에서도 잘 자라는 식물입니다.', 21, 60, 120, 30, 50, 70, 1),
-    ('잎새', '그늘에서도 잘 자라며 정기적인 물주기가 필요합니다.', 14, 30, 60, 20, 30, 40, 1),
-    ('오렌지나무', '햇볕과 온도가 높은 환경을 좋아합니다.', 10, 45, 90, 25, 35, 45, 1),
-    ('파피루스', '물빠짐이 좋은 흙에서 자랍니다.', 7, 30, 60, 15, 25, 35, 1),
-    ('비너스의 입', '습도와 온도가 높은 환경을 좋아합니다.', 10, 45, 90, 20, 30, 40, 1);
+INSERT INTO plant_type (plant_name, guide, water_interval, repot_interval, fertilize_interval, repot_mid, water_mid,
+                        fertilize_mid, image_id)
+VALUES ('페이토니아', '자주 물을 줘야 하는 식물입니다.', 7, 30, 60, 15, 20, 30, 1),
+       ('스파티필름', '햇볕을 좋아하며 습도가 높아야 합니다.', 10, 45, 30, 20, 30, 40, 1),
+       ('산세베리아', '강한 햇볕에서도 잘 자라는 식물입니다.', 14, 60, 90, 30, 50, 70, 1),
+       ('알로에', '건조한 환경을 잘 견딥니다.', 21, 60, 120, 40, 60, 80, 1),
+       ('아이비', '그늘에서도 잘 자라는 식물입니다.', 7, 30, 60, 10, 20, 30, 1),
+       ('몬스테라', '강한 햇볕을 좋아하며 자주 물을 줘야 합니다.', 10, 45, 60, 20, 30, 40, 1),
+       ('필로덴드론', '온도가 높은 환경에서 잘 자랍니다.', 14, 30, 90, 25, 40, 55, 1),
+       ('드라세나', '물빠짐이 좋은 흙에서 잘 자랍니다.', 21, 60, 120, 35, 50, 70, 1),
+       ('제라늄', '햇볕이 잘 드는 곳에서 자랍니다.', 10, 45, 60, 20, 30, 40, 1),
+       ('다육식물', '건조한 환경을 좋아하며 물주기가 드뭅니다.', 30, 90, 180, 40, 60, 80, 1),
+       ('커피나무', '실내에서 잘 자라며 정기적인 물주기가 필요합니다.', 14, 45, 90, 20, 30, 40, 1),
+       ('파키라', '강한 햇볕과 습도를 좋아합니다.', 7, 30, 60, 15, 25, 35, 1),
+       ('벵갈고무나무', '습도와 햇볕을 좋아하며, 자주 물을 줘야 합니다.', 10, 45, 90, 20, 30, 40, 1),
+       ('칼라디움', '온도와 습도가 높은 환경을 좋아합니다.', 7, 30, 60, 15, 25, 35, 1),
+       ('포인세티아', '겨울철에 잘 자라며 정기적인 물주기가 필요합니다.', 14, 30, 60, 20, 30, 40, 1),
+       ('루비', '햇볕이 잘 드는 곳에서 자라며 자주 물을 줍니다.', 10, 45, 90, 25, 35, 45, 1),
+       ('송악', '건조한 환경에서도 잘 자라는 식물입니다.', 21, 60, 120, 30, 50, 70, 1),
+       ('잎새', '그늘에서도 잘 자라며 정기적인 물주기가 필요합니다.', 14, 30, 60, 20, 30, 40, 1),
+       ('오렌지나무', '햇볕과 온도가 높은 환경을 좋아합니다.', 10, 45, 90, 25, 35, 45, 1),
+       ('파피루스', '물빠짐이 좋은 흙에서 자랍니다.', 7, 30, 60, 15, 25, 35, 1),
+       ('비너스의 입', '습도와 온도가 높은 환경을 좋아합니다.', 10, 45, 90, 20, 30, 40, 1);
 

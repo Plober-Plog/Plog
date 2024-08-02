@@ -1,15 +1,16 @@
 package com.plog.backend.domain.plant.service;
 
+import com.plog.backend.domain.plant.dto.PlantCheckDto;
 import com.plog.backend.domain.plant.dto.request.PlantRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponse;
-import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface PlantService {
-    Plant addPlant(PlantRequestDto plantAddRequest) throws NotValidPlantTypeIdsException;
+    void addPlant(PlantRequestDto plantAddRequest) throws NotValidPlantTypeIdsException;
 
     PlantGetResponse getPlant(Long plantId);
 
@@ -17,11 +18,17 @@ public interface PlantService {
 
     List<PlantGetResponse> getPlantList(String searchId);
 
-    Plant updatePlant(Long plantId, PlantRequestDto plantUpdateRequestDto);
+    void updatePlant(Long plantId, PlantRequestDto plantUpdateRequestDto);
 
     void deletePlant(Long plantId);
 
     void farewellPlant(Long plantId);
+
+    void addPlantCheck (Long plantId, PlantCheckDto plantCheckDto);
+
+    void updatePlantCheck(Long plantId, PlantCheckDto plantCheckDto);
+
+    PlantCheckDto getPlantCheck(Long plantId, String checkDate);
 
     //TODO [강윤서]
     // - 1. isFixed(boolean) 을 fixed(int) 로 변환하는 로직

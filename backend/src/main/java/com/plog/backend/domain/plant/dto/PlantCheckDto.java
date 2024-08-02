@@ -1,5 +1,6 @@
-package com.plog.backend.domain.plant.dto.request;
+package com.plog.backend.domain.plant.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.Date;
@@ -10,9 +11,12 @@ import java.util.Date;
 @Setter
 @Builder
 @ToString
-public class PlantCheckRequestDto {
+public class PlantCheckDto {
+    @JsonProperty("isWatered")
     boolean isWatered;
+    @JsonProperty("isFertilized")
     boolean isFertilized;
+    @JsonProperty("isRepotted")
     boolean isRepotted;
     Date checkDate;
 }
