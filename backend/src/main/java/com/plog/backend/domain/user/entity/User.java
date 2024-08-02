@@ -1,10 +1,12 @@
 package com.plog.backend.domain.user.entity;
 
+import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
@@ -15,7 +17,7 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @ToString
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -49,14 +51,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-
-    @Column(nullable = false, updatable = false)
-    @CreatedDate
-    private LocalDate createAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDate modifiedAt;
 
     @Enumerated(EnumType.STRING)
     @Column
@@ -100,7 +94,6 @@ public class User {
         this.gender = Gender.gender(gender);
         this.state = State.state(state);
         this.role = Role.role(role);
-        this.createAt = LocalDate.now();
         this.totalExp = totalExp;
         this.chatAuth = ChatAuth.chatAuth(chatAuth);
         this.profileInfo = profileInfo;

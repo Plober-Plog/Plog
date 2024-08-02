@@ -1,4 +1,4 @@
-package com.plog.backend.domain.plant.dto.request;
+package com.plog.backend.domain.plant.dto.response;
 
 import lombok.*;
 
@@ -10,13 +10,12 @@ import java.util.Date;
 @Setter
 @Builder
 @ToString
-public class PlantAddRequest {
+public class PlantGetResponse {
     Long plantTypeId;
-    Long otherPlantTypeId;
-    String profile;
-    String bio;
+    Long otherPlantId;
     String nickname;
+    String profile;
     Date birthDate;
     boolean hasNotified;
-    boolean isFixed;
+    int fixed;
 }

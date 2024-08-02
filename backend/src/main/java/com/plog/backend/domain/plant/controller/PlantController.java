@@ -1,15 +1,15 @@
 package com.plog.backend.domain.plant.controller;
 
 import com.plog.backend.domain.plant.dto.request.PlantAddRequest;
+import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
 import com.plog.backend.domain.plant.exception.NotValidRequestException;
 import com.plog.backend.domain.plant.service.PlantService;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user/plant")
@@ -32,5 +32,17 @@ public class PlantController {
         }
         plantService.addPlant(plantAddRequest);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 등록이 완료되었습니다."));
+    }
+
+    @GetMapping("/{plantId}/info")
+    public ResponseEntity<PlantGetResponse> getPlants(@PathVariable Long plantId) {
+        PlantGetResponse response = plantService.getPlant(plantId);
+        return ResponseEntity.status(200).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PlantGetResponse>> getPlantList(@RequestParam String searchId) {
+        List<PlantGetResponse> response = plantService.getPlantList(searchId);
+        return ResponseEntity.status(200).body(response);
     }
 }

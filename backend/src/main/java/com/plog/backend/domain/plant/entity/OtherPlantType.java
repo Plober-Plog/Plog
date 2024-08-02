@@ -14,7 +14,7 @@ import lombok.ToString;
 public class OtherPlantType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int otherPlantTypeId;
+    Long otherPlantTypeId;
     @Column
     String plantName;
 }

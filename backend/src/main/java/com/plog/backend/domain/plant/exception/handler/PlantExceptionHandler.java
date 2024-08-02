@@ -2,7 +2,7 @@ package com.plog.backend.domain.plant.exception.handler;
 
 import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 import com.plog.backend.domain.plant.exception.NotValidRequestException;
-import com.plog.backend.global.exception.ExceptionResponseDto;
+import com.plog.backend.global.exception.ExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class PlantExceptionHandler {
     @ExceptionHandler(NotValidPlantTypeIdsException.class)
-    public ResponseEntity<ExceptionResponseDto> handleNotValidPlantTypeIdsException(
+    public ResponseEntity<ExceptionResponse> handleNotValidPlantTypeIdsException(
             NotValidPlantTypeIdsException ex, HttpServletRequest request) {
-        ExceptionResponseDto response = ExceptionResponseDto.of(
+        ExceptionResponse response = ExceptionResponse.of(
                 request.getMethod(),
                 request.getRequestURI(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -25,9 +25,9 @@ public class PlantExceptionHandler {
     }
 
     @ExceptionHandler(NotValidRequestException.class)
-    public ResponseEntity<ExceptionResponseDto> handleNotValidRequestException(
+    public ResponseEntity<ExceptionResponse> handleNotValidRequestException(
             NotValidRequestException ex, HttpServletRequest request) {
-        ExceptionResponseDto response = ExceptionResponseDto.of(
+        ExceptionResponse response = ExceptionResponse.of(
                 request.getMethod(),
                 request.getRequestURI(),
                 HttpStatus.BAD_REQUEST.value(),
