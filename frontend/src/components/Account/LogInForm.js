@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from'react-router-dom';
 import axios from 'axios';
 import sha256 from 'js-sha256';
+import useAuthStore from './useAuthStore';
 
 import Btn from '../Common/Btn';
 import InputField from './InputField';
@@ -18,7 +19,9 @@ const LoginForm = () => {
 
   // 로그인 확인
   const [loginError, setLoginError] = useState('');
+  const setToken = useAuthStore((state) => state.setToken);
 
+  // 로그인 버튼 클릭
   const handleLogin = async(event) => {
     event.preventDefault();
 
@@ -35,11 +38,12 @@ const LoginForm = () => {
 
       const { accessToken, refreshToken } = response.data;
 
-      // 토큰을 로컬 스토리지에 저장
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-
-      console.log('로그인 성공!', response.data);
+      if (response.data.token) {
+        console.log('로그인 성공!');
+        setToken(response.data.token); // JWT 토큰을 Zustand 스토어에 저장
+      } else {
+        setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
+      }
 
       // TODO 메인으로 이동
 
