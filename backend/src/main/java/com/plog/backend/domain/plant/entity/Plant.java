@@ -45,7 +45,7 @@ public class Plant extends BaseEntity {
     @Column
     private String bio;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate birthDate;
 
     @Column

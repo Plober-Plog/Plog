@@ -2,8 +2,6 @@ package com.plog.backend.domain.plant.dto.response;
 
 import lombok.*;
 
-import javax.annotation.Nullable;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

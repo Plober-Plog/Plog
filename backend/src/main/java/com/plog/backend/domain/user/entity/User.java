@@ -1,11 +1,10 @@
 package com.plog.backend.domain.user.entity;
 
+import com.plog.backend.domain.area.entity.Gugun;
+import com.plog.backend.domain.area.entity.Sido;
 import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -16,6 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Getter
+@Setter
 @ToString
 public class User extends BaseEntity {
     @Id
@@ -37,33 +37,33 @@ public class User extends BaseEntity {
     @Column
     private LocalDate birthDate;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
 
     @Column
     private String source;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private State state;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column
     private Provider provider;
 
     @Column
-    private String provider_id;
+    private String providerId;
 
     @Column(nullable = false)
     @ColumnDefault("0")
     private int totalExp;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ChatAuth chatAuth;
 
@@ -74,6 +74,9 @@ public class User extends BaseEntity {
     @Column
     @ColumnDefault("false")
     private boolean isAd;
+
+    private int sidoCode;
+    private int gugunCode;
 
     @Builder
     public User(String email,
@@ -86,7 +89,9 @@ public class User extends BaseEntity {
                 int totalExp,
                 int chatAuth,
                 String profileInfo,
-                boolean isAd) {
+                boolean isAd,
+                int sidoCode,
+                int gugunCode) {
         this.email = email;
         this.searchId = searchId;
         this.nickname = nickname;
@@ -98,5 +103,7 @@ public class User extends BaseEntity {
         this.chatAuth = ChatAuth.chatAuth(chatAuth);
         this.profileInfo = profileInfo;
         this.isAd = isAd;
+        this.sidoCode = sidoCode;
+        this.gugunCode = gugunCode;
     }
 }
