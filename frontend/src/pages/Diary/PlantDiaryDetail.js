@@ -17,7 +17,8 @@ import './PlantDiaryWrite.css';
 
 const PlantDiaryDetail = ({ currentDate, plantId }) => {
   const location = useLocation();
-  const { plantDiaryId, date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state; // 여기도 plantDiaryId에 저장된 정보받아올듯
+  // TODO 여기도 plantDiaryId에 저장된 정보받아올듯
+  const { plantDiaryId, date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state; 
   const navigate = useNavigate();
 
   // 임시 데이터

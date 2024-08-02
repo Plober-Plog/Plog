@@ -219,7 +219,8 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
       alert(error.message);
     }
 
-    navigate(`/diary/${date}`, //state 는 임시로 한거고 나중에는 plantDiaryId로 확인할거임
+    // TODO state 는 임시로 한거고 나중에는 plantDiaryId로 확인할거임
+    navigate(`/diary/${date}`, 
       { state: { 
       date, 
       content,
