@@ -17,23 +17,23 @@ import './PlantDiaryWrite.css';
 
 const PlantDiaryDetail = ({ currentDate, plantId }) => {
   const location = useLocation();
-  const { date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state;
+  const { plantDiaryId, date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state; // 여기도 plantDiaryId에 저장된 정보받아올듯
   const navigate = useNavigate();
 
   // 임시 데이터
   const weathercontent = '강수량이 많고 습도가 높으니 어쩌구 하세요'
 
   const handleEdit = () => {
-    navigate('/', { state: { diaryData: location.state.diaryData } });
+    navigate('/write', { state: { diaryData: location.state } });
   };
   
   const handleSNSUpload = () => {
-    navigate('/sns', { state: { diaryData: location.state.diaryData } });
+    navigate('/sns', { state: { diaryData: location.state } });
   };
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/user/diary/${plantId}/${currentDate}`, {
+      const response = await fetch(`/api/user/diary/${plantDiaryId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ const PlantDiaryDetail = ({ currentDate, plantId }) => {
       }
 
       alert('일지가 삭제되었습니다.');
-      navigate(-1); 
+      navigate('/'); 
     } catch (error) {
       console.error('Error:', error);
       alert('일지 삭제 중 오류가 발생했습니다.');
@@ -57,7 +57,7 @@ const PlantDiaryDetail = ({ currentDate, plantId }) => {
       <div className="section">
         <h2>{date}</h2>
         <DiaryTodoIcon src={pencilIcon} onClick={handleEdit} />
-        <Btn content="X" onClick={() => navigate(-1)} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
+        <Btn content="X" onClick={() => navigate('/')} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
       </div>
       <div className="section">
         <ImageSlider imgs={imgs} />

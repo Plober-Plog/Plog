@@ -26,8 +26,8 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
   const [isRepotted, setIsRepotted] = useState(false);
   const [imgs, setImgs] = useState([]);
   // const [isExistingDiary, setIsExistingDiary] = useState(false); // 현재 날짜에 이미 작성된 일지가 있는지 여부
+  // const [showConfirmation, setShowConfirmation] = useState(false); //날짜 변경 시 이미 작성된 일지가 있을 경우, 날짜 변경 여부를 확인하는 팝업을 표시
   const [plantDiaryId, setplantDiaryId] = useState(null); //현재 날짜에 이미 작성된 일지가 있을 경우 해당 일지의 ID를 저장
-  const [showConfirmation, setShowConfirmation] = useState(false); //날짜 변경 시 이미 작성된 일지가 있을 경우, 날짜 변경 여부를 확인하는 팝업을 표시
 
 
   const navigate = useNavigate();
@@ -38,9 +38,9 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
     nickname: '조이',
     plantTypeId: '몬스테라'
   };
-  const weather = '강수량 많음'
-  const humidity = '습함'
-  const temperature = '기온 높음'
+  const weather = 2;
+  const humidity = 3;
+  const temperature = 30.0;
 
   // 해당 날짜에 작성된 일지 확인 
   const fetchDiary = async ({checkDate, plantId}) => {
@@ -82,7 +82,6 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
       // if (!response.ok) {
       //   throw new Error('관리 기록 조회에 실패했습니다.');
       // }
-      setIsWatered()
       const data = await response.json();
       console.log(data);
       return data;
@@ -98,12 +97,11 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
   useEffect(() => {
     const getDiaryAndPlantCheck = async () => {
       try {
-        const diary = await fetchDiary(date, plantId);
-        const plantCheck = await fetchPlantCheck(date, plantId);
+        const diary = await fetchDiary({checkDate: date, plantId});
+        const plantCheck = await fetchPlantCheck({checkDate: date, plantId});
         if (diary || plantCheck) {
           alert('이미 작성된 일기가 있습니다.');
           if (diary) {
-            setShowConfirmation(true);
             setplantDiaryId(diary.plantDiaryId);
             setContent(diary.content);
             setImgs(diary.image.map(img => ({ url: img.url, id: img.imageId })));
@@ -188,15 +186,14 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: diaryData,
+          body: JSON.stringify(diaryData),
         }
       );
 
-      if (!response.ok) {
-        throw new Error('다이어리 저장에 실패했습니다.');
-      }
-
-      navigate(`/diary/${date}`, { state: { diaryData } });
+      // if (!response.ok) {
+      //   throw new Error('다이어리 저장에 실패했습니다.');
+      // }
+      // navigate(`/diary/${date}`, { state: { diaryData } });
     } catch (error) {
       console.error('Error:', error);
       // alert(error.message);
@@ -210,19 +207,19 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: plantData,
+        body: JSON.stringify(plantData),
       });
 
-      if (!response.ok) {
-        throw new Error('다이어리 저장에 실패했습니다.');
-      }
+      // if (!response.ok) {
+      //   throw new Error('식물 정보 저장에 실패했습니다.');
+      // }
 
     } catch (error) {
       console.error('Error:', error);
       alert(error.message);
     }
 
-    navigate(`/diary/${date}`, 
+    navigate(`/diary/${date}`, //state 는 임시로 한거고 나중에는 plantDiaryId로 확인할거임
       { state: { 
       date, 
       content,
