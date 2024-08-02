@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { getUserInfo, updateUserInfo } from '../../api';
+import useUserStore from '../../stores/useUserStore';
+
 import Btn from '../Common/Btn';
 import InputField from './InputField';
 import SelectField from './SelectField';
 import RadioField from './RadioField';
 import AccountBtn from './AccountBtn';
 import ModalComplete from '../../components/Account/ModalComplete';
+
 
 const ProfileUpdateForm = ({ userData }) => {
   const [id, setId] = useState(userData.id);
@@ -18,6 +22,30 @@ const ProfileUpdateForm = ({ userData }) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
+  // 프로필 정보 불러오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getUserInfo();
+        setUser(userInfo);
+        setId(userInfo.id);
+        setEmail(userInfo.email);
+        setNickname(userInfo.nickname);
+        setBirthdate(userInfo.birthdate);
+        setSource(userInfo.source);
+        setGender(userInfo.gender);
+        setSido(userInfo.sido);
+        setGugun(userInfo.gugun);
+      } catch (error) {
+        console.error('사용자 정보 불러오기 실패:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, [setUser]);
+
+
+  // 아이디, 닉네임 유효성 검사
   useEffect(() => {
     setIsFormValid(id && nickname);
   }, [id, nickname]);
@@ -27,6 +55,7 @@ const ProfileUpdateForm = ({ userData }) => {
     
     setOpenModal(true);
   }
+
 
   const closeModal = () => {
     setOpenModal(false);
@@ -47,6 +76,7 @@ const ProfileUpdateForm = ({ userData }) => {
           />
           <AccountBtn 
             content='중복확인'
+            onClick={console.log('중복확인 코드 적용')}
           />
         </div>
         <div>
@@ -88,9 +118,9 @@ const ProfileUpdateForm = ({ userData }) => {
           selectedValue={gender}
           onChange={setGender}
           options={[
-            { value: 0, label: '선택하지 않음' },
-            { value: 2, label: '여자' },
-            { value: 1, label: '남자' },
+            { value: 1, label: '선택하지 않음' },
+            { value: 2, label: '남자' },
+            { value: 3, label: '여자' },
           ]}
           isRequired={false}
         />
