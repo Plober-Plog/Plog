@@ -2,14 +2,18 @@ package com.plog.backend.domain.plant.service;
 
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.service.ImageService;
+import com.plog.backend.domain.plant.dto.PlantCheckDto;
+import com.plog.backend.domain.plant.dto.request.PlantCheckRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponse;
 import com.plog.backend.domain.plant.entity.OtherPlantType;
 import com.plog.backend.domain.plant.entity.Plant;
+import com.plog.backend.domain.plant.entity.PlantCheck;
 import com.plog.backend.domain.plant.entity.PlantType;
 import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 import com.plog.backend.domain.plant.repository.OtherPlantTypeRepository;
+import com.plog.backend.domain.plant.repository.PlantCheckRepository;
 import com.plog.backend.domain.plant.repository.PlantRepository;
 import com.plog.backend.domain.plant.repository.PlantTypeRepository;
 import com.plog.backend.domain.user.entity.User;
@@ -21,8 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,19 +42,20 @@ public class PlantServiceImpl implements PlantService {
     private static ImageService imageService;
     private static UserServiceImpl userService;
     private static OtherPlantTypeRepository otherPlantTypeRepository;
+    private static PlantCheckRepository plantCheckRepository;
 
     @Autowired
-    PlantServiceImpl(PlantRepository plantRepository, PlantTypeRepository plantTypeRepository, OtherPlantTypeRepository otherPlantTypeRepository, ImageService imageService, UserServiceImpl userService) {
+    PlantServiceImpl(PlantRepository plantRepository, PlantTypeRepository plantTypeRepository, OtherPlantTypeRepository otherPlantTypeRepository, PlantCheckRepository plantCheckRepository, ImageService imageService, UserServiceImpl userService) {
         PlantServiceImpl.plantRepository = plantRepository;
         PlantServiceImpl.plantTypeRepository = plantTypeRepository;
         PlantServiceImpl.otherPlantTypeRepository = otherPlantTypeRepository;
+        PlantServiceImpl.plantCheckRepository = plantCheckRepository;
         PlantServiceImpl.imageService = imageService;
         PlantServiceImpl.userService = userService;
-
     }
 
     @Override
-    public Plant addPlant(PlantRequestDto plantAddRequest) throws NotValidPlantTypeIdsException {
+    public void addPlant(PlantRequestDto plantAddRequest) throws NotValidPlantTypeIdsException {
         log.info(">>> addPlant - 요청 데이터: {}", plantAddRequest);
         Image image = imageService.uploadImage(plantAddRequest.getProfile());
         log.info(">>> addPlant - 이미지 업로드 완료: {}", image);
@@ -68,7 +76,8 @@ public class PlantServiceImpl implements PlantService {
                         plantAddRequest.isFixed()
                 );
                 log.info(">>> addPlant - 기본 식물 생성: {}", plantByPlantType);
-                return plantRepository.save(plantByPlantType);
+                plantRepository.save(plantByPlantType);
+                return ;
             case 2: // 기타 식물
                 plantType.setPlantTypeId(1L);
                 otherPlantType.setOtherPlantTypeId(plantAddRequest.getOtherPlantTypeId());
@@ -80,7 +89,8 @@ public class PlantServiceImpl implements PlantService {
                         plantAddRequest.isFixed()
                 );
                 log.info(">>> addPlant - 기타 식물 생성: {}", plantByOtherPlantType);
-                return plantRepository.save(plantByOtherPlantType);
+                plantRepository.save(plantByOtherPlantType);
+                return ;
             default:
                 throw new NotValidPlantTypeIdsException();
         }
@@ -155,7 +165,7 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public Plant updatePlant(Long plantId, PlantRequestDto plantUpdateRequestDto) {
+    public void updatePlant(Long plantId, PlantRequestDto plantUpdateRequestDto) {
         log.info(">>> updatePlant - 요청 ID: {}, 업데이트 데이터: {}", plantId, plantUpdateRequestDto);
         int type = checkPlantType(
                 plantUpdateRequestDto.getPlantTypeId(),
@@ -179,7 +189,7 @@ public class PlantServiceImpl implements PlantService {
                 p.setOtherPlantType(otherPlantTypeRepository.getReferenceById(plantUpdateRequestDto.getOtherPlantTypeId()));
             }
             log.info(">>> updatePlant - 업데이트된 식물 정보: {}", p);
-            return plantRepository.save(p);
+            plantRepository.save(p);
         } else {
             throw new EntityNotFoundException("Plant with ID " + plantId + " not found");
         }
@@ -215,7 +225,90 @@ public class PlantServiceImpl implements PlantService {
             plantRepository.save(p);
             log.info(">>> farewellPlant - 식물과 이별 완료, ID: {}", plantId);
         } else {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Plant with ID " + plantId + " not found");
+        }
+    }
+
+    @Override
+    public void addPlantCheck(Long plantId, PlantCheckDto plantCheckDto) {
+        LocalDate checkDate = DateUtil.getInstance().convertToLocalDate(plantCheckDto.getCheckDate());
+        if (checkDate.isAfter(LocalDate.now())) {
+            throw new NotValidRequestException("미래의 식물 관리 기록은 작성할 수 없습니다");
+        }
+        Optional<Plant> plant = plantRepository.findById(plantId);
+        if (plant.isPresent()) {
+            PlantCheck plantCheck = new PlantCheck();
+            plantCheck.setPlant(plant.get());
+            plantCheck.setCheckDate(checkDate);
+            plantCheck.setWatered(plantCheckDto.isWatered());
+            plantCheck.setFertilized(plantCheckDto.isFertilized());
+            plantCheck.setRepotted(plantCheckDto.isRepotted());
+            plantCheckRepository.save(plantCheck);
+            log.info(">>> addPlantCheck - 관리 기록 추가 완료, 식물 ID: {}, 관리 날짜: {}", plantId, checkDate);
+        } else {
+            throw new EntityNotFoundException("Plant with ID " + plantId + " not found");
+        }
+    }
+
+    @Override
+    public void updatePlantCheck(Long plantId, PlantCheckDto plantCheckDto) {
+        LocalDate checkDate = DateUtil.getInstance().convertToLocalDate(plantCheckDto.getCheckDate());
+        if (checkDate.isAfter(LocalDate.now())) {
+            throw new NotValidRequestException("미래의 관리 기록을 수정 할 수 없습니다");
+        }
+        Optional<Plant> plant = plantRepository.findById(plantId);
+        if (plant.isPresent()) {
+            Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantId, checkDate);
+            if (plantCheck.isPresent()) {
+                PlantCheck pc = plantCheck.get();
+                pc.setCheckDate(checkDate);
+                pc.setWatered(plantCheckDto.isWatered());
+                pc.setFertilized(plantCheckDto.isFertilized());
+                pc.setRepotted(plantCheckDto.isRepotted());
+                plantCheckRepository.save(pc);
+                log.info(">>> updatePlantCheck - 관리 기록 수정 완료, 식물 ID: {}, 관리 날짜: {}", plantId, checkDate);
+            } else {
+                throw new EntityNotFoundException("No PlantCheck record found for plant ID " + plantId + " and date " + checkDate);
+            }
+        } else {
+            throw new EntityNotFoundException("Plant with ID " + plantId + " not found");
+        }
+    }
+
+    @Override
+    public PlantCheckDto getPlantCheck(Long plantId, String checkDate) {
+        log.info(">>> getPlantCheck - 요청 ID: {}, 관리 날짜: {}", plantId, checkDate);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        LocalDate date;
+        try {
+            date = DateUtil.getInstance().convertToLocalDate(dateFormat.parse(checkDate));
+        } catch (ParseException e) {
+            throw new NotValidRequestException();
+        }
+        Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantId, date);
+        if (plantCheck.isPresent()) {
+            PlantCheck pc = plantCheck.get();
+            PlantCheckDto response = new PlantCheckDto();
+            response.setCheckDate(DateUtil.getInstance().convertToDate(pc.getCheckDate()));
+            response.setWatered(pc.isWatered());
+            response.setFertilized(pc.isFertilized());
+            response.setRepotted(pc.isRepotted());
+            return response;
+        } else {
+            throw new EntityNotFoundException("No PlantCheck record found for plant ID " + plantId + " and date " + date);
+        }
+    }
+
+    @Override
+    public void deletePlantCheck(Long plantId, PlantCheckRequestDto checkDate) {
+        log.info(">>> deletePlantCheck - 요청 ID: {}", plantId);
+        LocalDate date = DateUtil.getInstance().convertToLocalDate(checkDate.getCheckDate());
+        Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantId, date);
+        if (plantCheck.isPresent()) {
+            plantCheckRepository.delete(plantCheck.get());
+            log.info(">>> deletePlantCheck - 관리 기록 삭제 완료, 식물 ID: {}, 관리 날짜: {}", plantId, date);
+        } else {
+            throw new NotValidRequestException("No PlantCheck record found to delete for plant ID " + plantId + " and date " + date);
         }
     }
 

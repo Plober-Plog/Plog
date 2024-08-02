@@ -1,8 +1,8 @@
 package com.plog.backend.global.exception.handler;
 
-import com.plog.backend.global.exception.ExceptionResponse;
+import com.plog.backend.global.exception.EntityNotFoundException;
+import com.plog.backend.global.exception.model.ExceptionResponseDto;
 import com.plog.backend.global.exception.NotValidRequestException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<ExceptionResponseDto> handleEntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
         log.error("EntityNotFoundException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
-        ExceptionResponse response = ExceptionResponse.of(
+        ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
                 HttpStatus.NOT_FOUND.value(),
@@ -28,10 +28,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotValidRequestException.class)
-    public ResponseEntity<ExceptionResponse> handleNotValidRequestException(
+    public ResponseEntity<ExceptionResponseDto> handleNotValidRequestException(
             NotValidRequestException ex, HttpServletRequest request) {
         log.error("NotValidRequestException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
-        ExceptionResponse response = ExceptionResponse.of(
+        ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
                 HttpStatus.BAD_REQUEST.value(),

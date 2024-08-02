@@ -1,57 +1,58 @@
-//package com.plog.backend.controller;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.plog.backend.domain.plant.controller.PlantController;
-//import com.plog.backend.domain.plant.dto.request.PlantAddRequest;
-//import com.plog.backend.domain.plant.entity.Plant;
-//import com.plog.backend.domain.plant.service.PlantService;
-//import com.plog.backend.global.model.response.BaseResponseBody;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Nested;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.params.ParameterizedTest;
-//import org.junit.jupiter.params.provider.ValueSource;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.http.MediaType;
-//import org.springframework.security.test.context.support.WithMockUser;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-//
-//import java.text.ParseException;
-//import java.text.SimpleDateFormat;
-//import java.util.Date;
-//
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.verify;
-//import static org.mockito.Mockito.when;
-//import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-//
-//@WebMvcTest(PlantController.class)
-//@AutoConfigureMockMvc
-//public class PlantControllerTest {
-//
-//    private final MockMvc mockMvc;
-//    private final ObjectMapper objectMapper;
-//
-//    @MockBean
-//    private PlantService plantService;
-//
-//    @Autowired
-//    PlantControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
-//        this.mockMvc = mockMvc;
-//        this.objectMapper = objectMapper;
-//    }
-//
+package com.plog.backend.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.plog.backend.domain.plant.controller.PlantController;
+import com.plog.backend.domain.plant.dto.request.PlantRequestDto;
+import com.plog.backend.domain.plant.entity.Plant;
+import com.plog.backend.domain.plant.service.PlantService;
+import com.plog.backend.global.model.response.BaseResponseBody;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(PlantController.class)
+@AutoConfigureMockMvc
+public class PlantControllerTest {
+
+    private final MockMvc mockMvc;
+    private final ObjectMapper objectMapper;
+
+    @MockBean
+    private PlantService plantService;
+
+    @Autowired
+    PlantControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
+        this.mockMvc = mockMvc;
+        this.objectMapper = objectMapper;
+    }
+
 //    @Nested
 //    @DisplayName("식물 등록")
 //    class AddPlant {
 //
-//        PlantAddRequest plantAddRequest;
+//        PlantRequestDto plantAddRequest;
 //
 //        @Nested
 //        @DisplayName("정상 케이스")
@@ -61,7 +62,7 @@
 //            void setUp() throws ParseException {
 //                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 //                Date birthDate = dateFormat.parse("2024-07-30");
-//                plantAddRequest = new PlantAddRequest().builder()
+//                plantAddRequest = new PlantRequestDto().builder()
 //                        .profile("imageUrl")
 //                        .nickname("nickname")
 //                        .birthDate(birthDate)
@@ -89,7 +90,7 @@
 //                verify(plantService).addPlant(any(PlantAddRequest.class)); // service method 호출 확인
 //            }
 //        }
-//
+
 //        @Nested
 //        @DisplayName("비정상 케이스")
 //        class FailureCase {
@@ -101,10 +102,10 @@
 //                        .hasNotified(false)
 //                        .isFixed(false).build();
 //            }
-//
-//            //TODO [강윤서]
-//            // - 권한이 없는 회원의 요청에 대한 401 예외 테스트
-//
+
+            //TODO [강윤서]
+            // - 권한이 없는 회원의 요청에 대한 401 예외 테스트
+
 //            @Test
 //            @WithMockUser(username = "user", roles = {"USER"})
 //            @DisplayName("닉네임 누락으로 등록 실패")
@@ -126,7 +127,7 @@
 //                        .andExpect(jsonPath("$.message").value("nickname 은 필수 필드입니다."))
 //                        .andExpect(jsonPath("$.timestamp").exists());
 //            }
-//
+
 //            @Test
 //            @WithMockUser(username = "user", roles = {"USER"})
 //            @DisplayName("생일 누락으로 등록 실패")
@@ -148,27 +149,27 @@
 //            }
 //        }
 //    }
-//
-//
-//    @Nested
-//    @DisplayName("식물 조회")
-//    class GetPlant {
-//        @Nested
-//        @DisplayName("정상 케이스")
-//        class SuccessCase {
-//            @BeforeEach
-//            void setUp() throws ParseException {
-//
-//            }
-//
-//            @ParameterizedTest
-//            @ValueSource(longs = {1L}) // 테스트에 사용할 plantId 값들
-//            @WithMockUser(username = "user", roles = {"USER"})
-//            @DisplayName("유효한 요청(plantId)으로 조회 성공")
-//            void getPlantSuccessfully(Long plantId) throws Exception {
-//                mockMvc.perform(MockMvcRequestBuilders.get("/user/plant/{plantId}/info", plantId))
-//                        .andExpect(status().isOk());
-//            }
-//        }
-//    }
-//}
+
+
+    @Nested
+    @DisplayName("식물 조회")
+    class GetPlant {
+        @Nested
+        @DisplayName("정상 케이스")
+        class SuccessCase {
+            @BeforeEach
+            void setUp() throws ParseException {
+
+            }
+
+            @ParameterizedTest
+            @ValueSource(longs = {1L}) // 테스트에 사용할 plantId 값들
+            @WithMockUser(username = "user", roles = {"USER"})
+            @DisplayName("유효한 요청(plantId)으로 조회 성공")
+            void getPlantSuccessfully(Long plantId) throws Exception {
+                mockMvc.perform(MockMvcRequestBuilders.get("/user/plant/{plantId}/info", plantId))
+                        .andExpect(status().isOk());
+            }
+        }
+    }
+}
