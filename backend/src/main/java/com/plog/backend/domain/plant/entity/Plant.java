@@ -21,35 +21,35 @@ import java.util.Date;
 public class Plant extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long plantId;
+    private Long plantId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    User user;
+    private User user;
 
     @OneToOne
     @JoinColumn(name = "image_id", referencedColumnName = "imageId")
-    Image image;
+    private Image image;
 
     @ManyToOne
     @JoinColumn(name = "plant_type_id", referencedColumnName = "plantTypeId")
-    PlantType plantType;
+    private PlantType plantType;
 
     @ManyToOne
     @JoinColumn(name = "other_plant_type_id", referencedColumnName = "otherPlantTypeId")
-    OtherPlantType otherPlantType;
+    private OtherPlantType otherPlantType;
 
     @Column(nullable = false)
-    String nickname;
+    private String nickname;
 
     @Column
-    String bio;
+    private String bio;
 
     @Column(nullable = false)
-    LocalDate birthDate;
+    private LocalDate birthDate;
 
     @Column
-    LocalDate deadDate;
+    private LocalDate deadDate;
 
     @Column(nullable = false)
     @ColumnDefault("true")
@@ -61,16 +61,16 @@ public class Plant extends BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    boolean isDeleted;
+    private boolean isDeleted;
 
     @Column
-    LocalDate waterDate;
+    private LocalDate waterDate;
 
     @Column
-    LocalDate fertilizeDate;
+    private LocalDate fertilizeDate;
 
     @Column
-    LocalDate repotDate;
+    private LocalDate repotDate;
 
     @Builder
     public Plant(PlantType plantType, OtherPlantType otherPlantType, String nickname, Image image, Date birthDate, boolean hasNotified, boolean isFixed) {
