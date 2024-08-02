@@ -24,8 +24,11 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
   const [isWatered, setIsWatered] = useState(false);
   const [isFertilized, setIsFertilized] = useState(false);
   const [isRepotted, setIsRepotted] = useState(false);
-  const [isExistingDiary, setIsExistingDiary] = useState(false);
   const [imgs, setImgs] = useState([]);
+  // const [isExistingDiary, setIsExistingDiary] = useState(false); // 현재 날짜에 이미 작성된 일지가 있는지 여부
+  const [plantDiaryId, setplantDiaryId] = useState(null); //현재 날짜에 이미 작성된 일지가 있을 경우 해당 일지의 ID를 저장
+  const [showConfirmation, setShowConfirmation] = useState(false); //날짜 변경 시 이미 작성된 일지가 있을 경우, 날짜 변경 여부를 확인하는 팝업을 표시
+
 
   const navigate = useNavigate();
 
@@ -39,53 +42,86 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
   const humidity = '습함'
   const temperature = '기온 높음'
 
-  // 해당 날짜에 작성된 일지 확인 -> 날짜로 찾기 필요할듯..
-  const fetchDiary = async ({currentDate, plantId}) => {
+  // 해당 날짜에 작성된 일지 확인 
+  const fetchDiary = async ({checkDate, plantId}) => {
     try {
-      const response = await fetch(`/api/user/diary/${plantId}/${currentDate}`, {
+      const response = await fetch(`/api/user/plant/${plantId}/diary?checkDate=${checkDate}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-  
-      if (!response.ok) {
-        throw new Error('일지 조회에 실패했습니다.');
-      }
-  
+      
+      // if (!response.ok) {
+      //   throw new Error('일지 조회에 실패했습니다.');
+      // }
+
+      // 처음 페이지 로딩했을 때, 해당 날짜의 일지가 있으면 content 등등 그 내용으로 업로드
       const data = await response.json();
+      console.log(data);
       return data;
+
     } catch (error) {
       console.error('Error:', error);
+      console.log('새로운 일지를 작성합니다.')
       throw error;
     }
   };
 
-  // 이 부분 왜 useEffect 가 2개인지? 
-  // 날짜 변경하면 일지 작성 여부 확인
-  useEffect(() => {
-    const diary = fetchDiary({date, plantId});
-    if (diary) {
-      alert('이미 작성된 일기가 있습니다.');
-      console.log(diary)
+  // 해당 날짜에 작성된 관리 기록 확인
+  const fetchPlantCheck = async (checkDate, plantId) => {
+    try {
+      const response = await fetch(`/api/user/plant/${plantId}/check?checkDate=${checkDate}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // 서버에서 에러가 났을 때 예외를 발생시키기 위한 코드 catch 로 넘어감
+      // if (!response.ok) {
+      //   throw new Error('관리 기록 조회에 실패했습니다.');
+      // }
+      setIsWatered()
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error('Error:', error);
+      console.log('새로운 일지를 작성합니다.');
+      throw error;
     }
-  }, [date]);
+  }; 
 
 
   // 컴포넌트 로딩 및 날짜 변경 시 일지 조회
   useEffect(() => {
-    const getDiary = async () => {
+    const getDiaryAndPlantCheck = async () => {
       try {
         const diary = await fetchDiary(date, plantId);
-        if (diary) {
+        const plantCheck = await fetchPlantCheck(date, plantId);
+        if (diary || plantCheck) {
           alert('이미 작성된 일기가 있습니다.');
+          if (diary) {
+            setShowConfirmation(true);
+            setplantDiaryId(diary.plantDiaryId);
+            setContent(diary.content);
+            setImgs(diary.image.map(img => ({ url: img.url, id: img.imageId })));
+          }
+          if (plantCheck) {
+            setIsWatered(plantCheck.isWatered);
+            setIsFertilized(plantCheck.isFertilized);
+            setIsRepotted(plantCheck.isRepotted);
+          }
         } 
       } catch (error) {
+        // 날짜 변경해도 작성된 일지 없으므로 계속 일지 작성 진행 
         console.error('일지 데이터를 불러오는 중 오류 발생:', error);
+        console.log(error);
       }
     };
-    getDiary();
-  }, [date, plantId]);
+    getDiaryAndPlantCheck();
+  }, [date]);
 
 
   // 정보 입력
@@ -140,18 +176,21 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
       isWatered,
       isFertilized,
       isRepotted,
-      date
+      checkDate: date
     }
 
     // 일지 작성 요청
     try {
-      const response = await fetch('/api/user/diary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: diaryData,
-      });
+      const response = await fetch(
+        plantDiaryId ? `/api/user/diary/${plantDiaryId}` : '/api/user/diary', 
+        {
+          method: plantDiaryId ? 'PATCH' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: diaryData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error('다이어리 저장에 실패했습니다.');
@@ -160,13 +199,14 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
       navigate(`/diary/${date}`, { state: { diaryData } });
     } catch (error) {
       console.error('Error:', error);
-      alert(error.message);
+      // alert(error.message);
     }
     
     // 식물 정보 저장 요청
     try {
+      const method = plantDiaryId? 'PATCH' : 'POST';
       const response = await fetch(`/api/user/plant/${plantId}/check`, {
-        method: 'POST',
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -182,8 +222,17 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
       alert(error.message);
     }
 
-    navigate(`/diary/${date}`, { state: { 
-      date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs
+    navigate(`/diary/${date}`, 
+      { state: { 
+      date, 
+      content,
+      weather, 
+      temperature, 
+      humidity, 
+      isWatered, 
+      isFertilized, 
+      isRepotted, 
+      imgs
      } });
      
   };
@@ -218,7 +267,7 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId }) => {
         <Content content={content} setContent={setContent} />
       </div>
       <div>
-        <Btn content={isExistingDiary ? "수정하기" : "작성하기"} onClick={handleSave} />
+        <Btn content="작성하기" onClick={handleSave} />
       </div>
     </div>
   );

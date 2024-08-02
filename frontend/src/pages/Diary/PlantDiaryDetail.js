@@ -15,7 +15,7 @@ import humidityIcon from '../../assets/icon/humidity.png';
 import temperatureIcon from '../../assets/icon/temperature.png'; 
 import './PlantDiaryWrite.css';
 
-const PlantDiaryDetail = ({ currentDate,plantId }) => {
+const PlantDiaryDetail = ({ currentDate, plantId }) => {
   const location = useLocation();
   const { date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state;
   const navigate = useNavigate();
