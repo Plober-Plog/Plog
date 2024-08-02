@@ -1,4 +1,4 @@
-package com.plog.backend.domain.plant.exception;
+package com.plog.backend.global.exception;
 
 import lombok.Getter;
 
