@@ -24,12 +24,12 @@ const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed }) => {
   return (
     <div>
       <i title ="알람" onClick={handleToggleNotification}>
-        {hasNotified ? '🔔' : '❌🔔'}
+        {hasNotified ? '🔔' : '🔕'}
       </i>
       <i title ="편집" onClick={handleEdit}>✏️</i>
       <i title ="일지" onClick={handleWriteDiary}>📒</i>
       <i title ="고정" onClick={handleToggleFixed}>
-        {isFixed? '📌' : '❌📌'  }
+        {isFixed? '📌' : '❌'  }
       </i>
     </div>
   );

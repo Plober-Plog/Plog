@@ -62,7 +62,7 @@ const Calender = ({ plantId }) =>{
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     
     return (
-      <div className="color-box min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="color-box">
         <div className={`indicator ${checkRecord && checkRecord.isWatered ? 'watered' : ''}`}></div>
         <div className={`indicator ${checkRecord && checkRecord.isFertilized ? 'fertilized' : ''}`}></div>
         <div className={`indicator ${checkRecord && checkRecord.isRepotted ? 'repotted' : ''}`}></div>
