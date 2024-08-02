@@ -72,3 +72,10 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 }
+
+//TODO [장현준]
+// 1. ResponseBody 적용하기 => 보낼 값이 딱히 없다면, BaseResponseBody
+// 2. ResponseBody 에서 중복 부분은 중복이 되면 상태코드 409 발생
+// 3. 회원관리 필드들 다시 다 확인해보기
+// 4. log형식 >>>> 추가하기
+// 5.
