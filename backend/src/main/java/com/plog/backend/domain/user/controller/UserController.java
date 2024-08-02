@@ -1,27 +1,20 @@
 package com.plog.backend.domain.user.controller;
 
-import com.plog.backend.domain.user.dto.RequestSignInDto;
-import com.plog.backend.domain.user.dto.RequestSignUpDto;
+import com.plog.backend.domain.user.dto.UserModifyDto;
+import com.plog.backend.domain.user.dto.UserSignIngDto;
+import com.plog.backend.domain.user.dto.UserSignUpDto;
 import com.plog.backend.domain.user.entity.User;
-import com.plog.backend.domain.user.repository.UserRepository;
-import com.plog.backend.domain.user.service.UserService;
 import com.plog.backend.domain.user.service.UserServiceImpl;
-import com.plog.backend.global.auth.JwtTokenProvider;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
+@Slf4j
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-
     private final UserServiceImpl userService;
 
     @Autowired
@@ -31,19 +24,16 @@ public class UserController {
 
     // 회원 가입
     @PostMapping
-    public ResponseEntity registerUser(@Valid @RequestBody RequestSignUpDto request) {
-        // 디버그 로그 추가
-        UserController.log.info("Register User Received Request: " + request.toString());
-
+    public ResponseEntity<User> registerUser(@Valid @RequestBody UserSignUpDto request) {
+        log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", request);
         User user = userService.createUser(request);
         return ResponseEntity.ok(user);
     }
 
     // 회원 수정
     @PatchMapping
-    public ResponseEntity modifyUser(@RequestHeader("Authorization") String token, @Valid @RequestBody RequestSignUpDto request) {
-        // 디버그 로그 추가
-        UserController.log.info("modify User Received Request: " + request.toString());
+    public ResponseEntity<User> modifyUser(@RequestHeader("Authorization") String token, @Valid @RequestBody UserModifyDto request) {
+        log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", request);
 
         if (token.startsWith("Bearer ")) {
             token = token.substring(7); // "Bearer " 문자열 제거
@@ -55,29 +45,30 @@ public class UserController {
 
     // 아이디 확인
     @GetMapping("/{searchId}")
-    public ResponseEntity checkSearchId(@PathVariable("searchId") String searchId) {
-        UserController.log.info("Check Search Id Received Request");
-        return ResponseEntity.ok(userService.checkUser(searchId));
+    public ResponseEntity<Boolean> checkSearchId(@PathVariable("searchId") String searchId) {
+        log.info(">>> [GET] /user/{} - 아이디 확인 요청", searchId);
+        boolean result = userService.checkUser(searchId);
+        return ResponseEntity.ok(result);
     }
 
     // 로그인 JWT 적용
     @PostMapping("/login")
-    public ResponseEntity signIn(@Valid @RequestBody RequestSignInDto request) {
+    public ResponseEntity<String> signIn(@Valid @RequestBody UserSignIngDto request) {
+        log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", request);
         try {
-            log.info("Login Received Request: " + request.toString());
             String token = userService.login(request.getEmail(), request.getPassword());
-            log.info("Received Token: " + token);
             return ResponseEntity.ok(token);
         } catch (Exception e) {
+            log.error(">>> [POST] /user/login - 로그인 실패: {}", e.getMessage());
             return ResponseEntity.status(401).body("Invalid email or password");
         }
     }
 
     // 이메일 중복 확인
     @PostMapping("/email")
-    public ResponseEntity checkEmail(@Valid @RequestBody RequestSignInDto request) {
-        log.info("Check Email Received Request: " + request.toString());
-
-        return ResponseEntity.ok(userService.checkEmail(request.getEmail()));
+    public ResponseEntity<Boolean> checkEmail(@Valid @RequestBody UserSignIngDto request) {
+        log.info(">>> [POST] /user/email - 이메일 중복 확인 요청 데이터: {}", request);
+        boolean result = userService.checkEmail(request.getEmail());
+        return ResponseEntity.ok(result);
     }
 }

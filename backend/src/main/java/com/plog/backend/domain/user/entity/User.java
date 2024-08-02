@@ -1,11 +1,11 @@
 package com.plog.backend.domain.user.entity;
 
+import com.plog.backend.domain.area.entity.Gugun;
+import com.plog.backend.domain.area.entity.Sido;
+import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
@@ -16,15 +16,11 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-@DynamicUpdate
 @ToString
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-    
-    //TODO
-    // 프로필사진, 시도,구군 추가
 
     @Column(nullable = false)
     private String email;
@@ -41,41 +37,33 @@ public class User {
     @Column
     private LocalDate birthDate;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
 
     @Column
     private String source;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private State state;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false, updatable = false)
-    @CreatedDate
-    private LocalDate createAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDate modifiedAt;
-
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column
     private Provider provider;
 
     @Column
-    private String provider_id;
+    private String providerId;
 
     @Column(nullable = false)
     @ColumnDefault("0")
     private int totalExp;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ChatAuth chatAuth;
 
@@ -87,10 +75,7 @@ public class User {
     @ColumnDefault("false")
     private boolean isAd;
 
-    @Column
     private int sidoCode;
-
-    @Column
     private int gugunCode;
 
     @Builder
@@ -104,7 +89,9 @@ public class User {
                 int totalExp,
                 int chatAuth,
                 String profileInfo,
-                boolean isAd) {
+                boolean isAd,
+                int sidoCode,
+                int gugunCode) {
         this.email = email;
         this.searchId = searchId;
         this.nickname = nickname;
@@ -112,10 +99,11 @@ public class User {
         this.gender = Gender.gender(gender);
         this.state = State.state(state);
         this.role = Role.role(role);
-        this.createAt = LocalDate.now();
         this.totalExp = totalExp;
         this.chatAuth = ChatAuth.chatAuth(chatAuth);
         this.profileInfo = profileInfo;
         this.isAd = isAd;
+        this.sidoCode = sidoCode;
+        this.gugunCode = gugunCode;
     }
 }

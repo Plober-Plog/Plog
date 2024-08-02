@@ -1,96 +1,85 @@
 package com.plog.backend.domain.plant.entity;
 
 import com.plog.backend.domain.image.entity.Image;
+import com.plog.backend.domain.user.entity.User;
+import com.plog.backend.global.model.dto.BaseEntity;
 import com.plog.backend.global.util.DateUtil;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @EntityListeners(AuditingEntityListener.class)
 @ToString
-public class Plant {
+public class Plant extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int plantId;
+    private Long plantId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    private User user;
 
     @OneToOne
     @JoinColumn(name = "image_id", referencedColumnName = "imageId")
-    Image image;
+    private Image image;
 
     @ManyToOne
-    @JoinColumn(name = "plant_type_id", referencedColumnName = "plantTypeId", nullable = true)
-    PlantType plantType;
+    @JoinColumn(name = "plant_type_id", referencedColumnName = "plantTypeId")
+    private PlantType plantType;
 
     @ManyToOne
-    @JoinColumn(name = "other_plant_type_id", referencedColumnName = "otherPlantTypeId", nullable = true)
-    OtherPlantType otherPlantType;
+    @JoinColumn(name = "other_plant_type_id", referencedColumnName = "otherPlantTypeId")
+    private OtherPlantType otherPlantType;
 
     @Column(nullable = false)
-    String nickname;
+    private String nickname;
 
     @Column
-    String bio;
+    private String bio;
+
+    @Column
+    private LocalDate birthDate;
+
+    @Column
+    private LocalDate deadDate;
 
     @Column(nullable = false)
-    LocalDate birthDate;
-
-    @Column
-    LocalDate deadDate;
-
-    @Column
     @ColumnDefault("true")
     boolean hasNotified;
 
-    @Column
+    @Column(nullable = false)
     @ColumnDefault("255")
     int fixed;
 
-    @Column
+    @Column(nullable = false)
     @ColumnDefault("false")
-    boolean isDeleted;
+    private boolean isDeleted;
 
     @Column
-    LocalDate waterDate;
+    private LocalDate waterDate;
 
     @Column
-    LocalDate fertilizeDate;
+    private LocalDate fertilizeDate;
 
     @Column
-    LocalDate repotDate;
+    private LocalDate repotDate;
 
-    @Column(updatable = false)
-    @CreatedDate
-    LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    LocalDateTime modifiedAt;
-
-    // 기본 식물
     @Builder
-    public Plant(PlantType plantType, String nickname, Image image, Date birthDate) {
+    public Plant(PlantType plantType, OtherPlantType otherPlantType, String nickname, Image image, Date birthDate, boolean hasNotified, boolean isFixed) {
         this.plantType = plantType;
-        this.nickname = nickname;
-        this.image = image;
-        this.birthDate = DateUtil.getInstance().convertToLocalDate(birthDate);
-    }
-
-    // 기타 식물
-    @Builder
-    public Plant(OtherPlantType otherPlantType, String nickname, Image image, Date birthDate) {
         this.otherPlantType = otherPlantType;
         this.nickname = nickname;
         this.image = image;
         this.birthDate = DateUtil.getInstance().convertToLocalDate(birthDate);
+        this.hasNotified = hasNotified;
+        this.fixed = isFixed ? 1 : 255; //TODO [강윤서] - fixed 계산
     }
 }

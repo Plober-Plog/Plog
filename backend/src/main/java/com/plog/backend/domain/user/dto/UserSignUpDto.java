@@ -1,10 +1,8 @@
 package com.plog.backend.domain.user.dto;
 
-import com.plog.backend.domain.user.entity.*;
-import com.plog.backend.global.model.dto.BaseRequestDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Date;
@@ -15,12 +13,11 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestSignUpDto extends BaseRequestDto {
+public class UserSignUpDto {
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
     @Email(message = "유효한 이메일 형식이 아닙니다.")
     private String email;
-
 
     @NotBlank(message = "검색 ID는 필수 입력 값입니다.")
     private String searchId;
@@ -35,6 +32,7 @@ public class RequestSignUpDto extends BaseRequestDto {
 
     private int gender;
 
+    @JsonProperty("birthDate")
     private Date birthDate;
     private String source;
 

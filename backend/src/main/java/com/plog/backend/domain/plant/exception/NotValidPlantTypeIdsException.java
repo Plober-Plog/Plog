@@ -7,7 +7,7 @@ public class NotValidPlantTypeIdsException extends RuntimeException {
     private final String message;
 
     public NotValidPlantTypeIdsException() {
-        this.message = "유효한 식물 종류가 아닙니다.";
+        this.message = "유효하지 않은 식물 종류입니다.";
     }
 
     public NotValidPlantTypeIdsException(String message) {
