@@ -1,9 +1,6 @@
 package com.plog.backend.domain.user.controller;
 
-import com.plog.backend.domain.user.dto.request.UserEmailCheckRequestDto;
-import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
-import com.plog.backend.domain.user.dto.request.UserSignInRequestDto;
-import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
+import com.plog.backend.domain.user.dto.request.*;
 import com.plog.backend.domain.user.dto.response.UserResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
@@ -128,6 +125,7 @@ public class UserController {
 
         return ResponseEntity.status(204).body(BaseResponseBody.of(204, "회원 탈퇴 되었습니다."));
     }
+
 }
 
 //TODO [장현준]

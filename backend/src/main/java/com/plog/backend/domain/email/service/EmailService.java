@@ -11,6 +11,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -69,7 +71,7 @@ public class EmailService {
         message.setText(setContext(authCode), "utf-8", "html");
 
         // Redis 에 해당 인증코드 인증 시간 설정
-        redisUtil.setDataExpire(email, authCode, 60 * 30L);
+        redisUtil.setDataExpire(email, authCode, 60 * 5L);  // 5분으로 변경
 
         return message;
     }
@@ -102,7 +104,7 @@ public class EmailService {
         String codeFoundByEmail = redisUtil.getData(email);
         log.info("code found by email: " + codeFoundByEmail);
         if (codeFoundByEmail == null) {
-            return false;
+            throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT, "인증코드가 만료되었습니다.");
         }
         return codeFoundByEmail.equals(code);
     }
