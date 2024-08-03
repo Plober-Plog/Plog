@@ -172,6 +172,7 @@ const SignUpForm = () => {
       source,
       sidoCode: sido,
       gugunCode: gugun,
+      profileInfo: "",
       isAd: agreeAdvertisement
     };
 
