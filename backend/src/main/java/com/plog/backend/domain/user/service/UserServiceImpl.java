@@ -161,6 +161,16 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
     }
+
+    @Override
+    public void deleteUser(String token) {
+        log.info(">>> deleteUser - 토큰: {}", token);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> deleteUser - 추출된 사용자 ID: {}", userId);
+        // soft delete 진행
+        userRepository.findById(userId).get().setState(State.DELETED);
+        log.info(">>> deleteUser - 삭제 완료");
+    }
 }
 
 // TODO [장현준] Optional Exception 수정

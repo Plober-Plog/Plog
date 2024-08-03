@@ -115,8 +115,18 @@ public class UserController {
     // 회원 정보 조회
     @GetMapping
     public ResponseEntity<UserResponseDto> getUser(@RequestHeader("Authorization") String token) {
-        log.info(">>> [GET] /user - 회원 정보 조회 토큰: {}", token);
+        log.info(">>> [GET] /user - 회원 정보 조회 요청: {}", token);
         return ResponseEntity.status(200).body(userService.getUser(token));
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping
+    public ResponseEntity<BaseResponseBody> deleteUser(@RequestHeader("Authorization") String token) {
+        log.info(">>> [DELETE] /user - 회원 탈퇴 요청: {}", token);
+
+        userService.deleteUser(token);
+
+        return ResponseEntity.status(204).body(BaseResponseBody.of(204, "회원 탈퇴 되었습니다."));
     }
 }
 
