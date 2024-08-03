@@ -1,9 +1,10 @@
-package com.plog.backend.domain.plant.dto;
+package com.plog.backend.domain.plant.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,12 +12,19 @@ import java.util.Date;
 @Setter
 @Builder
 @ToString
-public class PlantCheckDto {
+public class PlantCheckAddRequestDto {
+    @Schema(description = "물 주기 여부", example = "true")
     @JsonProperty("isWatered")
     boolean isWatered;
-    @JsonProperty("isFertilized")
+
+    @Schema(description = "영양제 주기 여부", example = "false")
+    @JsonProperty("isWatered")
     boolean isFertilized;
-    @JsonProperty("isRepotted")
+
+    @Schema(description = "분갈이 여부", example = "false")
+    @JsonProperty("isWatered")
     boolean isRepotted;
-    Date checkDate;
+
+    @Schema(description = "점검 날짜", example = "2024-01-01")
+    LocalDate checkDate;
 }

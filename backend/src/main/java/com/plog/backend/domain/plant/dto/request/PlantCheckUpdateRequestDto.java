@@ -1,5 +1,7 @@
 package com.plog.backend.domain.plant.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -10,14 +12,19 @@ import java.time.LocalDate;
 @Setter
 @Builder
 @ToString
-public class PlantAddRequestDto {
-    //TODO [강윤서] - user 연결
-    Long plantTypeId;
-    Long otherPlantTypeId;
-    String profile;
-    String bio;
-    String nickname;
-    LocalDate birthDate;
-    boolean hasNotified;
-    boolean isFixed;
+public class PlantCheckUpdateRequestDto {
+    @Schema(description = "물 주기 여부", example = "true")
+    @JsonProperty("isWatered")
+    boolean isWatered;
+
+    @Schema(description = "영양제 주기 여부", example = "false")
+    @JsonProperty("isWatered")
+    boolean isFertilized;
+
+    @Schema(description = "분갈이 여부", example = "false")
+    @JsonProperty("isWatered")
+    boolean isRepotted;
+
+    @Schema(description = "점검 날짜", example = "2024-01-01")
+    LocalDate checkDate;
 }
