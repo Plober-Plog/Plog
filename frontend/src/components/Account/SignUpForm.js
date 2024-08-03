@@ -21,7 +21,7 @@ const SignUpForm = () => {
   const [nickname, setNickname] = useState('');
   const [birthdate, setBirthdate] = useState('');
   const [source, setSource] = useState('');
-  const [gender, setGender] = useState(0);
+  const [gender, setGender] = useState(1);
   const [sido, setSido] = useState('');
   const [gugun, setGugun] = useState('');
   // 회원 동의
@@ -44,7 +44,7 @@ const SignUpForm = () => {
   const [timer, setTimer] = useState(0);
 
 
-  // const API_URI = 'http://localhost:8080/api/user';
+  // TODO 로그인 브랜치 확인 후 uri 경로 조정 
   const API_URI = 'https://i11b308.p.ssafy.io/user';
   
 
@@ -90,7 +90,7 @@ const SignUpForm = () => {
 
   // 이메일 인증
   const handleCheckEmail = async () => {
-    
+
     // 이메일 중복확인
     try {
       const response = await axios.post(`${API_URI}/email`, { email });
