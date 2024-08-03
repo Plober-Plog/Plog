@@ -14,5 +14,5 @@ public interface UserService {
     Boolean checkUserEmail(String email);
     User updateUser(String token, UserUpdateRequestDto request);
     void deleteUser(String token);
-    UserResponseDto findPassowrd(String email);
+//    UserResponseDto findPassowrd(String email);
 }
