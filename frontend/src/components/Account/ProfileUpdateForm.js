@@ -11,17 +11,22 @@ import ModalComplete from '../../components/Account/ModalComplete';
 
 
 const ProfileUpdateForm = ({ userData }) => {
-  const [id, setId] = useState(userData.id);
-  const [email, setEmail] = useState(userData.email);
+  // 회원 정보 변경 불가능
+  const email = useState(userData.email);
+  const source = useState(userData.source || '');
+  // 회원 정보 변경 가능
+  const [searchId, setsearchId] = useState(userData.searchId);
+  const [profile, setProfile] = useState(userData.profile);
   const [nickname, setNickname] = useState(userData.nickname || '');
   const [birthdate, setBirthdate] = useState(userData.birthdate || '');
-  const [source, setSource] = useState(userData.source || '');
   const [gender, setGender] = useState(userData.gender);
   const [sido, setSido] = useState(userData.sido || '');
   const [gugun, setGugun] = useState(userData.gugun || '');
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [profileInfo, setProfileInfo] = useState(userData.profile_info || '');
 
+  const URI = 'https://i11b308.p.ssafy.io'
 
   // 아이디, 닉네임 유효성 검사
   useEffect(() => {
@@ -30,13 +35,28 @@ const ProfileUpdateForm = ({ userData }) => {
 
   const handleProfileUpdate = () => {
     console.log('업데이트 정보 받기성공!');
+
+    const userData = {
+      id,
+      nickname,
+      profile,
+      birthdate,
+      gender,
+      sido,
+      gugun,
+      profileInfo,
+    }
+
+    // 회원정보 수정 요청
+    
+
     
     setOpenModal(true);
   }
 
-
   const closeModal = () => {
     setOpenModal(false);
+    // TODO Setting으로 가는 navigate 추가
   };
 
   return (
@@ -44,12 +64,15 @@ const ProfileUpdateForm = ({ userData }) => {
       <form onSubmit={(e) => e.preventDefault()}>
         <h2>회원정보 수정</h2>
         <div>
+         {/* 이미지 수정 컴포넌트 추가 */}
+        </div>
+        <div>
           {!isFormValid && <p>아이디를 입력해 주세요.</p>}
           <InputField
             type="text"
             placeholder="아이디"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
+            value={searchId}
+            onChange={(e) => setsearchId(e.target.value)}
             isRequired={true}
           />
           <AccountBtn 

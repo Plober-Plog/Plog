@@ -1,15 +1,18 @@
 import React from 'react';
-import PasswordFind from './pages/Account/PasswordFind';
-import SignUp from './pages/Account/SignUp';
-import Login from './pages/Account/Login';
-import PasswordUpdate from './pages/Account/PasswordUpdate';
-import ProfileUpdate from './pages/Account/ProfileUpdate';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import PlantDiaryWrite from './pages/Diary/PlantDiaryWrite';
+import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
+import PlantDetail from './pages/Plant/PlantDetail';
 
 function App() {
   return (
-    <div className="App">
- 
-    </div>
+    <Router>
+    <Routes>
+      <Route path="/" element={<PlantDetail />} />
+      <Route path="/write" element={<PlantDiaryWrite />} />
+      <Route path="/diary/:plantDiaryId" element={<PlantDiaryDetail />} />
+    </Routes>
+    </Router>
   );
 }
 
