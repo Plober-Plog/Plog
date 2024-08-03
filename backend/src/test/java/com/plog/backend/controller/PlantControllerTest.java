@@ -2,7 +2,7 @@ package com.plog.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plog.backend.domain.plant.controller.PlantController;
-import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
+import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.service.PlantService;
 import com.plog.backend.global.auth.PloberUserDetailService;
 import com.plog.backend.global.util.JwtTokenUtil;
@@ -35,6 +35,7 @@ public class PlantControllerTest {
 
     @MockBean
     private PloberUserDetailService userDetailsService;
+
     @Autowired
     PlantControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
@@ -43,7 +44,7 @@ public class PlantControllerTest {
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
     public void testGetPlant() throws Exception {
-        when(plantService.getPlant(1L)).thenReturn(new PlantGetResponse());
+        when(plantService.getPlant(1L)).thenReturn(new PlantGetResponseDto());
 
         mockMvc.perform(get("/user/plant/1/info"))
                 .andExpect(status().isOk());
