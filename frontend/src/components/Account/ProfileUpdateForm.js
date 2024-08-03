@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+
 import { getUserInfo, updateUserInfo } from '../../api';
 import useUserStore from '../../stores/useUserStore';
 
@@ -11,9 +14,10 @@ import ModalComplete from '../../components/Account/ModalComplete';
 
 
 const ProfileUpdateForm = ({ userData }) => {
+  
   // 회원 정보 변경 불가능
-  const email = useState(userData.email);
-  const source = useState(userData.source || '');
+  const email = userData.email;
+  const source = userData.source || '';
   // 회원 정보 변경 가능
   const [searchId, setsearchId] = useState(userData.searchId);
   const [profile, setProfile] = useState(userData.profile);
@@ -22,41 +26,54 @@ const ProfileUpdateForm = ({ userData }) => {
   const [gender, setGender] = useState(userData.gender);
   const [sido, setSido] = useState(userData.sido || '');
   const [gugun, setGugun] = useState(userData.gugun || '');
+  const [profileInfo, setProfileInfo] = useState(userData.profile_info || '');
+  const [isAd, setIsAd] = useState(userData.isAd);
+
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [profileInfo, setProfileInfo] = useState(userData.profile_info || '');
 
   const URI = 'https://i11b308.p.ssafy.io'
+  const navigate = useNavigate();
+
 
   // 아이디, 닉네임 유효성 검사
   useEffect(() => {
     setIsFormValid(id && nickname);
   }, [id, nickname]);
 
-  const handleProfileUpdate = () => {
-    console.log('업데이트 정보 받기성공!');
+  const handleProfileUpdate = async () => {
 
     const userData = {
-      id,
       nickname,
+      searchId,
       profile,
-      birthdate,
       gender,
+      birthdate,
+      source,
       sido,
       gugun,
       profileInfo,
+      isAd
     }
 
     // 회원정보 수정 요청
-    
-
-    
-    setOpenModal(true);
+    try {
+      const response = await axios.patch(`${URI}/api/user`, userData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer your_token_here',
+        },
+      });
+      console.log('회원 정보 수정 성공:', response);
+      setOpenModal(true);
+    } catch (error) {
+      console.error('회원 정보 수정 실패:', error);
+    }
   }
 
   const closeModal = () => {
     setOpenModal(false);
-    // TODO Setting으로 가는 navigate 추가
+    navigate('/setting');
   };
 
   return (
@@ -64,7 +81,7 @@ const ProfileUpdateForm = ({ userData }) => {
       <form onSubmit={(e) => e.preventDefault()}>
         <h2>회원정보 수정</h2>
         <div>
-         {/* 이미지 수정 컴포넌트 추가 */}
+         {/* TODO 이미지 수정 컴포넌트 추가 */}
         </div>
         <div>
           {!isFormValid && <p>아이디를 입력해 주세요.</p>}
