@@ -13,16 +13,18 @@ function App() {
       <header className='full-width'>
         {/* <Header /> */}
       </header>
-      <Router>
-      <Routes>
-        {/* <Route path="/plant/:plantId" element={<PlantDetail />} /> */}
-        <Route path="/plant" element={<PlantDetail />} />
-        {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
-        <Route path="/plant/register" element={<PlantRegister />} />
-        {/* API TEST 용 */}
-        {/* <Route path="/" element={<ApiTest />} /> */}
-      </Routes>
-    </Router>
+      <main class='content'>
+        <Router>
+          <Routes>
+            {/* <Route path="/plant/:plantId" element={<PlantDetail />} /> */}
+            <Route path="/plant" element={<PlantDetail />} />
+            {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
+            <Route path="/plant/register" element={<PlantRegister />} />
+            {/* API TEST 용 */}
+            {/* <Route path="/" element={<ApiTest />} /> */}
+          </Routes>
+        </Router>
+      </main>
     </div>
   );
 }
