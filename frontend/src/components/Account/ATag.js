@@ -1,5 +1,3 @@
-import './Login.css'
-
 const ATag = ({content, onClick}) => {
   return (
     <a onClick={onClick}>

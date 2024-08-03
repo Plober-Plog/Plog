@@ -10,6 +10,7 @@ import RadioField from './RadioField';
 import SelectField from './SelectField';
 import ModalComplete from './ModalComplete';
 import defaultProfile from '../../assets/image/defaultprofile.png';
+import './Login.css'
 
 const SignUpForm = () => {
   // 회원 정보
@@ -45,7 +46,7 @@ const SignUpForm = () => {
 
 
   // TODO 로그인 브랜치 확인 후 uri 경로 조정 
-  const API_URI = 'https://i11b308.p.ssafy.io/user';
+  const API_URI = 'https://i11b308.p.ssafy.io/api/user';
   
 
   // 유효성 검사
@@ -68,6 +69,7 @@ const SignUpForm = () => {
 
 
   // 아이디 중복확인
+  // TODO 중복될 경우 409conflict 에러로 반환
   const handleCheckSearchId = async () => {
     try {
       const response = await axios.get(`${API_URI}/${searchId}`);
