@@ -33,7 +33,7 @@ const SignUpForm = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(false);
   const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
-  const [EmailCheckMsg, setEmailCheckMsg] = useState('');
+  const [emailCheckMsg, setEmailCheckMsg] = useState('');
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [passwordCheckMsg, setPasswordCheckMsg] = useState('');
   const [passwordConfirmCheckMsg, setPasswordConfirmCheckMsg] = useState('');
@@ -44,9 +44,9 @@ const SignUpForm = () => {
   const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
   const [timer, setTimer] = useState(0);
 
-
+  // TODO Atag 속성 변경
   // TODO 로그인 브랜치 확인 후 uri 경로 조정 
-  const API_URI = 'https://i11b308.p.ssafy.io/api/user';
+  const URI = 'https://i11b308.p.ssafy.io/user';
   
 
   // 유효성 검사
@@ -67,25 +67,26 @@ const SignUpForm = () => {
   }, [searchId, isSearchIdAvailable, email, password, passwordConfirm, nickname, agreePersonal, isEmailVerified]);
 
 
-
   // 아이디 중복확인
-  // TODO 중복될 경우 409conflict 에러로 반환
   const handleCheckSearchId = async () => {
     try {
-      const response = await axios.get(`${API_URI}/${searchId}`);
-
-      if (response.data.result) {
-        setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
-        setIsSearchIdAvailable(false);
-      } else {
+      const response = await axios.get(`${URI}/${searchId}`);
+  
+      if (response.status === 200) {
         setSearchIdCheckMsg('사용 가능한 아이디입니다.');
         setIsSearchIdAvailable(true);
-        console.log('아이디 중복확인 성공!')
+        console.log('아이디 중복확인 성공!');
       }
     } catch (error) {
-      console.error('아이디 중복확인 실패: ', error);
-      setSearchIdCheckMsg('아이디 중복확인 중 오류가 발생했습니다.');
-      setIsSearchIdAvailable(false);
+      if (error.response && error.response.status === 409) {
+        setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
+        setIsSearchIdAvailable(false);
+        console.error('아이디 중복 확인: 이미 사용 중인 아이디입니다.');
+      } else {
+        setSearchIdCheckMsg('아이디 중복확인 중 오류가 발생했습니다.');
+        setIsSearchIdAvailable(false);
+        console.error('아이디 중복확인 실패: ', error);
+      }
     }
   };
 
@@ -95,20 +96,25 @@ const SignUpForm = () => {
 
     // 이메일 중복확인
     try {
-      const response = await axios.post(`${API_URI}/email`, { email });
-      console.log('이메일 중복 확인 성공!')
-      if (response.data.result) {
-        setEmailCheckMsg('이미 사용 중인 이메일입니다.');
-        return
+      const response = await axios.post(`${URI}/email/check`, { code: emailVerificationCode });
+      // 중복 X
+      if (response.status === 200) {
+        console.log('이메일 중복 확인 성공! (중복 X)');
+        setIsEmailVerified(true);
       }
-    } catch(error) {
-      console.log('이메일 인증 실패 : ', error);
-      return
+    } catch (error) {
+      // 중복 O
+      if (error.response && error.response.status === 409) {
+        console.error('이메일 중복: ', error);
+        // 실패
+      } else {
+        console.error('이메일 인증 확인 실패: ', error);
+      }
     }
 
     // 이메일 인증번호 전송
     try {
-      const response = await axios.post(`${API_URI}/email/send`, { email });
+      const response = await axios.post(`${URI}/email/send`, { email });
       console.log('이메일 인증번호 전송 성공!');
       setIsEmailVerificationSent(true);
       setTimer(300)
@@ -116,6 +122,7 @@ const SignUpForm = () => {
       console.log('이메일 인증번호 전송 실패 : ', error);
     }
   }
+
 
   // 타이머 변환
   const formatTime = (seconds) => {
@@ -141,7 +148,7 @@ const SignUpForm = () => {
   // 이메일 인증 코드 확인
   const handleVerifyEmailCode = async () => {
     try {
-      const response = await axios.post(`${API_URI}/email/check`, { code: emailVerificationCode });
+      const response = await axios.post(`${URI}/email/check`, { code: emailVerificationCode });
       console.log('이메일 인증 성공!');
       setIsEmailVerified(true);
     } catch (error) {
@@ -153,14 +160,14 @@ const SignUpForm = () => {
   // 회원가입 버튼 클릭
   const handleSignUp = async () => {
 
-    if (password !== passwordConfirm) {
-      alert('비밀번호가 일치하지 않습니다.');
-      return;
-    }
-    if (!agreePersonal) {
-      alert('개인정보 수집 동의를 완료해주세요');
-      return;
-    }
+    // if (password !== passwordConfirm) {
+    //   alert('비밀번호가 일치하지 않습니다.');
+    //   return;
+    // }
+    // if (!agreePersonal) {
+    //   alert('개인정보 수집 동의를 완료해주세요');
+    //   return;
+    // }
     
     const userInfo = {
       // TODO default 이미지 추가하기
@@ -183,7 +190,7 @@ const SignUpForm = () => {
 
     // 회원가입 요청
     try {
-      await axios.post(API_URI, userInfo);
+      await axios.post(URI, userInfo);
       setOpenModal(true);
     } catch (error) {
       console.error('회원가입 실패: ', error);
@@ -193,6 +200,7 @@ const SignUpForm = () => {
   const closeModal = () => {
     setOpenModal(false);
   };
+
 
   return (
     <div>
@@ -214,7 +222,7 @@ const SignUpForm = () => {
             }}
             isRequired={true}
           />
-          <ATag content="중복확인" onClick={handleCheckSearchId}/>
+          <ATag content="중복확인" onClick={handleCheckSearchId} disabled={searchIdCheckMsg}/>
           {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
         </div>
         <div>
@@ -236,10 +244,10 @@ const SignUpForm = () => {
           />
           <ATag
             content="인증하기"
-            disabled={!setEmailCheckMsg}
+            disabled={!emailCheckMsg}
             onClick={handleCheckEmail}
           />
-          {EmailCheckMsg && <p>{EmailCheckMsg}</p>}
+          {emailCheckMsg && <p>{emailCheckMsg}</p>}
         </div>
         {isEmailVerificationSent && (
           <div>
