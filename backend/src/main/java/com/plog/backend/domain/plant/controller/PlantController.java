@@ -28,15 +28,15 @@ public class PlantController {
 
     // =============== 식물 ===============
     @PostMapping
-    public ResponseEntity<BaseResponseBody> addPlant(@RequestHeader("Authorization") String token, @RequestBody PlantAddRequestDto plantAddRequest) {
-        log.info(">>> [POST] /user/plant - 요청 데이터: {}", plantAddRequest);
-        if (plantAddRequest.getNickname() == null || plantAddRequest.getNickname().isEmpty()) {
+    public ResponseEntity<BaseResponseBody> addPlant(@RequestHeader("Authorization") String token, @RequestBody PlantAddRequestDto plantAddRequestDto) {
+        log.info(">>> [POST] /user/plant - 요청 데이터: {}", plantAddRequestDto);
+        if (plantAddRequestDto.getNickname() == null || plantAddRequestDto.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
         }
         if (plantAddRequestDto.getBirthDate() == null) {
             throw new NotValidRequestException("birthDate는 필수 필드입니다.");
         }
-        plantService.addPlant(token, plantAddRequest);
+        plantService.addPlant(token, plantAddRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 등록이 완료되었습니다."));
     }
 
@@ -68,9 +68,9 @@ public class PlantController {
 
 
     @PatchMapping("/{plantId}")
-    public ResponseEntity<BaseResponseBody> updatePlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantAddRequestDto plantUpdateRequest) {
-        log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequest);
-        plantService.updatePlant(token, plantId, plantUpdateRequest);
+    public ResponseEntity<BaseResponseBody> updatePlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantAddRequestDto plantUpdateRequestDto) {
+        log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequestDto);
+        plantService.updatePlant(token, plantId, plantUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 수정이 완료되었습니다."));
     }
 
