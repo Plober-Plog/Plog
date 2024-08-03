@@ -2,6 +2,7 @@ package com.plog.backend.domain.user.service;
 
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
+import com.plog.backend.domain.user.dto.response.UserResponseDto;
 import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
@@ -43,7 +44,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(String email, String password) {
+    public UserResponseDto getUser(String token) {
+        log.info(">>> getUser - 토큰: {}", token);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> getUser - 추출된 사용자 ID: {}", userId);
+        User user = userRepository.findById(userId).get();
+
+        return UserResponseDto.builder()
+                .email(user.getEmail())
+                .searchId(user.getSearchId())
+                .nickname(user.getNickname())
+                .gender(user.getGender().getValue())
+                .birthDate(user.getBirthDate())
+                .sidoCode(user.getSidoCode())
+                .gugunCode(user.getGugunCode())
+                .profileInfo(user.getProfileInfo())
+                .isAd(user.isAd())
+                .build();
+    }
+
+    @Override
+    public String userSignIn(String email, String password) {
         log.info(">>> login - 이메일: {}, 패스워드: {}", email, password);
 
         User user = userRepository.findByEmail(email)
@@ -96,7 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean checkUser(String searchId) {
+    public Boolean checkUserSearchId(String searchId) {
         log.info(">>> checkUser - 검색 ID: {}", searchId);
         Optional<User> user = userRepository.findUserBySearchId(searchId);
         boolean isPresent = user.isPresent();
@@ -106,7 +127,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean checkEmail(String email) {
+    public Boolean checkUserEmail(String email) {
         log.info(">>> checkEmail - 이메일: {}", email);
         Optional<User> user = userRepository.findByEmail(email);
         boolean isPresent = user.isPresent();

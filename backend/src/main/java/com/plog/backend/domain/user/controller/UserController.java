@@ -4,6 +4,7 @@ import com.plog.backend.domain.user.dto.request.UserEmailCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignInRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
+import com.plog.backend.domain.user.dto.response.UserResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.service.UserServiceImpl;
@@ -79,7 +80,7 @@ public class UserController {
     @GetMapping("/{searchId}")
     public ResponseEntity<BaseResponseBody> checkSearchId(@PathVariable("searchId") String searchId) {
         log.info(">>> [GET] /user/{} - 아이디 확인 요청", searchId);
-        boolean result = userService.checkUser(searchId);
+        boolean result = userService.checkUserSearchId(searchId);
 
         if(result)
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "이미 존재하는 ID 입니다."));
@@ -91,7 +92,7 @@ public class UserController {
     @PostMapping("/email")
     public ResponseEntity<BaseResponseBody> checkEmail(@RequestBody UserEmailCheckRequestDto userEmailCheckRequestDto) {
         log.info(">>> [POST] /user/email - 이메일 중복 확인 요청 데이터: {}", userEmailCheckRequestDto);
-        boolean result = userService.checkEmail(userEmailCheckRequestDto.getEmail());
+        boolean result = userService.checkUserEmail(userEmailCheckRequestDto.getEmail());
         if(result)
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "이미 존재하는 Email 입니다."));
         else
@@ -100,10 +101,10 @@ public class UserController {
 
     // 로그인 JWT 적용
     @PostMapping("/login")
-    public ResponseEntity<BaseResponseBody> signIn(@Valid @RequestBody UserSignInRequestDto userSignInRequestDto) {
+    public ResponseEntity<BaseResponseBody> signIn(@RequestBody UserSignInRequestDto userSignInRequestDto) {
         log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", userSignInRequestDto);
         try {
-            String token = userService.login(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
+            String token = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "로그인이 완료되었습니다."));
         } catch (Exception e) {
             log.error(">>> [POST] /user/login - 로그인 실패: {}", e.getMessage());
@@ -111,8 +112,14 @@ public class UserController {
         }
     }
 
-
+    // 회원 정보 조회
+    @GetMapping
+    public ResponseEntity<UserResponseDto> getUser(@RequestHeader("Authorization") String token) {
+        log.info(">>> [GET] /user - 회원 정보 조회 토큰: {}", token);
+        return ResponseEntity.status(200).body(userService.getUser(token));
+    }
 }
 
 //TODO [장현준]
-// 5. api문서 수정하고, 변수 맞춰놓기
+// 1. api문서 수정하고, 변수 맞춰놓기
+// 2. JWT 토큰 expire, invalid 예외 적용하기
