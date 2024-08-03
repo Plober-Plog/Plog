@@ -1,6 +1,7 @@
 package com.plog.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.plog.backend.domain.diary.service.PlantDiaryService;
 import com.plog.backend.domain.plant.controller.PlantController;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.service.PlantService;
@@ -29,6 +30,9 @@ public class PlantControllerTest {
 
     @MockBean
     private PlantService plantService;
+
+    @MockBean
+    private PlantDiaryService plantDiaryService;
 
     @MockBean
     private JwtTokenUtil jwtTokenUtil;
@@ -104,10 +108,7 @@ public class PlantControllerTest {
 ////                        .hasNotified(false)
 ////                        .isFixed(false).build();
 ////            }
-////
-////            //TODO [강윤서]
-////            // - 권한이 없는 회원의 요청에 대한 401 예외 테스트
-////
+
 ////            @Test
 ////            @WithMockUser(username = "user", roles = {"USER"})
 ////            @DisplayName("닉네임 누락으로 등록 실패")

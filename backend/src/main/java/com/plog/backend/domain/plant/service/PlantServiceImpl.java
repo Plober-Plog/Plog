@@ -329,6 +329,7 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
+    @Transactional
     @Override
     public void updatePlantCheck(String token, Long plantId, PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
@@ -444,5 +445,3 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 }
-
-// TODO [강윤서] Update에 Transactional 붙여주기

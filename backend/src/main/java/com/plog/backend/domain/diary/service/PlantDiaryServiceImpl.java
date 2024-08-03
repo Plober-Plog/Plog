@@ -29,7 +29,7 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 
 @Slf4j
 @RequiredArgsConstructor
-@Service
+@Service("plantDiaryService")
 public class PlantDiaryServiceImpl implements PlantDiaryService {
     private static PlantDiaryRepository plantDiaryRepository;
     private static PlantRepository plantRepository;
