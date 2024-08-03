@@ -1,34 +1,34 @@
 package com.plog.backend.domain.plant.controller;
 
-import com.plog.backend.domain.plant.dto.PlantCheckDto;
-import com.plog.backend.domain.plant.dto.request.PlantCheckRequestDto;
+import com.plog.backend.domain.diary.dto.response.PlantDiaryGetSimpleResponseDto;
+import com.plog.backend.domain.diary.service.PlantDiaryService;
 import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
-import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
+import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
+import com.plog.backend.domain.plant.dto.request.PlantCheckUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
+import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.service.PlantService;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/user/plant")
 public class PlantController {
 
     private final PlantService plantService;
+    private final PlantDiaryService plantDiaryService;
 
-    @Autowired
-    public PlantController(PlantService plantService) {
-        this.plantService = plantService;
-    }
-
-    // 식물
+    // =============== 식물 ===============
     @PostMapping
-    public ResponseEntity<BaseResponseBody> addPlant(@RequestBody PlantAddRequestDto plantAddRequest) {
+    public ResponseEntity<BaseResponseBody> addPlant(@RequestHeader("Authorization") String token, @RequestBody PlantAddRequestDto plantAddRequest) {
         log.info(">>> [POST] /user/plant - 요청 데이터: {}", plantAddRequest);
         if (plantAddRequest.getNickname() == null || plantAddRequest.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
@@ -36,71 +36,118 @@ public class PlantController {
         if (plantAddRequest.getBirthDate() == null) {
             throw new NotValidRequestException("birthDate는 필수 필드입니다.");
         }
-        plantService.addPlant(plantAddRequest);
+        plantService.addPlant(token, plantAddRequest);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 등록이 완료되었습니다."));
     }
 
     @GetMapping("/{plantId}/info")
-    public ResponseEntity<PlantGetResponse> getPlants(@PathVariable Long plantId) {
+    public ResponseEntity<PlantGetResponseDto> getPlant(@PathVariable Long plantId) {
         log.info(">>> [GET] /user/plant/{}/info - 요청 ID: {}", plantId, plantId);
-        PlantGetResponse response = plantService.getPlant(plantId);
-        return ResponseEntity.status(200).body(response);
+        PlantGetResponseDto plantGetResponseDto = plantService.getPlant(plantId);
+        return ResponseEntity.status(200).body(plantGetResponseDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<PlantGetResponse>> getPlantList(@RequestParam String searchId) {
+    public ResponseEntity<List<PlantGetResponseDto>> getPlants(
+            @RequestParam String searchId,
+            @RequestParam(required = false) String plantTypeId,
+            @RequestParam(required = false) String otherPlantTypeId) {
+
         log.info(">>> [GET] /user/plant - 검색 ID: {}", searchId);
-        List<PlantGetResponse> response = plantService.getPlantList(searchId);
-        return ResponseEntity.status(200).body(response);
+
+        List<PlantGetResponseDto> plantGetResponseDtoList;
+
+        if (plantTypeId != null && otherPlantTypeId != null) {
+            plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(searchId, plantTypeId, otherPlantTypeId);
+        } else {
+            plantGetResponseDtoList = plantService.getPlantList(searchId);
+        }
+
+        return ResponseEntity.status(200).body(plantGetResponseDtoList);
     }
 
+
     @PatchMapping("/{plantId}")
-    public ResponseEntity<BaseResponseBody> updatePlant(@PathVariable Long plantId, @RequestBody PlantAddRequestDto plantUpdateRequest) {
+    public ResponseEntity<BaseResponseBody> updatePlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantAddRequestDto plantUpdateRequest) {
         log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequest);
-        plantService.updatePlant(plantId, plantUpdateRequest);
+        plantService.updatePlant(token, plantId, plantUpdateRequest);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 수정이 완료되었습니다."));
     }
 
     @DeleteMapping("/{plantId}")
-    public ResponseEntity<BaseResponseBody> deletePlant(@PathVariable Long plantId) {
+    public ResponseEntity<BaseResponseBody> deletePlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId) {
         log.info(">>> [DELETE] /user/plant/{} - 삭제 ID: {}", plantId, plantId);
-        plantService.deletePlant(plantId);
+        plantService.deletePlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 삭제가 완료되었습니다."));
     }
 
     @PatchMapping("/{plantId}/farewell")
-    public ResponseEntity<BaseResponseBody> farewellPlant(@PathVariable Long plantId) {
+    public ResponseEntity<BaseResponseBody> farewellPlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId) {
         log.info(">>> [PATCH] /user/plant/{}/farewell - 이별 ID: {}", plantId, plantId);
-        plantService.farewellPlant(plantId);
+        plantService.farewellPlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물과 이별이 완료되었습니다."));
     }
 
-    // 관리
+
+    // =============== 관리 ===============
+
     @PostMapping("/{plantId}/check")
-    public ResponseEntity<BaseResponseBody> addPlantCheck(@PathVariable Long plantId, @RequestBody PlantCheckDto plantCheckDto) {
-        log.info(">>> [POST] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckDto);
-        plantService.addPlantCheck(plantId, plantCheckDto);
+    public ResponseEntity<BaseResponseBody> addPlantCheck(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantCheckAddRequestDto plantCheckAddRequestDto) {
+        log.info(">>> [POST] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckAddRequestDto);
+        plantService.addPlantCheck(token, plantId, plantCheckAddRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 기록이 완료되었습니다."));
     }
 
     @PatchMapping("/{plantId}/check")
-    public ResponseEntity<BaseResponseBody> updatePlantCheck(@PathVariable Long plantId, @RequestBody PlantCheckDto plantCheckDto) {
-        log.info(">>> [PATCH] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckDto);
-        plantService.updatePlantCheck(plantId, plantCheckDto);
+    public ResponseEntity<BaseResponseBody> updatePlantCheck(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
+        log.info(">>> [PATCH] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckUpdateRequestDto);
+        plantService.updatePlantCheck(token, plantId, plantCheckUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 수정이 완료되었습니다."));
     }
 
     @GetMapping("/{plantId}/check")
-    public ResponseEntity<PlantCheckDto> getPlantCheck(@PathVariable Long plantId, @RequestParam("checkDate") String checkDate) {
-        log.info(">>> [GET] /user/plant/{}/check - 요청 날짜: {}", plantId, checkDate);
-        PlantCheckDto response = plantService.getPlantCheck(plantId, checkDate);
-        return ResponseEntity.status(200).body(response);
+    public ResponseEntity<?> handlePlantCheck(@PathVariable Long plantId,
+                                              @RequestParam(required = false) String checkDate,
+                                              @RequestParam(required = false) String year,
+                                              @RequestParam(required = false) String month) {
+        if (checkDate != null) {
+            log.info(">>> [GET] /user/plant/{}/check - 요청 날짜: {}", plantId, checkDate);
+            PlantCheckGetResponseDto plantCheckGetResponseDto = plantService.getPlantCheck(plantId, checkDate);
+            return ResponseEntity.status(200).body(plantCheckGetResponseDto);
+        } else if (year != null && month != null) {
+            log.info(">>> [GET] /user/plant/{}/check - 연도: {}, 월: {}", plantId, year, month);
+            List<PlantCheckGetResponseDto> plantCheckGetResponseDtoList = plantService.getPlantCheckByYearAndMonth(plantId, year, month);
+            return ResponseEntity.status(200).body(plantCheckGetResponseDtoList);
+        } else {
+            throw new NotValidRequestException();
+        }
     }
 
     @DeleteMapping("/{plantId}/check")
-    public ResponseEntity<BaseResponseBody> deletePlantCheck(@PathVariable Long plantId, @RequestBody PlantCheckRequestDto checkDate) {
+    public ResponseEntity<BaseResponseBody> deletePlantCheck(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestParam("checkDate") String checkDate) {
         log.info(">>> [DELETE] /user/plant/{}/check - 요청 데이터: {}", plantId, checkDate);
-        plantService.deletePlantCheck(plantId, checkDate);
+        plantService.deletePlantCheck(token, plantId, checkDate);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 삭제가 완료되었습니다."));
+    }
+
+    // ================== 일지 ==================
+    @GetMapping("/{plantId}/diary")
+    public ResponseEntity<List<PlantDiaryGetSimpleResponseDto>> getPlantDiary(@PathVariable Long plantId,
+                                                                              @RequestParam(required = false) String recordDate,
+                                                                              @RequestParam(required = false) String year,
+                                                                              @RequestParam(required = false) String month) {
+        if (recordDate != null) {
+            log.info(">>> [GET] /user/plant/{}/diary - 기록 날짜: {}", plantId, recordDate);
+            List<PlantDiaryGetSimpleResponseDto> plantDiaryGetResponseDtoList = plantDiaryService.getPlantDiaryByRecordDate(plantId, recordDate);
+            return ResponseEntity.status(200).body(plantDiaryGetResponseDtoList);
+        } else if (year != null && month != null) {
+            log.info(">>> [GET] /user/plant/{}/diary - 연도: {}, 월: {}", plantId, year, month);
+            List<PlantDiaryGetSimpleResponseDto> plantDiaryGetResponseDtoList = plantDiaryService.getPlantDiaryByYearAndMonth(plantId, year, month);
+            return ResponseEntity.status(200).body(plantDiaryGetResponseDtoList);
+        } else {
+            log.info(">>> [GET] /user/plant/{}/diary - 최근 5개 일지 조회", plantId);
+            List<PlantDiaryGetSimpleResponseDto> plantDiaryGetResponseDtoList = plantDiaryService.getPlantDiaryRecentFive(plantId);
+            return ResponseEntity.status(200).body(plantDiaryGetResponseDtoList);
+        }
     }
 }
