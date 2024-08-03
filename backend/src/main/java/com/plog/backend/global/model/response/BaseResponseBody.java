@@ -9,13 +9,13 @@ public class BaseResponseBody {
     String message = null;
     Integer statusCode = null;
 
-    public BaseResponseBody() {}
+    private BaseResponseBody() {}
 
-    public BaseResponseBody(Integer statusCode){
+    private BaseResponseBody(Integer statusCode){
         this.statusCode = statusCode;
     }
 
-    public BaseResponseBody(Integer statusCode, String message){
+    private BaseResponseBody(Integer statusCode, String message){
         this.statusCode = statusCode;
         this.message = message;
     }
