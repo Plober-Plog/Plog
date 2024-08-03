@@ -32,22 +32,28 @@ public class UserController {
     public ResponseEntity<BaseResponseBody> createUser(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
         log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
         if(userSignUpRequestDto.getEmail() == null || userSignUpRequestDto.getEmail().trim().isEmpty()) {
+            log.error(">>> [POST] /user - 이메일이 필수 필드입니다.");
             throw new NotValidRequestException("email은 필수 필드입니다.");
         }
         if (userSignUpRequestDto.getEmail().matches(EMAIL_PATTERN)) {
+            log.error(">>> [POST] /user - 유효하지 않은 이메일 형식입니다: {}", userSignUpRequestDto.getEmail());
             throw new InvalidEmailFormatException("Invalid email format");
         }
         if(userSignUpRequestDto.getPassword() == null || userSignUpRequestDto.getPassword().trim().isEmpty()) {
+            log.error(">>> [POST] /user - 비밀번호가 필수 필드입니다.");
             throw new NotValidRequestException("password는 필수 필드입니다.");
         }
         if(userSignUpRequestDto.getSearchId() == null || userSignUpRequestDto.getSearchId().trim().isEmpty()) {
+            log.error(">>> [POST] /user - 검색 ID가 필수 필드입니다.");
             throw new NotValidRequestException("검색 ID는 필수 입력 값입니다.");
         }
         if(userSignUpRequestDto.getNickname() == null || userSignUpRequestDto.getNickname().trim().isEmpty()) {
+            log.error(">>> [POST] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
 
         User user = userService.createUser(userSignUpRequestDto);
+        log.info(">>> [POST] /user - 회원 가입 완료: {}", user);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
     }
 
@@ -58,18 +64,22 @@ public class UserController {
 
         // userUpdateRequestDto 유효성 검사
         if(userUpdateRequestDto.getNickname() == null || userUpdateRequestDto.getNickname().trim().isEmpty()) {
+            log.error(">>> [PATCH] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
 
         if(userUpdateRequestDto.getSearchId() == null || userUpdateRequestDto.getSearchId().trim().isEmpty()) {
+            log.error(">>> [PATCH] /user - 검색 ID가 필수 필드입니다.");
             throw new NotValidRequestException("검색 ID는 필수 입력 값입니다.");
         }
 
         if (token.startsWith("Bearer ")) {
             token = token.substring(7); // "Bearer " 문자열 제거
+            log.info(">>> [PATCH] /user - Bearer 제거 후 토큰: {}", token);
         }
 
         User user = userService.updateUser(token, userUpdateRequestDto);
+        log.info(">>> [PATCH] /user - 회원 수정 완료: {}", user);
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 정보 수정이 완료되었습니다."));
     }
@@ -80,10 +90,13 @@ public class UserController {
         log.info(">>> [GET] /user/{} - 아이디 확인 요청", searchId);
         boolean result = userService.checkUserSearchId(searchId);
 
-        if(result)
+        if(result) {
+            log.warn(">>> [GET] /user/{} - 이미 존재하는 ID 입니다.", searchId);
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "이미 존재하는 ID 입니다."));
-        else
+        } else {
+            log.info(">>> [GET] /user/{} - 없는 검색 ID 입니다.", searchId);
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "없는 검색 ID 입니다."));
+        }
     }
 
     // 이메일 중복 확인
@@ -91,10 +104,13 @@ public class UserController {
     public ResponseEntity<BaseResponseBody> checkEmail(@RequestBody UserEmailCheckRequestDto userEmailCheckRequestDto) {
         log.info(">>> [POST] /user/email - 이메일 중복 확인 요청 데이터: {}", userEmailCheckRequestDto);
         boolean result = userService.checkUserEmail(userEmailCheckRequestDto.getEmail());
-        if(result)
+        if(result) {
+            log.warn(">>> [POST] /user/email - 이미 존재하는 Email 입니다.");
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "이미 존재하는 Email 입니다."));
-        else
+        } else {
+            log.info(">>> [POST] /user/email - 없는 검색 Email 입니다.");
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "없는 검색 Email 입니다."));
+        }
     }
 
     // 로그인 JWT 적용
@@ -103,6 +119,7 @@ public class UserController {
         log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", userSignInRequestDto);
         try {
             String token = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
+            log.info(">>> [POST] /user/login - 로그인 성공, 토큰: {}", token);
             return ResponseEntity.status(200).body(BaseResponseBody.of(200, "로그인이 완료되었습니다."));
         } catch (Exception e) {
             log.error(">>> [POST] /user/login - 로그인 실패: {}", e.getMessage());
@@ -114,7 +131,9 @@ public class UserController {
     @GetMapping
     public ResponseEntity<UserResponseDto> getUser(@RequestHeader("Authorization") String token) {
         log.info(">>> [GET] /user - 회원 정보 조회 요청: {}", token);
-        return ResponseEntity.status(200).body(userService.getUser(token));
+        UserResponseDto userResponseDto = userService.getUser(token);
+        log.info(">>> [GET] /user - 회원 정보 조회 완료: {}", userResponseDto);
+        return ResponseEntity.status(200).body(userResponseDto);
     }
 
     // 회원 탈퇴
@@ -124,19 +143,35 @@ public class UserController {
 
         userService.deleteUser(token);
 
-        return ResponseEntity.status(204).body(BaseResponseBody.of(204, "회원 탈퇴 되었습니다."));
+        log.info(">>> [DELETE] /user - 회원 탈퇴 완료");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(BaseResponseBody.of(204, "회원 탈퇴 되었습니다."));
     }
 
     // 현재 비밀번호 확인
     @PostMapping("/password")
-    public ResponseEntity<BaseResponseBody> checkPassword(@RequestHeader("Authorization") String token
-    , @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
-        log.info(">>> [GET] /user/password - 현재 비밀번호 확인 요청 : {}", token);
+    public ResponseEntity<BaseResponseBody> checkPassword(@RequestHeader("Authorization") String token, @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+        log.info(">>> [POST] /user/password - 현재 비밀번호 확인 요청 : {}", token);
         BaseResponseBody baseResponseBody = userService.checkPassword(token, userPasswordCheckRequestDto);
+        log.info(">>> [POST] /user/password - 비밀번호 확인 결과: {}", baseResponseBody);
         return ResponseEntity.status(baseResponseBody.getStatusCode()).body(baseResponseBody);
     }
 
+    // 비밀번호 수정
+    @PatchMapping("/password")
+    public ResponseEntity<BaseResponseBody> updatePassword(@RequestBody UserPasswordUpdateRequestDto requestDto) {
+        log.info(">>> [PATCH] /user/password - 비밀번호 수정 요청: {}", requestDto);
+        try {
+            userService.updatePassword(requestDto);
+            log.info(">>> [PATCH] /user/password - 비밀번호 수정 완료");
+            return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "비밀번호가 성공적으로 변경되었습니다."));
+        } catch (IllegalArgumentException e) {
+            log.error(">>> [PATCH] /user/password - 비밀번호 수정 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(404, e.getMessage()));
+        } catch (Exception e) {
+            log.error(">>> [PATCH] /user/password - 내부 서버 오류 발생: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponseBody.of(500, "내부 서버 오류가 발생했습니다."));
+        }
+    }
 }
 
-//TODO [장현준]
-// 1. JWT 토큰 expire, invalid 예외 적용하기
+//TODO [장현준] - JWT 토큰 expire, invalid 예외 헨들러

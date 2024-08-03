@@ -1,6 +1,7 @@
 package com.plog.backend.domain.user.service;
 
 import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
+import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
 import com.plog.backend.domain.user.dto.response.UserResponseDto;
@@ -50,7 +51,12 @@ public class UserServiceImpl implements UserService {
         log.info(">>> getUser - 토큰: {}", token);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> getUser - 추출된 사용자 ID: {}", userId);
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error(">>> getUser - 사용자를 찾을 수 없음: {}", userId);
+            return new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        });
+
+        log.info(">>> getUser - 사용자 정보: {}", user);
 
         return UserResponseDto.builder()
                 .email(user.getEmail())
@@ -75,10 +81,10 @@ public class UserServiceImpl implements UserService {
                     return new IllegalArgumentException("Invalid email or password");
                 });
 
-        log.info(">>> login - 사용자 찾음: {}", user.toString());
+        log.info(">>> login - 사용자 찾음: {}", user);
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUserId(), password)
+                new UsernamePasswordAuthenticationToken(email, password)
         );
 
         log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
@@ -164,14 +170,25 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     @Override
     public void deleteUser(String token) {
         log.info(">>> deleteUser - 토큰: {}", token);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> deleteUser - 추출된 사용자 ID: {}", userId);
-        // soft delete 진행
-        userRepository.findById(userId).get().setState(State.DELETED);
-        log.info(">>> deleteUser - 삭제 완료");
+
+        // 사용자 조회
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setState(State.DELETED);
+            userRepository.save(user);
+            log.info(">>> deleteUser - 사용자 삭제 완료: {}", user);
+        } else {
+            log.error(">>> deleteUser - 사용자를 찾을 수 없음: {}", userId);
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
     }
 
     @Override
@@ -180,7 +197,8 @@ public class UserServiceImpl implements UserService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> checkPassword - 추출된 사용자 ID: {}", userId);
 
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         boolean result = passwordEncoder.matches(userPasswordCheckRequestDto.getPassword(), user.getPassword());
 
@@ -189,5 +207,21 @@ public class UserServiceImpl implements UserService {
             return BaseResponseBody.of(200, "비밀번호가 확인 되었습니다.");
         else
             return BaseResponseBody.of(401, "비밀번호가 틀립니다.");
+    }
+
+    @Transactional
+    @Override
+    public void updatePassword(UserPasswordUpdateRequestDto userPasswordUpdateRequestDto) {
+        log.info(">>> updatePassword - RequestDto: {}", userPasswordUpdateRequestDto);
+
+        User user = userRepository.findById(userPasswordUpdateRequestDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 비밀번호 인코딩
+        String encodedPassword = passwordEncoder.encode(userPasswordUpdateRequestDto.getPassword());
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+        log.info(">>> updatePassword - 비밀번호 변경 성공");
     }
 }
