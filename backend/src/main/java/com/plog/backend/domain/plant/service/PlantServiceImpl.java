@@ -1,6 +1,5 @@
 package com.plog.backend.domain.plant.service;
 
-import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.service.ImageService;
 import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
@@ -41,13 +40,13 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 @Service("plantService")
 public class PlantServiceImpl implements PlantService {
 
-    private static PlantRepository plantRepository;
-    private static PlantTypeRepository plantTypeRepository;
-    private static OtherPlantTypeRepository otherPlantTypeRepository;
-    private static PlantCheckRepository plantCheckRepository;
-    private static UserRepository userRepository;
+    private final PlantRepository plantRepository;
+    private final PlantTypeRepository plantTypeRepository;
+    private final OtherPlantTypeRepository otherPlantTypeRepository;
+    private final PlantCheckRepository plantCheckRepository;
+    private final UserRepository userRepository;
 
-    private static ImageService imageService;
+    private final ImageService imageService;
 
     @Override
     public void addPlant(String token, PlantAddRequestDto plantAddRequest) {

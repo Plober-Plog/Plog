@@ -31,8 +31,8 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 @RequiredArgsConstructor
 @Service("plantDiaryService")
 public class PlantDiaryServiceImpl implements PlantDiaryService {
-    private static PlantDiaryRepository plantDiaryRepository;
-    private static PlantRepository plantRepository;
+    private final PlantDiaryRepository plantDiaryRepository;
+    private final PlantRepository plantRepository;
 
 
     @Override
