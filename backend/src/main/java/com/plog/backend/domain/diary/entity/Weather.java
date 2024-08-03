@@ -1,5 +1,7 @@
 package com.plog.backend.domain.diary.entity;
 
+import com.plog.backend.domain.user.entity.ChatAuth;
+
 public enum Weather {
     SUNNY(1),
     CLOUDY(2),
@@ -14,5 +16,14 @@ public enum Weather {
 
     public int getValue() {
         return value;
+    }
+
+    public static Weather weather(int value) {
+        for (Weather weather : Weather.values()) {
+            if (weather.getValue() == value) {
+                return weather;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value: " + value);
     }
 }

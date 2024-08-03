@@ -16,4 +16,13 @@ public enum Humidity {
     public int getValue() {
         return value;
     }
+
+    public static Humidity humidity(int value) {
+        for (Humidity humidity : Humidity.values()) {
+            if (humidity.getValue() == value) {
+                return humidity;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value: " + value);
+    }
 }
