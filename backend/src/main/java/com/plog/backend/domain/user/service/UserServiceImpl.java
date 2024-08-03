@@ -2,8 +2,7 @@ package com.plog.backend.domain.user.service;
 
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
-import com.plog.backend.domain.user.entity.Gender;
-import com.plog.backend.domain.user.entity.User;
+import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
@@ -75,19 +74,21 @@ public class UserServiceImpl implements UserService {
         log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpRequestDto);
         User user = User.builder()
                 .email(userSignUpRequestDto.getEmail())
-                .gender(userSignUpRequestDto.getGender())
-                .role(1)
-                .state(1)
+                .gender(Gender.gender(userSignUpRequestDto.getGender()))
+                .role(Role.role(1))
+                .state(State.state(1))
                 .profileInfo("안녕하세용")
                 .isAd(userSignUpRequestDto.isAd())
                 .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
-                .chatAuth(1)
+                .chatAuth(ChatAuth.chatAuth(1))
                 .searchId(userSignUpRequestDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
                 .sidoCode(userSignUpRequestDto.getSidoCode())
                 .gugunCode(userSignUpRequestDto.getGugunCode())
-                //TODO [장현준] - source, image, birthDate 추가
+                .source(userSignUpRequestDto.getSource())
+                .birthDate(userSignUpRequestDto.getBirthDate())
+                //TODO [장현준] - image 추가
                 .build();
         User savedUser = userRepository.save(user);
         log.info(">>> createUser - 사용자 생성됨: {}", savedUser);

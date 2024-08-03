@@ -5,8 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.util.Date;
-
+import java.time.LocalDate;
 @Getter
 @ToString
 @Builder
@@ -32,7 +31,7 @@ public class UserSignUpRequestDto {
     private int gender;
 
     @JsonProperty("birthDate")
-    private Date birthDate;
+    private LocalDate birthDate;
     private String source;
 
     private boolean isAd;

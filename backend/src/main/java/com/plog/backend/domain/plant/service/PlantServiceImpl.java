@@ -4,7 +4,7 @@ import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.service.ImageService;
 import com.plog.backend.domain.plant.dto.PlantCheckDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantRequestDto;
+import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponse;
 import com.plog.backend.domain.plant.entity.OtherPlantType;
@@ -29,7 +29,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +54,7 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public void addPlant(PlantRequestDto plantAddRequest) throws NotValidPlantTypeIdsException {
+    public void addPlant(PlantAddRequestDto plantAddRequest) throws NotValidPlantTypeIdsException {
         log.info(">>> addPlant - 요청 데이터: {}", plantAddRequest);
         Image image = imageService.uploadImage(plantAddRequest.getProfile());
         log.info(">>> addPlant - 이미지 업로드 완료: {}", image);
@@ -165,7 +164,7 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public void updatePlant(Long plantId, PlantRequestDto plantUpdateRequestDto) {
+    public void updatePlant(Long plantId, PlantAddRequestDto plantUpdateRequestDto) {
         log.info(">>> updatePlant - 요청 ID: {}, 업데이트 데이터: {}", plantId, plantUpdateRequestDto);
         int type = checkPlantType(
                 plantUpdateRequestDto.getPlantTypeId(),
@@ -329,3 +328,5 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 }
+
+// TODO [강윤서] Update에 Transactional 붙여주기
