@@ -1,81 +1,118 @@
 package com.plog.backend.domain.user.controller;
 
-import com.plog.backend.domain.user.dto.UserModifyDto;
-import com.plog.backend.domain.user.dto.UserSignIngDto;
-import com.plog.backend.domain.user.dto.UserSignUpDto;
+import com.plog.backend.domain.user.dto.request.UserEmailCheckRequestDto;
+import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
+import com.plog.backend.domain.user.dto.request.UserSignInRequestDto;
+import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
 import com.plog.backend.domain.user.entity.User;
+import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.service.UserServiceImpl;
+import com.plog.backend.global.exception.NotValidRequestException;
+import com.plog.backend.global.model.response.BaseResponseBody;
+import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 @Slf4j
 public class UserController {
     private final UserServiceImpl userService;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    public UserController(UserServiceImpl userService) {
-        this.userService = userService;
-    }
+    // 이메일 검증 패턴
+    private static final String EMAIL_PATTERN =
+            "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
     // 회원 가입
     @PostMapping
-    public ResponseEntity<User> registerUser(@Valid @RequestBody UserSignUpDto request) {
-        log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", request);
-        User user = userService.createUser(request);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<BaseResponseBody> createUser(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
+        log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
+        if(userSignUpRequestDto.getEmail() == null || userSignUpRequestDto.getEmail().trim().isEmpty()) {
+            throw new NotValidRequestException("email은 필수 필드입니다.");
+        }
+        if (userSignUpRequestDto.getEmail().matches(EMAIL_PATTERN)) {
+            throw new InvalidEmailFormatException("Invalid email format");
+        }
+        if(userSignUpRequestDto.getPassword() == null || userSignUpRequestDto.getPassword().trim().isEmpty()) {
+            throw new NotValidRequestException("password는 필수 필드입니다.");
+        }
+        if(userSignUpRequestDto.getSearchId() == null || userSignUpRequestDto.getSearchId().trim().isEmpty()) {
+            throw new NotValidRequestException("검색 ID는 필수 입력 값입니다.");
+        }
+        if(userSignUpRequestDto.getNickname() == null || userSignUpRequestDto.getNickname().trim().isEmpty()) {
+            throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
+        }
+
+        User user = userService.createUser(userSignUpRequestDto);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
     }
 
     // 회원 수정
     @PatchMapping
-    public ResponseEntity<User> modifyUser(@RequestHeader("Authorization") String token, @Valid @RequestBody UserModifyDto request) {
-        log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", request);
+    public ResponseEntity<BaseResponseBody> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+        log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", userUpdateRequestDto);
+
+        // userUpdateRequestDto 유효성 검사
+        if(userUpdateRequestDto.getNickname() == null || userUpdateRequestDto.getNickname().trim().isEmpty()) {
+            throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
+        }
+
+        if(userUpdateRequestDto.getSearchId() == null || userUpdateRequestDto.getSearchId().trim().isEmpty()) {
+            throw new NotValidRequestException("검색 ID는 필수 입력 값입니다.");
+        }
 
         if (token.startsWith("Bearer ")) {
             token = token.substring(7); // "Bearer " 문자열 제거
         }
 
-        User user = userService.updateUser(token, request);
-        return ResponseEntity.ok(user);
+        User user = userService.updateUser(token, userUpdateRequestDto);
+
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 정보 수정이 완료되었습니다."));
     }
 
-    // 아이디 확인
+    // 중복 아이디 확인
     @GetMapping("/{searchId}")
-    public ResponseEntity<Boolean> checkSearchId(@PathVariable("searchId") String searchId) {
+    public ResponseEntity<BaseResponseBody> checkSearchId(@PathVariable("searchId") String searchId) {
         log.info(">>> [GET] /user/{} - 아이디 확인 요청", searchId);
         boolean result = userService.checkUser(searchId);
-        return ResponseEntity.ok(result);
-    }
 
-    // 로그인 JWT 적용
-    @PostMapping("/login")
-    public ResponseEntity<String> signIn(@Valid @RequestBody UserSignIngDto request) {
-        log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", request);
-        try {
-            String token = userService.login(request.getEmail(), request.getPassword());
-            return ResponseEntity.ok(token);
-        } catch (Exception e) {
-            log.error(">>> [POST] /user/login - 로그인 실패: {}", e.getMessage());
-            return ResponseEntity.status(401).body("Invalid email or password");
-        }
+        if(result)
+            return ResponseEntity.status(409).body(BaseResponseBody.of(409, "이미 존재하는 ID 입니다."));
+        else
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "없는 검색 ID 입니다."));
     }
 
     // 이메일 중복 확인
     @PostMapping("/email")
-    public ResponseEntity<Boolean> checkEmail(@Valid @RequestBody UserSignIngDto request) {
-        log.info(">>> [POST] /user/email - 이메일 중복 확인 요청 데이터: {}", request);
-        boolean result = userService.checkEmail(request.getEmail());
-        return ResponseEntity.ok(result);
+    public ResponseEntity<BaseResponseBody> checkEmail(@RequestBody UserEmailCheckRequestDto userEmailCheckRequestDto) {
+        log.info(">>> [POST] /user/email - 이메일 중복 확인 요청 데이터: {}", userEmailCheckRequestDto);
+        boolean result = userService.checkEmail(userEmailCheckRequestDto.getEmail());
+        if(result)
+            return ResponseEntity.status(409).body(BaseResponseBody.of(409, "이미 존재하는 Email 입니다."));
+        else
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "없는 검색 Email 입니다."));
     }
+
+    // 로그인 JWT 적용
+    @PostMapping("/login")
+    public ResponseEntity<BaseResponseBody> signIn(@Valid @RequestBody UserSignInRequestDto userSignInRequestDto) {
+        log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", userSignInRequestDto);
+        try {
+            String token = userService.login(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "로그인이 완료되었습니다."));
+        } catch (Exception e) {
+            log.error(">>> [POST] /user/login - 로그인 실패: {}", e.getMessage());
+            return ResponseEntity.status(401).body(BaseResponseBody.of(401, "아이디 혹은 비밀번호가 맞지 않습니다."));
+        }
+    }
+
+
 }
 
 //TODO [장현준]
-// 1. ResponseBody 적용하기 => 보낼 값이 딱히 없다면, BaseResponseBody
-// 2. ResponseBody 에서 중복 부분은 중복이 되면 상태코드 409 발생
-// 3. 회원관리 필드들 다시 다 확인해보기
-// 4. log형식 >>>> 추가하기
-// 5.
+// 5. api문서 수정하고, 변수 맞춰놓기

@@ -1,7 +1,7 @@
 package com.plog.backend.domain.user.service;
 
-import com.plog.backend.domain.user.dto.UserModifyDto;
-import com.plog.backend.domain.user.dto.UserSignUpDto;
+import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
+import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
 import com.plog.backend.domain.user.entity.Gender;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
@@ -12,8 +12,6 @@ import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -73,20 +71,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(UserSignUpDto userSignUpDto) {
-        log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpDto);
+    public User createUser(UserSignUpRequestDto userSignUpRequestDto) {
+        log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpRequestDto);
         User user = User.builder()
-                .email(userSignUpDto.getEmail())
-                .gender(userSignUpDto.getGender())
+                .email(userSignUpRequestDto.getEmail())
+                .gender(userSignUpRequestDto.getGender())
                 .role(1)
                 .state(1)
                 .profileInfo("안녕하세용")
-                .isAd(userSignUpDto.isAd())
-                .nickname(userSignUpDto.getNickname())
+                .isAd(userSignUpRequestDto.isAd())
+                .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
                 .chatAuth(1)
-                .searchId(userSignUpDto.getSearchId())
-                .password(passwordEncoder.encode(userSignUpDto.getPassword()))
+                .searchId(userSignUpRequestDto.getSearchId())
+                .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
+                .sidoCode(userSignUpRequestDto.getSidoCode())
+                .gugunCode(userSignUpRequestDto.getGugunCode())
+                //TODO [장현준] - source, image, birthDate 추가
                 .build();
         User savedUser = userRepository.save(user);
         log.info(">>> createUser - 사용자 생성됨: {}", savedUser);
@@ -98,6 +99,7 @@ public class UserServiceImpl implements UserService {
         log.info(">>> checkUser - 검색 ID: {}", searchId);
         Optional<User> user = userRepository.findUserBySearchId(searchId);
         boolean isPresent = user.isPresent();
+
         log.info(">>> checkUser - 사용자 존재 여부: {}", isPresent);
         return isPresent;
     }
@@ -113,7 +115,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User updateUser(String token, UserModifyDto request) {
+    public User updateUser(String token, UserUpdateRequestDto request) {
         log.info(">>> updateUser - 토큰: {}, 요청 데이터: {}", token, request);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> updateUser - 추출된 사용자 ID: {}", userId);
@@ -138,3 +140,5 @@ public class UserServiceImpl implements UserService {
         }
     }
 }
+
+// TODO [장현준] Optional Exception 수정

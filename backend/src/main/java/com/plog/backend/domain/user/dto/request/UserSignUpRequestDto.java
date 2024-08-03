@@ -1,4 +1,4 @@
-package com.plog.backend.domain.user.dto;
+package com.plog.backend.domain.user.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
@@ -8,12 +8,11 @@ import lombok.*;
 import java.util.Date;
 
 @Getter
-@Setter
 @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserSignUpDto {
+public class UserSignUpRequestDto {
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
     @Email(message = "유효한 이메일 형식이 아닙니다.")
@@ -40,4 +39,6 @@ public class UserSignUpDto {
 
     private int sidoCode;
     private int gugunCode;
+
+    private String profileInfo;
 }
