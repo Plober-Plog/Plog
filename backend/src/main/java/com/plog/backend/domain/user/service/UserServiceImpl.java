@@ -1,5 +1,6 @@
 package com.plog.backend.domain.user.service;
 
+import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
 import com.plog.backend.domain.user.dto.response.UserResponseDto;
@@ -7,6 +8,7 @@ import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
+import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.DateUtil;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
@@ -171,6 +173,21 @@ public class UserServiceImpl implements UserService {
         userRepository.findById(userId).get().setState(State.DELETED);
         log.info(">>> deleteUser - 삭제 완료");
     }
-}
 
-// TODO [장현준] Optional Exception 수정
+    @Override
+    public BaseResponseBody checkPassword(String token, UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+        log.info(">>> checkPassword - 토큰, RequestDto: {}, {}", token, userPasswordCheckRequestDto.toString());
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> checkPassword - 추출된 사용자 ID: {}", userId);
+
+        User user = userRepository.findById(userId).get();
+
+        boolean result = passwordEncoder.matches(userPasswordCheckRequestDto.getPassword(), user.getPassword());
+
+        log.info(">>> checkPassword - 비교: {}", result);
+        if(result)
+            return BaseResponseBody.of(200, "비밀번호가 확인 되었습니다.");
+        else
+            return BaseResponseBody.of(401, "비밀번호가 틀립니다.");
+    }
+}

@@ -11,6 +11,7 @@ import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -126,8 +127,16 @@ public class UserController {
         return ResponseEntity.status(204).body(BaseResponseBody.of(204, "회원 탈퇴 되었습니다."));
     }
 
+    // 현재 비밀번호 확인
+    @PostMapping("/password")
+    public ResponseEntity<BaseResponseBody> checkPassword(@RequestHeader("Authorization") String token
+    , @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+        log.info(">>> [GET] /user/password - 현재 비밀번호 확인 요청 : {}", token);
+        BaseResponseBody baseResponseBody = userService.checkPassword(token, userPasswordCheckRequestDto);
+        return ResponseEntity.status(baseResponseBody.getStatusCode()).body(baseResponseBody);
+    }
+
 }
 
 //TODO [장현준]
-// 1. api문서 수정하고, 변수 맞춰놓기
-// 2. JWT 토큰 expire, invalid 예외 적용하기
+// 1. JWT 토큰 expire, invalid 예외 적용하기
