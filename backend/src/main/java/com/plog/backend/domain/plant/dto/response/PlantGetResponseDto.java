@@ -24,8 +24,8 @@ public class PlantGetResponseDto {
     @Schema(description = "식물 별명", example = "초록이")
     String nickname;
 
-    @Schema(description = "식물 프로필 URL", example = "http://example.com/profile.jpg")
-    String profile;
+//    @Schema(description = "식물 프로필 URL", example = "http://example.com/profile.jpg")
+//    String profile;
 
     @Schema(description = "식물 생일", example = "2023-01-01")
     LocalDate birthDate;

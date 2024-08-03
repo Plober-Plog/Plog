@@ -14,8 +14,8 @@ public class PlantTypeGetResponseDto {
     @Schema(description = "식물 이름", example = "몬스테라")
     String plantName;
 
-    @Schema(description = "식물 프로필 URL", example = "http://example.com/profile.jpg")
-    String profile;
+//    @Schema(description = "식물 프로필 URL", example = "http://example.com/profile.jpg")
+//    String profile;
 
     @Schema(description = "식물 관리 가이드", example = "이 식물은 밝은 간접광에서 잘 자랍니다.")
     String guide;

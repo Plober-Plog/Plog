@@ -3,6 +3,7 @@ package com.plog.backend.domain.plant.service;
 import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.request.PlantUpdateRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
@@ -21,7 +22,7 @@ public interface PlantService {
 
     List<PlantGetResponseDto> getPlantListByPlantTypeIds(String searchId, String plantTypeId, String otherPlantTypeId);
 
-    void updatePlant(String token, Long plantId, PlantAddRequestDto plantUpdateRequestDto);
+    void updatePlant(String token, Long plantId, PlantUpdateRequestDto plantUpdateRequestDto);
 
     void deletePlant(String token, Long plantId);
 

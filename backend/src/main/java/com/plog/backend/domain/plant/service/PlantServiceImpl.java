@@ -5,6 +5,7 @@ import com.plog.backend.domain.image.service.ImageService;
 import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.request.PlantUpdateRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
@@ -52,8 +53,8 @@ public class PlantServiceImpl implements PlantService {
     public void addPlant(String token, PlantAddRequestDto plantAddRequest) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> addPlant - 요청 데이터: {}", plantAddRequest);
-        Image image = imageService.uploadImage(plantAddRequest.getProfile());
-        log.info(">>> addPlant - 이미지 업로드 완료: {}", image);
+//        Image image = imageService.uploadImage(plantAddRequest.getProfile());
+//        log.info(">>> addPlant - 이미지 업로드 완료: {}", image);
 
         int type = checkPlantType(plantAddRequest.getPlantTypeId(), plantAddRequest.getOtherPlantTypeId());
 
@@ -72,7 +73,7 @@ public class PlantServiceImpl implements PlantService {
                             .plantType(plantType)
                             .otherPlantType(otherPlantType)
                             .nickname(plantAddRequest.getNickname())
-                            .image(image)
+//                            .image(image)
                             .birthDate(plantAddRequest.getBirthDate())
                             .hasNotified(plantAddRequest.isHasNotified())
                             .isFixed(plantAddRequest.isFixed())
@@ -90,7 +91,7 @@ public class PlantServiceImpl implements PlantService {
                             .plantType(plantType)
                             .otherPlantType(otherPlantType)
                             .nickname(plantAddRequest.getNickname())
-                            .image(image)
+//                            .image(image)
                             .birthDate(plantAddRequest.getBirthDate())
                             .hasNotified(plantAddRequest.isHasNotified())
                             .isFixed(plantAddRequest.isFixed())
@@ -119,7 +120,7 @@ public class PlantServiceImpl implements PlantService {
                     .plantId(p.getPlantId())
                     .plantTypeId(p.getPlantType().getPlantTypeId())
                     .nickname(p.getNickname())
-                    .profile(p.getImage().getImageUrl())
+//                    .profile(p.getImage().getImageUrl())
                     .birthDate(p.getBirthDate())
                     .hasNotified(p.isHasNotified())
                     .fixed(p.getFixed())
@@ -141,7 +142,7 @@ public class PlantServiceImpl implements PlantService {
             return PlantTypeGetResponseDto.builder()
                     .plantName(pt.getPlantName())
                     .guide(pt.getGuide())
-                    .profile(pt.getImage().getImageUrl())
+//                    .profile(pt.getImage().getImageUrl())
                     .waterInterval(pt.getWaterInterval())
                     .fertilizeInterval(pt.getFertilizeInterval())
                     .repotInterval(pt.getRepotInterval())
@@ -167,7 +168,7 @@ public class PlantServiceImpl implements PlantService {
                         .birthDate(p.getBirthDate())
                         .deathDate(p.getDeadDate())
                         .nickname(p.getNickname())
-                        .profile(p.getImage().getImageUrl())
+//                        .profile(p.getImage().getImageUrl())
                         .isDeleted(p.isDeleted())
                         .fixed(p.getFixed())
                         .build();
@@ -196,7 +197,7 @@ public class PlantServiceImpl implements PlantService {
                                 .birthDate(p.getBirthDate())
                                 .deathDate(p.getDeadDate())
                                 .nickname(p.getNickname())
-                                .profile(p.getImage().getImageUrl())
+//                                .profile(p.getImage().getImageUrl())
                                 .isDeleted(p.isDeleted())
                                 .fixed(p.getFixed())
                                 .build();
@@ -215,7 +216,7 @@ public class PlantServiceImpl implements PlantService {
                                 .birthDate(p.getBirthDate())
                                 .deathDate(p.getDeadDate())
                                 .nickname(p.getNickname())
-                                .profile(p.getImage().getImageUrl())
+//                                .profile(p.getImage().getImageUrl())
                                 .isDeleted(p.isDeleted())
                                 .fixed(p.getFixed())
                                 .build();
@@ -232,7 +233,7 @@ public class PlantServiceImpl implements PlantService {
 
     @Transactional
     @Override
-    public void updatePlant(String token, Long plantId, PlantAddRequestDto plantUpdateRequestDto) {
+    public void updatePlant(String token, Long plantId, PlantUpdateRequestDto plantUpdateRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> updatePlant - 요청 ID: {}, 업데이트 데이터: {}", plantId, plantUpdateRequestDto);
         int type = checkPlantType(
@@ -250,7 +251,7 @@ public class PlantServiceImpl implements PlantService {
             if (userId != p.getUser().getUserId())
                 throw new NotAuthorizedRequestException();
 
-            p.getImage().setImageUrl(plantUpdateRequestDto.getProfile());
+//            p.getImage().setImageUrl(plantUpdateRequestDto.getProfile());
             p.setNickname(plantUpdateRequestDto.getNickname());
             p.setBio(plantUpdateRequestDto.getBio());
             p.setBirthDate(plantUpdateRequestDto.getBirthDate());

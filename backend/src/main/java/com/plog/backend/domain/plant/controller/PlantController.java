@@ -5,6 +5,7 @@ import com.plog.backend.domain.diary.service.PlantDiaryService;
 import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantCheckUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.request.PlantUpdateRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.service.PlantService;
@@ -68,7 +69,7 @@ public class PlantController {
 
 
     @PatchMapping("/{plantId}")
-    public ResponseEntity<BaseResponseBody> updatePlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantAddRequestDto plantUpdateRequestDto) {
+    public ResponseEntity<BaseResponseBody> updatePlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantUpdateRequestDto plantUpdateRequestDto) {
         log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequestDto);
         plantService.updatePlant(token, plantId, plantUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 수정이 완료되었습니다."));

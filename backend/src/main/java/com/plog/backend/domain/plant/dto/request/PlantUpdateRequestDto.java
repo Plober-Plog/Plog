@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Setter
 @Builder
 @ToString
-public class PlantAddRequestDto {
+public class PlantUpdateRequestDto {
     @Schema(description = "기본 식물 종류 ID (2부터 유효한 값)", example = "2")
     Long plantTypeId;
 
