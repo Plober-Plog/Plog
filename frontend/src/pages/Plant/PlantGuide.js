@@ -10,7 +10,7 @@ const PlantGuide = () => {
 
   useEffect(() => {
     const fetchPlantData = async () => {
-      const URI = 'https://서버정보/api/user/plant-type/2';
+      const URI = 'https://i11b308.p.ssafy.io//api/user/plant-type/2';
       try {
         const response = await axios.get(URI);
         setPlantData(response.data);
