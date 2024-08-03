@@ -33,7 +33,7 @@ public class PlantController {
         if (plantAddRequest.getNickname() == null || plantAddRequest.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
         }
-        if (plantAddRequest.getBirthDate() == null) {
+        if (plantAddRequestDto.getBirthDate() == null) {
             throw new NotValidRequestException("birthDate는 필수 필드입니다.");
         }
         plantService.addPlant(token, plantAddRequest);

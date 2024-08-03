@@ -444,3 +444,5 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 }
+
+// TODO [강윤서] Update에 Transactional 붙여주기
