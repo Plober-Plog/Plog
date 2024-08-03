@@ -4,6 +4,8 @@ import com.plog.backend.domain.email.dto.request.EmailRequestDto;
 import com.plog.backend.domain.email.dto.request.EmailVerifyRequestDto;
 import com.plog.backend.domain.email.dto.response.VerifyResponseDto;
 import com.plog.backend.domain.email.service.EmailService;
+import com.plog.backend.domain.user.repository.UserRepositorySupport;
+import com.plog.backend.domain.user.service.UserServiceImpl;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 @RequestMapping("/user")
 public class EmailController {
     private final EmailService emailService;
+    private final UserRepositorySupport userRepositorySupport;
 
     // 인증코드 메일 발송
     @PostMapping("/email/send")
@@ -37,7 +40,7 @@ public class EmailController {
         try {
             boolean isVerify = emailService.verifyEmailCode(emailVerifyRequestDto.getEmail(), emailVerifyRequestDto.getVerifyCode());
             log.info(">>> [POST] /user/email/check - 인증코드 검증 결과: {}", isVerify);
-            verifyResponseDto = new VerifyResponseDto(isVerify, "");
+            verifyResponseDto = new VerifyResponseDto(isVerify, "", -1L);
             if(isVerify) {
                 verifyResponseDto.setMessage("인증코드가 확인 되었습니다.");
                 return ResponseEntity.status(HttpStatus.OK).body(verifyResponseDto);
@@ -48,7 +51,7 @@ public class EmailController {
         } catch (ResponseStatusException e) {
             if (e.getStatusCode() == HttpStatus.REQUEST_TIMEOUT) {
                 log.warn(">>> [POST] /user/email/check - 인증코드 만료: {}", emailVerifyRequestDto.getEmail());
-                verifyResponseDto = new VerifyResponseDto(false, "인증코드가 만료되었습니다.");
+                verifyResponseDto = new VerifyResponseDto(false, "인증코드가 만료되었습니다.", -1L);
                 return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(verifyResponseDto);
             } else {
                 log.error(">>> [POST] /user/email/check - 인증코드 검증 중 예외 발생", e);
@@ -74,7 +77,7 @@ public class EmailController {
         try {
             boolean isVerify = emailService.verifyEmailCode(emailVerifyRequestDto.getEmail(), emailVerifyRequestDto.getVerifyCode());
             log.info(">>> [POST] /user/password/check - 비밀번호 찾기 인증코드 검증 결과: {}", isVerify);
-            verifyResponseDto = new VerifyResponseDto(isVerify, "");
+            verifyResponseDto = new VerifyResponseDto(isVerify, "", -1L);
             if(isVerify) {
                 verifyResponseDto.setMessage("인증코드가 확인 되었습니다.");
                 return ResponseEntity.status(HttpStatus.OK).body(verifyResponseDto);
@@ -85,7 +88,9 @@ public class EmailController {
         } catch (ResponseStatusException e) {
             if (e.getStatusCode() == HttpStatus.REQUEST_TIMEOUT) {
                 log.warn(">>> [POST] /user/password/check - 인증코드 만료: {}", emailVerifyRequestDto.getEmail());
-                verifyResponseDto = new VerifyResponseDto(false, "인증코드가 만료되었습니다.");
+                verifyResponseDto = new VerifyResponseDto(false, "인증코드가 만료되었습니다.", -1L);
+                // 이메일로 userId를 반환
+                verifyResponseDto.setUserId(userRepositorySupport.findByEmail(emailVerifyRequestDto.getEmail()).getUserId());
                 return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(verifyResponseDto);
             } else {
                 log.error(">>> [POST] /user/password/check - 비밀번호 찾기 인증코드 검증 중 예외 발생", e);

@@ -10,4 +10,5 @@ import lombok.Setter;
 public class VerifyResponseDto {
     private boolean result;
     private String message;
+    private Long userId;
 }
