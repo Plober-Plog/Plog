@@ -1,12 +1,25 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../../pages/Plant/PlantDetail.css';
+import '../../../src/output.css';
 
-// id는 눌렀을 때 detail 페이지로 연결하는 데에 씀
-// 일지의 경우 일지 detail, sns의 경우 sns detail
+const ArticleCard = ({ id, log, thumbnail, type }) => {
 
-const ArticleCard = ({ id, log, thumbnail }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (type === 'plant') {
+      navigate(`/plant/diary/${id}`);
+    } else if (type === 'sns') {
+      navigate(`/sns/${id}`);
+    } else {
+      console.log(`type error${type}`);
+    }
+  };
+
   return (
-    <div>
-      <img src={thumbnail} alt="thumbnail" />
+    <div onClick={handleClick}>
+      <img src={thumbnail} alt="thumbnail" className='article-thumbnail'/>
       <p>{log}</p>
     </div>
   )

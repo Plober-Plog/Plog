@@ -1,15 +1,22 @@
 import React from 'react';
+import kakao from '../../assets/image/kakao.png'
+import naver from '../../assets/image/naver.png'
+import google from '../../assets/image/google.png'
 
 const SocialLogin = () => {
   return (
     <div className="social-login">
       <p>간편로그인</p>
       <div className="social-buttons">
-
-        {/* 버튼은 아이콘 받아와서 변경할 예정 */}
-        <button className="social-button kakao">카카오</button>
-        <button className="social-button naver">네이버</button>
-        <button className="social-button google">구글</button>
+        <button className="social-button">
+          <img src={kakao} alt="카카오" className="social-icon" />
+        </button>
+        <button className="social-button">
+          <img src={naver} alt="네이버" className="social-icon" />
+        </button>
+        <button className="social-button">
+          <img src={google} alt="구글" className="social-icon" />
+        </button>
       </div>
     </div>
   );

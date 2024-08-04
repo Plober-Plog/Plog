@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
-import AccountBtn from '../../components/Account/AccountBtn';
+import ATag from '../../components/Account/ATag';
 import ModalComplete from '../../components/Account/ModalComplete';
 
 const PasswordUpdate = () => {
@@ -87,7 +87,7 @@ const PasswordUpdate = () => {
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true} 
           />
-          <AccountBtn
+          <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
@@ -101,7 +101,7 @@ const PasswordUpdate = () => {
             onChange={(e) => setPasswordConfirm(e.target.value)}
             isRequired={true} 
           />
-          <AccountBtn
+          <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />

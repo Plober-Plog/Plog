@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
-import AccountBtn from '../../components/Account/AccountBtn';
+import ATag from '../../components/Account/ATag';
 
 const PasswordFind = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ const PasswordFind = () => {
             onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
           />
-          <AccountBtn 
+          <ATag 
             content='인증하기'
           />
         </div>
