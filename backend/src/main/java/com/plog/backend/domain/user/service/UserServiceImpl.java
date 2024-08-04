@@ -4,6 +4,7 @@ import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
+import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.domain.user.repository.UserRepository;
@@ -11,7 +12,6 @@ import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
-import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -192,7 +192,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BaseResponseBody checkPassword(String token, UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+    public UserCheckPasswordResponseDto checkPassword(String token, UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
         log.info(">>> checkPassword - 토큰, RequestDto: {}, {}", token, userPasswordCheckRequestDto.toString());
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> checkPassword - 추출된 사용자 ID: {}", userId);
@@ -203,10 +203,11 @@ public class UserServiceImpl implements UserService {
         boolean result = passwordEncoder.matches(userPasswordCheckRequestDto.getPassword(), user.getPassword());
 
         log.info(">>> checkPassword - 비교: {}", result);
+        UserCheckPasswordResponseDto responseDto = new UserCheckPasswordResponseDto();
         if(result)
-            return BaseResponseBody.of(200, "비밀번호가 확인 되었습니다.");
+            return UserCheckPasswordResponseDto.of(user.getUserId(), 200, "비밀번호가 확인 되었습니다.");
         else
-            return BaseResponseBody.of(401, "비밀번호가 틀립니다.");
+            return UserCheckPasswordResponseDto.of(-1L, 401, "비밀번호가 틀립니다.");
     }
 
     @Transactional
@@ -215,7 +216,7 @@ public class UserServiceImpl implements UserService {
         log.info(">>> updatePassword - RequestDto: {}", userPasswordUpdateRequestDto);
 
         User user = userRepository.findById(userPasswordUpdateRequestDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
 
         // 비밀번호 인코딩
         String encodedPassword = passwordEncoder.encode(userPasswordUpdateRequestDto.getPassword());

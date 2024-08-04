@@ -1,6 +1,7 @@
 package com.plog.backend.domain.user.controller;
 
 import com.plog.backend.domain.user.dto.request.*;
+import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
@@ -149,11 +150,11 @@ public class UserController {
 
     @Operation(summary = "현재 비밀번호 확인", description = "현재 비밀번호를 확인합니다.")
     @PostMapping("/password")
-    public ResponseEntity<BaseResponseBody> checkPassword(@RequestHeader("Authorization") String token, @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+    public ResponseEntity<UserCheckPasswordResponseDto> checkPassword(@RequestHeader("Authorization") String token, @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
         log.info(">>> [POST] /user/password - 현재 비밀번호 확인 요청 : {}", token);
-        BaseResponseBody baseResponseBody = userService.checkPassword(token, userPasswordCheckRequestDto);
-        log.info(">>> [POST] /user/password - 비밀번호 확인 결과: {}", baseResponseBody);
-        return ResponseEntity.status(baseResponseBody.getStatusCode()).body(baseResponseBody);
+        UserCheckPasswordResponseDto userCheckPasswordResponseDto = userService.checkPassword(token, userPasswordCheckRequestDto);
+        log.info(">>> [POST] /user/password - 비밀번호 확인 결과: {}", userCheckPasswordResponseDto);
+        return ResponseEntity.status(userCheckPasswordResponseDto.getStatusCode()).body(userCheckPasswordResponseDto);
     }
 
     @Operation(summary = "비밀번호 수정", description = "비밀번호를 수정합니다.")
