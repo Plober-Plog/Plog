@@ -62,9 +62,9 @@ public class GlobalExceptionHandler {
         ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
-                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.REQUEST_TIMEOUT.value(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(response, HttpStatus.REQUEST_TIMEOUT);
     }
 }
