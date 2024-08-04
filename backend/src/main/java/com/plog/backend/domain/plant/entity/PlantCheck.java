@@ -2,10 +2,8 @@ package com.plog.backend.domain.plant.entity;
 
 import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
@@ -37,5 +35,13 @@ public class PlantCheck extends BaseEntity {
     @Column
     private LocalDate checkDate;
 
+    @Builder
+    PlantCheck(Plant plant, boolean isWatered, boolean isFertilized, boolean isRepotted, LocalDate checkDate) {
+        this.plant = plant;
+        this.isWatered = isWatered;
+        this.isFertilized = isFertilized;
+        this.isRepotted = isRepotted;
+        this.checkDate = checkDate;
+    }
 
 }

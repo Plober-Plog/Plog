@@ -74,12 +74,13 @@ public class Plant extends BaseEntity {
     private LocalDate repotDate;
 
     @Builder
-    public Plant(PlantType plantType, OtherPlantType otherPlantType, String nickname, Image image, Date birthDate, boolean hasNotified, boolean isFixed) {
+    public Plant(User user, PlantType plantType, OtherPlantType otherPlantType, String nickname, Image image, LocalDate birthDate, boolean hasNotified, boolean isFixed) {
+        this.user = user;
         this.plantType = plantType;
         this.otherPlantType = otherPlantType;
         this.nickname = nickname;
         this.image = image;
-        this.birthDate = DateUtil.getInstance().convertToLocalDate(birthDate);
+        this.birthDate = birthDate;
         this.hasNotified = hasNotified;
         this.fixed = isFixed ? 1 : 255; //TODO [강윤서] - fixed 계산
     }

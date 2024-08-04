@@ -1,35 +1,42 @@
 package com.plog.backend.domain.plant.service;
 
-import com.plog.backend.domain.plant.dto.PlantCheckDto;
+import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
 import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantCheckRequestDto;
-import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
-import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponse;
+import com.plog.backend.domain.plant.dto.request.PlantCheckUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.request.PlantUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
+import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
+import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
+import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 
 import java.util.List;
 
 public interface PlantService {
-    void addPlant(PlantAddRequestDto plantAddRequest);
+    void addPlant(String token, PlantAddRequestDto plantAddRequest);
 
-    PlantGetResponse getPlant(Long plantId);
+    PlantGetResponseDto getPlant(Long plantId);
 
-    PlantTypeGetResponse getPlantType(Long plantTypeId);
+    PlantTypeGetResponseDto getPlantType(Long plantTypeId);
 
-    List<PlantGetResponse> getPlantList(String searchId);
+    List<PlantGetResponseDto> getPlantList(String searchId);
 
-    void updatePlant(Long plantId, PlantAddRequestDto plantUpdateRequestDto);
+    List<PlantGetResponseDto> getPlantListByPlantTypeIds(String searchId, String plantTypeId, String otherPlantTypeId);
 
-    void deletePlant(Long plantId);
+    void updatePlant(String token, Long plantId, PlantUpdateRequestDto plantUpdateRequestDto);
 
-    void farewellPlant(Long plantId);
+    void deletePlant(String token, Long plantId);
 
-    void addPlantCheck(Long plantId, PlantCheckDto plantCheckDto);
+    void farewellPlant(String token, Long plantId);
 
-    void updatePlantCheck(Long plantId, PlantCheckDto plantCheckDto);
+    void addPlantCheck (String token, Long plantId, PlantCheckAddRequestDto plantCheckAddRequestDto);
 
-    PlantCheckDto getPlantCheck(Long plantId, String checkDate);
+    void updatePlantCheck(String token, Long plantId, PlantCheckUpdateRequestDto plantCheckUpdateRequestDto);
 
-    void deletePlantCheck(Long plantId, PlantCheckRequestDto checkDate);
+    PlantCheckGetResponseDto getPlantCheck(Long plantId, String checkDate);
+
+    void deletePlantCheck(String token, Long plantId, String checkDate);
+
+    List<PlantCheckGetResponseDto> getPlantCheckByYearAndMonth(Long plantId, String year, String month);
 
     //TODO [강윤서]
     // - 1. isFixed(boolean) 을 fixed(int) 로 변환하는 로직

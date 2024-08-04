@@ -1,6 +1,7 @@
 package com.plog.backend.global.exception.handler;
 
 import com.plog.backend.global.exception.EntityNotFoundException;
+import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.model.ExceptionResponseDto;
 import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,5 +39,18 @@ public class GlobalExceptionHandler {
                 ex.getMessage()
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotAuthorizedRequestException.class)
+    public ResponseEntity<ExceptionResponseDto> handleNotAuthorizedRequestException(
+            NotAuthorizedRequestException ex, HttpServletRequest request) {
+        log.error("NotAuthorizedRequestException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        ExceptionResponseDto response = ExceptionResponseDto.of(
+                request.getMethod(),
+                request.getRequestURI(),
+                HttpStatus.FORBIDDEN.value(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

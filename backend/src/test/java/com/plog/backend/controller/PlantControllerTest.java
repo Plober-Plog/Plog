@@ -1,8 +1,9 @@
 package com.plog.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.plog.backend.domain.diary.service.PlantDiaryService;
 import com.plog.backend.domain.plant.controller.PlantController;
-import com.plog.backend.domain.plant.dto.response.PlantGetResponse;
+import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.service.PlantService;
 import com.plog.backend.global.auth.PloberUserDetailService;
 import com.plog.backend.global.util.JwtTokenUtil;
@@ -31,10 +32,14 @@ public class PlantControllerTest {
     private PlantService plantService;
 
     @MockBean
+    private PlantDiaryService plantDiaryService;
+
+    @MockBean
     private JwtTokenUtil jwtTokenUtil;
 
     @MockBean
     private PloberUserDetailService userDetailsService;
+
     @Autowired
     PlantControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
@@ -43,7 +48,7 @@ public class PlantControllerTest {
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
     public void testGetPlant() throws Exception {
-        when(plantService.getPlant(1L)).thenReturn(new PlantGetResponse());
+        when(plantService.getPlant(1L)).thenReturn(new PlantGetResponseDto());
 
         mockMvc.perform(get("/user/plant/1/info"))
                 .andExpect(status().isOk());
@@ -103,10 +108,7 @@ public class PlantControllerTest {
 ////                        .hasNotified(false)
 ////                        .isFixed(false).build();
 ////            }
-////
-////            //TODO [강윤서]
-////            // - 권한이 없는 회원의 요청에 대한 401 예외 테스트
-////
+
 ////            @Test
 ////            @WithMockUser(username = "user", roles = {"USER"})
 ////            @DisplayName("닉네임 누락으로 등록 실패")
