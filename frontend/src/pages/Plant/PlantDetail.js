@@ -47,7 +47,7 @@ const PlantDetail = ({ plantId = 1 }) => {
   return (
     <div>
       <ProfileHeader
-        data={plantData}
+        data={{ ...plantData, plantId }}
         type="plant"
       />
       <CustomCalendar 

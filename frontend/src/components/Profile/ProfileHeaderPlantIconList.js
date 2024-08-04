@@ -18,8 +18,14 @@ const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed }) => {
   }
 
   const handleWriteDiary = () => {
-    navigate('plant/diary/write');
-  }
+    const currentDate = new Date().toISOString().split('T')[0];
+    navigate(`/plant/${plantId}/diary/write`, {
+      state: {
+        date: currentDate,
+        plantId: plantId
+      }
+    });
+  };
 
   return (
     <div>
