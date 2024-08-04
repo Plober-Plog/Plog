@@ -1,5 +1,7 @@
 package com.plog.backend.domain.user.entity;
 
+import com.plog.backend.global.exception.NotValidRequestException;
+
 public enum Gender {
     NA(1),
     MALE(2),
@@ -21,6 +23,6 @@ public enum Gender {
                 return gender;
             }
         }
-        throw new IllegalArgumentException("Invalid value: " + value);
+        throw new NotValidRequestException("Invalid value: " + value);
     }
 }

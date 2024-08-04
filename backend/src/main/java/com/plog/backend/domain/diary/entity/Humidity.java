@@ -1,5 +1,7 @@
 package com.plog.backend.domain.diary.entity;
 
+import com.plog.backend.global.exception.NotValidRequestException;
+
 public enum Humidity {
     DRY(1),
     CLEAN(2),
@@ -23,6 +25,6 @@ public enum Humidity {
                 return humidity;
             }
         }
-        throw new IllegalArgumentException("Invalid value: " + value);
+        throw new NotValidRequestException("Invalid value: " + value);
     }
 }
