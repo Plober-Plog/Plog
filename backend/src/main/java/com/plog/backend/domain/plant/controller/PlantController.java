@@ -29,7 +29,9 @@ public class PlantController {
 
     // =============== 식물 ===============
     @PostMapping
-    public ResponseEntity<BaseResponseBody> addPlant(@RequestHeader("Authorization") String token, @RequestBody PlantAddRequestDto plantAddRequestDto) {
+    public ResponseEntity<BaseResponseBody> addPlant(
+            @RequestHeader("Authorization") String token,
+            @RequestBody PlantAddRequestDto plantAddRequestDto) {
         log.info(">>> [POST] /user/plant - 요청 데이터: {}", plantAddRequestDto);
         if (plantAddRequestDto.getNickname() == null || plantAddRequestDto.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
@@ -49,19 +51,25 @@ public class PlantController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PlantGetResponseDto>> getPlants(
+    public ResponseEntity<List<PlantGetResponseDto>> getPlantList(
             @RequestParam String searchId,
             @RequestParam(required = false) String plantTypeId,
-            @RequestParam(required = false) String otherPlantTypeId) {
+            @RequestParam(required = false) String otherPlantTypeId,
+            @RequestParam(required = false, defaultValue = "0") String page,
+            @RequestParam(required = false, defaultValue = "15") String size) {
 
-        log.info(">>> [GET] /user/plant - 검색 ID: {}", searchId);
+        log.info(">>> [GET] /user/plant - 검색 ID: {}, plantTypeId: {}, " +
+                        "otherPlantTypeId: {}, page: {}, size: {}",
+                searchId, plantTypeId, otherPlantTypeId, page, size);
 
         List<PlantGetResponseDto> plantGetResponseDtoList;
 
         if (plantTypeId != null && otherPlantTypeId != null) {
-            plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(searchId, plantTypeId, otherPlantTypeId);
+            plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(searchId,
+                    plantTypeId, otherPlantTypeId, Integer.parseInt(page), Integer.parseInt(size));
         } else {
-            plantGetResponseDtoList = plantService.getPlantList(searchId);
+            plantGetResponseDtoList = plantService.getPlantList(searchId,
+                    Integer.parseInt(page), Integer.parseInt(size));
         }
 
         return ResponseEntity.status(200).body(plantGetResponseDtoList);
@@ -69,38 +77,59 @@ public class PlantController {
 
 
     @PatchMapping("/{plantId}")
-    public ResponseEntity<BaseResponseBody> updatePlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantUpdateRequestDto plantUpdateRequestDto) {
+    public ResponseEntity<BaseResponseBody> updatePlant(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long plantId,
+            @RequestBody PlantUpdateRequestDto plantUpdateRequestDto) {
         log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequestDto);
         plantService.updatePlant(token, plantId, plantUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 수정이 완료되었습니다."));
     }
 
     @DeleteMapping("/{plantId}")
-    public ResponseEntity<BaseResponseBody> deletePlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId) {
+    public ResponseEntity<BaseResponseBody> deletePlant(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long plantId) {
         log.info(">>> [DELETE] /user/plant/{} - 삭제 ID: {}", plantId, plantId);
         plantService.deletePlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 삭제가 완료되었습니다."));
     }
 
     @PatchMapping("/{plantId}/farewell")
-    public ResponseEntity<BaseResponseBody> farewellPlant(@RequestHeader("Authorization") String token, @PathVariable Long plantId) {
+    public ResponseEntity<BaseResponseBody> farewellPlant(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long plantId) {
         log.info(">>> [PATCH] /user/plant/{}/farewell - 이별 ID: {}", plantId, plantId);
         plantService.farewellPlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물과 이별이 완료되었습니다."));
     }
 
+    @PatchMapping("/{plantId}/fix")
+    public ResponseEntity<BaseResponseBody> updateFixStatePlant(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long plantId) {
+        log.info(">>> [PATCH] /user/plant/{}/fix - 고정할 Id: {}", plantId, plantId);
+        plantService.updateFixStatePlant(token, plantId);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물의 고정 여부 수정이 완료되었습니다."));
+    }
 
     // =============== 관리 ===============
 
     @PostMapping("/{plantId}/check")
-    public ResponseEntity<BaseResponseBody> addPlantCheck(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantCheckAddRequestDto plantCheckAddRequestDto) {
+    public ResponseEntity<BaseResponseBody> addPlantCheck(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long plantId,
+            @RequestBody PlantCheckAddRequestDto plantCheckAddRequestDto) {
         log.info(">>> [POST] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckAddRequestDto);
         plantService.addPlantCheck(token, plantId, plantCheckAddRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 기록이 완료되었습니다."));
     }
 
     @PatchMapping("/{plantId}/check")
-    public ResponseEntity<BaseResponseBody> updatePlantCheck(@RequestHeader("Authorization") String token, @PathVariable Long plantId, @RequestBody PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
+    public ResponseEntity<BaseResponseBody> updatePlantCheck(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long plantId,
+            @RequestBody PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
         log.info(">>> [PATCH] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckUpdateRequestDto);
         plantService.updatePlantCheck(token, plantId, plantCheckUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 수정이 완료되었습니다."));

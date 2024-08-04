@@ -42,9 +42,6 @@ public class PlantGetResponseDto {
     @Schema(description = "고정 여부", example = "true")
     boolean isFixed;
 
-    @Schema(description = "정렬 순서", example = "1")
-    int order;
-
     @Schema(description = "삭제 여부", example = "false")
     boolean isDeleted;
 }

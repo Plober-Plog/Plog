@@ -18,15 +18,17 @@ public interface PlantService {
 
     PlantTypeGetResponseDto getPlantType(Long plantTypeId);
 
-    List<PlantGetResponseDto> getPlantList(String searchId);
+    List<PlantGetResponseDto> getPlantList(String searchId, int page, int size);
 
-    List<PlantGetResponseDto> getPlantListByPlantTypeIds(String searchId, String plantTypeId, String otherPlantTypeId);
+    List<PlantGetResponseDto> getPlantListByPlantTypeIds(String searchId, String plantTypeId, String otherPlantTypeId, int page, int size);
 
     void updatePlant(String token, Long plantId, PlantUpdateRequestDto plantUpdateRequestDto);
 
     void deletePlant(String token, Long plantId);
 
     void farewellPlant(String token, Long plantId);
+
+    void updateFixStatePlant(String token, Long plantId);
 
     void addPlantCheck (String token, Long plantId, PlantCheckAddRequestDto plantCheckAddRequestDto);
 
@@ -39,6 +41,5 @@ public interface PlantService {
     List<PlantCheckGetResponseDto> getPlantCheckByYearAndMonth(Long plantId, String year, String month);
 
     //TODO [강윤서]
-    // - 1. isFixed(boolean) 을 fixed(int) 로 변환하는 로직
-    // - 2. waterDate, fertilizeDate, repotDate 계산하는 로직
+    // - waterDate, fertilizeDate, repotDate 계산하는 로직
 }
