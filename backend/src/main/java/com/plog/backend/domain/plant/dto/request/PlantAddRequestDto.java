@@ -2,6 +2,7 @@ package com.plog.backend.domain.plant.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -18,8 +19,8 @@ public class PlantAddRequestDto {
     @Schema(description = "기타 식물 종류 ID (2부터 유효한 값)", example = "1")
     private Long otherPlantTypeId;
 
-//    @Schema(description = "프로필 URL", example = "http://example.com/profile.jpg")
-//    private String profile;
+    @Schema(description = "프로필 사진")
+    private MultipartFile profile;
 
     @Schema(description = "식물 소개", example = "이 식물은 밝은 간접광에서 잘 자랍니다.")
     private String bio;

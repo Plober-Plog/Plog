@@ -13,6 +13,9 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class PlantCheckUpdateRequestDto {
+    @Schema(description = "식물 ID", example = "1")
+    private Long plantId;
+
     @Schema(description = "물 주기 여부", example = "true")
     @JsonProperty("isWatered")
     private boolean isWatered;
