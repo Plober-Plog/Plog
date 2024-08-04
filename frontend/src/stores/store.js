@@ -5,6 +5,7 @@ const useAuthStore = create((set) => ({
   token: localStorage.getItem('token'),
   // 토큰 저장
   setToken: (token) => {
+    console.log('토큰 저장 함수 호출:', token);
     set({ token });
     localStorage.setItem('token', token);
   },
