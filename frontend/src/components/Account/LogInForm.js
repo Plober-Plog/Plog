@@ -2,15 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from'react-router-dom';
 import axios from 'axios';
 import sha256 from 'js-sha256';
-import useAuthStore from './useAuthStore';
+import useAuthStore from '../../stores/store';
 
 import Btn from '../Common/Btn';
 import InputField from './InputField';
 import ATag from './ATag';
-
-import './Login.css'
-
-
 
 
 const LoginForm = () => {
@@ -31,31 +27,32 @@ const LoginForm = () => {
 
     const userInfo = {
       email,
-      password: sha256(password),
+      "password": sha256(password),
     }
 
     console.log('로그인 정보 받기 성공!')
     console.log(userInfo)
 
     try {
-      const response = await axios.post(`${URI}/user`, userInfo)
+      const response = await axios.post(`${URI}/user/login`, userInfo)
 
-      const { accessToken, refreshToken } = response.data;
+      console.log(response.data)
 
       if (response.data.token) {
         console.log('로그인 성공!');
         setToken(response.data.token); // JWT 토큰을 Zustand 스토어에 저장
-        navigate('/'); // 로그인 성공시 메인으로 이동
+        navigate('/');
       } else {
         setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
       }
 
-      // TODO 메인으로 이동
-
     } catch (error) {
       console.error('로그인 오류:', error);
+      if (error.response) {
+        console.error('서버 응답 데이터:', error.response.data);
+        setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
+      }
     }
-
   };
 
   return (
