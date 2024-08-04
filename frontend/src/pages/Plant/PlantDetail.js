@@ -54,6 +54,7 @@ const PlantDetail = ({ plantId = 1 }) => {
         plantId={plantId}
       />
       <ArticleCardList 
+        plantId={plantId}
         articles={articles}
         type="plant"
       />
