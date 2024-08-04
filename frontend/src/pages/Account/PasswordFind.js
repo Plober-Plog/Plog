@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
-import AccountBtn from '../../components/Account/AccountBtn';
+import ATag from '../../components/Account/ATag';
 
 const PasswordFind = () => {
   // input fields

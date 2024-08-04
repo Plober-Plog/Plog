@@ -3,11 +3,11 @@ import Btn from '../Common/Btn';
 import InputField from './InputField';
 import SelectField from './SelectField';
 import RadioField from './RadioField';
-import AccountBtn from './AccountBtn';
+import ATag from './ATag';
 import ModalComplete from '../../components/Account/ModalComplete';
 
 const ProfileUpdateForm = ({ userData }) => {
-  const [id, setId] = useState(userData.id);
+  const [searchId, setSearchId] = useState(userData.setSearchID);
   const [email, setEmail] = useState(userData.email);
   const [nickname, setNickname] = useState(userData.nickname || '');
   const [birthdate, setBirthdate] = useState(userData.birthdate || '');
@@ -19,8 +19,8 @@ const ProfileUpdateForm = ({ userData }) => {
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    setIsFormValid(id && nickname);
-  }, [id, nickname]);
+    setIsFormValid(searchId && nickname);
+  }, [searchId, nickname]);
 
   const handleProfileUpdate = () => {
     console.log('업데이트 정보 받기성공!');
@@ -41,11 +41,11 @@ const ProfileUpdateForm = ({ userData }) => {
           <InputField
             type="text"
             placeholder="아이디"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
+            value={searchId}
+            onChange={(e) => setSearchId(e.target.value)}
             isRequired={true}
           />
-          <AccountBtn 
+          <ATag 
             content='중복확인'
           />
         </div>
