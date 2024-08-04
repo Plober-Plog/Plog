@@ -1,0 +1,63 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import axios from 'axios';
+
+import Btn from '../../components/Common/Btn';
+import InputField from '../../components/Account/InputField';
+import './Account.css';
+
+const PasswordChange = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [passwordConfirmMsg, setPasswordConfirmMsg] = useState('');
+  const URI = "https://i11b308.p.ssafy.io/api"
+  const navigate = useNavigate();
+
+  const handlePasswordChange = async (event) => {
+    event.preventDefault();
+
+    // 현재 비밀번호 확인 요청
+    try {
+      const response = await axios.post(`${URI}/user/password`, {
+        // TODO 머지 후 header 추가
+        password: currentPassword,
+      });
+
+      if (response.status === 200) {
+        console.log('비밀번호 확인 성공!')
+        // TODO passwordUpdate로 이동
+        // TODO searchId 넘겨주기
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        console.log('비밀번호 불일치!')
+        setPasswordConfirmMsg('비밀번호가 일치하지 않습니다.');
+      } else {
+        console.log('비밀번호 확인 실패!')
+        setPasswordConfirmMsg('비밀번호 확인에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+    console.log('비밀번호 확인 : ', currentPassword);
+  };
+
+  return (
+    <div className="container">
+      <h2 className="title">비밀번호 변경</h2>
+      <form onSubmit={handlePasswordChange} className="form">
+        <InputField
+          type="password"
+          placeholder="현재 비밀번호"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          required
+          className="input"
+        />
+        {/* TODO 머지 후 비밀번호 보이기 버튼 추가 */}
+        {passwordConfirmMsg && <p className="error">{passwordConfirmMsg}</p>}
+        <Btn content="비밀번호 확인" type="submit" className="button"/>
+      </form>
+    </div>
+  );
+};
+
+
+export default PasswordChange;

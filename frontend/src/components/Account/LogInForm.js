@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Btn from '../Common/Btn';
 import InputField from './InputField';
 import AccountBtn from './AccountBtn';
