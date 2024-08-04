@@ -55,21 +55,20 @@ public class PlantController {
             @RequestParam String searchId,
             @RequestParam(required = false) String plantTypeId,
             @RequestParam(required = false) String otherPlantTypeId,
-            @RequestParam(required = false, defaultValue = "0") String page,
-            @RequestParam(required = false, defaultValue = "15") String size) {
+            @RequestParam(required = false, defaultValue = "0") String page) {
 
         log.info(">>> [GET] /user/plant - 검색 ID: {}, plantTypeId: {}, " +
-                        "otherPlantTypeId: {}, page: {}, size: {}",
-                searchId, plantTypeId, otherPlantTypeId, page, size);
+                        "otherPlantTypeId: {}, page: {}",
+                searchId, plantTypeId, otherPlantTypeId, page);
 
         List<PlantGetResponseDto> plantGetResponseDtoList;
 
         if (plantTypeId != null && otherPlantTypeId != null) {
             plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(searchId,
-                    plantTypeId, otherPlantTypeId, Integer.parseInt(page), Integer.parseInt(size));
+                    plantTypeId, otherPlantTypeId, Integer.parseInt(page));
         } else {
             plantGetResponseDtoList = plantService.getPlantList(searchId,
-                    Integer.parseInt(page), Integer.parseInt(size));
+                    Integer.parseInt(page));
         }
 
         return ResponseEntity.status(200).body(plantGetResponseDtoList);

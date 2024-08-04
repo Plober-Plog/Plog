@@ -18,9 +18,9 @@ public interface PlantService {
 
     PlantTypeGetResponseDto getPlantType(Long plantTypeId);
 
-    List<PlantGetResponseDto> getPlantList(String searchId, int page, int size);
+    List<PlantGetResponseDto> getPlantList(String searchId, int page);
 
-    List<PlantGetResponseDto> getPlantListByPlantTypeIds(String searchId, String plantTypeId, String otherPlantTypeId, int page, int size);
+    List<PlantGetResponseDto> getPlantListByPlantTypeIds(String searchId, String plantTypeId, String otherPlantTypeId, int page);
 
     void updatePlant(String token, Long plantId, PlantUpdateRequestDto plantUpdateRequestDto);
 
