@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import sha256 from 'js-sha256';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
@@ -10,13 +9,15 @@ import AccountBtn from '../../components/Account/AccountBtn';
 import ModalComplete from '../../components/Account/ModalComplete';
 
 const PasswordUpdate = () => {
+  // location
+  const location = useLocation();
+  const { userId } = location.state;
   // input fields
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   // 변경 버튼 클릭
   const [openModal, setOpenModal] = useState(false);
-  const [updateResult, setUpdateResult] = useState(null);
   // 비밀번호 유효성 확인
   const [passwordError, setPasswordError] = useState('');
   const [passwordConfirmError, setPasswordConfirmError] = useState('');
@@ -58,19 +59,8 @@ const PasswordUpdate = () => {
     
     // 비밀번호 변경 요청
     try {
-      const result = await axios.patch(
-        '/user/password',
-        {
-        // TODO userId 추가
-        password: sha256(password)
-        },
-      {
-        headers: {
-          // TODO api.js에서 토큰 추가
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      });
-      setUpdateResult(result.result);
+      const response = await axios.patch('/user/password', { userId, password: sha256(password) })
+      console.log('비밀번호 변경 성공:', response.data);
       setOpenModal(true);
     } catch (error) {
       console.error('비밀번호 변경 실패:', error);
