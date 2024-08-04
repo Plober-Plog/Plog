@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.plog.backend.global.exception.NotValidRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -102,7 +103,7 @@ public class JwtTokenUtil {
             return Long.parseLong(decodedJWT.getSubject());
         } catch (JWTVerificationException ex) {
             // 검증 실패 시 예외 처리
-            throw new IllegalArgumentException("Invalid JWT token", ex);
+            throw new NotValidRequestException("유효하지 않은 토큰 입니다. " + ex.getMessage());
         }
     }
 

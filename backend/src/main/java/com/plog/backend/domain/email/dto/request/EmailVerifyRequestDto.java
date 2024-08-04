@@ -1,4 +1,4 @@
-package com.plog.backend.domain.email.dto;
+package com.plog.backend.domain.email.dto.request;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,9 +8,9 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class RequestEmailDto {
+public class EmailVerifyRequestDto {
     // 이메일 주소
-    private String mail;
+    private String email;
     // 인증 코드
     private String verifyCode;
 }
