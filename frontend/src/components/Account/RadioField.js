@@ -2,7 +2,7 @@ import React from 'react';
 
 const RadioField = ({ selectedValue, onChange, options }) => {
   return (
-    <div className="radio-field">
+    <div>
       {options.map(option => (
         <label key={option.value}>
           <input 

@@ -1,5 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Account
+import SignUp from './pages/Account/SignUp';
+import ProfileUpdate from './pages/Account/ProfileUpdate';
+import PasswordUpdate from './pages/Account/PasswordUpdate';
+import Setting from './pages/Account/Setting';
+// Plant
 import PlantDiaryWrite from './pages/Diary/PlantDiaryWrite';
 import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
 import PlantDetail from './pages/Plant/PlantDetail';
@@ -16,6 +23,12 @@ function App() {
       <main class='content'>
         <Router>
           <Routes>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profileupdate" element={<ProfileUpdate />} />
+            <Route path="/password/update" element={<PasswordUpdate />} />
+            <Route path="/setting" element={<Setting />} />
+            <Route path="/write" element={<PlantDiaryWrite />} />
+            <Route path="/diary/:plantDiaryId" element={<PlantDiaryDetail />} />
             {/* <Route path="/plant/:plantId" element={<PlantDetail />} /> */}
             <Route path="/plant" element={<PlantDetail />} />
             {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
