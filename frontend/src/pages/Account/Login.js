@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginForm from '../../components/Account/LoginForm';
-import SocialLogIn from '../../components/Account/SocialLogIn';
+import SocialLogin from '../../components/Account/SocialLogin';
 import ATag from '../../components/Account/ATag';
 import Btn from '../../components/Common/Btn';
 // import '../../components/Account/Login.css';
@@ -26,7 +26,7 @@ const Login = () => {
           }
         }
       />
-      <SocialLogIn />
+      <SocialLogin />
     </div>
   );
 }
