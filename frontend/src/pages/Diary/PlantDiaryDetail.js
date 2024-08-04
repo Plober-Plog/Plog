@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImageSlider from '../../components/Common/ImgSlider';
 import DiaryWeather from '../../components/Diary/DiaryWeather';
@@ -15,11 +16,12 @@ import humidityIcon from '../../assets/icon/humidity.png';
 import temperatureIcon from '../../assets/icon/temperature.png'; 
 import './PlantDiaryWrite.css';
 
-const PlantDiaryDetail = ({ currentDate, plantId }) => {
+const PlantDiaryDetail = () => {
   const location = useLocation();
-  // TODO 여기도 plantDiaryId에 저장된 정보받아올듯
-  const { plantDiaryId, date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state; 
   const navigate = useNavigate();
+  // TODO 여기도 plantDiaryId에 저장된 정보받아올듯
+  const { plantDiaryId, plantId, date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state; 
+  // const plantDiaryId = location.state?.plantDiaryId;
 
   // 임시 데이터
   const weathercontent = '강수량이 많고 습도가 높으니 어쩌구 하세요'
@@ -34,19 +36,19 @@ const PlantDiaryDetail = ({ currentDate, plantId }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/user/diary/${plantDiaryId}`, {
-        method: 'DELETE',
+      const response = await axios.delete(`/api/user/diary/${plantDiaryId}`, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer YOUR_TOKEN_HERE`,
         },
       });
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error('일지 삭제에 실패했습니다.');
       }
 
       alert('일지가 삭제되었습니다.');
-      navigate('/'); 
+      navigate(`plant/${plantId}`); 
     } catch (error) {
       console.error('Error:', error);
       alert('일지 삭제 중 오류가 발생했습니다.');
@@ -58,7 +60,7 @@ const PlantDiaryDetail = ({ currentDate, plantId }) => {
       <div className="section">
         <h2>{date}</h2>
         <DiaryTodoIcon src={pencilIcon} onClick={handleEdit} />
-        <Btn content="X" onClick={() => navigate('/')} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
+        <Btn content="X" onClick={() => navigate(`plant/${plantId}`)} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
       </div>
       <div className="section">
         <ImageSlider imgs={imgs} />

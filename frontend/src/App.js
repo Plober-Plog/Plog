@@ -16,6 +16,7 @@ function App() {
       <main class='content'>
         <Router>
           <Routes>
+            <Route path="/write" element={<PlantDiaryWrite />} />
             {/* <Route path="/plant/:plantId" element={<PlantDetail />} /> */}
             <Route path="/plant" element={<PlantDetail />} />
             {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
