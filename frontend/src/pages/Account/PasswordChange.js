@@ -24,8 +24,8 @@ const PasswordChange = () => {
 
       if (response.status === 200) {
         console.log('비밀번호 확인 성공!')
-        // TODO passwordUpdate로 이동
-        // TODO searchId 넘겨주기
+        const userId = response.data.userId;
+        navigate('/password/update', { state: { userId } });
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
