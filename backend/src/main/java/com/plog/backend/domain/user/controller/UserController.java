@@ -121,7 +121,7 @@ public class UserController {
         try {
             String token = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
             log.info(">>> [POST] /user/login - 로그인 성공, 토큰: {}", token);
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "로그인이 완료되었습니다."));
+            return ResponseEntity.status(200).header("Authorization", token).body(BaseResponseBody.of(200, "로그인이 완료되었습니다."));
         } catch (Exception e) {
             log.error(">>> [POST] /user/login - 로그인 실패: {}", e.getMessage());
             return ResponseEntity.status(401).body(BaseResponseBody.of(401, "아이디 혹은 비밀번호가 맞지 않습니다."));

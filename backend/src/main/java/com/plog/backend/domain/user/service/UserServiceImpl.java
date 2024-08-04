@@ -77,14 +77,19 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.error(">>> login - 이메일 또는 패스워드 잘못됨: {}", email);
-                    return new NotValidRequestException ("이메일 혹은 패스워드가 잘 못되었습니다.");
+                    log.error(">>> login - 이메일 잘못됨: {}", email);
+                    return new NotValidRequestException("이메일 혹은 패스워드가 잘 못 되었습니다.");
                 });
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            log.error(">>> login - 패스워드 잘못됨: {}", email);
+            throw new NotValidRequestException("이메일 혹은 패스워드가 잘 못되었습니다.");
+        }
 
         log.info(">>> login - 사용자 찾음: {}", user);
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+                new UsernamePasswordAuthenticationToken(user.getUserId(), password)
         );
 
         log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
