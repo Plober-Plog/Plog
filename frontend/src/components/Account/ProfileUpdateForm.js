@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
-import SelectField from './SelectField';
-import RadioField from './RadioField';
+import RadioField from '../Common/RadioField';
+import SelectField from '../Common/SelectField';
 import ATag from '../Common/ATag';
 import ModalComplete from '../Common/ModalComplete';
 

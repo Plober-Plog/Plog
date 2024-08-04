@@ -10,15 +10,16 @@ import ATag from '../Common/ATag';
 
 
 const LoginForm = () => {
+  // input fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
   // 로그인 확인
   const [loginError, setLoginError] = useState('');
   const setToken = useAuthStore((state) => state.setToken);
 
   const navigate = useNavigate();
+
 
   // 로그인 버튼 클릭
   const handleLogin = async(event) => {

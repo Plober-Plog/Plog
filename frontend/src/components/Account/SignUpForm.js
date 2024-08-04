@@ -5,11 +5,10 @@ import sha256 from 'js-sha256';
 import Btn from '../Common/Btn';
 import ATag from '../Common/ATag';
 import InputField from '../Common/InputField';
-import RadioField from './RadioField';
-import SelectField from './SelectField';
+import RadioField from '../Common/RadioField';
+import SelectField from '../Common/SelectField';
 import ModalComplete from '../Common/ModalComplete';
 import defaultProfile from '../../assets/image/defaultprofile.png';
-import './Login.css'
 
 const SignUpForm = () => {
   // 회원 정보
