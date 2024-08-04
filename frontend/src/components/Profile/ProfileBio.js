@@ -2,13 +2,18 @@ import React from 'react';
 import ProfileHeaderPlantIconList from './ProfileHeaderPlantIconList';
 import ProfileHeaderUserBtnList from './ProfileHeaderUserBtnList';
 
-const ProfileBio = ({ bio, type, plantId }) => {
+const ProfileBio = ({ bio, type, plantId, hasNotified }) => {
 
   const renderBtnIcon = () => {
     if (type === 'user') {
       return <ProfileHeaderUserBtnList />;
     } else if (type === 'plant') {
-      return <ProfileHeaderPlantIconList plantId={plantId}/>;
+      return (
+        <ProfileHeaderPlantIconList 
+          plantId={plantId}
+          hasNotified={hasNotified}
+        />
+      )
     } else {
       console.error(`Error. type이 ${type}로 들어왔습니다.`)
       return <p>잘못된 정보입니다.</p>;

@@ -48,17 +48,17 @@ const CustomCalendar = ({ plantId }) => {
 
   const formatDate = (date) => {
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월을 2자리 문자열로 포맷팅
-    const day = date.getDate().toString().padStart(2, '0'); // 일을 2자리 문자열로 포맷팅
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
   const handleClickDay = (date) => {
-    const formattedDate = formatDate(date); // 날짜를 YYYY-MM-DD 형식으로 포맷팅
+    const formattedDate = formatDate(date);
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     const checkRecord = checkRecords.find(check => new Date(check.checkDate).toDateString() === date.toDateString());
     if (diaryRecord || checkRecord) {
-      navigate(`/plant/${plantId}/${formattedDate}`); // 날짜가 있는 경우 상세 페이지로 이동
+      navigate(`/plant/${plantId}/${formattedDate}`);
     } else {
       navigate(`/plant/${plantId}/${formattedDate}/write`, {
         state: {
@@ -68,22 +68,6 @@ const CustomCalendar = ({ plantId }) => {
       });
     }
   };
-
-  // const handleClickDay = (date) => {
-  //   const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
-  //   const checkRecord = checkRecords.find(check => new Date(check.checkDate).toDateString() === date.toDateString());
-  //   if (diaryRecord || checkRecord) {
-  //     navigate(`/plant/${plantId}/${date.toISOString().split('T')[0]}`);
-  //   } else {
-  //     navigate(`/plant/${plantId}/${date.toISOString().split('T')[0]}/diary/write`, {
-  //       // 혹시 몰라 state로도 날짜를 보내겠습니다.
-  //       state: {
-  //         date: date.toISOString().split('T')[0],
-  //         plantId: plantId
-  //       }
-  //     });
-  //   }
-  // };
 
   const colorBox = ({ date }) => {
 

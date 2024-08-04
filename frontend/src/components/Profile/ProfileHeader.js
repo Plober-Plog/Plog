@@ -24,6 +24,7 @@ const ProfileHeader = ({ data = {}, type }) => {
     profileData.nickname = data.nickname || 'Unknown Nickname';
     profileData.bio = data.bio || '자기소개가 비어 있습니다.';
     profileData.plantId = data.plantId || null;
+    profileData.hasNotified = data.hasNotified;
   } else if (type === 'user') {
     profileData.imgSrc = data.profile || '';
     profileData.title = data.title || 'Unknown Plant';
@@ -47,6 +48,7 @@ const ProfileHeader = ({ data = {}, type }) => {
         bio={profileData.bio}
         type={type}
         plantId={profileData.plantId}
+        hasNotified={profileData.hasNotified}
       />
     </div>
   );
