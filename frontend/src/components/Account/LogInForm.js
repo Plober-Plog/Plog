@@ -6,10 +6,11 @@ import useAuthStore from './useAuthStore';
 
 import Btn from '../Common/Btn';
 import InputField from './InputField';
-import AccountBtn from './AccountBtn';
+import ATag from './ATag';
 
-// const API_URL = 'http://localhost:3000/api/user';
-const API_URL = 'https://i11b308.p.ssafy.io/api/user';
+import './Login.css'
+
+
 
 
 const LoginForm = () => {
@@ -20,6 +21,9 @@ const LoginForm = () => {
   // 로그인 확인
   const [loginError, setLoginError] = useState('');
   const setToken = useAuthStore((state) => state.setToken);
+
+  const URI = 'https://i11b308.p.ssafy.io/api';
+  const navigate = useNavigate();
 
   // 로그인 버튼 클릭
   const handleLogin = async(event) => {
@@ -34,13 +38,14 @@ const LoginForm = () => {
     console.log(userInfo)
 
     try {
-      const response = await axios.post(API_URL, userInfo)
+      const response = await axios.post(`${URI}/user`, userInfo)
 
       const { accessToken, refreshToken } = response.data;
 
       if (response.data.token) {
         console.log('로그인 성공!');
         setToken(response.data.token); // JWT 토큰을 Zustand 스토어에 저장
+        navigate('/'); // 로그인 성공시 메인으로 이동
       } else {
         setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
       }
@@ -73,7 +78,7 @@ const LoginForm = () => {
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true} 
           />
-          <AccountBtn
+          <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
