@@ -37,8 +37,6 @@ const CustomCalendar = ({ plantId }) => {
       setCheckRecords([...prevData.checkData, ...currentData.checkData, ...nextData.checkData]);
       setDiaryRecords([...prevData.diaryData, ...currentData.diaryData, ...nextData.diaryData]);
 
-      // console.log("Check Records:", [...prevData.checkData, ...currentData.checkData, ...nextData.checkData]);
-      // console.log("Diary Records:", [...prevData.diaryData, ...currentData.diaryData, ...nextData.diaryData]);
     } catch (error) {
       console.error("Calendar Error:", error);
     }
@@ -48,18 +46,44 @@ const CustomCalendar = ({ plantId }) => {
     fetchRecords(value);
   }, [value, plantId]);
 
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월을 2자리 문자열로 포맷팅
+    const day = date.getDate().toString().padStart(2, '0'); // 일을 2자리 문자열로 포맷팅
+    return `${year}-${month}-${day}`;
+  };
+
   const handleClickDay = (date) => {
+    const formattedDate = formatDate(date); // 날짜를 YYYY-MM-DD 형식으로 포맷팅
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
-    if (diaryRecord) {
-      navigate(`/plant/${plantId}/${diaryRecord.plantDiaryId}`);
+    const checkRecord = checkRecords.find(check => new Date(check.checkDate).toDateString() === date.toDateString());
+    if (diaryRecord || checkRecord) {
+      navigate(`/plant/${plantId}/${formattedDate}`); // 날짜가 있는 경우 상세 페이지로 이동
     } else {
-      navigate(`/plant/${plantId}/diary/write`, {
+      navigate(`/plant/${plantId}/${formattedDate}/write`, {
         state: {
-          date: date.toISOString().split('T')[0]
+          date: formattedDate,
+          plantId: plantId
         }
       });
     }
   };
+
+  // const handleClickDay = (date) => {
+  //   const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
+  //   const checkRecord = checkRecords.find(check => new Date(check.checkDate).toDateString() === date.toDateString());
+  //   if (diaryRecord || checkRecord) {
+  //     navigate(`/plant/${plantId}/${date.toISOString().split('T')[0]}`);
+  //   } else {
+  //     navigate(`/plant/${plantId}/${date.toISOString().split('T')[0]}/diary/write`, {
+  //       // 혹시 몰라 state로도 날짜를 보내겠습니다.
+  //       state: {
+  //         date: date.toISOString().split('T')[0],
+  //         plantId: plantId
+  //       }
+  //     });
+  //   }
+  // };
 
   const colorBox = ({ date }) => {
 

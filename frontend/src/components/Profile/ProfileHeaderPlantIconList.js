@@ -18,8 +18,9 @@ const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed }) => {
   }
 
   const handleWriteDiary = () => {
-    const currentDate = new Date().toISOString().split('T')[0];
-    navigate(`/plant/${plantId}/diary/write`, {
+    const currentDate = new Date().toISOString().split('T')[0]; // 현재 날짜를 YYYY-MM-DD 형식으로 가져오기
+    navigate(`/plant/${plantId}/${currentDate}/write`, {
+      // 혹시 몰라 state로도 날짜를 보내겠습니다.
       state: {
         date: currentDate,
         plantId: plantId
