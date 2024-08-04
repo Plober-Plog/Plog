@@ -103,7 +103,7 @@ public class JwtTokenUtil {
             return Long.parseLong(decodedJWT.getSubject());
         } catch (JWTVerificationException ex) {
             // 검증 실패 시 예외 처리
-            throw new NotValidRequestException("JwtTokenUtil : 유요하지 않은 토큰 입니다. " + ex.getMessage());
+            throw new NotValidRequestException("유효하지 않은 토큰 입니다. " + ex.getMessage());
         }
     }
 
