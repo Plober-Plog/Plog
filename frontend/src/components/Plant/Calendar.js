@@ -3,33 +3,49 @@ import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import './Calendar.css';
 
-const Calender = ({ plantId }) =>{
-
-  const URI = 'https://i11b308.p.ssafy.io/api'
+const CustomCalendar = ({ plantId }) => {
+  const URI = 'https://i11b308.p.ssafy.io/api';
   const [value, setValue] = useState(new Date());
   const [checkRecords, setCheckRecords] = useState([]);
   const [diaryRecords, setDiaryRecords] = useState([]);
   const navigate = useNavigate();
 
+  const fetchMonthData = async (year, month) => {
+    const checkResponse = await fetch(`${URI}/user/plant/${plantId}/check?year=${year}&month=${month}`);
+    const checkData = await checkResponse.json();
+    const diaryResponse = await fetch(`${URI}/user/plant/${plantId}/diary?year=${year}&month=${month}`);
+    const diaryData = await diaryResponse.json();
+    return { checkData, diaryData };
+  };
+
+  // 이전 달 데이터도 가져옵니다 (이전 달 끝부분, 다음 달 첫부분이 캘린더에 함께 보이기 때문에 필요)
+  const fetchRecords = async (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+
+    try {
+      const currentData = await fetchMonthData(year, month);
+
+      const prevMonth = month === 1 ? 12 : month - 1;
+      const prevYear = month === 1 ? year - 1 : year;
+      const prevData = await fetchMonthData(prevYear, prevMonth);
+
+      const nextMonth = month === 12 ? 1 : month + 1;
+      const nextYear = month === 12 ? year + 1 : year;
+      const nextData = await fetchMonthData(nextYear, nextMonth);
+
+      setCheckRecords([...prevData.checkData, ...currentData.checkData, ...nextData.checkData]);
+      setDiaryRecords([...prevData.diaryData, ...currentData.diaryData, ...nextData.diaryData]);
+
+      // console.log("Check Records:", [...prevData.checkData, ...currentData.checkData, ...nextData.checkData]);
+      // console.log("Diary Records:", [...prevData.diaryData, ...currentData.diaryData, ...nextData.diaryData]);
+    } catch (error) {
+      console.error("Calendar Error:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchRecords = async () => {
-      const year = value.getFullYear();
-      const month = value.getMonth() +1;
-
-      try {
-        const checkResponse = await fetch(`${URI}/user/plant/${plantId}/check?year=${year}&month=${month}`)
-        const checkData = await checkResponse.json();
-        setCheckRecords(checkData);
-
-        const diaryResponse = await fetch(`${URI}/user/plant/${plantId}/diary?year=${year}&month=${month}`)
-        const diaryData = await diaryResponse.json();
-        setDiaryRecords(diaryData);
-      } catch (error) {
-        console.error("fetch 함수 ERROR(아마도):", error);
-      }
-    };
-
-    fetchRecords();
+    fetchRecords(value);
   }, [value, plantId]);
 
   const handleClickDay = (date) => {
@@ -37,7 +53,7 @@ const Calender = ({ plantId }) =>{
     if (diaryRecord) {
       navigate(`/plant/${plantId}/${diaryRecord.plantDiaryId}`);
     } else {
-      navigate(`/plant${plantId}/diary/write`, {
+      navigate(`/plant/${plantId}/diary/write`, {
         state: {
           date: date.toISOString().split('T')[0]
         }
@@ -46,14 +62,15 @@ const Calender = ({ plantId }) =>{
   };
 
   const colorBox = ({ date }) => {
+
     const checkRecord = checkRecords.find(record => new Date(record.checkDate).toDateString() === date.toDateString());
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
-    
+
     return (
       <div className="color-box">
-        <div className={`indicator ${checkRecord && checkRecord.isWatered ? 'watered' : ''}`}></div>
-        <div className={`indicator ${checkRecord && checkRecord.isFertilized ? 'fertilized' : ''}`}></div>
-        <div className={`indicator ${checkRecord && checkRecord.isRepotted ? 'repotted' : ''}`}></div>
+        <div className={`indicator ${checkRecord?.isWatered ? 'watered' : ''}`}></div>
+        <div className={`indicator ${checkRecord?.isFertilized ? 'fertilized' : ''}`}></div>
+        <div className={`indicator ${checkRecord?.isRepotted ? 'repotted' : ''}`}></div>
         <div className={`indicator ${diaryRecord ? 'diary' : ''}`}></div>
       </div>
     );
@@ -62,13 +79,20 @@ const Calender = ({ plantId }) =>{
   return (
     <div>
       <Calendar
-        onChange={setValue}
+        onChange={(date) => {
+          setValue(date);
+          fetchRecords(date);
+        }}
         value={value}
         tileContent={colorBox}
         onClickDay={handleClickDay}
+        onActiveStartDateChange={({ activeStartDate }) => {
+          setValue(activeStartDate);
+          fetchRecords(activeStartDate);
+        }}
       />
     </div>
   );
 };
 
-export default Calender;
+export default CustomCalendar;

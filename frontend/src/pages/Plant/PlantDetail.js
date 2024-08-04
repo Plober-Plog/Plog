@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from "../../components/Profile/ProfileHeader";
-import Calendar from "../../components/Plant/Calendar";
+import CustomCalendar from "../../components/Plant/Calendar";
 import ArticleCardList from "../../components/Article/ArticleCardList";
 import ReportBanner from "../../components/Plant/ReportBanner";
 import Btn from "../../components/Common/Btn";
@@ -50,7 +50,7 @@ const PlantDetail = ({ plantId = 1 }) => {
         data={plantData}
         type="plant"
       />
-      <Calendar 
+      <CustomCalendar 
         plantId={plantId}
       />
       <ArticleCardList 
