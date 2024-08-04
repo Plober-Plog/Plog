@@ -4,11 +4,12 @@ import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
-import com.plog.backend.domain.user.dto.response.UserResponseDto;
+import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
+import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto getUser(String token) {
+    public UserGetResponseDto getUser(String token) {
         log.info(">>> getUser - 토큰: {}", token);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> getUser - 추출된 사용자 ID: {}", userId);
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
         log.info(">>> getUser - 사용자 정보: {}", user);
 
-        return UserResponseDto.builder()
+        return UserGetResponseDto.builder()
                 .email(user.getEmail())
                 .searchId(user.getSearchId())
                 .nickname(user.getNickname())
@@ -164,7 +165,7 @@ public class UserServiceImpl implements UserService {
             return updatedUser;
         } else {
             log.error(">>> updateUser - 사용자를 찾을 수 없음: {}", userId);
-            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+            throw new EntityNotFoundException("사용자를 찾을 수 없습니다.");
         }
     }
 

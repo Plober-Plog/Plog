@@ -1,14 +1,13 @@
 package com.plog.backend.domain.user.controller;
 
 import com.plog.backend.domain.user.dto.request.*;
-import com.plog.backend.domain.user.dto.response.UserResponseDto;
+import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.service.UserServiceImpl;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -129,11 +128,11 @@ public class UserController {
 
     // 회원 정보 조회
     @GetMapping
-    public ResponseEntity<UserResponseDto> getUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<UserGetResponseDto> getUser(@RequestHeader("Authorization") String token) {
         log.info(">>> [GET] /user - 회원 정보 조회 요청: {}", token);
-        UserResponseDto userResponseDto = userService.getUser(token);
-        log.info(">>> [GET] /user - 회원 정보 조회 완료: {}", userResponseDto);
-        return ResponseEntity.status(200).body(userResponseDto);
+        UserGetResponseDto userGetResponseDto = userService.getUser(token);
+        log.info(">>> [GET] /user - 회원 정보 조회 완료: {}", userGetResponseDto);
+        return ResponseEntity.status(200).body(userGetResponseDto);
     }
 
     // 회원 탈퇴

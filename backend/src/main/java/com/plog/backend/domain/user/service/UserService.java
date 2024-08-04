@@ -4,13 +4,13 @@ import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
-import com.plog.backend.domain.user.dto.response.UserResponseDto;
+import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.global.model.response.BaseResponseBody;
 
 public interface UserService {
     User getUserBySearchId(String searchId);
-    UserResponseDto getUser(String token);
+    UserGetResponseDto getUser(String token);
     String userSignIn(String email, String password);
     User createUser(UserSignUpRequestDto userSignUpRequestDto);
     Boolean checkUserSearchId(String searchId);
