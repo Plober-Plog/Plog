@@ -45,7 +45,7 @@ const SignUpForm = () => {
   const [timer, setTimer] = useState(0);
 
   const URI = 'https://i11b308.p.ssafy.io/api';
-  
+
   // TODO 이메일 인증 완료시 이메일 input 비활성화
 
   // 유효성 검사
@@ -131,6 +131,7 @@ const SignUpForm = () => {
     try {
       const response = await axios.post(`${URI}/user/email/send`, { email });
       console.log('이메일 인증번호 전송 성공!');
+      console.log(response)
       setIsEmailVerificationSent(true);
       setTimer(300)
     } catch(error) {
@@ -164,6 +165,7 @@ const SignUpForm = () => {
   const handleVerifyEmailCode = async () => {
     try {
       const response = await axios.post(`${URI}/user/email/check`, { email, verifyCode: emailVerificationInput });
+      console.log(response)
       console.log('이메일 인증 성공!');
       setIsEmailVerified(true);
     } catch (error) {
