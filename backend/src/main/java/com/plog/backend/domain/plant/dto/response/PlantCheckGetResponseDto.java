@@ -14,14 +14,14 @@ import java.time.LocalDate;
 public class PlantCheckGetResponseDto {
 
     @Schema(description = "물 주기 여부", example = "true")
-    boolean isWatered;
+    private boolean isWatered;
 
     @Schema(description = "영양제 주기 여부", example = "false")
-    boolean isFertilized;
+    private boolean isFertilized;
 
     @Schema(description = "분갈이 여부", example = "false")
-    boolean isRepotted;
+    private boolean isRepotted;
 
     @Schema(description = "점검 날짜", example = "2024-01-01")
-    LocalDate checkDate;
+    private LocalDate checkDate;
 }

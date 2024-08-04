@@ -265,6 +265,7 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
+    @Transactional
     @Override
     public void deletePlant(String token, Long plantId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
@@ -285,6 +286,7 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
+    @Transactional
     @Override
     public void farewellPlant(String token, Long plantId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
@@ -376,6 +378,7 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
+    @Transactional
     @Override
     public void deletePlantCheck(String token, Long plantId, String checkDate) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);

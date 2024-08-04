@@ -54,11 +54,11 @@ public class Plant extends BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("true")
-    boolean hasNotified;
+    private boolean hasNotified;
 
     @Column(nullable = false)
     @ColumnDefault("255")
-    int fixed;
+    private int fixed;
 
     @Column(nullable = false)
     @ColumnDefault("false")

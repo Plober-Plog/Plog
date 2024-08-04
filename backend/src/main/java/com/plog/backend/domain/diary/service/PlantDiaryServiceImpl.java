@@ -31,6 +31,7 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 @RequiredArgsConstructor
 @Service("plantDiaryService")
 public class PlantDiaryServiceImpl implements PlantDiaryService {
+
     private final PlantDiaryRepository plantDiaryRepository;
     private final PlantRepository plantRepository;
 
@@ -98,6 +99,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         }
     }
 
+    @Transactional
     @Override
     public void deletePlantDiary(String token, Long plantDiaryId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);

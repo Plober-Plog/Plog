@@ -20,26 +20,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class PlantType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long plantTypeId;
+    private Long plantTypeId;
     @Column
-    String plantName;
+    private String plantName;
     @Column
-    String guide;
+    private String guide;
     @OneToOne
     @JoinColumn(name = "image_id", referencedColumnName = "imageId")
-    Image image;
+    private Image image;
 
     @Column
-    int waterInterval;
+    private int waterInterval;
     @Column
-    int repotInterval;
+    private int repotInterval;
     @Column
-    int fertilizeInterval;
+    private int fertilizeInterval;
 
     @Column
-    int repotMid;
+    private int repotMid;
     @Column
-    int waterMid;
+    private int waterMid;
     @Column
-    int fertilizeMid;
+    private int fertilizeMid;
 }

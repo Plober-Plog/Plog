@@ -13,28 +13,28 @@ import java.time.LocalDate;
 @ToString
 public class PlantGetResponseDto {
     @Schema(description = "식물 ID", example = "1")
-    Long plantId;
+    private Long plantId;
 
     @Schema(description = "기본 식물 종류 ID (2부터 유효한 값)", example = "1")
-    Long plantTypeId;
+    private Long plantTypeId;
 
     @Schema(description = "기타 식물 종류 ID (2부터 유효한 값)", example = "2")
-    Long otherPlantId;
+    private Long otherPlantId;
 
     @Schema(description = "식물 별명", example = "초록이")
-    String nickname;
+    private String nickname;
 
 //    @Schema(description = "식물 프로필 URL", example = "http://example.com/profile.jpg")
-//    String profile;
+//    private String profile;
 
     @Schema(description = "식물 생일", example = "2023-01-01")
-    LocalDate birthDate;
+    private LocalDate birthDate;
 
     @Schema(description = "식물 이별일", example = "2024-01-01")
-    LocalDate deathDate;
+    private LocalDate deathDate;
 
     @Schema(description = "알림 여부", example = "true")
-    boolean hasNotified;
+    private boolean hasNotified;
 
     @Schema(description = "고정 순서 - 추후 변경 예정", example = "1")
     int fixed;
