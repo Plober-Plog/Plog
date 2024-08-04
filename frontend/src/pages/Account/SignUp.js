@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SignUpForm from '../../components/Account/SignUpForm';
-import ATag from '../../components/Account/ATag';
-import '../../components/Account/Account.css';
+import ATag from '../../components/Common/ATag';
+import './Account.css';
 
 const SignUp = () => {
   const navigate = useNavigate();

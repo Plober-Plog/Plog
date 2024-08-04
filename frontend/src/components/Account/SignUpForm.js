@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import sha256 from 'js-sha256';
-import AWS from 'aws-sdk';
 
 import Btn from '../Common/Btn';
-import ATag from './ATag';
-import InputField from './InputField';
+import ATag from '../Common/ATag';
+import InputField from '../Common/InputField';
 import RadioField from './RadioField';
 import SelectField from './SelectField';
-import ModalComplete from './ModalComplete';
+import ModalComplete from '../Common/ModalComplete';
 import defaultProfile from '../../assets/image/defaultprofile.png';
 import './Login.css'
 

@@ -4,13 +4,12 @@ import API from '../../apis/api';
 import { sha256 } from 'js-sha256';
 
 import Btn from '../../components/Common/Btn';
-import InputField from '../../components/Account/InputField';
+import InputField from '../../components/Common/InputField';
 import './Account.css';
 
 const PasswordChange = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [passwordConfirmMsg, setPasswordConfirmMsg] = useState('');
-  const URI = "https://i11b308.p.ssafy.io/api"
   const navigate = useNavigate();
 
   const handlePasswordChange = async (event) => {

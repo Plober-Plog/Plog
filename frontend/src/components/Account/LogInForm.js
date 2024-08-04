@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from'react-router-dom';
-import axios from 'axios';
 import API from '../../apis/api';
 import sha256 from 'js-sha256';
 import useAuthStore from '../../stores/store';
 
 import Btn from '../Common/Btn';
-import InputField from './InputField';
-import ATag from './ATag';
+import InputField from '../Common/InputField';
+import ATag from '../Common/ATag';
 
 
 const LoginForm = () => {
@@ -19,7 +18,6 @@ const LoginForm = () => {
   const [loginError, setLoginError] = useState('');
   const setToken = useAuthStore((state) => state.setToken);
 
-  const URI = 'https://i11b308.p.ssafy.io/api';
   const navigate = useNavigate();
 
   // 로그인 버튼 클릭
@@ -32,7 +30,7 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await API.post(`${URI}/user/login`, userInfo)
+      const response = await API.post('/user/login', userInfo)
       const token = response.headers['authorization'];
       console.log('토큰 : ', token)
 

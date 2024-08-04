@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../../components/Account/LoginForm';
 import SocialLogin from '../../components/Account/SocialLogin';
-import ATag from '../../components/Account/ATag';
+import ATag from '../../components/Common/ATag';
 
 const Login = () => {
   const navigate = useNavigate();

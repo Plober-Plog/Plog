@@ -4,9 +4,9 @@ import sha256 from 'js-sha256';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import Btn from '../../components/Common/Btn';
-import InputField from '../../components/Account/InputField';
-import ATag from '../../components/Account/ATag';
-import ModalComplete from '../../components/Account/ModalComplete';
+import InputField from '../../components/Common/InputField';
+import ATag from '../../components/Common/ATag';
+import ModalComplete from '../../components/Common/ModalComplete';
 import './Account.css';
 
 const PasswordUpdate = () => {
@@ -69,7 +69,6 @@ const PasswordUpdate = () => {
     }
   };
   
-
   // 모달
   const closeModal = () => {
     setOpenModal(false);

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Btn from '../Common/Btn';
-import InputField from './InputField';
+import InputField from '../Common/InputField';
 import SelectField from './SelectField';
 import RadioField from './RadioField';
-import ATag from './ATag';
-import ModalComplete from '../../components/Account/ModalComplete';
+import ATag from '../Common/ATag';
+import ModalComplete from '../Common/ModalComplete';
 
 const ProfileUpdateForm = ({ userData }) => {
   const [searchId, setSearchId] = useState(userData.setSearchID);
