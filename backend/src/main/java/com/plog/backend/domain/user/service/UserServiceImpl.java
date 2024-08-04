@@ -10,7 +10,6 @@ import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
 import com.plog.backend.global.model.response.BaseResponseBody;
-import com.plog.backend.global.util.DateUtil;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,6 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenUtil jwtTokenUtil;
-    private final DateUtil dateUtil;
 
     @Override
     public User getUserBySearchId(String searchId) {
@@ -156,7 +154,7 @@ public class UserServiceImpl implements UserService {
             user.setNickname(request.getNickname());
             user.setProfileInfo(request.getProfile());
             user.setGender(Gender.gender(request.getGender()));
-            user.setBirthDate(dateUtil.convertToLocalDate(request.getBirthDate()));
+            user.setBirthDate(request.getBirthDate());
             user.setSource(request.getSource());
             user.setSidoCode(request.getSidoCode());
             user.setGugunCode(request.getGugunCode());

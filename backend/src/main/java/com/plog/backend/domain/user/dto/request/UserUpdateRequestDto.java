@@ -3,7 +3,7 @@ package com.plog.backend.domain.user.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @ToString
@@ -18,7 +18,7 @@ public class UserUpdateRequestDto {
     private String searchId;
     private String profile;
     private int gender;
-    private Date birthDate;
+    private LocalDate birthDate;
     private String source;
     private int sidoCode;
     private int gugunCode;
