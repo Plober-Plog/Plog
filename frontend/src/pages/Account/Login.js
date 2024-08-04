@@ -1,32 +1,25 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import LoginForm from '../../components/Account/LoginForm';
-import SocialLogIn from '../../components/Account/SocialLogIn';
+import SocialLogin from '../../components/Account/SocialLogin';
 import ATag from '../../components/Account/ATag';
-import Btn from '../../components/Common/Btn';
-// import '../../components/Account/Login.css';
 
 const Login = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="container">
+    <div>
       <h1>로그인</h1>
       <LoginForm />
       <ATag 
         content={'회원가입 하기'}
-        onClick={
-          () => {
-            console.log('회원가입 페이지로 이동')
-          }
-        }
+        onClick={() => navigate('/signup')}
       />
       <ATag 
         content={'비밀번호 찾기'}
-        onClick={
-          () => {
-            console.log('비밀번호 찾기 페이지로 이동')
-          }
-        }
+        onClick={() => navigate('/passoword/find')}
       />
-      <SocialLogIn />
+      <SocialLogin />
     </div>
   );
 }
