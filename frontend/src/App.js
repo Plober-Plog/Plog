@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SignUp from './pages/Account/SignUp';
 import Login from './pages/Account/Login';
 import ProfileUpdate from './pages/Account/ProfileUpdate';
+import PasswordFind from './pages/Account/PasswordFind';
 import PasswordUpdate from './pages/Account/PasswordUpdate';
 import Setting from './pages/Account/Setting';
 // Plant
@@ -28,6 +29,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profileupdate" element={<ProfileUpdate />} />
             <Route path="/password/update" element={<PasswordUpdate />} />
+            <Route path="/password/find" element={<PasswordFind />} />
             <Route path="/setting" element={<Setting />} />
             <Route path="/write" element={<PlantDiaryWrite />} />
             <Route path="/diary/:plantDiaryId" element={<PlantDiaryDetail />} />
