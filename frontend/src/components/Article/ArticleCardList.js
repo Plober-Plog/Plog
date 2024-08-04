@@ -1,11 +1,6 @@
 import React from 'react';
 import ArticleCard from './ArticleCard';
 
-// data = {}, || ''
-// 위 부분은 아직 api가 없어 전달할 데이터가 존재하지 않기 떄문에 추가한 내용
-// api가 만들어지면, 추후 확인 후 수정할 것
-// 수정 시 data가 없거나 잘못 들어온 경우를 고려해야 함을 유의하기
-
 const ArticleCardList = ({ articles = [], type }) => {
   if (articles.length === 0) {
     return (
@@ -14,14 +9,19 @@ const ArticleCardList = ({ articles = [], type }) => {
       </div>
     )
   };
-  
+
+  /* TODO: BE에서 SNS 관련 api 명세를 작성한 후에 추가 및 수정할 것
+    type이 'plant'가 아닌 경우, props로 다른 데이터를 보내는 것도 고려하여 수정해야 합니다.
+    (식물 SNS 추천, 인기 SNS 추천 알고리즘에 쓰입니다.)
+    (BE에서 큐레이팅 알고리즘을 고려해 만들어 주어야 합니다.)
+  */
   return (
     <div>
       {articles.map(article => (
         <ArticleCard 
-          key={article.id}
-          id={article.id}
-          log={article.log}
+          key={article.plantDiaryId}
+          id={article.plantDiaryId}
+          log={article.recordDate}
           thumbnail={article.thumbnail}
           type={type}
         />
