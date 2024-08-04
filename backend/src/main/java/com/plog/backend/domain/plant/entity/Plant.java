@@ -3,14 +3,12 @@ package com.plog.backend.domain.plant.entity;
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.global.model.dto.BaseEntity;
-import com.plog.backend.global.util.DateUtil;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "plant")

@@ -1,5 +1,7 @@
 package com.plog.backend.domain.user.entity;
 
+import com.plog.backend.global.exception.NotValidRequestException;
+
 public enum Provider {
     KAKAO(1),
     GOOGLE(2),
@@ -21,6 +23,6 @@ public enum Provider {
                 return provider;
             }
         }
-        throw new IllegalArgumentException("Invalid value: " + value);
+        throw new NotValidRequestException("Invalid value: " + value);
     }
 }

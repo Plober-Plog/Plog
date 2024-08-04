@@ -1,13 +1,17 @@
 package com.plog.backend.domain.user.service;
 
-import com.plog.backend.domain.user.dto.UserModifyDto;
-import com.plog.backend.domain.user.dto.UserSignUpDto;
-import com.plog.backend.domain.user.entity.Gender;
-import com.plog.backend.domain.user.entity.User;
+import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
+import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
+import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
+import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
+import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
+import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
+import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
-import com.plog.backend.global.util.DateUtil;
+import com.plog.backend.global.exception.EntityNotFoundException;
+import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +35,6 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenUtil jwtTokenUtil;
-    private final DateUtil dateUtil;
 
     @Override
     public User getUserBySearchId(String searchId) {
@@ -39,24 +42,49 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserBySearchId(searchId)
                 .orElseThrow(() -> {
                     log.error(">>> getUserBySearchId - 사용자 찾을 수 없음: {}", searchId);
-                    return new IllegalArgumentException("User not found with searchId: " + searchId);
+                    return new NotValidRequestException("User not found with searchId: " + searchId);
                 });
     }
 
     @Override
-    public String login(String email, String password) {
+    public UserGetResponseDto getUser(String token) {
+        log.info(">>> getUser - 토큰: {}", token);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> getUser - 추출된 사용자 ID: {}", userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error(">>> getUser - 사용자를 찾을 수 없음: {}", userId);
+            return new NotValidRequestException ("사용자를 찾을 수 없습니다.");
+        });
+
+        log.info(">>> getUser - 사용자 정보: {}", user);
+
+        return UserGetResponseDto.builder()
+                .email(user.getEmail())
+                .searchId(user.getSearchId())
+                .nickname(user.getNickname())
+                .gender(user.getGender().getValue())
+                .birthDate(user.getBirthDate())
+                .sidoCode(user.getSidoCode())
+                .gugunCode(user.getGugunCode())
+                .profileInfo(user.getProfileInfo())
+                .isAd(user.isAd())
+                .build();
+    }
+
+    @Override
+    public String userSignIn(String email, String password) {
         log.info(">>> login - 이메일: {}, 패스워드: {}", email, password);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.error(">>> login - 이메일 또는 패스워드 잘못됨: {}", email);
-                    return new IllegalArgumentException("Invalid email or password");
+                    return new NotValidRequestException ("이메일 혹은 패스워드가 잘 못되었습니다.");
                 });
 
-        log.info(">>> login - 사용자 찾음: {}", user.toString());
+        log.info(">>> login - 사용자 찾음: {}", user);
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUserId(), password)
+                new UsernamePasswordAuthenticationToken(email, password)
         );
 
         log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
@@ -71,23 +99,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(UserSignUpDto userSignUpDto) {
-        log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpDto);
+    public User createUser(UserSignUpRequestDto userSignUpRequestDto) {
+        log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpRequestDto);
         User user = User.builder()
-                .email(userSignUpDto.getEmail())
-                .gender(userSignUpDto.getGender())
-                .role(1)
-                .state(1)
+                .email(userSignUpRequestDto.getEmail())
+                .gender(Gender.gender(userSignUpRequestDto.getGender()))
+                .role(Role.role(1))
+                .state(State.state(1))
                 .profileInfo("안녕하세용")
-                .isAd(userSignUpDto.isAd())
-                .nickname(userSignUpDto.getNickname())
+                .isAd(userSignUpRequestDto.isAd())
+                .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
-                .chatAuth(1)
-                .searchId(userSignUpDto.getSearchId())
-                .password(passwordEncoder.encode(userSignUpDto.getPassword()))
-                .sidoCode(userSignUpDto.getSidoCode())
-                .gugunCode(userSignUpDto.getGugunCode())
-                //TODO [장현준] - source, image, birthDate 추가
+                .chatAuth(ChatAuth.chatAuth(1))
+                .searchId(userSignUpRequestDto.getSearchId())
+                .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
+                .sidoCode(userSignUpRequestDto.getSidoCode())
+                .gugunCode(userSignUpRequestDto.getGugunCode())
+                .source(userSignUpRequestDto.getSource())
+                .birthDate(userSignUpRequestDto.getBirthDate())
+                //TODO [장현준] - image 추가
                 .build();
         User savedUser = userRepository.save(user);
         log.info(">>> createUser - 사용자 생성됨: {}", savedUser);
@@ -95,16 +125,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean checkUser(String searchId) {
+    public Boolean checkUserSearchId(String searchId) {
         log.info(">>> checkUser - 검색 ID: {}", searchId);
         Optional<User> user = userRepository.findUserBySearchId(searchId);
         boolean isPresent = user.isPresent();
+
         log.info(">>> checkUser - 사용자 존재 여부: {}", isPresent);
         return isPresent;
     }
 
     @Override
-    public Boolean checkEmail(String email) {
+    public Boolean checkUserEmail(String email) {
         log.info(">>> checkEmail - 이메일: {}", email);
         Optional<User> user = userRepository.findByEmail(email);
         boolean isPresent = user.isPresent();
@@ -114,7 +145,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User updateUser(String token, UserModifyDto request) {
+    public User updateUser(String token, UserUpdateRequestDto request) {
         log.info(">>> updateUser - 토큰: {}, 요청 데이터: {}", token, request);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> updateUser - 추출된 사용자 ID: {}", userId);
@@ -125,7 +156,7 @@ public class UserServiceImpl implements UserService {
             user.setNickname(request.getNickname());
             user.setProfileInfo(request.getProfile());
             user.setGender(Gender.gender(request.getGender()));
-            user.setBirthDate(dateUtil.convertToLocalDate(request.getBirthDate()));
+            user.setBirthDate(request.getBirthDate());
             user.setSource(request.getSource());
             user.setSidoCode(request.getSidoCode());
             user.setGugunCode(request.getGugunCode());
@@ -135,9 +166,63 @@ public class UserServiceImpl implements UserService {
             return updatedUser;
         } else {
             log.error(">>> updateUser - 사용자를 찾을 수 없음: {}", userId);
-            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+            throw new EntityNotFoundException("사용자를 찾을 수 없습니다.");
         }
     }
-}
 
-// TODO [장현준] Optional Exception 수정
+    @Transactional
+    @Override
+    public void deleteUser(String token) {
+        log.info(">>> deleteUser - 토큰: {}", token);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> deleteUser - 추출된 사용자 ID: {}", userId);
+
+        // 사용자 조회
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setState(State.DELETED);
+            userRepository.save(user);
+            log.info(">>> deleteUser - 사용자 삭제 완료: {}", user);
+        } else {
+            log.error(">>> deleteUser - 사용자를 찾을 수 없음: {}", userId);
+            throw new NotValidRequestException("사용자를 찾을 수 없습니다.");
+        }
+    }
+
+    @Override
+    public UserCheckPasswordResponseDto checkPassword(String token, UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+        log.info(">>> checkPassword - 토큰, RequestDto: {}, {}", token, userPasswordCheckRequestDto.toString());
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> checkPassword - 추출된 사용자 ID: {}", userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
+
+        boolean result = passwordEncoder.matches(userPasswordCheckRequestDto.getPassword(), user.getPassword());
+
+        log.info(">>> checkPassword - 비교: {}", result);
+        UserCheckPasswordResponseDto responseDto = new UserCheckPasswordResponseDto();
+        if(result)
+            return UserCheckPasswordResponseDto.of(user.getUserId(), 200, "비밀번호가 확인 되었습니다.");
+        else
+            return UserCheckPasswordResponseDto.of(-1L, 401, "비밀번호가 틀립니다.");
+    }
+
+    @Transactional
+    @Override
+    public void updatePassword(UserPasswordUpdateRequestDto userPasswordUpdateRequestDto) {
+        log.info(">>> updatePassword - RequestDto: {}", userPasswordUpdateRequestDto);
+
+        User user = userRepository.findById(userPasswordUpdateRequestDto.getUserId())
+                .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
+
+        // 비밀번호 인코딩
+        String encodedPassword = passwordEncoder.encode(userPasswordUpdateRequestDto.getPassword());
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+        log.info(">>> updatePassword - 비밀번호 변경 성공");
+    }
+}

@@ -11,10 +11,12 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "user")
 @NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @ToString
+@Builder
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,33 +77,4 @@ public class User extends BaseEntity {
 
     private int sidoCode;
     private int gugunCode;
-
-    @Builder
-    public User(String email,
-                String searchId,
-                String nickname,
-                String password,
-                int gender,
-                int state,
-                int role,
-                int totalExp,
-                int chatAuth,
-                String profileInfo,
-                boolean isAd,
-                int sidoCode,
-                int gugunCode) {
-        this.email = email;
-        this.searchId = searchId;
-        this.nickname = nickname;
-        this.password = password;
-        this.gender = Gender.gender(gender);
-        this.state = State.state(state);
-        this.role = Role.role(role);
-        this.totalExp = totalExp;
-        this.chatAuth = ChatAuth.chatAuth(chatAuth);
-        this.profileInfo = profileInfo;
-        this.isAd = isAd;
-        this.sidoCode = sidoCode;
-        this.gugunCode = gugunCode;
-    }
 }

@@ -1,5 +1,7 @@
 package com.plog.backend.domain.user.entity;
 
+import com.plog.backend.global.exception.NotValidRequestException;
+
 public enum ChatAuth {
     PUBLIC(1),
     NEIGHBOR(2),
@@ -22,6 +24,6 @@ public enum ChatAuth {
                 return chatAuth;
             }
         }
-        throw new IllegalArgumentException("Invalid value: " + value);
+        throw new NotValidRequestException("Invalid value: " + value);
     }
 }
