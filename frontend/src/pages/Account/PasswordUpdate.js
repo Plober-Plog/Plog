@@ -1,7 +1,8 @@
 import React from 'react';
 import axios from 'axios';
+import sha256 from 'js-sha256';
 import { useState } from 'react';
-import { updatePassword } from '../../api';
+import { useNavigate } from 'react-router-dom';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
@@ -21,6 +22,8 @@ const PasswordUpdate = () => {
   const [passwordConfirmError, setPasswordConfirmError] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
 
+  const URI = 'https://i11b308.p.ssafy.io/api'
+  const navigate = useNavigate();
 
 
   // 비밀번호 유효성 검사
@@ -55,7 +58,18 @@ const PasswordUpdate = () => {
     
     // 비밀번호 변경 요청
     try {
-      const result = await updatePassword(password);
+      const result = await axios.patch(
+        '/user/password',
+        {
+        // TODO userId 추가
+        password: sha256(password)
+        },
+      {
+        headers: {
+          // TODO api.js에서 토큰 추가
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       setUpdateResult(result.result);
       setOpenModal(true);
     } catch (error) {
@@ -67,8 +81,10 @@ const PasswordUpdate = () => {
   // 모달
   const closeModal = () => {
     setOpenModal(false);
+    navigate('/setting');
   };
   
+
   return (
     <div>
       <h2>비밀번호 변경</h2>
