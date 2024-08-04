@@ -1,9 +1,6 @@
 package com.plog.backend.domain.plant.service;
 
-import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantCheckUpdateRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.request.*;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
@@ -18,9 +15,9 @@ public interface PlantService {
 
     PlantTypeGetResponseDto getPlantType(Long plantTypeId);
 
-    List<PlantGetResponseDto> getPlantList(String searchId, int page);
+    List<PlantGetResponseDto> getPlantList(PlantGetRequestDto plantGetRequestDto);
 
-    List<PlantGetResponseDto> getPlantListByPlantTypeIds(String searchId, String plantTypeId, String otherPlantTypeId, int page);
+    List<PlantGetResponseDto> getPlantListByPlantTypeIds(PlantGetRequestDto plantGetRequestDto);
 
     void updatePlant(String token, Long plantId, PlantUpdateRequestDto plantUpdateRequestDto);
 

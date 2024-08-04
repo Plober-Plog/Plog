@@ -2,10 +2,7 @@ package com.plog.backend.domain.plant.controller;
 
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetSimpleResponseDto;
 import com.plog.backend.domain.diary.service.PlantDiaryService;
-import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantCheckUpdateRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.request.*;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.service.PlantService;
@@ -61,14 +58,18 @@ public class PlantController {
                         "otherPlantTypeId: {}, page: {}",
                 searchId, plantTypeId, otherPlantTypeId, page);
 
+        PlantGetRequestDto plantGetRequestDto = new PlantGetRequestDto();
+        plantGetRequestDto.setSearchId(searchId);
+        plantGetRequestDto.setPage(Integer.parseInt(page));
+
         List<PlantGetResponseDto> plantGetResponseDtoList;
 
         if (plantTypeId != null && otherPlantTypeId != null) {
-            plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(searchId,
-                    plantTypeId, otherPlantTypeId, Integer.parseInt(page));
+            plantGetRequestDto.setPlantTypeId(Long.parseLong(plantTypeId));
+            plantGetRequestDto.setOtherPlantTypeId(Long.parseLong(otherPlantTypeId));
+            plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(plantGetRequestDto);
         } else {
-            plantGetResponseDtoList = plantService.getPlantList(searchId,
-                    Integer.parseInt(page));
+            plantGetResponseDtoList = plantService.getPlantList(plantGetRequestDto);
         }
 
         return ResponseEntity.status(200).body(plantGetResponseDtoList);
@@ -139,8 +140,10 @@ public class PlantController {
                                               @RequestParam(required = false) String checkDate,
                                               @RequestParam(required = false) String year,
                                               @RequestParam(required = false) String month) {
+
         if (checkDate != null) {
             log.info(">>> [GET] /user/plant/{}/check - 요청 날짜: {}", plantId, checkDate);
+
             PlantCheckGetResponseDto plantCheckGetResponseDto = plantService.getPlantCheck(plantId, checkDate);
             return ResponseEntity.status(200).body(plantCheckGetResponseDto);
         } else if (year != null && month != null) {

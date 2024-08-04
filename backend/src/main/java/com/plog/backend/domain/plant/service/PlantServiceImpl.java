@@ -1,10 +1,7 @@
 package com.plog.backend.domain.plant.service;
 
 import com.plog.backend.domain.image.service.ImageService;
-import com.plog.backend.domain.plant.dto.request.PlantAddRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantCheckAddRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantCheckUpdateRequestDto;
-import com.plog.backend.domain.plant.dto.request.PlantUpdateRequestDto;
+import com.plog.backend.domain.plant.dto.request.*;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
@@ -142,11 +139,11 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantGetResponseDto> getPlantList(String searchId, int page) {
-        Optional<User> user = userRepository.findUserBySearchId(searchId);
+    public List<PlantGetResponseDto> getPlantList(PlantGetRequestDto plantGetRequestDto) {
+        Optional<User> user = userRepository.findUserBySearchId(plantGetRequestDto.getSearchId());
         if (user.isPresent()) {
             List<PlantGetResponseDto> plantGetResponseDtoList = new ArrayList<>();
-            List<Plant> plantList = plantRepositorySupport.findByUserSearchId(searchId, page);
+            List<Plant> plantList = plantRepositorySupport.findByUserSearchId(plantGetRequestDto.getSearchId(), plantGetRequestDto.getPage());
             for (Plant p : plantList) {
                 PlantGetResponseDto pgr = PlantGetResponseDto.builder()
                         .plantId(p.getPlantId())
@@ -169,14 +166,14 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantGetResponseDto> getPlantListByPlantTypeIds(String searchId, String plantTypeId, String otherPlantTypeId, int page) {
-        Optional<User> user = userRepository.findUserBySearchId(searchId);
+    public List<PlantGetResponseDto> getPlantListByPlantTypeIds(PlantGetRequestDto plantGetRequestDto) {
+        Optional<User> user = userRepository.findUserBySearchId(plantGetRequestDto.getSearchId());
         if (user.isPresent()) {
-            int type = checkPlantType(Long.parseLong(plantTypeId), Long.parseLong(otherPlantTypeId));
+            int type = checkPlantType(plantGetRequestDto.getPlantTypeId(), plantGetRequestDto.getOtherPlantTypeId());
             switch (type) {
                 case 1 -> {
                     List<PlantGetResponseDto> plantGetResponseDtoList = new ArrayList<>();
-                    List<Plant> plantList = plantRepositorySupport.findByUserSearchIdAndPlantTypeId(searchId, Long.parseLong(plantTypeId), page);
+                    List<Plant> plantList = plantRepositorySupport.findByUserSearchIdAndPlantTypeId(plantGetRequestDto.getSearchId(), plantGetRequestDto.getPlantTypeId(), plantGetRequestDto.getPage());
                     for (Plant p : plantList) {
                         PlantGetResponseDto pgr = PlantGetResponseDto.builder()
                                 .plantId(p.getPlantId())
@@ -196,7 +193,7 @@ public class PlantServiceImpl implements PlantService {
                 }
                 case 2 -> {
                     List<PlantGetResponseDto> plantGetResponseDtoList = new ArrayList<>();
-                    List<Plant> plantList = plantRepositorySupport.findByUserSearchIdAndOtherPlantTypeId(searchId, Long.parseLong(otherPlantTypeId), page);
+                    List<Plant> plantList = plantRepositorySupport.findByUserSearchIdAndOtherPlantTypeId(plantGetRequestDto.getSearchId(), plantGetRequestDto.getOtherPlantTypeId(), plantGetRequestDto.getPage());
                     for (Plant p : plantList) {
                         PlantGetResponseDto pgr = PlantGetResponseDto.builder()
                                 .plantId(p.getPlantId())
