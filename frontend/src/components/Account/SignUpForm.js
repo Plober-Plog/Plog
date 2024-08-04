@@ -38,16 +38,13 @@ const SignUpForm = () => {
   const [passwordCheckMsg, setPasswordCheckMsg] = useState('');
   const [passwordConfirmCheckMsg, setPasswordConfirmCheckMsg] = useState('');
   // 이메일 인증
-  const [emailVerificationCode, setEmailVerificationCode] = useState('');
   const [emailVerificationMsg, setEmailVerificationMsg] = useState('');
   const [emailVerificationInput, setEmailVerificationInput] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
   const [timer, setTimer] = useState(0);
 
-  // TODO Atag 속성 변경
-  // TODO 로그인 브랜치 확인 후 uri 경로 조정 
-  const URI = 'https://i11b308.p.ssafy.io/api/user';
+  const URI = 'https://i11b308.p.ssafy.io/api';
   
 
   // 유효성 검사
@@ -77,7 +74,7 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await axios.get(`${URI}/${searchId}`);
+      const response = await axios.get(`${URI}/user/${searchId}`);
       // 중복 X
       if (response.status === 200) {
         setSearchIdCheckMsg('사용 가능한 아이디입니다.');
@@ -110,7 +107,7 @@ const SignUpForm = () => {
 
     // 이메일 중복확인
     try {
-      const response = await axios.post(`${URI}/email`, { email });
+      const response = await axios.post(`${URI}/user/email`, { email });
       // 중복 X
       if (response.status === 200) {
         console.log('이메일 중복 확인 성공! (중복 X)');
@@ -131,7 +128,7 @@ const SignUpForm = () => {
 
     // 이메일 인증번호 전송
     try {
-      const response = await axios.post(`${URI}/email/send`, { email });
+      const response = await axios.post(`${URI}/user/email/send`, { email });
       console.log('이메일 인증번호 전송 성공!');
       setIsEmailVerificationSent(true);
       setTimer(300)
@@ -165,7 +162,7 @@ const SignUpForm = () => {
   // 이메일 인증 코드 확인
   const handleVerifyEmailCode = async () => {
     try {
-      const response = await axios.post(`${URI}/email/check`, { code: emailVerificationCode });
+      const response = await axios.post(`${URI}/user/email/check`, { email, verifyCode: emailVerificationInput });
       console.log('이메일 인증 성공!');
       setIsEmailVerified(true);
     } catch (error) {
@@ -177,15 +174,6 @@ const SignUpForm = () => {
 
   // 회원가입 버튼 클릭
   const handleSignUp = async () => {
-
-    // if (password !== passwordConfirm) {
-    //   alert('비밀번호가 일치하지 않습니다.');
-    //   return;
-    // }
-    // if (!agreePersonal) {
-    //   alert('개인정보 수집 동의를 완료해주세요');
-    //   return;
-    // }
     
     const userInfo = {
       // TODO default 이미지 추가하기
@@ -208,7 +196,7 @@ const SignUpForm = () => {
 
     // 회원가입 요청
     try {
-      await axios.post(URI, userInfo);
+      await axios.post(`${URI}/user`, userInfo);
       setOpenModal(true);
     } catch (error) {
       console.error('회원가입 실패: ', error);
