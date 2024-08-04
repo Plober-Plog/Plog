@@ -82,6 +82,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("${server.domain.host}")
                 .allowedOrigins("http://localhost:3000")
                 .exposedHeaders("Authorization")
-                .allowedMethods("OPTIONS","GET","POST", "PUT","DELETE");
+                .allowedMethods("OPTIONS","GET","POST","PUT","DELETE","PATCH");
     }
 }
