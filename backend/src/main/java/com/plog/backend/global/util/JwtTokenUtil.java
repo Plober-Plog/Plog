@@ -6,12 +6,12 @@ import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.plog.backend.global.exception.NotValidRequestException;
+import com.plog.backend.global.exception.TimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -81,8 +81,10 @@ public class JwtTokenUtil {
         try {
             verifier.verify(token.replace(TOKEN_PREFIX, ""));
             return true;
+        } catch (TokenExpiredException ex) {
+            throw new TimeoutException("토큰이 만료되었습니다.");
         } catch (JWTVerificationException ex) {
-            return false;
+            throw new NotValidRequestException("유효하지 않은 토큰 입니다. " + ex.getMessage());
         }
     }
 
@@ -101,8 +103,9 @@ public class JwtTokenUtil {
         try {
             DecodedJWT decodedJWT = verifier.verify(token.replace(TOKEN_PREFIX, ""));
             return Long.parseLong(decodedJWT.getSubject());
+        } catch (TokenExpiredException ex) {
+            throw new TimeoutException("토큰이 만료되었습니다.");
         } catch (JWTVerificationException ex) {
-            // 검증 실패 시 예외 처리
             throw new NotValidRequestException("유효하지 않은 토큰 입니다. " + ex.getMessage());
         }
     }
@@ -115,24 +118,13 @@ public class JwtTokenUtil {
 
         try {
             verifier.verify(token.replace(TOKEN_PREFIX, ""));
-        } catch (AlgorithmMismatchException ex) {
-            throw ex;
-        } catch (InvalidClaimException ex) {
-            throw ex;
-        } catch (SignatureGenerationException ex) {
-            throw ex;
-        } catch (SignatureVerificationException ex) {
+        } catch (AlgorithmMismatchException | InvalidClaimException | SignatureVerificationException |
+                 JWTCreationException | JWTDecodeException ex) {
             throw ex;
         } catch (TokenExpiredException ex) {
-            throw ex;
-        } catch (JWTCreationException ex) {
-            throw ex;
-        } catch (JWTDecodeException ex) {
-            throw ex;
+            throw new TimeoutException("토큰이 만료되었습니다.");
         } catch (JWTVerificationException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw ex;
+            throw new NotValidRequestException("유효하지 않은 토큰 입니다. " + ex.getMessage());
         }
     }
 }
