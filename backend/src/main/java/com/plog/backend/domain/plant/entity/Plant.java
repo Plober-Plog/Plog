@@ -3,14 +3,13 @@ package com.plog.backend.domain.plant.entity;
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.global.model.dto.BaseEntity;
-import com.plog.backend.global.util.DateUtil;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "plant")
@@ -57,8 +56,8 @@ public class Plant extends BaseEntity {
     private boolean hasNotified;
 
     @Column(nullable = false)
-    @ColumnDefault("255")
-    private int fixed;
+    @ColumnDefault("false")
+    private boolean isFixed;
 
     @Column(nullable = false)
     @ColumnDefault("false")
@@ -73,15 +72,18 @@ public class Plant extends BaseEntity {
     @Column
     private LocalDate repotDate;
 
+    @Column
+    private LocalDateTime fixedAt;
+
     @Builder
-    public Plant(User user, PlantType plantType, OtherPlantType otherPlantType, String nickname, Image image, LocalDate birthDate, boolean hasNotified, boolean isFixed) {
+    public Plant(User user, PlantType plantType, OtherPlantType otherPlantType,
+                 String nickname, Image image, String bio, LocalDate birthDate) {
         this.user = user;
         this.plantType = plantType;
         this.otherPlantType = otherPlantType;
         this.nickname = nickname;
         this.image = image;
+        this.bio = bio;
         this.birthDate = birthDate;
-        this.hasNotified = hasNotified;
-        this.fixed = isFixed ? 1 : 255; //TODO [강윤서] - fixed 계산
     }
 }

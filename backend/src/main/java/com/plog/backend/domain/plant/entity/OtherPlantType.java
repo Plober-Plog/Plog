@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@Table(name = "other_plant_type")
 @NoArgsConstructor
 @Getter
 @Setter

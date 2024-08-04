@@ -30,9 +30,4 @@ public class PlantUpdateRequestDto {
     @Schema(description = "식물 생일", example = "2023-01-01")
     private LocalDate birthDate;
 
-    @Schema(description = "알림 여부", example = "true")
-    private boolean hasNotified;
-
-    @Schema(description = "고정 여부", example = "false")
-    private boolean isFixed;
 }

@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 @Entity
+@Table(name = "plant_type")
 @NoArgsConstructor
 @Getter
 @Setter
