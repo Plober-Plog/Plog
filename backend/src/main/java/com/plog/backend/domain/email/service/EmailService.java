@@ -1,5 +1,6 @@
 package com.plog.backend.domain.email.service;
 
+import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -96,7 +97,7 @@ public class EmailService {
         log.info(">>> sendEmail - 인증코드 이메일 발송 시작: {}", toEmail);
         if (!isValidEmail(toEmail)) {
             log.warn(">>> sendEmail - 유효하지 않은 이메일 주소입니다: {}", toEmail);
-            throw new IllegalArgumentException("유효하지 않은 이메일 주소입니다: " + toEmail);
+            throw new NotValidRequestException("유효하지 않은 이메일 주소입니다: " + toEmail);
         }
 
         if (redisUtil.existData(toEmail)) {

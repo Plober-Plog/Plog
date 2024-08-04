@@ -10,6 +10,7 @@ import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
 import com.plog.backend.global.exception.EntityNotFoundException;
+import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserBySearchId(searchId)
                 .orElseThrow(() -> {
                     log.error(">>> getUserBySearchId - 사용자 찾을 수 없음: {}", searchId);
-                    return new IllegalArgumentException("User not found with searchId: " + searchId);
+                    return new NotValidRequestException("User not found with searchId: " + searchId);
                 });
     }
 
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
         log.info(">>> getUser - 추출된 사용자 ID: {}", userId);
         User user = userRepository.findById(userId).orElseThrow(() -> {
             log.error(">>> getUser - 사용자를 찾을 수 없음: {}", userId);
-            return new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+            return new NotValidRequestException ("사용자를 찾을 수 없습니다.");
         });
 
         log.info(">>> getUser - 사용자 정보: {}", user);
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.error(">>> login - 이메일 또는 패스워드 잘못됨: {}", email);
-                    return new IllegalArgumentException("Invalid email or password");
+                    return new NotValidRequestException ("이메일 혹은 패스워드가 잘 못되었습니다.");
                 });
 
         log.info(">>> login - 사용자 찾음: {}", user);
@@ -186,7 +187,7 @@ public class UserServiceImpl implements UserService {
             log.info(">>> deleteUser - 사용자 삭제 완료: {}", user);
         } else {
             log.error(">>> deleteUser - 사용자를 찾을 수 없음: {}", userId);
-            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+            throw new NotValidRequestException("사용자를 찾을 수 없습니다.");
         }
     }
 
@@ -197,7 +198,7 @@ public class UserServiceImpl implements UserService {
         log.info(">>> checkPassword - 추출된 사용자 ID: {}", userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
 
         boolean result = passwordEncoder.matches(userPasswordCheckRequestDto.getPassword(), user.getPassword());
 

@@ -1,5 +1,7 @@
 package com.plog.backend.domain.user.entity;
 
+import com.plog.backend.global.exception.NotValidRequestException;
+
 public enum Role {
     USER(1),
     ADMIN(2);
@@ -20,6 +22,6 @@ public enum Role {
                 return role;
             }
         }
-        throw new IllegalArgumentException("Invalid value: " + value);
+        throw new NotValidRequestException("Invalid value: " + value);
     }
 }

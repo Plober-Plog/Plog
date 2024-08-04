@@ -1,6 +1,7 @@
 package com.plog.backend.domain.diary.entity;
 
 import com.plog.backend.domain.user.entity.ChatAuth;
+import com.plog.backend.global.exception.NotValidRequestException;
 
 public enum Weather {
     SUNNY(1),
@@ -24,6 +25,6 @@ public enum Weather {
                 return weather;
             }
         }
-        throw new IllegalArgumentException("Invalid value: " + value);
+        throw new NotValidRequestException("Invalid value: " + value);
     }
 }
