@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { verifyEmail } from '../../api';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
@@ -10,42 +9,54 @@ import AccountBtn from '../../components/Account/AccountBtn';
 const PasswordFind = () => {
   // input fields
   const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   // 인증 코드 전송
   const [timer, setTimer] = useState(0);
-  const [codeSent, setCodeSent] = useState(false);
-  const [codeError, setCodeError] = useState('');
-  const navigate = useNavigate();
+  const [emailCheckMsg, setEmailCheckMsg] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
+  const [emailVerificationInput, setEmailVerificationInput] = useState('');
+  const [emailVerificationMsg, setEmailVerificationMsg] = useState('');
+
+  const URI = 'https://https://i11b308.p.ssafy.io/api'
 
 
   // 인증코드 타이머 설정
   useEffect(() => {
     let interval;
-    if (codeSent && timer > 0) {
+    if (isEmailVerificationSent && timer > 0) {
       interval = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
     } else if (timer === 0) {
       clearInterval(interval);
-      setCodeSent(false);
+      setIsEmailVerificationSent(false);
     }
     return () => clearInterval(interval);
-  }, [codeSent, timer]);
+  }, [isEmailVerificationSent, timer]);
 
 
   // 이메일 인증 코드 전송
   const handleEmailVerification = async () => {
+  
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+      console.log('이메일 형식이 올바르지 않습니다.');
+      return;
+    }
+
     try {
-      const response = await axios.post(`${API}/user/email/send`, { email });
+      const response = await axios.post(`${URI}/user/email/send`, { email });
       if (response.data) {
-        setCodeSent(true);
+        setIsEmailVerificationSent(true);
         setTimer(300); // 5분 타이머
+        console.log('인증 코드 전송 성공!');
       } else {
-        setEmailError('이메일 인증에 실패했습니다. 다시 시도해주세요.');
+        setEmailCheckMsg('이메일 인증에 실패했습니다. 다시 시도해주세요.');
+        console.log('인증 코드 전송 실패! : ',response);
       }
     } catch (error) {
-      setEmailError('이메일 인증에 실패했습니다. 다시 시도해주세요.');
+      setEmailCheckMsg('이메일 인증에 실패했습니다. 다시 시도해주세요.');
+      console.log('인증 코드 전송 실패! : ', error);
     }
   };
 
@@ -53,14 +64,23 @@ const PasswordFind = () => {
   // 이메일 인증 코드 확인
   const handleCodeVerification = async () => {
     try {
-      const response = await axios.post(`${API}/user/email/check`, { code: verificationCode });
+      const response = await axios.post(`${URI}/user/email/check`, { email, verifyCode: verificationCode });
       if (response.data.result) {
-        navigate('/password-update');
+        setIsEmailVerified(true);
+        setEmailVerificationMsg('이메일 인증 성공!');
       } else {
-        setCodeError('인증 코드가 올바르지 않습니다.');
+        setEmailVerificationMsg('인증 코드가 올바르지 않습니다.');
       }
     } catch (error) {
-      setCodeError('인증 코드 확인에 실패했습니다. 다시 시도해주세요.');
+      if (error.response && error.response.status === 408) {
+        setEmailVerificationMsg('인증 시간이 만료되었습니다. 다시 시도해주세요.');
+        console.log('인증 시간이 만료되었습니다. : ', error);
+      } else if (error.response && error.response.status === 400) {
+        setEmailVerificationMsg('잘못된 인증 코드입니다. 다시 시도해주세요.');
+        console.log('잘못된 인증 코드입니다. : ', error);
+      } else {
+        setEmailVerificationMsg('인증 코드 확인에 실패했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -79,35 +99,46 @@ const PasswordFind = () => {
       <form onSubmit={e => e.preventDefault()}>
         <div>
           <InputField
-            type="email" 
-            placeholder="이메일" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="이메일"
+            value={email}
+            onChange={(e) => {
+              const value = e.target.value
+              setEmail(value)
+              if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+                setEmailCheckMsg('올바른 이메일 형식이 아닙니다.');
+              } else {
+                setEmailCheckMsg('');
+              }
+            }}
             isRequired={true}
+            disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
           />
-          <AccountBtn 
-            content='인증하기'
-            onClick={() => {handleEmailVerification}}
+          <ATag
+            content="인증하기" onClick={handleEmailVerification}
           />
+          {emailCheckMsg && <p>{emailCheckMsg}</p>}
         </div>
-        {codeSent && (
+        {isEmailVerificationSent && (
           <div>
             <InputField
               type="text"
-              placeholder="인증 코드"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
+              placeholder="이메일 인증 코드"
+              value={emailVerificationInput}
+              onChange={(e) => setEmailVerificationInput(e.target.value)}
               isRequired={true}
+              disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
             />
-            <p>남은 시간: {formatTime(timer)}</p>
-            {codeError && <p>{codeError}</p>}
+            <p>{formatTime(timer)}</p>
+            <ATag content="인증 확인" onClick={handleCodeVerification} />
+            {emailVerificationMsg && <p>{emailVerificationMsg}</p>}
           </div>
         )}
-        <Btn
-          content="비밀번호 찾기"
-          disabled={!verificationCode}
-          onClick={handleCodeVerification}
-        />
+          <Btn
+            content="비밀번호 찾기"
+            disabled={!verificationCode}
+            onClick={() => navigate('/password/update')}
+          />
       </form>
     </div>
   )
