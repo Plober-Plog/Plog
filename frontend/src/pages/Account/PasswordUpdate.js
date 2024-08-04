@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../../apis/api';
 import sha256 from 'js-sha256';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
 import ATag from '../../components/Account/ATag';
 import ModalComplete from '../../components/Account/ModalComplete';
+import './Account.css';
 
 const PasswordUpdate = () => {
   // location
@@ -22,8 +23,6 @@ const PasswordUpdate = () => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordConfirmError, setPasswordConfirmError] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
-
-  const URI = 'https://i11b308.p.ssafy.io/api'
   const navigate = useNavigate();
 
 
@@ -59,7 +58,10 @@ const PasswordUpdate = () => {
     
     // 비밀번호 변경 요청
     try {
-      const response = await axios.patch('/user/password', { userId, password: sha256(password) })
+      const response = await API.patch('/user/password', {
+        userId,
+        password: sha256(password)
+      })
       console.log('비밀번호 변경 성공:', response.data);
       setOpenModal(true);
     } catch (error) {
@@ -76,9 +78,9 @@ const PasswordUpdate = () => {
   
 
   return (
-    <div>
-      <h2>비밀번호 변경</h2>
-      <form onSubmit={e => e.preventDefault()}>
+    <div className="container">
+      <h2 className="title">비밀번호 변경</h2>
+      <form onSubmit={e => e.preventDefault()} className="form">
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
@@ -86,6 +88,7 @@ const PasswordUpdate = () => {
             value={password} 
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true} 
+            className="input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
@@ -100,17 +103,19 @@ const PasswordUpdate = () => {
             value={passwordConfirm} 
             onChange={(e) => setPasswordConfirm(e.target.value)}
             isRequired={true} 
+            className="input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordConfirmError && <p>{passwordConfirmError}</p>}
+          {passwordConfirmError && <p className="error">{passwordConfirmError}</p>}
         </div>
         <Btn
           content="비밀번호 변경"
           disabled={!isFormValid}
           onClick={handlePasswordUpdate}
+          className="button"
         />
       </form>
       <ModalComplete title={'비밀번호 변경 완료'} content={'비밀번호 변경이 완료되었습니다'} open={openModal} onClose={closeModal}/>

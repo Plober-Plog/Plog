@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import axios from 'axios';
+import API from '../../apis/api';
+import { sha256 } from 'js-sha256';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Account/InputField';
@@ -17,9 +18,8 @@ const PasswordChange = () => {
 
     // 현재 비밀번호 확인 요청
     try {
-      const response = await axios.post(`${URI}/user/password`, {
-        // TODO 머지 후 header 추가
-        password: currentPassword,
+      const response = await API.post(`/user/password`, {
+        password: sha256(currentPassword),
       });
 
       if (response.status === 200) {
@@ -36,7 +36,6 @@ const PasswordChange = () => {
         setPasswordConfirmMsg('비밀번호 확인에 실패했습니다. 다시 시도해주세요.');
       }
     }
-    console.log('비밀번호 확인 : ', currentPassword);
   };
 
   return (
