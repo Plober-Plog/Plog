@@ -8,6 +8,8 @@ import com.plog.backend.domain.user.service.UserServiceImpl;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,15 +20,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "User API", description = "User 관련 API")
 public class UserController {
     private final UserServiceImpl userService;
     private final JwtTokenUtil jwtTokenUtil;
 
-    // 이메일 검증 패턴
     private static final String EMAIL_PATTERN =
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
-    // 회원 가입
+    @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping
     public ResponseEntity<BaseResponseBody> createUser(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
         log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
@@ -34,7 +36,7 @@ public class UserController {
             log.error(">>> [POST] /user - 이메일이 필수 필드입니다.");
             throw new NotValidRequestException("email은 필수 필드입니다.");
         }
-        if (userSignUpRequestDto.getEmail().matches(EMAIL_PATTERN)) {
+        if (!userSignUpRequestDto.getEmail().matches(EMAIL_PATTERN)) {
             log.error(">>> [POST] /user - 유효하지 않은 이메일 형식입니다: {}", userSignUpRequestDto.getEmail());
             throw new InvalidEmailFormatException("Invalid email format");
         }
@@ -56,12 +58,11 @@ public class UserController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
     }
 
-    // 회원 수정
+    @Operation(summary = "회원 수정", description = "회원 정보를 수정합니다.")
     @PatchMapping
     public ResponseEntity<BaseResponseBody> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
         log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", userUpdateRequestDto);
 
-        // userUpdateRequestDto 유효성 검사
         if(userUpdateRequestDto.getNickname() == null || userUpdateRequestDto.getNickname().trim().isEmpty()) {
             log.error(">>> [PATCH] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
@@ -73,7 +74,7 @@ public class UserController {
         }
 
         if (token.startsWith("Bearer ")) {
-            token = token.substring(7); // "Bearer " 문자열 제거
+            token = token.substring(7);
             log.info(">>> [PATCH] /user - Bearer 제거 후 토큰: {}", token);
         }
 
@@ -83,7 +84,7 @@ public class UserController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 정보 수정이 완료되었습니다."));
     }
 
-    // 중복 아이디 확인
+    @Operation(summary = "중복 아이디 확인", description = "사용 가능한 검색 ID인지 확인합니다.")
     @GetMapping("/{searchId}")
     public ResponseEntity<BaseResponseBody> checkSearchId(@PathVariable("searchId") String searchId) {
         log.info(">>> [GET] /user/{} - 아이디 확인 요청", searchId);
@@ -98,7 +99,7 @@ public class UserController {
         }
     }
 
-    // 이메일 중복 확인
+    @Operation(summary = "이메일 중복 확인", description = "사용 가능한 이메일인지 확인합니다.")
     @PostMapping("/email")
     public ResponseEntity<BaseResponseBody> checkEmail(@RequestBody UserEmailCheckRequestDto userEmailCheckRequestDto) {
         log.info(">>> [POST] /user/email - 이메일 중복 확인 요청 데이터: {}", userEmailCheckRequestDto);
@@ -112,7 +113,7 @@ public class UserController {
         }
     }
 
-    // 로그인 JWT 적용
+    @Operation(summary = "로그인", description = "로그인을 처리하고 JWT 토큰을 발급합니다.")
     @PostMapping("/login")
     public ResponseEntity<BaseResponseBody> signIn(@RequestBody UserSignInRequestDto userSignInRequestDto) {
         log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", userSignInRequestDto);
@@ -126,7 +127,7 @@ public class UserController {
         }
     }
 
-    // 회원 정보 조회
+    @Operation(summary = "회원 정보 조회", description = "회원 정보를 조회합니다.")
     @GetMapping
     public ResponseEntity<UserGetResponseDto> getUser(@RequestHeader("Authorization") String token) {
         log.info(">>> [GET] /user - 회원 정보 조회 요청: {}", token);
@@ -135,7 +136,7 @@ public class UserController {
         return ResponseEntity.status(200).body(userGetResponseDto);
     }
 
-    // 회원 탈퇴
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 처리합니다.")
     @DeleteMapping
     public ResponseEntity<BaseResponseBody> deleteUser(@RequestHeader("Authorization") String token) {
         log.info(">>> [DELETE] /user - 회원 탈퇴 요청: {}", token);
@@ -146,7 +147,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(BaseResponseBody.of(204, "회원 탈퇴 되었습니다."));
     }
 
-    // 현재 비밀번호 확인
+    @Operation(summary = "현재 비밀번호 확인", description = "현재 비밀번호를 확인합니다.")
     @PostMapping("/password")
     public ResponseEntity<BaseResponseBody> checkPassword(@RequestHeader("Authorization") String token, @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
         log.info(">>> [POST] /user/password - 현재 비밀번호 확인 요청 : {}", token);
@@ -155,7 +156,7 @@ public class UserController {
         return ResponseEntity.status(baseResponseBody.getStatusCode()).body(baseResponseBody);
     }
 
-    // 비밀번호 수정
+    @Operation(summary = "비밀번호 수정", description = "비밀번호를 수정합니다.")
     @PatchMapping("/password")
     public ResponseEntity<BaseResponseBody> updatePassword(@RequestBody UserPasswordUpdateRequestDto requestDto) {
         log.info(">>> [PATCH] /user/password - 비밀번호 수정 요청: {}", requestDto);
@@ -172,5 +173,3 @@ public class UserController {
         }
     }
 }
-
-//TODO [장현준] - JWT 토큰 expire, invalid 예외 헨들러

@@ -5,8 +5,9 @@ import com.plog.backend.domain.email.dto.request.EmailVerifyRequestDto;
 import com.plog.backend.domain.email.dto.response.VerifyResponseDto;
 import com.plog.backend.domain.email.service.EmailService;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
-import com.plog.backend.domain.user.service.UserServiceImpl;
 import com.plog.backend.global.model.response.BaseResponseBody;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +20,12 @@ import org.springframework.http.HttpStatus;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@Tag(name = "Email API", description = "Email 관련 API")
 public class EmailController {
     private final EmailService emailService;
     private final UserRepositorySupport userRepositorySupport;
 
-    // 인증코드 메일 발송
+    @Operation(summary = "인증코드 메일 발송", description = "이메일로 인증코드를 발송합니다.")
     @PostMapping("/email/send")
     public ResponseEntity<BaseResponseBody> mailSend(@RequestBody EmailRequestDto emailRequestDto) throws MessagingException {
         log.info(">>> [POST] /user/email/send - 인증코드 메일 발송 요청: {}", emailRequestDto.toString());
@@ -32,7 +34,7 @@ public class EmailController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200,"인증 메일이 전송 되었습니다."));
     }
 
-    // 인증코드 인증
+    @Operation(summary = "인증코드 인증", description = "이메일로 받은 인증코드를 확인합니다.")
     @PostMapping("/email/check")
     public ResponseEntity<VerifyResponseDto> verify(@RequestBody EmailVerifyRequestDto emailVerifyRequestDto) {
         log.info(">>> [POST] /user/email/check - 인증코드 검증 요청: {}", emailVerifyRequestDto.toString());
@@ -60,7 +62,7 @@ public class EmailController {
         }
     }
 
-    // 비밀번호 찾기 인증코드 메일 발송
+    @Operation(summary = "비밀번호 찾기 인증코드 메일 발송", description = "비밀번호 찾기를 위한 인증코드를 이메일로 발송합니다.")
     @PostMapping("/password/send")
     public ResponseEntity<BaseResponseBody> findPassword(@RequestBody EmailRequestDto emailRequestDto) throws MessagingException {
         log.info(">>> [POST] /user/password/send - 비밀번호 찾기 인증코드 메일 발송 요청: {}", emailRequestDto);
@@ -69,7 +71,7 @@ public class EmailController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200,"인증 메일이 전송 되었습니다."));
     }
 
-    // 비밀번호 찾기 인증코드 검증
+    @Operation(summary = "비밀번호 찾기 인증코드 검증", description = "비밀번호 찾기 위해 이메일로 받은 인증코드를 확인합니다.")
     @PostMapping("/password/check")
     public ResponseEntity<VerifyResponseDto> findPasswordVerify(@RequestBody EmailVerifyRequestDto emailVerifyRequestDto)  {
         log.info(">>> [POST] /user/password/check - 비밀번호 찾기 인증코드 검증 요청: {}", emailVerifyRequestDto);
