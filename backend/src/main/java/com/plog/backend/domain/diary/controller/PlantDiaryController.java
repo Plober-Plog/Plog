@@ -24,8 +24,7 @@ public class PlantDiaryController {
     @PostMapping
     public ResponseEntity<BaseResponseBody> addPlantDiary(
             @RequestHeader("Authorization") String token,
-            @RequestPart PlantDiaryAddRequestDto plantDiaryAddRequestDto,
-            @RequestPart(required = false) List<PlantDiaryImageUploadRequestDto> images) {
+            @RequestPart(value = "diaryData") PlantDiaryAddRequestDto plantDiaryAddRequestDto) {
         log.info(">>> [POST] /user/diary - 요청 데이터: {}", plantDiaryAddRequestDto);
         plantDiaryService.addPlantDiary(token, plantDiaryAddRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 등록이 완료되었습니다."));
