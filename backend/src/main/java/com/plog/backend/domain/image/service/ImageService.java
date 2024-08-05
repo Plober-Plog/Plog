@@ -1,5 +1,6 @@
 package com.plog.backend.domain.image.service;
 
+import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,7 +15,9 @@ public interface ImageService {
 
     String loadImage(Long imageId);
 
-    List<String> loadImagesByPlantDiaryId(Long plantDiaryId);
+    List<PlantDiaryImageGetResponseDto> loadImagesByPlantDiaryId(Long plantDiaryId);
+
+    List<String> loadImageUrlsByPlantDiaryId(Long plantDiaryId);
 
     String loadThumbnailImageByPlantDiaryId(Long plantDiaryId);
 }
