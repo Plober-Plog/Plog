@@ -47,7 +47,7 @@ public class NeighborServiceImpl implements NeighborService {
         User neighborUser = userRepository.findById(neighborId)
                 .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
 
-        int neighborType = 1;
+        int neighborType = NeighborType.NEIGHBOR.getValue();
 
         Optional<Neighbor> neighbor = neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, neighborType);
         if(neighbor.isPresent())
@@ -58,12 +58,36 @@ public class NeighborServiceImpl implements NeighborService {
 
 
     @Override
-    public void addMutualNeighbor(String token, Long userId) {
+    public void addMutualNeighbor(String token, Long neighborId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId).get();
+        User neighborUser = userRepository.findById(neighborId)
+                .orElseThrow(() -> {
+                    return new NotValidRequestException("이웃을 찾을 수 없습니다.");
+                });
 
+        Neighbor neighbor = Neighbor.builder()
+                .neighborFrom(user)
+                .neighborTo(neighborUser)
+                .neighborType(NeighborType.NEIGHBOR.getValue())
+                .build();
+
+        neighborRepository.save(neighbor);
     }
 
     @Override
-    public void deleteMutualNeighbor(String token, Long userId) {
+    public void deleteMutualNeighbor(String token, Long neighborId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId).get();
+        User neighborUser = userRepository.findById(neighborId)
+                .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
 
+        int neighborType = NeighborType.NEIGHBOR.getValue();
+
+        Optional<Neighbor> neighbor = neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, neighborType);
+        if(neighbor.isPresent())
+            neighborRepository.delete(neighbor.get());
+        else
+            throw new NotValidRequestException("해당 이웃 관계를 찾을 수 없습니다.");
     }
 }
