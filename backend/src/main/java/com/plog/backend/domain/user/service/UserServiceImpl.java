@@ -78,19 +78,42 @@ public class UserServiceImpl implements UserService {
     }
 
     public Map<String, String> userSignIn(String email, String password) {
+        log.info(">>> [USER SIGN IN] - 사용자 로그인 요청: 이메일 = {}", email);
+
+        // 이메일로 사용자 찾기
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.error(">>> [USER SIGN IN] - 이메일 잘못됨: {}", email);
+                    return new NotValidRequestException("이메일 혹은 패스워드가 잘 못 되었습니다.");
+                });
+
+        // 패스워드 검증
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            log.error(">>> [USER SIGN IN] - 패스워드 잘못됨: {}", email);
+            throw new NotValidRequestException("이메일 혹은 패스워드가 잘 못되었습니다.");
+        }
+
+        log.info(">>> login - 사용자 찾음: {}", user);
+        // 인증 객체 생성
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+                new UsernamePasswordAuthenticationToken(user.getUserId(), password)
         );
 
+        log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String accessToken = jwtTokenProvider.generateAccessToken(authentication);
+
+        // 토큰 생성
+        String accessToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
 
         // Redis에 토큰 저장 (Access 토큰: 1시간, Refresh 토큰: 7일)
-        User user = ((PloberUserDetails) authentication.getPrincipal()).getUser();
         redisUtil.setDataExpire("accessToken:" + user.getUserId(), accessToken, 3600);
         redisUtil.setDataExpire("refreshToken:" + user.getUserId(), refreshToken, 604800);
+
+        log.info(">>> [USER SIGN IN] - 사용자 로그인 성공: 유저 ID = {}", user.getUserId());
+        log.info(">>> [USER SIGN IN] - Access 토큰: {}", accessToken);
+        log.info(">>> [USER SIGN IN] - Refresh 토큰: {}", refreshToken);
 
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
@@ -100,10 +123,18 @@ public class UserServiceImpl implements UserService {
     }
 
     public void userSignOut(String token) {
+        log.info(">>> [USER SIGN OUT] - 사용자 로그아웃 요청: 토큰 = {}", token);
+
         String userId = jwtTokenProvider.getPayload(token, null);
+
         redisUtil.deleteData("accessToken:" + userId);
         redisUtil.deleteData("refreshToken:" + userId);
+
+        log.info(">>> [USER SIGN OUT] - Redis에서 토큰 삭제 완료: 유저 ID = {}", userId);
+
         SecurityContextHolder.clearContext();
+
+        log.info(">>> [USER SIGN OUT] - SecurityContextHolder 초기화 완료");
     }
 
     @Override

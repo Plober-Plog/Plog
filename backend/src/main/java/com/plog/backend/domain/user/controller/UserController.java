@@ -133,15 +133,15 @@ public class UserController {
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 처리하고 Redis에서 토큰을 삭제합니다.")
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ResponseEntity<BaseResponseBody> logout(@RequestHeader("Authorization") String token) {
-        log.info(">>> [POST] /user/logout - 로그아웃 요청: {}", token);
+        log.info(">>> [GET] /user/logout - 로그아웃 요청: {}", token);
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
-            log.info(">>> [POST] /user/logout - Bearer 제거 후 토큰: {}", token);
+            log.info(">>> [GET] /user/logout - Bearer 제거 후 토큰: {}", token);
         }
         userService.userSignOut(token);
-        log.info(">>> [POST] /user/logout - 로그아웃 완료");
+        log.info(">>> [GET] /user/logout - 로그아웃 완료");
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "로그아웃이 완료되었습니다."));
     }
 
