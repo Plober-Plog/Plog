@@ -1,4 +1,4 @@
-import axios from 'axios';
+import API from '../../apis/api';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from '../../stores/store';
@@ -16,6 +16,7 @@ const Setting = () => {
       if (!token) return;
 
       // 서버에 로그아웃 요청
+      await 
       await axios.post('https://i11b308.p.ssafy.io/api/user/logout', {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
