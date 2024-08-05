@@ -1,7 +1,6 @@
 package com.plog.backend.domain.diary.controller;
 
 import com.plog.backend.domain.diary.dto.request.PlantDiaryAddRequestDto;
-import com.plog.backend.domain.diary.dto.request.PlantDiaryImageUploadRequestDto;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryUpdateRequestDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
 import com.plog.backend.domain.diary.service.PlantDiaryService;
@@ -12,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RestController

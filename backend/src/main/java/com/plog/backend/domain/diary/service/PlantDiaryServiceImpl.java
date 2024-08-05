@@ -1,7 +1,6 @@
 package com.plog.backend.domain.diary.service;
 
 import com.plog.backend.domain.diary.dto.request.PlantDiaryAddRequestDto;
-import com.plog.backend.domain.diary.dto.request.PlantDiaryImageUploadRequestDto;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryUpdateRequestDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetSimpleResponseDto;
@@ -9,14 +8,14 @@ import com.plog.backend.domain.diary.entity.Humidity;
 import com.plog.backend.domain.diary.entity.PlantDiary;
 import com.plog.backend.domain.diary.entity.Weather;
 import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
+import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
+import com.plog.backend.domain.image.exception.ImageNotFoundException;
 import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.plant.entity.Plant;
-import com.plog.backend.domain.plant.repository.PlantCheckRepository;
 import com.plog.backend.domain.plant.repository.PlantRepository;
-import com.plog.backend.domain.plant.service.PlantServiceImpl;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
@@ -39,34 +38,23 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 public class PlantDiaryServiceImpl implements PlantDiaryService {
 
     private final PlantDiaryRepository plantDiaryRepository;
-    private final PlantDiaryImageRepository plantDiaryImageRepository;
     private final PlantRepository plantRepository;
     private final ImageServiceImpl imageService;
     private final ImageRepository imageRepository;
-
+    private final PlantDiaryImageRepository plantDiaryImageRepository;
 
     @Transactional
-    public void uploadPlantDiaryImages(List<PlantDiaryImageUploadRequestDto> plantDiaryImageUploadRequestDtoList, Long plantDiaryId) {
-        // 대표 사진 찾기
-        int thumbnailIdx = -1;
-        for (int i = 0; i < plantDiaryImageUploadRequestDtoList.size(); i++) {
-            if (plantDiaryImageUploadRequestDtoList.get(i).isThumbnail()) {
-                if (thumbnailIdx == -1) {
-                    thumbnailIdx = i;
-                } else {
-                    throw new NotValidRequestException("일지에는 대표 사진을 한 장만 지정할 수 있습니다.");
-                }
-            }
-        }
+    public void uploadPlantDiaryImages(MultipartFile[] images, int thumbnailIdx, Long plantDiaryId) {
+        if (images.length > 5)
+            throw new NotValidRequestException("일지에는 최대 5개 사진을 업로드 할 수 있습니다.");
 
         // 이미지 업로드
-        MultipartFile[] images = new MultipartFile[plantDiaryImageUploadRequestDtoList.size()];
         String[] imageUrls = imageService.plantDiaryUploadImages(images, plantDiaryId, thumbnailIdx);
     }
 
     @Transactional
     @Override
-    public void addPlantDiary(String token, PlantDiaryAddRequestDto plantDiaryAddRequestDto) {
+    public Long addPlantDiary(String token, PlantDiaryAddRequestDto plantDiaryAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> addPlantDiary - 요청 데이터: {}", plantDiaryAddRequestDto);
 
@@ -75,18 +63,14 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
             throw new NotValidRequestException("미래의 식물 일지는 작성할 수 없습니다");
         }
 
-        if (plantDiaryAddRequestDto.getImages().size() > 5)
-            throw new NotValidRequestException("일지에는 최대 5개 사진을 업로드 할 수 있습니다.");
-
-        PlantDiary existingPlantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDate(plantDiaryAddRequestDto.getPlantId(), plantDiaryAddRequestDto.getRecordDate());
-        if (existingPlantDiary != null)
-            throw new NotValidRequestException("이미 작성된 일지가 있어 새로 작성할 수 없습니다.");
-
         Optional<Plant> plant = plantRepository.findById(plantDiaryAddRequestDto.getPlantId());
         if (plant.isPresent()) {
             if (userId != plant.get().getUser().getUserId())
                 throw new NotAuthorizedRequestException();
-            // 식물 일지 등록
+            PlantDiary existPlantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDate(
+                    plantDiaryAddRequestDto.getPlantId(), plantDiaryAddRequestDto.getRecordDate());
+            if (existPlantDiary != null)
+                throw new NotValidRequestException("이미 해당 일자에 작성된 일지가 존재합니다.");
             PlantDiary plantDiary = PlantDiary.builder()
                     .plant(plant.get())
                     .weather(plantDiaryAddRequestDto.getWeather())
@@ -97,13 +81,8 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                     .build();
             PlantDiary pd = plantDiaryRepository.save(plantDiary);
 
-            // 일지 사진 업로드
-            if (plantDiaryAddRequestDto.getImages() != null) {
-                uploadPlantDiaryImages(plantDiaryAddRequestDto.getImages(), pd.getPlantDiaryId());
-            }
-
-            log.info(">>> addPlantDiary - 일지 저장 완료: {}", plantDiary);
-
+            log.info(">>> addPlantDiary - 일지 저장 완료 : 일지 id {}", plantDiary.getPlantDiaryId());
+            return pd.getPlantDiaryId();
         } else {
             throw new NotValidRequestException("일지를 작성할 식물이 없습니다.");
         }
@@ -128,6 +107,8 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                     throw new NotAuthorizedRequestException();
 
                 PlantDiary pd = plantDiary.get();
+
+                // 일지 내용 수정
                 pd.setPlant(plant.get());
                 pd.setContent(plantDiaryUpdateRequestDto.getContent());
                 pd.setWeather(Weather.weather(plantDiaryUpdateRequestDto.getWeather()));
@@ -136,17 +117,39 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                 pd.setTemperature(plantDiaryUpdateRequestDto.getTemperature());
                 plantDiaryRepository.save(pd);
 
-                //TODO [강윤서]
-                // plantDiaryId 의 thumbnail 값을 초기화하고
-                // request 속 thumbnailIdx 로 접근하여 true 로 변경
-//                List<PlantDiaryImage> plantDiaryImageUrlList = imageService.loadImagesByPlantDiaryId(plantDiaryUpdateRequestDto.getPlantDiaryId());
-//                imageService.
-                log.info(">>> updatePlantDiary - 일지 수정 완료: {}", pd);
+                log.info(">>> updatePlantDiary - 일지 내용 수정 완료: {}", pd.getPlantDiaryId());
+                // 일지 대표 사진 수정
+                Optional<PlantDiaryImage> plantDiaryImageOptional = plantDiaryImageRepository.findByPlantDiaryIdAndIsThumbnailTrue(plantDiary.get().getPlantDiaryId());
+                if (plantDiaryImageOptional.isPresent()) { // 등록되어 있으면 기존 썸네일 해제 진행
+                    PlantDiaryImage plantDiaryImage = plantDiaryImageOptional.get();
+                    plantDiaryImage.setThumbnail(false);
+                    plantDiaryImageRepository.save(plantDiaryImage);
+                } else {
+                    throw new ImageNotFoundException("썸네일로 등록된 사진을 조회할 수 없습니다.");
+                }
+                log.info(">>> updatePlantDiary - 기존 썸네일 해제 완료");
+                // 새로 들어온 thumbnailIdx 에 해당하는 order 이미지의 isThumbnail 을 true로 update
+                int thumbnailIdx = plantDiaryUpdateRequestDto.getThumbnailIdx();
+                List<PlantDiaryImageGetResponseDto> plantDiaryImageGetResponseDtoList = imageService.loadImagesByPlantDiaryId(plantDiaryUpdateRequestDto.getPlantDiaryId());
+                if (thumbnailIdx >= 0 && thumbnailIdx < plantDiaryImageGetResponseDtoList.size()) {
+                    PlantDiaryImageGetResponseDto newThumbnailPlantDiaryImage = plantDiaryImageGetResponseDtoList.get(thumbnailIdx);
+                    PlantDiaryImage newThumbnailImage = PlantDiaryImage.builder()
+                            .plantDiaryImageId(newThumbnailPlantDiaryImage.getPlantDiaryImageId())
+                            .plantDiaryId(newThumbnailPlantDiaryImage.getPlantDiaryId())
+                            .order(newThumbnailPlantDiaryImage.getOrder())
+                            .isThumbnail(true) // 새로 썸네일로 지정
+                            .image(newThumbnailPlantDiaryImage.getImage())
+                            .build();
+                    plantDiaryImageRepository.save(newThumbnailImage);
+                    log.info(">>> updatePlantDiary - 새로운 일지 썸네일 지정 완료");
+                } else {
+                    throw new NotValidRequestException("일지 사진의 해당 인덱스에 접근할 수 없습니다.");
+                }
             } else {
                 throw new EntityNotFoundException("일치하는 식물을 찾을 수 없습니다.");
             }
         } else {
-            throw new EntityNotFoundException("해당 일자에 작성된 식물에 대한 일지가  없습니다.");
+            throw new EntityNotFoundException("일치하는 식물 일지를 찾을 수 없습니다.");
         }
     }
 
@@ -154,6 +157,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     @Override
     public void deletePlantDiary(String token, Long plantDiaryId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> deletePlantDiary - 요청 ID: {}", plantDiaryId);
 
         Optional<PlantDiary> plantDiary = plantDiaryRepository.findById(plantDiaryId);
         if (plantDiary.isPresent()) {
@@ -173,7 +177,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
 
                 plantDiaryRepository.save(pd);
 
-                log.info(">>> deletePlantDiary - 일지 삭제 완료: {}", pd);
+                log.info(">>> deletePlantDiary - 일지 삭제 완료: {}", pd.getPlantDiaryId());
             } else {
                 throw new EntityNotFoundException("일치하는 식물을 찾을 수 없습니다.");
             }
@@ -184,17 +188,19 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
 
     @Override
     public PlantDiaryGetResponseDto getPlantDiary(Long plantDiaryId) {
+        log.info(">>> getPlantDiary - 요청 ID: {}", plantDiaryId);
+
         Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findById(plantDiaryId);
         if (optionalPlantDiary.isPresent()) {
             PlantDiary plantDiary = optionalPlantDiary.get();
             if (!plantDiary.isDeleted()) {
-                log.info(">>> getPlantDiary - 일지 조회 성공: {}", plantDiary);
-                List<String> imageList = imageService.loadImagesByPlantDiaryId(plantDiaryId);
+                log.info(">>> getPlantDiary - 일지 조회 성공: {}", plantDiary.getPlantDiaryId());
+                List<String> imageList = imageService.loadImageUrlsByPlantDiaryId(plantDiaryId);
                 return PlantDiaryGetResponseDto.builder()
                         .plantDiaryId(plantDiaryId)
                         .plantId(plantDiary.getPlant().getPlantId())
-                        .weather(plantDiary.getWeather().getValue())
-                        .humidity(plantDiary.getHumidity().getValue())
+                        .weather(Weather.weather(plantDiary.getWeather().getValue()))
+                        .humidity(Humidity.humidity(plantDiary.getHumidity().getValue()))
                         .temperature(plantDiary.getTemperature())
                         .content(plantDiary.getContent())
                         .recordDate(plantDiary.getRecordDate())
@@ -211,15 +217,15 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     @Override
     public PlantDiaryGetResponseDto getPlantDiaryByRecordDate(Long plantId, String recordDate) {
         PlantDiary plantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDate(plantId, LocalDate.parse(recordDate));
-        log.info(">>> getPlantDiaryByRecordDate 조회 완료");
+        log.info(">>> getPlantDiaryByRecordDate 조회 완료 ");
         if (plantDiary == null) return null;
 
-        List<String> imageList = imageService.loadImagesByPlantDiaryId(plantDiary.getPlantDiaryId());
+        List<String> imageList = imageService.loadImageUrlsByPlantDiaryId(plantDiary.getPlantDiaryId());
         return PlantDiaryGetResponseDto.builder()
                 .plantDiaryId(plantDiary.getPlantDiaryId())
                 .plantId(plantDiary.getPlant().getPlantId())
-                .weather(plantDiary.getWeather().getValue())
-                .humidity(plantDiary.getHumidity().getValue())
+                .weather(Weather.weather(plantDiary.getWeather().getValue()))
+                .humidity(Humidity.humidity(plantDiary.getHumidity().getValue()))
                 .temperature(plantDiary.getTemperature())
                 .content(plantDiary.getContent())
                 .recordDate(plantDiary.getRecordDate())
