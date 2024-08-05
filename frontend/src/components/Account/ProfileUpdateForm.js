@@ -9,6 +9,7 @@ import SelectField from '../Common/SelectField';
 import ATag from '../Common/ATag';
 import ModalComplete from '../Common/ModalComplete';
 
+
 const ProfileUpdateForm = ({ userData }) => {
   const navigate = useNavigate();
 
@@ -120,7 +121,7 @@ const ProfileUpdateForm = ({ userData }) => {
 
   return (
     <div>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} className="form">
         <div>
          {/* TODO 이미지 수정 컴포넌트 추가 */}
         </div>
@@ -132,6 +133,7 @@ const ProfileUpdateForm = ({ userData }) => {
             value={searchId}
             onChange={(e) => setSearchId(e.target.value)}
             isRequired={true}
+            className="input"
           />
           <ATag 
             content='중복확인' onClick={handleCheckSearchId}
@@ -145,6 +147,7 @@ const ProfileUpdateForm = ({ userData }) => {
             value={email}
             isRequired={true}
             disabled={true}
+            className="input"
           />
         </div>
         <div>
@@ -162,6 +165,7 @@ const ProfileUpdateForm = ({ userData }) => {
               }
             }}
             isRequired={false}
+            className="input"
           />
           {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
         </div>
@@ -172,6 +176,7 @@ const ProfileUpdateForm = ({ userData }) => {
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
+            className="input"
           />
         </div>
         <SelectField
@@ -209,6 +214,7 @@ const ProfileUpdateForm = ({ userData }) => {
           content="수정하기"
           disabled={!isFormValid}
           onClick={handleProfileUpdate}
+          className="button"
         />
       </form>
       <ModalComplete title={'회원정보 수정 완료'} content={'회원정보 수정이 완료되었습니다'} open={openModal} onClose={closeModal} />
