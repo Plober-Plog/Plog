@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @Operation(summary = "회원 수정", description = "회원 정보를 수정합니다.")
-    @PutMapping
+    @PatchMapping
     public ResponseEntity<BaseResponseBody> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
         log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", userUpdateRequestDto);
 
@@ -204,6 +204,14 @@ public class UserController {
     public ResponseEntity<UserProfileResponseDto> getProfile(@PathVariable("searchId") String searchId) {
         UserProfileResponseDto responseDto = userService.getProfile(searchId);
         log.info(">>> 상대 프로필 조회, 아이디, 반환값 : {}, {}", searchId, responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @Operation(summary = "이메일 사용자 조회", description = "이메일 기준으로 사용자를 조회합니다.")
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserGetResponseDto> getUserByEmail(@PathVariable("email") String email) {
+        UserGetResponseDto responseDto = userService.getUser(email);
+        log.info(">>> 상대 프로필 조회, 이메일, 반환값 : {}, {}", email, responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
