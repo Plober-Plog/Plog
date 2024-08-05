@@ -26,11 +26,25 @@ public class PlantDiary extends BaseEntity {
     private Plant plant;
 
     @Column
-    private Weather weather;
+    private int weather;
     @Column
     private float temperature;
     @Column
-    private Humidity humidity;
+    private int humidity;
+
+    public Weather getWeather() {
+        return Weather.weather(weather);
+    }
+    public void setWeather(Weather weather) {
+        this.weather = weather.getValue();
+    }
+
+    public Humidity getHumidity() {
+        return Humidity.humidity(humidity);
+    }
+    public void setHumidity(Humidity humidity) {
+        this.humidity = humidity.getValue();
+    }
 
     @Column
     private String content;
@@ -51,9 +65,9 @@ public class PlantDiary extends BaseEntity {
     @Builder
     PlantDiary(Plant plant, int weather, float temperature, int humidity, String content, LocalDate recordDate) {
         this.plant = plant;
-        this.weather = Weather.weather(weather);
+        this.weather = weather;
         this.temperature = temperature;
-        this.humidity = Humidity.humidity(humidity);
+        this.humidity = humidity;
         this.content = content;
         this.recordDate = recordDate;
     }

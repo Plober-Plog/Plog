@@ -49,7 +49,7 @@ public class PlantDiaryController {
     @GetMapping("/{plantDiaryId}")
     public ResponseEntity<PlantDiaryGetResponseDto> getPlantDiary(
             @PathVariable Long plantDiaryId) {
-        log.info(">>> [GET] /user/diary/{} - 요청 ID: {}, 기록 일자: {}", plantDiaryId, plantDiaryId);
+        log.info(">>> [GET] /user/diary/{} - 요청 ID: {}", plantDiaryId, plantDiaryId);
         PlantDiaryGetResponseDto plantDiaryGetResponseDto = plantDiaryService.getPlantDiary(plantDiaryId);
         return ResponseEntity.status(200).body(plantDiaryGetResponseDto);
     }
