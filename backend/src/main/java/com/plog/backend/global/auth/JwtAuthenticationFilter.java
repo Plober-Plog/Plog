@@ -1,6 +1,8 @@
 package com.plog.backend.global.auth;
 
 import com.plog.backend.global.util.JwtTokenUtil;
+import com.plog.backend.global.exception.NotValidRequestException;
+import com.plog.backend.global.exception.TimeoutException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,6 +44,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 userId = jwtTokenUtil.getVerifier().verify(jwtToken).getSubject();
                 log.info("jwtToken 속 정보 확인 : {}", userId);
+            } catch (TimeoutException e) {
+                SecurityContextHolder.clearContext();
+                response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
+                response.getWriter().write(e.getMessage());
+                return;
+            } catch (NotValidRequestException e) {
+                SecurityContextHolder.clearContext();
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write(e.getMessage());
+                return;
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -18,7 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//         configuration.addAllowedOrigin("*");
+        configuration.addAllowedOrigin("*");
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
@@ -82,6 +82,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("${server.domain.host}")
                 .allowedOrigins("http://localhost:3000")
                 .exposedHeaders("Authorization")
-                .allowedMethods("OPTIONS","GET","POST", "PUT","DELETE");
+                .allowedMethods("OPTIONS","GET","POST","PUT","DELETE","PATCH");
     }
 }
