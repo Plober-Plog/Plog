@@ -6,6 +6,7 @@ import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
+import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.global.model.response.BaseResponseBody;
 
@@ -20,4 +21,6 @@ public interface UserService {
     void deleteUser(String token);
     UserCheckPasswordResponseDto checkPassword(String token, UserPasswordCheckRequestDto userPasswordCheckRequestDto);
     void updatePassword(UserPasswordUpdateRequestDto userPasswordUpdateRequestDto);
+    UserProfileResponseDto getMyProfile(String token);
+    UserProfileResponseDto getProfile(Long searchId);
 }

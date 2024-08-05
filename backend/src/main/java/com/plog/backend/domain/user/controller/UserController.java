@@ -3,6 +3,7 @@ package com.plog.backend.domain.user.controller;
 import com.plog.backend.domain.user.dto.request.*;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
+import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.service.UserServiceImpl;
@@ -172,5 +173,17 @@ public class UserController {
             log.error(">>> [PATCH] /user/password - 내부 서버 오류 발생: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponseBody.of(500, "내부 서버 오류가 발생했습니다."));
         }
+    }
+
+    @Operation(summary = "내 프로필 조회", description = "내 프로필을 조회합니다.")
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestHeader("Authorization") String token) {
+        )
+    }
+
+    @Operation(summary = "프로필 조회", description = "검색 ID 기준으로 프로필을 조회합니다.")
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestParam Long searchId) {
+
     }
 }
