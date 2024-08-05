@@ -67,4 +67,17 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.REQUEST_TIMEOUT);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponseDto> handleUnknownException(
+            Exception ex, HttpServletRequest request) {
+        log.error("Exception 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        ExceptionResponseDto response = ExceptionResponseDto.of(
+                request.getMethod(),
+                request.getRequestURI(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
