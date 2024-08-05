@@ -1,6 +1,7 @@
 package com.plog.backend.domain.diary.service;
 
 import com.plog.backend.domain.diary.dto.request.PlantDiaryAddRequestDto;
+import com.plog.backend.domain.diary.dto.request.PlantDiaryImageUploadRequestDto;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryUpdateRequestDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetSimpleResponseDto;
