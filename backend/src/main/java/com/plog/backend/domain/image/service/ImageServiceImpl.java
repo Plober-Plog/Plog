@@ -181,7 +181,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<String> loadImagesByPlantDiaryId(int plantDiaryId) {
+    public List<String> loadImagesByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadImagesByPlantDiaryId - 플랜트 다이어리 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
         List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
         if (plantDiaryImages.isEmpty()) {
@@ -198,7 +198,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public String loadThumbnailImageByPlantDiaryId(int plantDiaryId) {
+    public String loadThumbnailImageByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
         PlantDiaryImage thumbnailImage = plantDiaryImageRepository.findByPlantDiaryIdAndIsThumbnailTrue(plantDiaryId)
                 .orElseThrow(() -> new ImageNotFoundException("해당 플랜트 다이어리에 해당하는 썸네일 이미지를 찾을 수 없습니다."));

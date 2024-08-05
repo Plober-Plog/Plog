@@ -14,7 +14,7 @@ public interface ImageService {
 
     String loadImage(Long imageId);
 
-    List<String> loadImagesByPlantDiaryId(int plantDiaryId);
+    List<String> loadImagesByPlantDiaryId(Long plantDiaryId);
 
-    String loadThumbnailImageByPlantDiaryId(int plantDiaryId);
+    String loadThumbnailImageByPlantDiaryId(Long plantDiaryId);
 }
