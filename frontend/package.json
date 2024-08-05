@@ -57,7 +57,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://i11b308.p.ssafy.io",
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.40",

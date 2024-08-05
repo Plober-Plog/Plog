@@ -9,6 +9,7 @@ import SelectField from '../Common/SelectField';
 import ATag from '../Common/ATag';
 import ModalComplete from '../Common/ModalComplete';
 
+
 const ProfileUpdateForm = ({ userData }) => {
   const navigate = useNavigate();
 
@@ -30,7 +31,7 @@ const ProfileUpdateForm = ({ userData }) => {
   // 유효성 검사
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(true);
+  const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(false);
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
 
@@ -130,10 +131,7 @@ const ProfileUpdateForm = ({ userData }) => {
             type="text"
             placeholder="아이디"
             value={searchId}
-            onChange={(e) => {
-              setSearchId(e.target.value)
-              setIsSearchIdAvailable(false)
-            }}
+            onChange={(e) => setSearchId(e.target.value)}
             isRequired={true}
             className="input"
           />
