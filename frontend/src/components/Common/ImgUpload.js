@@ -48,7 +48,7 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
 ImgUpload.propTypes = {
   cameraIcon: PropTypes.string.isRequired,
   imgs: PropTypes.arrayOf(PropTypes.shape({
-    url: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
     isThumbnail: PropTypes.bool.isRequired,
   })).isRequired,
   handleImageUpload: PropTypes.func.isRequired,

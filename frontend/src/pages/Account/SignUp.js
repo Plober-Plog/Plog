@@ -1,16 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import SignUpForm from '../../components/Account/SignUpForm';
-import Btn from '../../components/Common/Btn';
+import ATag from '../../components/Common/ATag';
+import './Account.css';
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   return (
-    <div>
-      <h1>회원가입</h1>
-      <Btn
+    <div className="account-container">
+      <h1 className="title">회원가입</h1>
+      <ATag
         content='로그인'
-        onClick={
-          () => console.log('로그인 페이지로 이동')
-        }
+        onClick={() => navigate('/login')}
       />
       <SignUpForm />
     </div>

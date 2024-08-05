@@ -22,7 +22,7 @@ import repottedIcon from '../../assets/icon/repotted.png';
 import './PlantDiaryWrite.css';
 
 //TODO [차유림] 현재는 location 받아오는 게 없어서 오류가 남 우선 주석처리했음
-const PlantDiaryWrite = ({currentDate = new Date(), plantId=1 }) => {  
+const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {  
   // const location = useLocation();
   const navigate = useNavigate();
   // const { plantId, date: selectedDate } = location.state;
@@ -34,9 +34,9 @@ const PlantDiaryWrite = ({currentDate = new Date(), plantId=1 }) => {
   const [isWatered, setIsWatered] = useState(false);
   const [isFertilized, setIsFertilized] = useState(false);
   const [isRepotted, setIsRepotted] = useState(false);
-  const [weather, setIsWeather] = useState('');
-  const [humidity, setIsHumidity] = useState('');
-  const [temperature, setIsTemperaturer] = useState('');
+  const [weather, setIsWeather] = useState(0);
+  const [humidity, setIsHumidity] = useState(0);
+  const [temperature, setIsTemperature] = useState(0);
   const [imgs, setImgs] = useState([]);
   const [plantDiaryId, setPlantDiaryId] = useState(null); //현재 날짜에 이미 작성된 일지가 있을 경우 해당 일지의 ID를 저장
   const [isEditMode, setIsEditMode] = useState(false);
@@ -72,7 +72,7 @@ const PlantDiaryWrite = ({currentDate = new Date(), plantId=1 }) => {
   const getDiaryAndPlantCheck = async () => {
     try {
       const data = await fetchDiaryAndCheck(plantId, date);
-      if (data) {
+      if (data.plantDiary || data.plantCheck) {
         setIsEditMode(true);
         if (data.plantDiary) {
           const { plantDiary } = data;
@@ -85,25 +85,15 @@ const PlantDiaryWrite = ({currentDate = new Date(), plantId=1 }) => {
            })));
           setIsWeather(plantDiary.weather);
           setIsHumidity(plantDiary.humidity);
-          setIsTemperaturer(plantDiary.temperature);
+          setIsTemperature(plantDiary.temperature);
         } else {
-          // const { plantDiary } = data;
+          const { plantCheck } = data;
           setPlantDiaryId(null);
           setContent('');
           setImgs([]);
-          // setIsWeather(plantDiary.weather);
-          // setIsHumidity(plantDiary.humidity);
-          // setIsTemperaturer(plantDiary.temperature);
-        }
-        if (data.plantCheck) {
-          const { plantCheck } = data;
           setIsWatered(plantCheck.watered);
           setIsFertilized(plantCheck.fertilized);
           setIsRepotted(plantCheck.repotted);
-        } else {
-          setIsWatered(false);
-          setIsFertilized(false);
-          setIsRepotted(false);
         }
       } else {
         // TODO [차유림]아직 날씨 데이터가 없기 때문에 주석처리 
@@ -121,7 +111,7 @@ const PlantDiaryWrite = ({currentDate = new Date(), plantId=1 }) => {
   getDiaryAndPlantCheck();
 }, [date, plantId]);
 
-  // 정보 입력
+  // 이미지 업로드 .. => 잘 모루겟어서 지피티한테 물어봄 ㅜㅜ ..  
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files); // 파일 입력에서 파일 배열을 만들기
     if (files.length + imgs.length > 5) { // 이미지가 5장을 초과하면 경고하고 반환
@@ -192,45 +182,59 @@ const PlantDiaryWrite = ({currentDate = new Date(), plantId=1 }) => {
       temperature,
       humidity,
       content,
-      images: imgs.map((img) => ({
-        url: img.url,
-        isThumbnail: img.isThumbnail
-      })),
+      thumbnailIdx,
       recordDate: formattedDate,
     };
-
+    console.log(diaryData);
     const plantData = {
       isWatered,
       isFertilized,
       isRepotted,
       checkDate: formattedDate,
     }
+    console.log(plantData);
 
-    // 이미지 정보를 배열로 전달해주기 위한 ...
-    const formData = new FormData();
-    formData.append('diaryData', new Blob([JSON.stringify(diaryData)], { type: 'application/json' }));
+    // const imgs = {
 
-    imgs.forEach((img, index) => {
-      formData.append('images', img.file);
-      formData.append('thumbnails', JSON.stringify({ url: img.url, isThumbnail: img.isThumbnail || index === 0 }));
-    });
+    // }
 
     // 일지작성요청 2
     try {
+      // console.log(plantDiaryId)
+      // const diaryWriteResponse = await axios({
+      //   method: 'POST',
+      //   url: `${URI}/user/diary`,
+      //   data:diaryData,
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
+      //   }
+        
+      // });
+      
+      // if (diaryWriteResponse.status !== 200) {
+      //   throw new Error('일지 저장에 실패했습니다.');
+      // }
+
+
+      // console.log(plantDiaryId)
+
       const diaryWriteResponse = await axios({
         method: plantDiaryId ? 'PATCH' : 'POST',
         url: plantDiaryId ? `${URI}/user/diary/${plantDiaryId}` : `${URI}/user/diary`,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
         },
-        data: formData,
+        diaryData: diaryData,
       });
-
+      
       if (diaryWriteResponse.status !== 200) {
         throw new Error('일지 저장에 실패했습니다.');
       }
 
+      console.log(plantDiaryId)
+      
       const plantCheckResponse = await axios({
         method: plantDiaryId ? 'PATCH' : 'POST',
         url: `${URI}/user/plant/${plantId}/check`,
@@ -283,7 +287,7 @@ const PlantDiaryWrite = ({currentDate = new Date(), plantId=1 }) => {
           })));
           setIsWeather(plantDiary.weather);
           setIsHumidity(plantDiary.humidity);
-          setIsTemperaturer(plantDiary.temperature);
+          setIsTemperature(plantDiary.temperature);
         } else {
           setPlantDiaryId(null);
           setContent('');
