@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface OtherPlantTypeRepository extends JpaRepository<OtherPlantType, Long> {
-    List<OtherPlantType> findByPlantName(String plantName);
+    OtherPlantType findByPlantName(String plantName);
 }
