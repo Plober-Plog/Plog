@@ -96,7 +96,7 @@ const ProfileUpdateForm = ({ userData }) => {
 
     // 회원정보 수정 요청
     try {
-      const response = await axios.patch('api/user', userData);
+      const response = await axios.patch('/user', userData);
       console.log('회원 정보 수정 성공:', response);
       setOpenModal(true);
     } catch (error) {
