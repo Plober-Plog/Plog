@@ -22,5 +22,5 @@ public interface UserService {
     UserCheckPasswordResponseDto checkPassword(String token, UserPasswordCheckRequestDto userPasswordCheckRequestDto);
     void updatePassword(UserPasswordUpdateRequestDto userPasswordUpdateRequestDto);
     UserProfileResponseDto getMyProfile(String token);
-    UserProfileResponseDto getProfile(Long searchId);
+    UserProfileResponseDto getProfile(String searchId);
 }

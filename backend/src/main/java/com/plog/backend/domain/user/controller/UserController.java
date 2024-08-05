@@ -178,12 +178,12 @@ public class UserController {
     @Operation(summary = "내 프로필 조회", description = "내 프로필을 조회합니다.")
     @GetMapping("/profile")
     public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestHeader("Authorization") String token) {
-        )
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getMyProfile(token));
     }
 
     @Operation(summary = "프로필 조회", description = "검색 ID 기준으로 프로필을 조회합니다.")
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestParam Long searchId) {
-
+    public ResponseEntity<UserProfileResponseDto> getProfile(@RequestParam String searchId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getProfile(searchId));
     }
 }

@@ -234,11 +234,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileResponseDto getMyProfile(String token) {
-        return null;
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
+
+        UserProfileResponseDto responseDto = UserProfileResponseDto.builder()
+                .title("기본 칭호")
+                .profile_info(user.getProfileInfo())
+                .total_exp(user.getTotalExp())
+                .nickname(user.getNickname())
+                .profile("default.jpg")
+                .build();
+
+        return responseDto;
     }
 
     @Override
-    public UserProfileResponseDto getProfile(Long searchId) {
-        return null;
+    public UserProfileResponseDto getProfile(String searchId) {
+
+        User user = userRepository.findUserBySearchId(searchId)
+                .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
+
+        UserProfileResponseDto responseDto = UserProfileResponseDto.builder()
+                .title("기본 칭호")
+                .profile_info(user.getProfileInfo())
+                .total_exp(user.getTotalExp())
+                .nickname(user.getNickname())
+                .profile("default.jpg")
+                .build();
+
+        return responseDto;
     }
 }
