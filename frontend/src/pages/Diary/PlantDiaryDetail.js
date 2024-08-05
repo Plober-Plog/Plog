@@ -27,9 +27,29 @@ const PlantDiaryDetail = () => {
   const weathercontent = '강수량이 많고 습도가 높으니 어쩌구 하세요'
 
   const handleEdit = () => {
-    navigate('/write', { state: { diaryData: location.state } });
+    navigate(`/plant/${plantId}/${date}/edit`, {
+      state: {
+        diaryData: {
+          plantDiaryId,
+          date,
+          content,
+          weather,
+          temperature,
+          humidity,
+          isWatered,
+          isFertilized,
+          isRepotted,
+          imgs,
+        },
+        plantData: {
+          isWatered,
+          isFertilized,
+          isRepotted,
+          checkDate: date,
+        },
+      },
+    });
   };
-  
   const handleSNSUpload = () => {
     navigate('/sns', { state: { diaryData: location.state } });
   };
