@@ -9,5 +9,5 @@ import lombok.*;
 @ToString
 @Builder
 public class NeighborAddRequestDto {
-    private Long userId;
+    private Long neighborId;
 }

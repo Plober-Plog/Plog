@@ -23,11 +23,8 @@ public class NeighborController {
     // 이웃 추가
     @Operation(summary = "이웃 추가", description = "회원 가입을 처리합니다.")
     @PostMapping
-    public ResponseEntity<BaseResponseBody> createUser(@RequestHeader("Authorization") String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
-        boolean isSuccess = neighborService.addNeighbor(token, neighborAddRequestDto.getUserId());
-        if(isSuccess)
+    public ResponseEntity<?> createUser(@RequestHeader("Authorization") String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
+        neighborService.addNeighbor(token, neighborAddRequestDto.getNeighborId());
             return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "이웃이 추가 되었습니다."));
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseResponseBody.of(401, "이웃을 확인해주세요."));
     }
 }
