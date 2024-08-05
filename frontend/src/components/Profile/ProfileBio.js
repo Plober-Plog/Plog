@@ -2,7 +2,7 @@ import React from 'react';
 import ProfileHeaderPlantIconList from './ProfileHeaderPlantIconList';
 import ProfileHeaderUserBtnList from './ProfileHeaderUserBtnList';
 
-const ProfileBio = ({ bio, type, plantId, hasNotified }) => {
+const ProfileBio = ({ bio, type, plantId, hasNotified, plantData }) => {
 
   const renderBtnIcon = () => {
     if (type === 'user') {
@@ -12,6 +12,7 @@ const ProfileBio = ({ bio, type, plantId, hasNotified }) => {
         <ProfileHeaderPlantIconList 
           plantId={plantId}
           hasNotified={hasNotified}
+          plantData={plantData}
         />
       )
     } else {

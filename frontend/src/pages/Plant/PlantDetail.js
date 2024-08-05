@@ -31,6 +31,7 @@ const PlantDetail = ({ plantId = 1 }) => {
         const response = await fetch(`${URI}/user/plant/${plantId}/diary`);
         const data = await response.json();
         setArticles(data);
+        console.log(data);
       } catch (error) {
         console.error("CardList Error:", error)
       }

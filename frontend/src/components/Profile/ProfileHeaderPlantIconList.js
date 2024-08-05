@@ -1,20 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-/* TODO: 데이터 PATCH 할 때 유저 권한 체크하는 부분은 해당 파트 맡은 팀원이 기능 구현한 이후 추가할 예정
-  fixed의 경우 BE에서 관련 api명세서 수정한 뒤 추가할 예정
-*/
-const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed }) => {
+const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed, plantData }) => {
+
+  const URI = 'https://i11b308.p.ssafy.io/api';
+  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
 
   const navigate = useNavigate();
   const [nowNotified, setNowNotified] = useState(hasNotified);
+  const [nowFixed, setNowFixed] = useState(isFixed);
 
-  const handleToggleFixed = () => {}
 
-  const handleToggleNotification = () => {
-    setNowNotified((prev) => !prev);
+  const handleToggleFixed = async () => {
+    const updatedFixedStatus = !nowFixed;
+
+    try {
+      const response = await axios.patch(`${URI}/user/plant/${plantId}/fix`, 
+        { isFixed: updatedFixedStatus },
+        {
+          headers: {
+            'Authorization': `${TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        setNowFixed(updatedFixedStatus);
+      } else {
+        console.error('Failed to update fixed status', response.data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
-  
+
+  const handleToggleNotification = async () => {
+    const updatedNotificationStatus = !nowNotified;
+    const updatedPlantData = {
+      ...plantData,
+      hasNotified: updatedNotificationStatus
+    };
+
+    try {
+      const response = await fetch(`https://i11b308.p.ssafy.io/api/user/plant/${plantId}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedPlantData),
+      });
+
+      if (response.ok) {
+        setNowNotified(updatedNotificationStatus);
+      } else {
+        console.error('Failed to update notification status');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const handleEdit = () => {
     navigate(`/plant/register/${plantId}`);
   }
@@ -32,13 +80,13 @@ const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed }) => {
 
   return (
     <div>
-      <i title ="알람" onClick={handleToggleNotification}>
+      <i title="알람" onClick={handleToggleNotification}>
         {nowNotified ? '🔔' : '🔕'}
       </i>
-      <i title ="편집" onClick={handleEdit}>✏️</i>
-      <i title ="일지" onClick={handleWriteDiary}>📒</i>
-      <i title ="고정" onClick={handleToggleFixed}>
-        {isFixed? '📌' : '❌'  }
+      <i title="편집" onClick={handleEdit}>✏️</i>
+      <i title="일지" onClick={handleWriteDiary}>📒</i>
+      <i title="고정" onClick={handleToggleFixed}>
+        {nowFixed ? '📌' : '❌'}
       </i>
     </div>
   );

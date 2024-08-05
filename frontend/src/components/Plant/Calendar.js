@@ -2,26 +2,43 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import './Calendar.css';
+import axios from 'axios';
 
 const CustomCalendar = ({ plantId }) => {
   const URI = 'https://i11b308.p.ssafy.io/api';
+  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
+
   const [value, setValue] = useState(new Date());
   const [checkRecords, setCheckRecords] = useState([]);
   const [diaryRecords, setDiaryRecords] = useState([]);
   const navigate = useNavigate();
 
   const fetchMonthData = async (year, month) => {
-    const checkResponse = await fetch(`${URI}/user/plant/${plantId}/check?year=${year}&month=${month}`);
-    const checkData = await checkResponse.json();
-    const diaryResponse = await fetch(`${URI}/user/plant/${plantId}/diary?year=${year}&month=${month}`);
-    const diaryData = await diaryResponse.json();
-    return { checkData, diaryData };
+    try {
+      // console.log(`Fetching data for year: ${year}, month: ${month}`); // 로그 추가
+      const checkResponse = await axios.get(`${URI}/user/plant/${plantId}/check`, {
+        params: { year, month },
+        headers: { 'Authorization': TOKEN }
+      });
+      
+      const diaryResponse = await axios.get(`${URI}/user/plant/${plantId}/diary`, {
+        params: { year, month },
+        headers: { 'Authorization': TOKEN }
+      });
+  
+      // console.log('checkResponse:', checkResponse.data); // 로그 추가
+      // console.log('diaryResponse:', diaryResponse.data); // 로그 추가
+
+      return { checkData: checkResponse.data, diaryData: diaryResponse.data };
+    } catch (error) {
+      console.error('Error fetching month data:', error);
+      return { checkData: [], diaryData: [] };
+    }
   };
 
-  // 이전 달 데이터도 가져옵니다 (이전 달 끝부분, 다음 달 첫부분이 캘린더에 함께 보이기 때문에 필요)
   const fetchRecords = async (date) => {
     const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+    const month = date.getMonth() +1; // JavaScript에서 getMonth()는 0부터 시작하므로 1을 더해줍니다.
 
     try {
       const currentData = await fetchMonthData(year, month);
@@ -36,7 +53,6 @@ const CustomCalendar = ({ plantId }) => {
 
       setCheckRecords([...prevData.checkData, ...currentData.checkData, ...nextData.checkData]);
       setDiaryRecords([...prevData.diaryData, ...currentData.diaryData, ...nextData.diaryData]);
-
     } catch (error) {
       console.error("Calendar Error:", error);
     }
@@ -70,15 +86,14 @@ const CustomCalendar = ({ plantId }) => {
   };
 
   const colorBox = ({ date }) => {
-
     const checkRecord = checkRecords.find(record => new Date(record.checkDate).toDateString() === date.toDateString());
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
 
     return (
       <div className="color-box">
-        <div className={`indicator ${checkRecord?.isWatered ? 'watered' : ''}`}></div>
-        <div className={`indicator ${checkRecord?.isFertilized ? 'fertilized' : ''}`}></div>
-        <div className={`indicator ${checkRecord?.isRepotted ? 'repotted' : ''}`}></div>
+        <div className={`indicator ${checkRecord?.watered ? 'watered' : ''}`}></div>
+        <div className={`indicator ${checkRecord?.fertilized ? 'fertilized' : ''}`}></div>
+        <div className={`indicator ${checkRecord?.repotted ? 'repotted' : ''}`}></div>
         <div className={`indicator ${diaryRecord ? 'diary' : ''}`}></div>
       </div>
     );

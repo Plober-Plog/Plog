@@ -2,6 +2,15 @@ import React from 'react';
 import ArticleCard from './ArticleCard';
 
 const ArticleCardList = ({ plantId, articles = [], type }) => {
+
+  if (!Array.isArray(articles)) {
+    return (
+      <div>
+        {articles}
+      </div>
+    )
+  }
+
   if (articles.length === 0) {
     return (
       <div>
