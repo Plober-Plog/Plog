@@ -6,7 +6,10 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.3",
+    "axios": "^1.7.2",
+    "aws-sdk": "^2.1665.0",
+    "http-proxy-middleware": "^3.0.0",
+    "js-sha256": "^0.11.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-calendar": "^5.0.0",
@@ -54,7 +57,10 @@
       "last 1 safari version"
     ]
   },
+  "proxy": "https://i11b308.p.ssafy.io",
   "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.40",
     "tailwindcss": "^3.4.7"
   }
 }
