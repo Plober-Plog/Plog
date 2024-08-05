@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
 import API from '../../apis/api';
 
 import Btn from '../Common/Btn';
@@ -10,24 +9,24 @@ import RadioField from './RadioField';
 import ATag from './ATag';
 import ModalComplete from '../../components/Account/ModalComplete';
 
-
 const ProfileUpdateForm = ({ userData }) => {
-  
   const navigate = useNavigate();
-  const URI = 'https://i11b308.p.ssafy.io/api'
+
   // 회원 정보 변경 불가능
-  const email = userData.email;
+  const email = userData.email || '';
   const source = userData.source || '';
+
   // 회원 정보 변경 가능
-  const [searchId, setsearchId] = useState(userData.searchId);
-  const [profile, setProfile] = useState(userData.profile);
-  const [nickname, setNickname] = useState(userData.nickname || '');
-  const [birthdate, setBirthdate] = useState(userData.birthdate || '');
-  const [gender, setGender] = useState(userData.gender);
-  const [sido, setSido] = useState(userData.sido || '');
-  const [gugun, setGugun] = useState(userData.gugun || '');
-  const [profileInfo, setProfileInfo] = useState(userData.profile_info || '');
-  const [isAd, setIsAd] = useState(userData.isAd);
+  const [searchId, setSearchId] = useState('');
+  const [profile, setProfile] = useState(null);
+  const [nickname, setNickname] = useState('');
+  const [birthdate, setBirthdate] = useState('');
+  const [gender, setGender] = useState(1);
+  const [sido, setSido] = useState('');
+  const [gugun, setGugun] = useState('');
+  const [profileInfo, setProfileInfo] = useState('');
+  const [isAd, setIsAd] = useState(false);
+
   // 유효성 검사
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -35,7 +34,20 @@ const ProfileUpdateForm = ({ userData }) => {
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
 
-
+  // useEffect를 사용하여 userData가 변경될 때마다 상태를 업데이트합니다.
+  useEffect(() => {
+    if (userData) {
+      setSearchId(userData.searchId || '');
+      setProfile(userData.profile);
+      setNickname(userData.nickname || '');
+      setBirthdate(userData.birthdate || '');
+      setGender(userData.gender);
+      setSido(userData.sidoCode || '');
+      setGugun(userData.gugunCode || '');
+      setProfileInfo(userData.profileInfo || '');
+      setIsAd(userData.isAd);
+    }
+  }, [userData]);
 
   // 아이디, 닉네임 유효성 검사
   useEffect(() => {
@@ -46,7 +58,6 @@ const ProfileUpdateForm = ({ userData }) => {
     );
   }, [searchId, nickname, isSearchIdAvailable]);
 
-
   // 아이디 중복확인
   const handleCheckSearchId = async () => {
     // 유효성 검사
@@ -56,7 +67,7 @@ const ProfileUpdateForm = ({ userData }) => {
     }
 
     try {
-      const response = await axios.get(`${URI}/user/${searchId}`);
+      const response = await API.get(`/user/${searchId}`);
       // 중복 X
       if (response.status === 200) {
         setSearchIdCheckMsg('사용 가능한 아이디입니다.');
@@ -78,10 +89,8 @@ const ProfileUpdateForm = ({ userData }) => {
     }
   };
 
-
   const handleProfileUpdate = async () => {
-
-    const userData = {
+    const updatedUserData = {
       nickname,
       searchId,
       profile,
@@ -92,17 +101,17 @@ const ProfileUpdateForm = ({ userData }) => {
       gugun,
       profileInfo,
       isAd
-    }
+    };
 
     // 회원정보 수정 요청
     try {
-      const response = await axios.patch('/user', userData);
+      const response = await API.patch('/user', updatedUserData);
       console.log('회원 정보 수정 성공:', response);
       setOpenModal(true);
     } catch (error) {
       console.error('회원 정보 수정 실패:', error);
     }
-  }
+  };
 
   const closeModal = () => {
     setOpenModal(false);
@@ -121,7 +130,7 @@ const ProfileUpdateForm = ({ userData }) => {
             type="text"
             placeholder="아이디"
             value={searchId}
-            onChange={(e) => setsearchId(e.target.value)}
+            onChange={(e) => setSearchId(e.target.value)}
             isRequired={true}
           />
           <ATag 
@@ -144,11 +153,11 @@ const ProfileUpdateForm = ({ userData }) => {
             placeholder="닉네임"
             value={nickname}
             onChange={(e) => {
-              const value = e.target.value
-              setNickname(value)
+              const value = e.target.value;
+              setNickname(value);
               if (value.length < 3 || value.length > 10) {
                 setNicknameCheckMsg('닉네임은 3~10 글자여야 합니다.');
-              } else{
+              } else {
                 setNicknameCheckMsg('');
               }
             }}
@@ -202,7 +211,7 @@ const ProfileUpdateForm = ({ userData }) => {
           onClick={handleProfileUpdate}
         />
       </form>
-      <ModalComplete title={'회원정보 수정 완료'} content={'회원정보 수정이 완료되었습니다'} open={openModal} onClose={closeModal}/>
+      <ModalComplete title={'회원정보 수정 완료'} content={'회원정보 수정이 완료되었습니다'} open={openModal} onClose={closeModal} />
     </div>
   );
 };
