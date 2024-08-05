@@ -25,7 +25,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "User API", description = "User 관련 API")
-@CrossOrigin(origins = "http://localhost:3000", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.PUT })
 public class UserController {
     private final UserServiceImpl userService;
     private final JwtTokenUtil jwtTokenUtil;

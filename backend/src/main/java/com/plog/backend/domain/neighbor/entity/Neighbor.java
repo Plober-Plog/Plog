@@ -1,6 +1,7 @@
 package com.plog.backend.domain.neighbor.entity;
 
 import com.plog.backend.domain.user.entity.User;
+import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,7 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @ToString
 @Builder
-public class Neighbor {
+public class Neighbor extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long neighborId;
