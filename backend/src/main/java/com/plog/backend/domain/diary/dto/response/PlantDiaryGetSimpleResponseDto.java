@@ -19,5 +19,5 @@ public class PlantDiaryGetSimpleResponseDto {
     private LocalDate recordDate;
 
     @Schema(description = "일지의 대표 사진")
-    private String image;
+    private String thumbnail;
 }

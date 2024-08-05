@@ -9,7 +9,6 @@ import com.plog.backend.domain.diary.entity.Humidity;
 import com.plog.backend.domain.diary.entity.PlantDiary;
 import com.plog.backend.domain.diary.entity.Weather;
 import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
-import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
 import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
@@ -202,7 +201,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     @Override
     public PlantDiaryGetResponseDto getPlantDiaryByRecordDate(Long plantId, String recordDate) {
         PlantDiary plantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDate(plantId, LocalDate.parse(recordDate));
-
+        log.info(">>> getPlantDiaryByRecordDate 조회 완료 : {}", plantDiary);
         if (plantDiary == null) return null;
 
         List<String> imageList = imageService.loadImagesByPlantDiaryId(plantDiary.getPlantDiaryId());
@@ -225,6 +224,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
         List<PlantDiary> plantDiaryList = plantDiaryRepository.findAllByPlantPlantIdAndRecordDateBetween(plantId, startDate, endDate);
+        log.info(">>> getPlantDiaryByYearAndMonth 조회 완료 : {}", plantDiaryList);
         List<PlantDiaryGetSimpleResponseDto> plantDiaryGetSimpleResponseDtoList = new ArrayList<>();
         for (PlantDiary plantDiary : plantDiaryList) {
             String thumbnailUrl = imageService.loadThumbnailImageByPlantDiaryId(plantDiary.getPlantDiaryId());
@@ -242,6 +242,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     @Override
     public List<PlantDiaryGetSimpleResponseDto> getPlantDiaryRecentFive(Long plantId) {
         List<PlantDiary> plantDiaryList = plantDiaryRepository.findTop5ByPlantPlantIdOrderByRecordDateDesc(plantId);
+        log.info(">>> getPlantDiaryRecentFive 조회 완료 : {}", plantDiaryList);
         List<PlantDiaryGetSimpleResponseDto> plantDiaryGetSimpleResponseDtoList = new ArrayList<>();
         for (PlantDiary plantDiary : plantDiaryList) {
             String thumbnailUrl = imageService.loadThumbnailImageByPlantDiaryId(plantDiary.getPlantDiaryId());
