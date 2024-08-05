@@ -1,7 +1,7 @@
 import React from 'react';
 import ArticleCard from './ArticleCard';
 
-const ArticleCardList = ({ ownerId, articles = [], type }) => {
+const ArticleCardList = ({ plantId, articles = [], type }) => {
 
   if (!Array.isArray(articles)) {
     return (
@@ -31,7 +31,7 @@ const ArticleCardList = ({ ownerId, articles = [], type }) => {
       {articles.map(article => (
         <ArticleCard 
           key={article.plantDiaryId}
-          plantId={ownerId}
+          plantId={plantId}
           id={article.plantDiaryId}
           log={article.recordDate}
           thumbnail={article.thumbnail}

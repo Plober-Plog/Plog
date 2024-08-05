@@ -23,8 +23,12 @@ const ProfilePlantCardList = ({ searchId }) => {
       if (response.data.length === 0) {
         setHasMore(false);
       } else {
-        setPlants((prevPlants) => [...prevPlants, ...response.data]);
-        setPage((prevPage) => prevPage + 1);
+        if (page === 0) {
+          setPlants(response.data);
+        } else {
+          setPlants((prevPlants) => [...prevPlants, ...response.data]);
+        }
+        setPage(page + 1);
       }
     } catch (error) {
       console.error('Fetch Plants Error:', error);
