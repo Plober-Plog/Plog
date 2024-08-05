@@ -230,3 +230,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
+
+//TODO [장현준] - User
+// 1. 탈퇴 후, 다시 가입을 할때는 => 원래 값에 위의 덮기
+// 2. 탈퇴 후, 가입을 못하게 해야한다.
+// 3. 회원 객체 프로필 사진
