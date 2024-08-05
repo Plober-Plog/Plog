@@ -80,14 +80,14 @@ public class NeighborServiceImpl implements NeighborService {
         Neighbor neighborFrom = Neighbor.builder()
                 .neighborFrom(user)
                 .neighborTo(neighborUser)
-                .neighborType(NeighborType.NEIGHBOR.getValue())
+                .neighborType(NeighborType.MUTUAL_NEIGHBOR.getValue())
                 .build();
         neighborRepository.save(neighborFrom);
 
         Neighbor neighborTo = Neighbor.builder()
                 .neighborFrom(neighborUser)
                 .neighborTo(user)
-                .neighborType(NeighborType.NEIGHBOR.getValue())
+                .neighborType(NeighborType.MUTUAL_NEIGHBOR.getValue())
                 .build();
         neighborRepository.save(neighborTo);
 
