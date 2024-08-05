@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 import sha256 from 'js-sha256';
 import useAuthStore from '../../stores/store';
@@ -8,46 +8,37 @@ import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
 import ATag from '../Common/ATag';
 
-
 const LoginForm = () => {
-  // input fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  // 로그인 확인
   const [loginError, setLoginError] = useState('');
   const setToken = useAuthStore((state) => state.setToken);
 
   const navigate = useNavigate();
 
-
-  // 로그인 버튼 클릭
-  const handleLogin = async(event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
 
     const userInfo = {
       email,
       password: sha256(password),
-    }
+    };
 
     try {
-      const response = await API.post('/user/login', userInfo)
-      const token = response.headers['authorization'];
-      console.log('토큰 : ', token)
+      const response = await API.post('/user/login', userInfo);
+      const { accessToken, refreshToken } = response.data;
+      console.log('토큰 정보 : ', response.data)
 
-      if (token) {
-        console.log(response.data)
-        console.log('로그인 성공!');
-        setToken(token); // JWT 토큰을 Zustand 스토어에 저장
+      if (accessToken && refreshToken) {
+        setToken(accessToken, refreshToken);
         navigate('/');
       } else {
         setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
       }
-
     } catch (error) {
       console.error('로그인 오류:', error);
       if (error.response) {
-        console.error('서버 응답 데이터:', error.response.data);
         setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
       }
     }
@@ -55,12 +46,12 @@ const LoginForm = () => {
 
   return (
     <div>
-      <form onSubmit={e => e.preventDefault()} className="form">
+      <form onSubmit={handleLogin} className="form">
         <div>
           <InputField
-            type="email" 
-            placeholder="이메일" 
-            value={email} 
+            type="email"
+            placeholder="이메일"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
             className="input"
@@ -69,8 +60,8 @@ const LoginForm = () => {
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
-            placeholder="비밀번호" 
-            value={password} 
+            placeholder="비밀번호"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true}
             className="input"
@@ -90,6 +81,6 @@ const LoginForm = () => {
       </form>
     </div>
   );
-}
+};
 
 export default LoginForm;
