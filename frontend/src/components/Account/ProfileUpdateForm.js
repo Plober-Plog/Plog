@@ -9,7 +9,7 @@ import Btn from '../Common/Btn';
 import InputField from './InputField';
 import SelectField from './SelectField';
 import RadioField from './RadioField';
-import AccountBtn from './AccountBtn';
+import ATag from './ATag';
 import ModalComplete from '../../components/Account/ModalComplete';
 
 
@@ -38,8 +38,8 @@ const ProfileUpdateForm = ({ userData }) => {
 
   // 아이디, 닉네임 유효성 검사
   useEffect(() => {
-    setIsFormValid(id && nickname);
-  }, [id, nickname]);
+    setIsFormValid(searchId && nickname);
+  }, [searchId, nickname]);
 
   const handleProfileUpdate = async () => {
 
@@ -92,7 +92,7 @@ const ProfileUpdateForm = ({ userData }) => {
             onChange={(e) => setsearchId(e.target.value)}
             isRequired={true}
           />
-          <AccountBtn 
+          <ATag 
             content='중복확인'
             onClick={console.log('중복확인 코드 적용')}
           />

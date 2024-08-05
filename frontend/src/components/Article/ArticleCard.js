@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../../pages/Plant/PlantDetail.css';
+import '../../../src/output.css';
 
 const ArticleCard = ({ id, log, thumbnail, type }) => {
 
@@ -7,9 +9,9 @@ const ArticleCard = ({ id, log, thumbnail, type }) => {
 
   const handleClick = () => {
     if (type === 'plant') {
-      navigate(`/api/user/diary/${id}`);
+      navigate(`/plant/diary/${id}`);
     } else if (type === 'sns') {
-      navigate(`/api/user/sns/${id}`);
+      navigate(`/sns/${id}`);
     } else {
       console.log(`type error${type}`);
     }
@@ -17,7 +19,7 @@ const ArticleCard = ({ id, log, thumbnail, type }) => {
 
   return (
     <div onClick={handleClick}>
-      <img src={thumbnail} alt="thumbnail" />
+      <img src={thumbnail} alt="thumbnail" className='article-thumbnail'/>
       <p>{log}</p>
     </div>
   )
