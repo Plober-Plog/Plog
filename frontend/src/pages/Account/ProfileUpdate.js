@@ -5,14 +5,15 @@ import ProfileUpdateForm from '../../components/Account/ProfileUpdateForm';
 const ProfileUpdate = () => {
   const [userData, setUserData] = useState({});
 
-  const URI = 'https://i11b308.p.ssafy.io'
-
     // 프로필 정보 불러오기
     useEffect(() => {
       const fetchUserData = async () => {
         try {
+          console.log('유정 정보 불러오기...');
           const response = await API.get('/user');
-          const data = await response.data;
+          console.log('응답 데이터:', response);
+          const data = response.data;
+          console.log('유저 데이터:', data);
           setUserData(data);
         } catch (error) {
           console.error('유저 정보 불러오기 실패 : ', error);

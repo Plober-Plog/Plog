@@ -13,6 +13,8 @@ import ModalComplete from '../../components/Account/ModalComplete';
 
 const ProfileUpdateForm = ({ userData }) => {
   
+  const navigate = useNavigate();
+  const URI = 'https://i11b308.p.ssafy.io/api'
   // 회원 정보 변경 불가능
   const email = userData.email;
   const source = userData.source || '';
@@ -29,14 +31,53 @@ const ProfileUpdateForm = ({ userData }) => {
   // 유효성 검사
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(false);
+  const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
+  const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
 
-  const navigate = useNavigate();
 
 
   // 아이디, 닉네임 유효성 검사
   useEffect(() => {
-    setIsFormValid(searchId && nickname);
-  }, [searchId, nickname]);
+    setIsFormValid(
+      searchId &&
+      nickname &&
+      isSearchIdAvailable
+    );
+  }, [searchId, nickname, isSearchIdAvailable]);
+
+
+  // 아이디 중복확인
+  const handleCheckSearchId = async () => {
+    // 유효성 검사
+    if (!/^[a-z0-9]{5,15}$/.test(searchId)) {
+      console.log('아이디 형식이 올바르지 않습니다.');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${URI}/user/${searchId}`);
+      // 중복 X
+      if (response.status === 200) {
+        setSearchIdCheckMsg('사용 가능한 아이디입니다.');
+        setIsSearchIdAvailable(true);
+        console.log('아이디 중복확인 성공!');
+      }
+    } catch (error) {
+      // 중복 O
+      if (error.response && error.response.status === 409) {
+        setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
+        setIsSearchIdAvailable(false);
+        console.error('아이디 중복 확인: 이미 사용 중인 아이디입니다.');
+      } else {
+        // 실패
+        setSearchIdCheckMsg('아이디 중복확인 중 오류가 발생했습니다.');
+        setIsSearchIdAvailable(false);
+        console.error('아이디 중복확인 실패: ', error);
+      }
+    }
+  };
+
 
   const handleProfileUpdate = async () => {
 
@@ -84,8 +125,9 @@ const ProfileUpdateForm = ({ userData }) => {
             isRequired={true}
           />
           <ATag 
-            content='중복확인'
+            content='중복확인' onClick={handleCheckSearchId}
           />
+          {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -101,9 +143,18 @@ const ProfileUpdateForm = ({ userData }) => {
             type="text"
             placeholder="닉네임"
             value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setNickname(value)
+              if (value.length < 3 || value.length > 10) {
+                setNicknameCheckMsg('닉네임은 3~10 글자여야 합니다.');
+              } else{
+                setNicknameCheckMsg('');
+              }
+            }}
             isRequired={false}
           />
+          {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
         </div>
         <div>
           <InputField
