@@ -40,12 +40,14 @@ const Setting = () => {
       const accessToken = useAuthStore.getState().accessToken;
       if (!accessToken) {
         console.log('로그인되지 않은 상태입니다.');
+        console.log(accessToken) // null인지 확인
+        clearToken(); // refresh token 제거
         return;
       }
 
       // 서버에 회원탈퇴 요청
       const response = await API.delete('/user');
-      console.log('회원 탈퇴 성공:', response.data);
+      console.log('회원 탈퇴 성공');
 
       // 토큰 제거
       clearToken();
