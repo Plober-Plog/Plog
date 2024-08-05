@@ -16,6 +16,7 @@ const Setting = () => {
       if (!accessToken) {
         console.log('이미 로그아웃된 회원입니다.');
         console.log(accessToken) // null인지 확인
+        clearToken(); // refresh token 제거
         return;
       }
 
@@ -23,7 +24,7 @@ const Setting = () => {
       const response = await API.get('/user/logout')
       console.log('로그아웃 성공:', response.data);
 
-      // 토큰 제거 후 로그인 페이지로 이동
+      // 토큰 제거
       clearToken();
       navigate('/login');
 
