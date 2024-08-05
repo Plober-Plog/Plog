@@ -21,28 +21,30 @@ import UserProfile from './pages/Profile/UserProfile';
 function App() {
   return (
     <div className='container'>
-      <header className='full-width'>
-        <Header />
-      </header>
-      <main class='content'>
-        <Router>
-          <Routes>
-          <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/profileupdate" element={<ProfileUpdate />} />
-            <Route path="/password/change" element={<PasswordChange />} />
-            <Route path="/password/find" element={<PasswordFind />} />
-            <Route path="/password/update" element={<PasswordUpdate />} />
-            <Route path="/setting" element={<Setting />} />
-            <Route path="/write" element={<PlantDiaryWrite />} />
-            <Route path="/diary/:plantDiaryId" element={<PlantDiaryDetail />} />
-            {/* <Route path="/plant/:plantId" element={<PlantDetail />} /> */}
-            <Route path="/plant" element={<PlantDetail />} />
-            {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
-            <Route path="/plant/register" element={<PlantRegister />} />
-          </Routes>
-        </Router>
-      </main>
+      <Router>
+        <header className='full-width'>
+          <Header />
+        </header>
+        <main class='content'>
+
+            <Routes>
+            <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/profileupdate" element={<ProfileUpdate />} />
+              <Route path="/password/change" element={<PasswordChange />} />
+              <Route path="/password/find" element={<PasswordFind />} />
+              <Route path="/password/update" element={<PasswordUpdate />} />
+              <Route path="/setting" element={<Setting />} />
+              <Route path="/write" element={<PlantDiaryWrite />} />
+              <Route path="/diary/:plantDiaryId" element={<PlantDiaryDetail />} />
+              {/* <Route path="/plant/:plantId" element={<PlantDetail />} /> */}
+              <Route path="/plant" element={<PlantDetail />} />
+              {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
+              <Route path="/plant/register" element={<PlantRegister />} />
+            </Routes>
+
+        </main>
+      </Router>
     </div>
   );
 };
