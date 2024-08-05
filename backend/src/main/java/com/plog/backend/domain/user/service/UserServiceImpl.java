@@ -6,6 +6,7 @@ import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
+import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
@@ -229,5 +230,15 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         log.info(">>> updatePassword - 비밀번호 변경 성공");
+    }
+
+    @Override
+    public UserProfileResponseDto getMyProfile(String token) {
+        return null;
+    }
+
+    @Override
+    public UserProfileResponseDto getProfile(Long searchId) {
+        return null;
     }
 }
