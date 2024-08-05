@@ -13,8 +13,11 @@ import java.time.LocalDate;
 @ToString
 public class PlantDiaryGetSimpleResponseDto {
     @Schema(description = "식물 일지 ID", example = "2")
-    Long plantDiaryId;
+    private Long plantDiaryId;
+
     @Schema(description = "일지 작성 일자", example = "2024-06-02")
-    LocalDate recordDate;
-    //TODO [강윤서] - image 처리
+    private LocalDate recordDate;
+
+    @Schema(description = "일지의 대표 사진")
+    private String image;
 }

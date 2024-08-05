@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface PlantDiaryRepository extends JpaRepository<PlantDiary, Long> {
-    List<PlantDiary>
-    findAllByPlantPlantIdAndRecordDate(Long plantId, LocalDate recordDate);
+    PlantDiary
+    findByPlantPlantIdAndRecordDate(Long plantId, LocalDate recordDate);
 
     List<PlantDiary> findAllByPlantPlantIdAndRecordDateBetween(Long plantId, LocalDate startDate, LocalDate endDate);
 

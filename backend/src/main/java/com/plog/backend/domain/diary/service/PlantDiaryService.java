@@ -9,13 +9,10 @@ import java.util.List;
 
 public interface PlantDiaryService {
     void addPlantDiary(String token, PlantDiaryAddRequestDto plantDiaryAddRequestDto);
-    void updatePlantDiary(String token, Long plantDiaryId,PlantDiaryUpdateRequestDto plantDiaryUpdateRequestDto);
+    void updatePlantDiary(String token, PlantDiaryUpdateRequestDto plantDiaryUpdateRequestDto);
     void deletePlantDiary(String token, Long plantDiaryId);
     PlantDiaryGetResponseDto getPlantDiary(Long plantDiaryId);
-
-    List<PlantDiaryGetSimpleResponseDto> getPlantDiaryByRecordDate(Long plantId, String recordDate);
-
+    PlantDiaryGetResponseDto getPlantDiaryByRecordDate(Long plantId, String recordDate);
     List<PlantDiaryGetSimpleResponseDto> getPlantDiaryByYearAndMonth(Long plantId, String year, String month);
-
     List<PlantDiaryGetSimpleResponseDto> getPlantDiaryRecentFive(Long plantId);
 }
