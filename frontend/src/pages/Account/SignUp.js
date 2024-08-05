@@ -8,7 +8,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container">
+    <div className="account-container">
       <h1 className="title">회원가입</h1>
       <ATag
         content='로그인'
