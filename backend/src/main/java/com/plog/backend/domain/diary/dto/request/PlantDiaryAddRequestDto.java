@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,7 +30,6 @@ public class PlantDiaryAddRequestDto {
     @Schema(description = "일지 작성 일자", example = "2024-06-02")
     private LocalDate recordDate;
 
-    @Schema(description = "일지에 업로드할 사진 배열")
-    private List<PlantDiaryImageUploadRequestDto> images;
-
+    @Schema(description = "대표 사진 index (0 ~ 4)", example = "2")
+    private int thumbnailIdx;
 }

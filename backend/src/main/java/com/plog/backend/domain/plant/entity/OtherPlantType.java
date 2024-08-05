@@ -19,6 +19,11 @@ public class OtherPlantType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long otherPlantTypeId;
+
     @Column
     private String plantName;
+
+    public OtherPlantType(String plantName) {
+        this.plantName = plantName;
+    }
 }

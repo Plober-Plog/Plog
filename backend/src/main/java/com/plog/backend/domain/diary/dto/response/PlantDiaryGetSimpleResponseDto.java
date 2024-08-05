@@ -1,6 +1,5 @@
 package com.plog.backend.domain.diary.dto.response;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

@@ -1,6 +1,5 @@
 package com.plog.backend.domain.diary.entity;
 
-import com.plog.backend.domain.user.entity.ChatAuth;
 import com.plog.backend.global.exception.NotValidRequestException;
 
 public enum Weather {
