@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-
-import { getUserInfo, updateUserInfo } from '../../api';
-import useUserStore from '../../stores/useUserStore';
+import API from '../../apis/api';
 
 import Btn from '../Common/Btn';
 import InputField from './InputField';
@@ -28,11 +26,10 @@ const ProfileUpdateForm = ({ userData }) => {
   const [gugun, setGugun] = useState(userData.gugun || '');
   const [profileInfo, setProfileInfo] = useState(userData.profile_info || '');
   const [isAd, setIsAd] = useState(userData.isAd);
-
+  // 유효성 검사
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  const URI = 'https://i11b308.p.ssafy.io'
   const navigate = useNavigate();
 
 
@@ -58,12 +55,7 @@ const ProfileUpdateForm = ({ userData }) => {
 
     // 회원정보 수정 요청
     try {
-      const response = await axios.patch(`${URI}/api/user`, userData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer your_token_here',
-        },
-      });
+      const response = await axios.patch('api/user', userData);
       console.log('회원 정보 수정 성공:', response);
       setOpenModal(true);
     } catch (error) {
@@ -79,7 +71,6 @@ const ProfileUpdateForm = ({ userData }) => {
   return (
     <div>
       <form onSubmit={(e) => e.preventDefault()}>
-        <h2>회원정보 수정</h2>
         <div>
          {/* TODO 이미지 수정 컴포넌트 추가 */}
         </div>
@@ -94,7 +85,6 @@ const ProfileUpdateForm = ({ userData }) => {
           />
           <ATag 
             content='중복확인'
-            onClick={console.log('중복확인 코드 적용')}
           />
         </div>
         <div>
@@ -102,7 +92,6 @@ const ProfileUpdateForm = ({ userData }) => {
             type="email"
             placeholder="이메일"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
             disabled={true}
           />
@@ -127,7 +116,6 @@ const ProfileUpdateForm = ({ userData }) => {
         </div>
         <SelectField
           value={source}
-          onChange={(e) => setSource(e.target.value)}
           options={['가입경로', '지인추천', '인터넷 검색']}
           isRequired={false}
           disabled={true}

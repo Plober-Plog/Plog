@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API from '../../apis/api';
 import ProfileUpdateForm from '../../components/Account/ProfileUpdateForm';
 
 const ProfileUpdate = () => {
@@ -10,8 +11,8 @@ const ProfileUpdate = () => {
     useEffect(() => {
       const fetchUserData = async () => {
         try {
-          const response = await get('/api/user');
-          const data = await response.json();
+          const response = await API.get('/user');
+          const data = await response.data;
           setUserData(data);
         } catch (error) {
           console.error('유저 정보 불러오기 실패 : ', error);
