@@ -1,26 +1,25 @@
 import { useState } from 'react';
 import { useNavigate } from'react-router-dom';
-import axios from 'axios';
 import API from '../../apis/api';
 import sha256 from 'js-sha256';
 import useAuthStore from '../../stores/store';
 
 import Btn from '../Common/Btn';
-import InputField from './InputField';
-import ATag from './ATag';
+import InputField from '../Common/InputField';
+import ATag from '../Common/ATag';
 
 
 const LoginForm = () => {
+  // input fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
   // 로그인 확인
   const [loginError, setLoginError] = useState('');
   const setToken = useAuthStore((state) => state.setToken);
 
-  const URI = 'https://i11b308.p.ssafy.io/api';
   const navigate = useNavigate();
+
 
   // 로그인 버튼 클릭
   const handleLogin = async(event) => {
@@ -32,7 +31,7 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await API.post(`${URI}/user/login`, userInfo)
+      const response = await API.post('/user/login', userInfo)
       const token = response.headers['authorization'];
       console.log('토큰 : ', token)
 
@@ -56,7 +55,7 @@ const LoginForm = () => {
 
   return (
     <div>
-      <form onSubmit={e => e.preventDefault()}>
+      <form onSubmit={e => e.preventDefault()} className="form">
         <div>
           <InputField
             type="email" 
@@ -64,6 +63,7 @@ const LoginForm = () => {
             value={email} 
             onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
+            className="input"
           />
         </div>
         <div>
@@ -72,7 +72,8 @@ const LoginForm = () => {
             placeholder="비밀번호" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)}
-            isRequired={true} 
+            isRequired={true}
+            className="input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
@@ -84,6 +85,7 @@ const LoginForm = () => {
           content="로그인"
           disabled={!email || !password}
           onClick={handleLogin}
+          className="button"
         />
       </form>
     </div>

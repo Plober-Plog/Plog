@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Btn from "../../components/Common/Btn";
 import defaultImg from '../../assets/icon/default.png';
 // import ProfileImgEdit from '../../components/Profile/ProfileImgEdit';
-import InputField from '../Account/InputField';
-import ATag from '../Account/ATag';
+import InputField from '../Common/InputField';
+import ATag from '../Common/ATag';
 import ProfileImgEdit from '../Profile/ProfileImgEdit';
 
 

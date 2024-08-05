@@ -2,6 +2,7 @@ import React from 'react';
 import kakao from '../../assets/image/kakao.png'
 import naver from '../../assets/image/naver.png'
 import google from '../../assets/image/google.png'
+import './SocialLogin.css';
 
 const SocialLogin = () => {
   return (

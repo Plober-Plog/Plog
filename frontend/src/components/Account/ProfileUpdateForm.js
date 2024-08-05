@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import API from '../../apis/api';
 
 import Btn from '../Common/Btn';
-import InputField from './InputField';
-import SelectField from './SelectField';
-import RadioField from './RadioField';
-import ATag from './ATag';
-import ModalComplete from '../../components/Account/ModalComplete';
+import InputField from '../Common/InputField';
+import RadioField from '../Common/RadioField';
+import SelectField from '../Common/SelectField';
+import ATag from '../Common/ATag';
+import ModalComplete from '../Common/ModalComplete';
 
 const ProfileUpdateForm = ({ userData }) => {
   const navigate = useNavigate();
