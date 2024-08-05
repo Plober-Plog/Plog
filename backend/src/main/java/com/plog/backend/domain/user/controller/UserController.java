@@ -175,16 +175,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponseBody.of(500, "내부 서버 오류가 발생했습니다."));
         }
     }
-
-    @Operation(summary = "내 프로필 조회", description = "내 프로필을 조회합니다.")
-    @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestHeader("Authorization") String token) {
-        )
-    }
-
-    @Operation(summary = "프로필 조회", description = "검색 ID 기준으로 프로필을 조회합니다.")
-    @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestParam Long searchId) {
-
-    }
 }
