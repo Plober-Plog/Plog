@@ -90,7 +90,10 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
             PlantDiary pd = plantDiaryRepository.save(plantDiary);
 
             // 일지 사진 업로드
-            uploadPlantDiaryImages(plantDiaryAddRequestDto.getImages(), pd.getPlantDiaryId());
+            if (plantDiaryAddRequestDto.getImages() != null) {
+                uploadPlantDiaryImages(plantDiaryAddRequestDto.getImages(), pd.getPlantDiaryId());
+            }
+
             log.info(">>> addPlantDiary - 일지 저장 완료: {}", plantDiary);
 
         } else {
