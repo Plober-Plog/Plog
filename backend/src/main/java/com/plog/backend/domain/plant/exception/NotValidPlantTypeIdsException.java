@@ -2,6 +2,7 @@ package com.plog.backend.domain.plant.exception;
 
 import lombok.Getter;
 
+// 식물의 종류가 유효하지 않을 경우의 예외
 @Getter
 public class NotValidPlantTypeIdsException extends RuntimeException {
     private final String message;

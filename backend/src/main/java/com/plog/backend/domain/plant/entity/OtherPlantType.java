@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@Table(name = "other_plant_type")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -17,7 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class OtherPlantType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long otherPlantTypeId;
+    private Long otherPlantTypeId;
     @Column
-    String plantName;
+    private String plantName;
 }

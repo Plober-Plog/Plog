@@ -13,19 +13,27 @@ import java.util.Date;
 @Builder
 @ToString
 public class PlantDiaryUpdateRequestDto {
+    @Schema(description = "식물 일지 ID", example = "2")
+    private Long plantDiaryId;
+
     @Schema(description = "식물 ID", example = "2")
-    Long plantId;
+    private Long plantId;
+
     @Schema(description = "SUNNY, CLOUDY, VERY_CLOUDY, RAINY 순서대로 1부터 시작", example = "1")
-    int weather;
+    private int weather;
+
     @Schema(description = "기온", example = "28.5")
-    float temperature;
+    private float temperature;
+
     @Schema(description = "DRY, CLEAN,  NORMAL, MOIST, WET 순서대로 1부터 시작", example = "2")
-    int humidity;
+    private int humidity;
+
     @Schema(description = "식물 일지 내용", example = "오늘은 식물이 잘 자랐어요.")
-    String content;
+    private String content;
+
     @Schema(description = "일지 작성 일자", example = "2024-06-02")
-    LocalDate recordDate;
-//    List<MultipartFile> images;
-    //TODO [강윤서]
-    // image 배열 받기
+    private LocalDate recordDate;
+
+    @Schema(description = "대표 사진 index", example = "2")
+    private int thumbnailIdx;
 }
