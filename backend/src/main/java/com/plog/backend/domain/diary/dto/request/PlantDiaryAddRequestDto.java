@@ -2,7 +2,6 @@ package com.plog.backend.domain.diary.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
