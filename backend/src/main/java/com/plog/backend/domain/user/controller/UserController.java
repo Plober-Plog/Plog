@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "User API", description = "User 관련 API")
+@CrossOrigin(origins = "http://localhost:3000", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS })
 public class UserController {
     private final UserServiceImpl userService;
     private final JwtTokenUtil jwtTokenUtil;
