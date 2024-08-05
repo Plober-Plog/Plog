@@ -1,14 +1,14 @@
 package com.plog.backend.domain.user.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class UserGetResponseDto {
     private String email;
     private String searchId;
