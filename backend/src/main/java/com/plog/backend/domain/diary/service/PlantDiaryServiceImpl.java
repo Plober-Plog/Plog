@@ -44,6 +44,9 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
 
     @Transactional
     public void uploadPlantDiaryImages(List<PlantDiaryImageUploadRequestDto> plantDiaryImageUploadRequestDtoList, Long plantDiaryId) {
+        if (plantDiaryImageUploadRequestDtoList.size() > 5)
+            throw new NotValidRequestException("일지에는 최대 5개 사진을 업로드 할 수 있습니다.");
+
         // 대표 사진 찾기
         int thumbnailIdx = -1;
         for (int i = 0; i < plantDiaryImageUploadRequestDtoList.size(); i++) {
@@ -71,9 +74,6 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         if (recordDate.isAfter(LocalDate.now())) {
             throw new NotValidRequestException("미래의 식물 일지는 작성할 수 없습니다");
         }
-
-        if (plantDiaryAddRequestDto.getImages().size() > 5)
-            throw new NotValidRequestException("일지에는 최대 5개 사진을 업로드 할 수 있습니다.");
 
         Optional<Plant> plant = plantRepository.findById(plantDiaryAddRequestDto.getPlantId());
         if (plant.isPresent()) {

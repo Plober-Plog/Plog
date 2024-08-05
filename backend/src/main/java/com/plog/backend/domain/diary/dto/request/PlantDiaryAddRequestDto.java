@@ -32,7 +32,7 @@ public class PlantDiaryAddRequestDto {
     @Schema(description = "일지 작성 일자", example = "2024-06-02")
     private LocalDate recordDate;
 
-    @Schema(description = "일지에 업로드할 사진 배열")
-    private List<PlantDiaryImageUploadRequestDto> images;
+//    @Schema(description = "일지에 업로드할 사진 배열")
+//    private List<PlantDiaryImageUploadRequestDto> images;
 
 }
