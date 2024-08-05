@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
         log.info(">>> getUser - 추출된 사용자 ID: {}", userId);
         User user = userRepository.findById(userId).orElseThrow(() -> {
             log.error(">>> getUser - 사용자를 찾을 수 없음: {}", userId);
-            return new NotValidRequestException ("사용자를 찾을 수 없습니다.");
+            return new NotValidRequestException("사용자를 찾을 수 없습니다.");
         });
 
         log.info(">>> getUser - 사용자 정보: {}", user);
@@ -79,12 +79,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.error(">>> login - 이메일 잘못됨: {}", email);
-                    return new NotValidRequestException("이메일 혹은 패스워드가 잘 못 되었습니다.");
+                    return new NotValidRequestException("이메일 혹은 패스워드가 잘못 되었습니다.");
                 });
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             log.error(">>> login - 패스워드 잘못됨: {}", email);
-            throw new NotValidRequestException("이메일 혹은 패스워드가 잘 못되었습니다.");
+            throw new NotValidRequestException("이메일 혹은 패스워드가 잘못되었습니다.");
         }
 
         log.info(">>> login - 사용자 찾음: {}", user);
@@ -234,11 +234,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileResponseDto getMyProfile(String token) {
-        return null;
+        log.info(">>> getMyProfile - 토큰: {}", token);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> getMyProfile - 추출된 사용자 ID: {}", userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
+
+        log.info(">>> getMyProfile - 추출된 사용자 정보: {}", user);
+
+        UserProfileResponseDto responseDto = UserProfileResponseDto.builder()
+                .title("기본 칭호")
+                .profile_info(user.getProfileInfo())
+                .total_exp(user.getTotalExp())
+                .nickname(user.getNickname())
+                .profile("default.jpg")
+                .build();
+
+        log.info(">>> getMyProfile - 프로필 정보: {}", responseDto);
+        return responseDto;
     }
 
     @Override
-    public UserProfileResponseDto getProfile(Long searchId) {
-        return null;
+    public UserProfileResponseDto getProfile(String searchId) {
+        log.info(">>> getProfile - 검색 ID: {}", searchId);
+
+        User user = userRepository.findUserBySearchId(searchId)
+                .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
+
+        UserProfileResponseDto responseDto = UserProfileResponseDto.builder()
+                .title("기본 칭호")
+                .profile_info(user.getProfileInfo())
+                .total_exp(user.getTotalExp())
+                .nickname(user.getNickname())
+                .profile("default.jpg")
+                .build();
+
+        log.info(">>> getProfile - 프로필 정보: {}", responseDto);
+        return responseDto;
     }
 }

@@ -1,12 +1,13 @@
 package com.plog.backend.domain.user.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
+@Getter
+@Setter
 public class UserProfileResponseDto {
     private String profile;
     private String nickname;
