@@ -24,10 +24,23 @@ public class JwtTokenProvider {
         return jwtTokenUtil.getToken(user.getUserId());
     }
 
+    public String generateRefreshToken(Authentication authentication){
+        User user = ((PloberUserDetails) authentication.getPrincipal()).getUser();
+        return jwtTokenUtil.getRefreshToken(user.getUserId());
+    }
+
     public boolean validateToken(String token, HttpServletRequest request){
         boolean isValid = jwtTokenUtil.validateToken(token);
         if (!isValid) {
             request.setAttribute("exception", "INVALID_OR_EXPIRED_JWT");
+        }
+        return isValid;
+    }
+
+    public boolean validateRefreshToken(String token, HttpServletRequest request){
+        boolean isValid = jwtTokenUtil.validateRefreshToken(token);
+        if (!isValid) {
+            request.setAttribute("exception", "INVALID_OR_EXPIRED_REFRESH_JWT");
         }
         return isValid;
     }

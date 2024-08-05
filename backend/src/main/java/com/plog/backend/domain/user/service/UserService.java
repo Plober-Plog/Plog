@@ -10,10 +10,13 @@ import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.global.model.response.BaseResponseBody;
 
+import java.util.Map;
+
 public interface UserService {
     User getUserBySearchId(String searchId);
     UserGetResponseDto getUser(String token);
-    String userSignIn(String email, String password);
+    Map<String, String> userSignIn(String email, String password);
+    void userSignOut(String token);
     User createUser(UserSignUpRequestDto userSignUpRequestDto);
     Boolean checkUserSearchId(String searchId);
     Boolean checkUserEmail(String email);
