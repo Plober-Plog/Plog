@@ -5,12 +5,13 @@ import com.plog.backend.domain.diary.dto.request.PlantDiaryImageUploadRequestDto
 import com.plog.backend.domain.diary.dto.request.PlantDiaryUpdateRequestDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
 import com.plog.backend.domain.diary.service.PlantDiaryService;
+import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,10 +26,13 @@ public class PlantDiaryController {
     public ResponseEntity<BaseResponseBody> addPlantDiary(
             @RequestHeader("Authorization") String token,
             @ModelAttribute PlantDiaryAddRequestDto plantDiaryAddRequestDto,
-            @RequestPart(required = false) List<PlantDiaryImageUploadRequestDto> images) {
-
-        log.info(">>> [POST] /user/diary - 요청 데이터: {}", plantDiaryAddRequestDto);
-        plantDiaryService.addPlantDiary(token, plantDiaryAddRequestDto);
+            @RequestPart(value = "images", required = false) MultipartFile[] images) {
+        log.info(">>> [POST] /user/diary - 요청 데이터: {} 이미지 {}", plantDiaryAddRequestDto, images == null ? "X" : "O");
+        Long plantDiaryId = plantDiaryService.addPlantDiary(token, plantDiaryAddRequestDto);
+        // 요청으로 넘어온 이미지 리스트가 있으면 호출
+        if (images != null) {
+            plantDiaryService.uploadPlantDiaryImages(images, plantDiaryAddRequestDto.getThumbnailIdx(), plantDiaryId);
+        }
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 등록이 완료되었습니다."));
     }
 
@@ -38,6 +42,10 @@ public class PlantDiaryController {
             @PathVariable Long plantDiaryId,
             @RequestBody PlantDiaryUpdateRequestDto plantDiaryUpdateRequestDto) {
         log.info(">>> [PATCH] /user/diary/{} - 요청 데이터: {}", plantDiaryId, plantDiaryUpdateRequestDto);
+        if (plantDiaryUpdateRequestDto.getRecordDate() == null)
+            throw new NotValidRequestException("일지 기록 일자는 필수 값입니다.");
+        if (plantDiaryUpdateRequestDto.getPlantId() == null)
+            throw new NotValidRequestException("식물 번호는 필수값입니다.");
         plantDiaryUpdateRequestDto.setPlantDiaryId(plantDiaryId);
         plantDiaryService.updatePlantDiary(token, plantDiaryUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 수정이 완료되었습니다."));
@@ -51,6 +59,7 @@ public class PlantDiaryController {
         plantDiaryService.deletePlantDiary(token, plantDiaryId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 삭제가 완료되었습니다."));
     }
+
     @GetMapping("/{plantDiaryId}")
     public ResponseEntity<PlantDiaryGetResponseDto> getPlantDiary(
             @PathVariable Long plantDiaryId) {
@@ -59,10 +68,12 @@ public class PlantDiaryController {
         return ResponseEntity.status(200).body(plantDiaryGetResponseDto);
     }
 
-    @GetMapping("/{plantId}")
+    @GetMapping("/plant/{plantId}")
     public ResponseEntity<PlantDiaryGetResponseDto> getPlantDiary(
             @PathVariable Long plantId,
-            @RequestParam(required = false) String recordDate) {
+            @RequestParam String recordDate) {
+        if (recordDate == null)
+            throw new NotValidRequestException("recordDate는 필수 값입니다.");
         log.info(">>> [GET] /user/diary/{} - 요청 ID: {}, 기록 일자: {}", plantId, plantId, recordDate);
         PlantDiaryGetResponseDto plantDiaryGetResponseDto = plantDiaryService.getPlantDiaryByRecordDate(plantId, recordDate);
         return ResponseEntity.status(200).body(plantDiaryGetResponseDto);
