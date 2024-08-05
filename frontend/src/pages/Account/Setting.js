@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from '../../stores/useAuthStore';
+import useAuthStore from '../../stores/store';
 import ModalConfirm from "../../components/Common/ModalConfirm";
 
 const Setting = () => {
