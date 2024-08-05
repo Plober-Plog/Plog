@@ -19,7 +19,7 @@ public interface PlantService {
 
     List<PlantGetResponseDto> getPlantListByPlantTypeIds(PlantGetRequestDto plantGetRequestDto);
 
-    void updatePlant(String token, Long plantId, PlantUpdateRequestDto plantUpdateRequestDto);
+    void updatePlant(String token, PlantUpdateRequestDto plantUpdateRequestDto);
 
     void deletePlant(String token, Long plantId);
 
@@ -27,15 +27,15 @@ public interface PlantService {
 
     void updateFixStatePlant(String token, Long plantId);
 
-    void addPlantCheck (String token, Long plantId, PlantCheckAddRequestDto plantCheckAddRequestDto);
+    void addPlantCheck (String token, PlantCheckAddRequestDto plantCheckAddRequestDto);
 
-    void updatePlantCheck(String token, Long plantId, PlantCheckUpdateRequestDto plantCheckUpdateRequestDto);
+    void updatePlantCheck(String token, PlantCheckUpdateRequestDto plantCheckUpdateRequestDto);
 
     PlantCheckGetResponseDto getPlantCheck(Long plantId, String checkDate);
 
     void deletePlantCheck(String token, Long plantId, String checkDate);
 
-    List<PlantCheckGetResponseDto> getPlantCheckByYearAndMonth(Long plantId, String year, String month);
+    List<PlantCheckGetResponseDto> getPlantCheckByYearAndMonth(PlantGetByYearAndMonthRequestDto plantGetByYearAndMonthRequestDto);
 
     //TODO [강윤서]
     // - waterDate, fertilizeDate, repotDate 계산하는 로직

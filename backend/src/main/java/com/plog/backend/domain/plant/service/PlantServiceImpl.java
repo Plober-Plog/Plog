@@ -1,5 +1,7 @@
 package com.plog.backend.domain.plant.service;
 
+import com.plog.backend.domain.image.entity.Image;
+import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.image.service.ImageService;
 import com.plog.backend.domain.plant.dto.request.*;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
@@ -20,6 +22,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,50 +46,57 @@ public class PlantServiceImpl implements PlantService {
     private final UserRepository userRepository;
 
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
     @Override
-    public void addPlant(String token, PlantAddRequestDto plantAddRequest) {
+    public void addPlant(String token, PlantAddRequestDto plantAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
 
-//        Image image = imageService.uploadImage(plantAddRequest.getProfile());
-//        log.info(">>> addPlant - 이미지 업로드 완료: {}", image);
+        MultipartFile[] images = new MultipartFile[]{plantAddRequestDto.getProfile()};
+        if (images.length > 1)
+            throw new NotValidRequestException("식물의 대표 사진은 한 장만 등록할 수 있습니다.");
+        String[] imageUrl = imageService.uploadImages(images);
 
-        int type = checkPlantType(plantAddRequest.getPlantTypeId(), plantAddRequest.getOtherPlantTypeId());
+        int type = checkPlantType(plantAddRequestDto.getPlantTypeId(), plantAddRequestDto.getOtherPlantTypeId());
 
         PlantType plantType = new PlantType();
         OtherPlantType otherPlantType = new OtherPlantType();
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
+            Optional<Image> plantImage = imageRepository.findByImageUrl(imageUrl[0]);
+            if (!plantImage.isPresent()) {
+                throw new EntityNotFoundException("식물의 대표 사진을 불러오는 데 실패하였습니다.");
+            }
             switch (type) {
                 case 1 -> { // 기본 식물
-                    plantType.setPlantTypeId(plantAddRequest.getPlantTypeId());
+                    plantType.setPlantTypeId(plantAddRequestDto.getPlantTypeId());
                     otherPlantType.setOtherPlantTypeId(1L);
 
                     Plant plantByPlantType = Plant.builder()
                             .user(user.get())
                             .plantType(plantType)
                             .otherPlantType(otherPlantType)
-                            .nickname(plantAddRequest.getNickname())
-//                            .image(image)
-                            .birthDate(plantAddRequest.getBirthDate())
-                            .bio(plantAddRequest.getBio())
+                            .nickname(plantAddRequestDto.getNickname())
+                            .image(plantImage.get())
+                            .birthDate(plantAddRequestDto.getBirthDate())
+                            .bio(plantAddRequestDto.getBio())
                             .build();
                     log.info(">>> addPlant - 기본 식물 생성: {}", plantByPlantType);
                     plantRepository.save(plantByPlantType);
                 }
                 case 2 -> {// 기타 식물
                     plantType.setPlantTypeId(1L);
-                    otherPlantType.setOtherPlantTypeId(plantAddRequest.getOtherPlantTypeId());
+                    otherPlantType.setOtherPlantTypeId(plantAddRequestDto.getOtherPlantTypeId());
 
                     Plant plantByOtherPlantType = Plant.builder()
                             .user(user.get())
                             .plantType(plantType)
                             .otherPlantType(otherPlantType)
-                            .nickname(plantAddRequest.getNickname())
-//                            .image(image)
-                            .birthDate(plantAddRequest.getBirthDate())
-                            .bio(plantAddRequest.getBio())
+                            .nickname(plantAddRequestDto.getNickname())
+                            .image(plantImage.get())
+                            .birthDate(plantAddRequestDto.getBirthDate())
+                            .bio(plantAddRequestDto.getBio())
                             .build();
                     log.info(">>> addPlant - 기타 식물 생성: {}", plantByOtherPlantType);
                     plantRepository.save(plantByOtherPlantType);
@@ -108,7 +118,7 @@ public class PlantServiceImpl implements PlantService {
                     .plantTypeId(p.getPlantType().getPlantTypeId())
                     .nickname(p.getNickname())
                     .bio(p.getBio())
-//                    .profile(p.getImage().getImageUrl())
+                    .profile(p.getImage().getImageUrl())
                     .birthDate(p.getBirthDate())
                     .hasNotified(p.isHasNotified())
                     .isFixed(p.isFixed())
@@ -128,7 +138,7 @@ public class PlantServiceImpl implements PlantService {
             return PlantTypeGetResponseDto.builder()
                     .plantName(pt.getPlantName())
                     .guide(pt.getGuide())
-//                    .profile(pt.getImage().getImageUrl())
+                    .profile(pt.getImage().getImageUrl())
                     .waterInterval(pt.getWaterInterval())
                     .fertilizeInterval(pt.getFertilizeInterval())
                     .repotInterval(pt.getRepotInterval())
@@ -153,7 +163,7 @@ public class PlantServiceImpl implements PlantService {
                         .deadDate(p.getDeadDate())
                         .nickname(p.getNickname())
                         .bio(p.getBio())
-//                        .profile(p.getImage().getImageUrl())
+                        .profile(p.getImage().getImageUrl())
                         .isDeleted(p.isDeleted())
                         .isFixed(p.isFixed())
                         .build();
@@ -183,7 +193,7 @@ public class PlantServiceImpl implements PlantService {
                                 .deadDate(p.getDeadDate())
                                 .nickname(p.getNickname())
                                 .bio(p.getBio())
-//                                .profile(p.getImage().getImageUrl())
+                                .profile(p.getImage().getImageUrl())
                                 .isDeleted(p.isDeleted())
                                 .isFixed(p.isFixed())
                                 .build();
@@ -203,7 +213,7 @@ public class PlantServiceImpl implements PlantService {
                                 .deadDate(p.getDeadDate())
                                 .nickname(p.getNickname())
                                 .bio(p.getBio())
-//                                .profile(p.getImage().getImageUrl())
+                                .profile(p.getImage().getImageUrl())
                                 .isDeleted(p.isDeleted())
                                 .isFixed(p.isFixed())
                                 .build();
@@ -220,15 +230,21 @@ public class PlantServiceImpl implements PlantService {
 
     @Transactional
     @Override
-    public void updatePlant(String token, Long plantId, PlantUpdateRequestDto plantUpdateRequestDto) {
+    public void updatePlant(String token, PlantUpdateRequestDto plantUpdateRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
+
+        MultipartFile[] images = new MultipartFile[]{plantUpdateRequestDto.getProfile()};
+        if (images.length > 1)
+            throw new NotValidRequestException("식물의 대표 사진은 한 장만 등록할 수 있습니다.");
+        String[] imageUrl = imageService.uploadImages(images);
+
         int type = checkPlantType(
                 plantUpdateRequestDto.getPlantTypeId(),
                 plantUpdateRequestDto.getOtherPlantTypeId()
         );
         if (type != 1 && type != 2) throw new NotValidPlantTypeIdsException();
 
-        Optional<Plant> plant = plantRepository.findById(plantId);
+        Optional<Plant> plant = plantRepository.findById(plantUpdateRequestDto.getPlantId());
         if (plant.isPresent()) {
             Plant p = plant.get();
 
@@ -237,7 +253,12 @@ public class PlantServiceImpl implements PlantService {
             if (userId != p.getUser().getUserId())
                 throw new NotAuthorizedRequestException();
 
-//            p.getImage().setImageUrl(plantUpdateRequestDto.getProfile());
+            Optional<Image> plantImage = imageRepository.findByImageUrl(imageUrl[0]);
+            if (!plantImage.isPresent()) {
+                throw new EntityNotFoundException("식물의 대표 사진을 불러오는 데 실패하였습니다.");
+            }
+
+            p.setImage(plantImage.get());
             p.setNickname(plantUpdateRequestDto.getNickname());
             p.setBio(plantUpdateRequestDto.getBio());
             p.setBirthDate(plantUpdateRequestDto.getBirthDate());
@@ -314,12 +335,12 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public void addPlantCheck(String token, Long plantId, PlantCheckAddRequestDto plantCheckAddRequestDto) {
+    public void addPlantCheck(String token, PlantCheckAddRequestDto plantCheckAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         if (plantCheckAddRequestDto.getCheckDate().isAfter(LocalDate.now())) {
             throw new NotValidRequestException("미래의 식물 관리 기록은 작성할 수 없습니다");
         }
-        Optional<Plant> plant = plantRepository.findById(plantId);
+        Optional<Plant> plant = plantRepository.findById(plantCheckAddRequestDto.getPlantId());
         if (plant.isPresent()) {
             if (userId != plant.get().getUser().getUserId())
                 throw new NotAuthorizedRequestException();
@@ -331,7 +352,7 @@ public class PlantServiceImpl implements PlantService {
                     .checkDate(plantCheckAddRequestDto.getCheckDate())
                     .build();
             plantCheckRepository.save(plantCheck);
-            log.info(">>> addPlantCheck - 관리 기록 추가 완료, 식물 ID: {}, 관리 날짜: {}", plantId, plantCheckAddRequestDto.getCheckDate());
+            log.info(">>> addPlantCheck - 관리 기록 추가 완료, 식물 ID: {}, 관리 날짜: {}", plantCheckAddRequestDto.getPlantId(), plantCheckAddRequestDto.getCheckDate());
         } else {
             throw new EntityNotFoundException("일치하는 식물이 없습니다.");
         }
@@ -339,16 +360,16 @@ public class PlantServiceImpl implements PlantService {
 
     @Transactional
     @Override
-    public void updatePlantCheck(String token, Long plantId, PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
+    public void updatePlantCheck(String token, PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         if (plantCheckUpdateRequestDto.getCheckDate().isAfter(LocalDate.now())) {
             throw new NotValidRequestException("미래의 관리 기록을 수정 할 수 없습니다");
         }
-        Optional<Plant> plant = plantRepository.findById(plantId);
+        Optional<Plant> plant = plantRepository.findById(plantCheckUpdateRequestDto.getPlantId());
         if (plant.isPresent()) {
             if (userId != plant.get().getUser().getUserId())
                 throw new NotAuthorizedRequestException();
-            Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantId, plantCheckUpdateRequestDto.getCheckDate());
+            Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantCheckUpdateRequestDto.getPlantId(), plantCheckUpdateRequestDto.getCheckDate());
             if (plantCheck.isPresent()) {
                 PlantCheck pc = plantCheck.get();
                 pc.setCheckDate(plantCheckUpdateRequestDto.getCheckDate());
@@ -356,7 +377,7 @@ public class PlantServiceImpl implements PlantService {
                 pc.setFertilized(plantCheckUpdateRequestDto.isFertilized());
                 pc.setRepotted(plantCheckUpdateRequestDto.isRepotted());
                 plantCheckRepository.save(pc);
-                log.info(">>> updatePlantCheck - 관리 기록 수정 완료, 식물 ID: {}, 관리 날짜: {}", plantId, plantCheckUpdateRequestDto.getCheckDate());
+                log.info(">>> updatePlantCheck - 관리 기록 수정 완료, 식물 ID: {}, 관리 날짜: {}", plantCheckUpdateRequestDto.getCheckDate(), plantCheckUpdateRequestDto.getCheckDate());
             } else {
                 throw new EntityNotFoundException("일치하는 식물 관리 기록이 없습니다.");
             }
@@ -371,6 +392,7 @@ public class PlantServiceImpl implements PlantService {
 
         Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantId, date);
         if (plantCheck.isPresent()) {
+            log.info(">>> updatePlantCheck - 관리 기록 조회 완료 {}", plantCheck.get());
             PlantCheck pc = plantCheck.get();
             PlantCheckGetResponseDto plantCheckGetResponseDto = new PlantCheckGetResponseDto();
             plantCheckGetResponseDto.setCheckDate(pc.getCheckDate());
@@ -379,7 +401,7 @@ public class PlantServiceImpl implements PlantService {
             plantCheckGetResponseDto.setRepotted(pc.isRepotted());
             return plantCheckGetResponseDto;
         } else {
-            throw new EntityNotFoundException("일치하는 식물 관리 기록이 없습니다.");
+            return new PlantCheckGetResponseDto();
         }
     }
 
@@ -403,14 +425,11 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<PlantCheckGetResponseDto> getPlantCheckByYearAndMonth(Long plantId, String year, String month) {
-        int yearInt = Integer.parseInt(year);
-        int monthInt = Integer.parseInt(month);
-
-        LocalDate startDate = LocalDate.of(yearInt, monthInt, 1);
+    public List<PlantCheckGetResponseDto> getPlantCheckByYearAndMonth(PlantGetByYearAndMonthRequestDto plantGetByYearAndMonthRequestDto) {
+        LocalDate startDate = LocalDate.of(plantGetByYearAndMonthRequestDto.getYear(), plantGetByYearAndMonthRequestDto.getMonth(), 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
-        Optional<List<PlantCheck>> optionalPlantChecks = plantCheckRepository.findAllByPlantPlantId(plantId);
+        Optional<List<PlantCheck>> optionalPlantChecks = plantCheckRepository.findAllByPlantPlantId(plantGetByYearAndMonthRequestDto.getPlantId());
         List<PlantCheckGetResponseDto> result = new ArrayList<>();
 
         if (optionalPlantChecks.isPresent()) {
