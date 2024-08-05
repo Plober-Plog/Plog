@@ -182,6 +182,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                 log.info(">>> getPlantDiary - 일지 조회 성공: {}", plantDiary);
                 List<String> imageList = imageService.loadImagesByPlantDiaryId(plantDiaryId);
                 return PlantDiaryGetResponseDto.builder()
+                        .plantDiaryId(plantDiaryId)
                         .plantId(plantDiary.getPlant().getPlantId())
                         .weather(plantDiary.getWeather().getValue())
                         .humidity(plantDiary.getHumidity().getValue())
@@ -206,6 +207,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
 
         List<String> imageList = imageService.loadImagesByPlantDiaryId(plantDiary.getPlantDiaryId());
         return PlantDiaryGetResponseDto.builder()
+                .plantDiaryId(plantDiary.getPlantDiaryId())
                 .plantId(plantDiary.getPlant().getPlantId())
                 .weather(plantDiary.getWeather().getValue())
                 .humidity(plantDiary.getHumidity().getValue())

@@ -15,6 +15,9 @@ import java.util.List;
 @Builder
 @ToString
 public class PlantDiaryGetResponseDto {
+    @Schema(description = "식물 일지 ID", example = "1")
+    private Long plantDiaryId;
+
     @Schema(description = "식물 ID", example = "2")
     private Long plantId;
 
