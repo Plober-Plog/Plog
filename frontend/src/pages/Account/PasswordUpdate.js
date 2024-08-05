@@ -61,7 +61,7 @@ const PasswordUpdate = () => {
     // 비밀번호 변경 요청
     try {
       console.log(userId)
-      const response = await axios.patch(`${URI}/user/password`, {
+      const response = await axios.put(`${URI}/user/password`, {
         userId,
         password: sha256(password)
       })

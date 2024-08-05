@@ -213,7 +213,7 @@ const SignUpForm = () => {
     <div>
       <form onSubmit={(e) => e.preventDefault()} className="form">
         <div>
-          {!isFormValid && <p>필수 항목을 모두 입력해 주세요.</p>}
+          {!isFormValid && <p className="error">필수 항목을 모두 입력해 주세요.</p>}
           <InputField
             type="text"
             placeholder="아이디"
@@ -231,7 +231,7 @@ const SignUpForm = () => {
             className="input"
           />
           <ATag content="중복확인" onClick={handleCheckSearchId}/>
-          {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
+          {searchIdCheckMsg && <p className="error">{searchIdCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -254,7 +254,7 @@ const SignUpForm = () => {
           <ATag
             content="인증하기" onClick={handleCheckEmail}
           />
-          {emailCheckMsg && <p>{emailCheckMsg}</p>}
+          {emailCheckMsg && <p className="error">{emailCheckMsg}</p>}
         </div>
         {isEmailVerificationSent && (
           <div>
@@ -269,7 +269,7 @@ const SignUpForm = () => {
             />
             <p>{formatTime(timer)}</p>
             <ATag content="인증 확인" onClick={handleVerifyEmailCode} />
-            {emailVerificationMsg && <p>{emailVerificationMsg}</p>}
+            {emailVerificationMsg && <p className="error">{emailVerificationMsg}</p>}
           </div>
         )}
         <div>
@@ -293,7 +293,7 @@ const SignUpForm = () => {
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordCheckMsg && <p>{passwordCheckMsg}</p>}
+          {passwordCheckMsg && <p className="error">{passwordCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -316,7 +316,7 @@ const SignUpForm = () => {
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordConfirmCheckMsg && <p>{passwordConfirmCheckMsg}</p>}
+          {passwordConfirmCheckMsg && <p className="error">{passwordConfirmCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -335,7 +335,7 @@ const SignUpForm = () => {
             isRequired={false}
             className="input"
           />
-          {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
+          {nicknameCheckMsg && <p className="error">{nicknameCheckMsg}</p>}
           <ATag content="추천받기" />
         </div>
         <div>

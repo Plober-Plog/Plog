@@ -5,11 +5,13 @@ import { sha256 } from 'js-sha256';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Common/InputField';
+import ATag from '../../components/Common/ATag';
 import './Account.css';
 
 const PasswordChange = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [passwordConfirmMsg, setPasswordConfirmMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handlePasswordChange = async (event) => {
@@ -42,14 +44,17 @@ const PasswordChange = () => {
       <h2 className="title">비밀번호 변경</h2>
       <form onSubmit={handlePasswordChange} className="form">
         <InputField
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="현재 비밀번호"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
           required
           className="input"
         />
-        {/* TODO 머지 후 비밀번호 보이기 버튼 추가 */}
+        <ATag
+          onClick={() => setShowPassword(!showPassword)}
+          content={showPassword ? '숨기기' : '보기'}
+        />
         {passwordConfirmMsg && <p className="error">{passwordConfirmMsg}</p>}
         <Btn content="비밀번호 확인" type="submit" className="button"/>
       </form>
