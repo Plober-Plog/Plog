@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import ProfilePlantCardList from '../../components/Article/ProfilePlantCardList';
+import SnsProfileTab from '../../components/Profile/SnSProfileTab';
 import axios from 'axios';
 
 const UserProfile = ({ userId = 1 }) => {
@@ -9,6 +10,11 @@ const UserProfile = ({ userId = 1 }) => {
 
   const [userData, setUserData] = useState(null);
   const [articles, setArticles] = useState([]);
+
+  /* TODO: [예진] 이 부분 현재는 plant가 기본 상태인데
+    sns 기능이 완료된 뒤에 sns를 기본 상태로 수정할 것
+  */
+  const [activeTab, setActiveTab] = useState('plant');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -54,9 +60,15 @@ const UserProfile = ({ userId = 1 }) => {
         data={{ ...userData, ownerId: userId}}
         type='user'
       />
-      <ProfilePlantCardList
-        searchId='zpqmdh'
+      <SnsProfileTab 
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        searchId={'zpqmdh'}
       />
+
+      {/* <ProfilePlantCardList
+        searchId='zpqmdh'
+      /> */}
     </div>
   )
 };
