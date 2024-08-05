@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import sha256 from 'js-sha256';
-import AWS from 'aws-sdk';
 
 import Btn from '../Common/Btn';
-import ATag from './ATag';
-import InputField from './InputField';
-import RadioField from './RadioField';
-import SelectField from './SelectField';
-import ModalComplete from './ModalComplete';
+import ATag from '../Common/ATag';
+import InputField from '../Common/InputField';
+import RadioField from '../Common/RadioField';
+import SelectField from '../Common/SelectField';
+import ModalComplete from '../Common/ModalComplete';
 import defaultProfile from '../../assets/image/defaultprofile.png';
-import './Login.css'
 
 const SignUpForm = () => {
   // 회원 정보
@@ -46,7 +44,6 @@ const SignUpForm = () => {
 
   const URI = 'https://i11b308.p.ssafy.io/api';
 
-  // TODO 이메일 인증 완료시 이메일 input 비활성화
 
   // 유효성 검사
   useEffect(() => {
@@ -112,7 +109,7 @@ const SignUpForm = () => {
       // 중복 X
       if (response.status === 200) {
         console.log('이메일 중복 확인 성공! (중복 X)');
-        setIsEmailVerified(true);
+        setIsEmailVerificationSent(true);
       }
     } catch (error) {
       // 중복 O
@@ -168,6 +165,7 @@ const SignUpForm = () => {
       console.log(response)
       console.log('이메일 인증 성공!');
       setIsEmailVerified(true);
+      setIsEmailVerificationSent(false); // 이메일 인증 성공 후 인증번호 입력 필드 비활성화
     } catch (error) {
       console.error('이메일 인증 확인 실패: ', error);
       setEmailVerificationMsg('인증번호가 일치하지 않습니다.');
@@ -213,9 +211,9 @@ const SignUpForm = () => {
 
   return (
     <div>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} className="form">
         <div>
-          {!isFormValid && <p>필수 항목을 모두 입력해 주세요.</p>}
+          {!isFormValid && <p className="error">필수 항목을 모두 입력해 주세요.</p>}
           <InputField
             type="text"
             placeholder="아이디"
@@ -230,9 +228,10 @@ const SignUpForm = () => {
               }
             }}
             isRequired={true}
+            className="input"
           />
           <ATag content="중복확인" onClick={handleCheckSearchId}/>
-          {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
+          {searchIdCheckMsg && <p className="error">{searchIdCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -250,11 +249,14 @@ const SignUpForm = () => {
             }}
             isRequired={true}
             disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+            className="input"
           />
-          <ATag
-            content="인증하기" onClick={handleCheckEmail}
-          />
-          {emailCheckMsg && <p>{emailCheckMsg}</p>}
+          {!isEmailVerified && (
+            <ATag
+              content="인증번호 전송" onClick={handleCheckEmail}
+            />
+          )}
+          {emailCheckMsg && <p className="error">{emailCheckMsg}</p>}
         </div>
         {isEmailVerificationSent && (
           <div>
@@ -265,10 +267,11 @@ const SignUpForm = () => {
               onChange={(e) => setEmailVerificationInput(e.target.value)}
               isRequired={true}
               disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+              className="input"
             />
             <p>{formatTime(timer)}</p>
             <ATag content="인증 확인" onClick={handleVerifyEmailCode} />
-            {emailVerificationMsg && <p>{emailVerificationMsg}</p>}
+            {emailVerificationMsg && <p className="error">{emailVerificationMsg}</p>}
           </div>
         )}
         <div>
@@ -286,12 +289,13 @@ const SignUpForm = () => {
               }
             }}
             isRequired={true}
+            className="input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordCheckMsg && <p>{passwordCheckMsg}</p>}
+          {passwordCheckMsg && <p className="error">{passwordCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -308,12 +312,13 @@ const SignUpForm = () => {
               }
             }}
             isRequired={true}
+            className="input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordConfirmCheckMsg && <p>{passwordConfirmCheckMsg}</p>}
+          {passwordConfirmCheckMsg && <p className="error">{passwordConfirmCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -330,8 +335,9 @@ const SignUpForm = () => {
               }
             }}
             isRequired={false}
+            className="input"
           />
-          {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
+          {nicknameCheckMsg && <p className="error">{nicknameCheckMsg}</p>}
           <ATag content="추천받기" />
         </div>
         <div>
@@ -341,6 +347,7 @@ const SignUpForm = () => {
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
+            className="input"
           />
         </div>
         <SelectField
@@ -395,6 +402,7 @@ const SignUpForm = () => {
           content="회원가입"
           disabled={!isFormValid}
           onClick={handleSignUp}
+          className="button"
         />
       </form>
       <ModalComplete title={'회원가입 완료'} content={'회원가입이 완료되었습니다'} open={openModal} onClose={closeModal} />

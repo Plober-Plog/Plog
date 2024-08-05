@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Btn from '../../components/Common/Btn';
-import InputField from '../../components/Account/InputField';
-import ATag from '../../components/Account/ATag';
+import InputField from '../../components/Common/InputField';
+import ATag from '../../components/Common/ATag';
 
 const PasswordFind = () => {
   // input fields
