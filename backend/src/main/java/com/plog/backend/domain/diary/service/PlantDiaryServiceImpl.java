@@ -63,7 +63,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
 
     @Transactional
     @Override
-    public void addPlantDiary(String token, PlantDiaryAddRequestDto plantDiaryAddRequestDto) {
+    public Long addPlantDiary(String token, PlantDiaryAddRequestDto plantDiaryAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> addPlantDiary - 요청 데이터: {}", plantDiaryAddRequestDto);
 
@@ -89,10 +89,8 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                     .build();
             PlantDiary pd = plantDiaryRepository.save(plantDiary);
 
-            // 일지 사진 업로드
-            uploadPlantDiaryImages(plantDiaryAddRequestDto.getImages(), pd.getPlantDiaryId());
             log.info(">>> addPlantDiary - 일지 저장 완료: {}", plantDiary);
-
+            return pd.getPlantDiaryId();
         } else {
             throw new NotValidRequestException("일지를 작성할 식물이 없습니다.");
         }
@@ -202,7 +200,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     @Override
     public PlantDiaryGetResponseDto getPlantDiaryByRecordDate(Long plantId, String recordDate) {
         PlantDiary plantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDate(plantId, LocalDate.parse(recordDate));
-        log.info(">>> getPlantDiaryByRecordDate 조회 완료 : {}", plantDiary);
+        log.info(">>> getPlantDiaryByRecordDate 조회 완료 ");
         if (plantDiary == null) return null;
 
         List<String> imageList = imageService.loadImagesByPlantDiaryId(plantDiary.getPlantDiaryId());
@@ -226,7 +224,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
         List<PlantDiary> plantDiaryList = plantDiaryRepository.findAllByPlantPlantIdAndRecordDateBetween(plantId, startDate, endDate);
-        log.info(">>> getPlantDiaryByYearAndMonth 조회 완료 : {}", plantDiaryList);
+        log.info(">>> getPlantDiaryByYearAndMonth 조회 완료");
         List<PlantDiaryGetSimpleResponseDto> plantDiaryGetSimpleResponseDtoList = new ArrayList<>();
         for (PlantDiary plantDiary : plantDiaryList) {
             String thumbnailUrl = imageService.loadThumbnailImageByPlantDiaryId(plantDiary.getPlantDiaryId());
@@ -244,7 +242,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     @Override
     public List<PlantDiaryGetSimpleResponseDto> getPlantDiaryRecentFive(Long plantId) {
         List<PlantDiary> plantDiaryList = plantDiaryRepository.findTop5ByPlantPlantIdOrderByRecordDateDesc(plantId);
-        log.info(">>> getPlantDiaryRecentFive 조회 완료 : {}", plantDiaryList);
+        log.info(">>> getPlantDiaryRecentFive 조회 완료");
         List<PlantDiaryGetSimpleResponseDto> plantDiaryGetSimpleResponseDtoList = new ArrayList<>();
         for (PlantDiary plantDiary : plantDiaryList) {
             String thumbnailUrl = imageService.loadThumbnailImageByPlantDiaryId(plantDiary.getPlantDiaryId());
