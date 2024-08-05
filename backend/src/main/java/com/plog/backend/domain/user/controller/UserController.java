@@ -176,14 +176,19 @@ public class UserController {
     }
 
     @Operation(summary = "내 프로필 조회", description = "내 프로필을 조회합니다.")
-    @GetMapping("/profile")
+    @GetMapping("/my-profile")
     public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getMyProfile(token));
+        UserProfileResponseDto responseDto = userService.getMyProfile(token);
+        log.info(">>> 내 프로필 조회 반환값 : {}",responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @Operation(summary = "프로필 조회", description = "검색 ID 기준으로 프로필을 조회합니다.")
-    @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponseDto> getProfile(@RequestParam String searchId) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getProfile(searchId));
+    @GetMapping("/profile/{searchId}")
+    public ResponseEntity<UserProfileResponseDto> getProfile(@PathVariable("searchId") String searchId) {
+        UserProfileResponseDto responseDto = userService.getProfile(searchId);
+        log.info(">>> 상대 프로필 조회, 아이디, 반환값 : {}, {}", searchId, responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
 }
