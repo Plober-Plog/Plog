@@ -1,17 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const DateDisplay = ({ date }) => {
+const DateDisplay = ({ date, setDate }) => {
+  const handleDateChange = (event) => {
+    setDate(event.target.value);
+  };
+
   return (
     <div>
-      <h1>{ date }</h1>
+      <input type="date" value={date} onChange={handleDateChange} />
     </div>
   );
 };
 
-// dateDisplay.propTypes = {
-//   date: PropTypes.string.isRequired,
-// };
-
+DateDisplay.propTypes = {
+  date: PropTypes.string.isRequired,
+  setDate: PropTypes.func.isRequired,
+};
 
 export default DateDisplay;
