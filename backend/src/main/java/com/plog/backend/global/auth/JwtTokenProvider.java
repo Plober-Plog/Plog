@@ -32,6 +32,14 @@ public class JwtTokenProvider {
         return isValid;
     }
 
+    public boolean validateRefreshToken(String token, HttpServletRequest request){
+        boolean isValid = jwtTokenUtil.validateRefreshToken(token);
+        if (!isValid) {
+            request.setAttribute("exception", "INVALID_OR_EXPIRED_REFRESH_JWT");
+        }
+        return isValid;
+    }
+
     public String getPayload(String token , HttpServletRequest request){
         if (validateToken(token, request)) {
             String[] parts = token.split("\\.");

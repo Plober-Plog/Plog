@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -125,6 +126,33 @@ public class JwtTokenUtil {
             throw new TimeoutException("토큰이 만료되었습니다.");
         } catch (JWTVerificationException ex) {
             throw new NotValidRequestException("유효하지 않은 토큰 입니다. " + ex.getMessage());
+        }
+    }
+
+    public String getRefreshToken(Long userId) {
+        Date expires = jwtTokenUtil.getTokenExpirationForRefresh(expirationTime);
+        return JWT.create()
+                .withSubject(userId + "")
+                .withExpiresAt(expires)
+                .withIssuer(ISSUER)
+                .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
+                .sign(Algorithm.HMAC256(secretKey.getBytes()));
+    }
+
+    public Date getTokenExpirationForRefresh(int expirationTime) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expiresAt = now.plus(expirationTime * 30, ChronoUnit.DAYS); // Refresh 토큰은 30일 유효
+        return Date.from(expiresAt.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public boolean validateRefreshToken(String token) {
+        try {
+            getVerifier().verify(token.replace(TOKEN_PREFIX, ""));
+            return true;
+        } catch (TokenExpiredException ex) {
+            throw new TimeoutException("Refresh 토큰이 만료되었습니다.");
+        } catch (JWTVerificationException ex) {
+            throw new NotValidRequestException("유효하지 않은 Refresh 토큰 입니다. " + ex.getMessage());
         }
     }
 }
