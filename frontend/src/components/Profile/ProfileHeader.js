@@ -18,7 +18,7 @@ const ProfileHeader = ({ data = {}, type }) => {
     profileData.imgSrc = data.profile || '';
     profileData.title = data.title || '타이틀이 없습니다';
     profileData.nickname = data.nickname || '닉네임 없음';
-    profileData.bio = data.profile_nifo || '자기소개가 비어 있습니다.';
+    profileData.bio = data.profile_info || '자기소개가 비어 있습니다.';
     profileData.ownerId = data.searchId || null;
   } else {
     console.error(`Unexpected type: ${type}`)

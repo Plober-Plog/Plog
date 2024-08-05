@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
-import ArticleCardList from '../../components/Article/ArticleCardList';
+import ProfilePlantCardList from '../../components/Article/ProfilePlantCardList';
 import axios from 'axios';
 
 const UserProfile = ({ userId = 1 }) => {
@@ -36,6 +36,15 @@ const UserProfile = ({ userId = 1 }) => {
   if (!userData) {
     return <div>Loading</div>
   };
+  
+  /* TODO: [예진] 윤서가 Plant Type 리스트 반환해주는 API 만들어 주면 그걸 보여주는 컴포넌트를 만들어 추가해야합니다
+    누르면 UI 토글이 되고,
+    해당 값을 ProfilePlantCardList의 axios GET 요청의 params로 함께 넘겨줘야 합니다.
+  */
+
+  /* TODO: [예진] 아영이가 상태관리쪽을 작업한 뒤,
+    searchId를 쉽게 반환할 수 있도록 만들어주면 아래 하드코딩을 수정해야 합니다.
+  */
 
   return (
     <div>
@@ -43,10 +52,8 @@ const UserProfile = ({ userId = 1 }) => {
         data={{ ...userData, ownerId: userId}}
         type='user'
       />
-      <ArticleCardList
-        ownerId={userId}
-        articles={articles}
-        type="user"
+      <ProfilePlantCardList
+        searchId='zpqmdh'
       />
     </div>
   )
