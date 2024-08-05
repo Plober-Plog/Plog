@@ -1,6 +1,7 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Common/InputField';
@@ -40,7 +41,7 @@ const PasswordFind = () => {
   // 이메일 인증 코드 전송
   const handleEmailVerification = async () => {
   
-    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
       console.log('이메일 형식이 올바르지 않습니다.');
       return;
     }

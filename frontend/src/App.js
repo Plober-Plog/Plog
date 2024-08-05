@@ -8,7 +8,6 @@ import PasswordFind from './pages/Account/PasswordFind';
 import PasswordChange from './pages/Account/PasswordChange';
 import ProfileUpdate from './pages/Account/ProfileUpdate';
 import PasswordUpdate from './pages/Account/PasswordUpdate';
-import ProfileUpdate from './pages/Account/ProfileUpdate';
 import Setting from './pages/Account/Setting';
 // Plant
 import PlantDiaryWrite from './pages/Diary/PlantDiaryWrite';
