@@ -9,7 +9,6 @@ import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ public class PlantDiaryController {
     @PostMapping
     public ResponseEntity<BaseResponseBody> addPlantDiary(
             @RequestHeader("Authorization") String token,
-            @ModelAttribute PlantDiaryAddRequestDto plantDiaryAddRequestDto,
+            @RequestPart PlantDiaryAddRequestDto plantDiaryAddRequestDto,
             @RequestPart(required = false) List<PlantDiaryImageUploadRequestDto> images) {
         log.info(">>> [POST] /user/diary - 요청 데이터: {}", plantDiaryAddRequestDto);
         plantDiaryService.addPlantDiary(token, plantDiaryAddRequestDto);
