@@ -44,7 +44,6 @@ const SignUpForm = () => {
 
   const URI = 'https://i11b308.p.ssafy.io/api';
 
-  // TODO 이메일 인증 완료시 이메일 input 비활성화
 
   // 유효성 검사
   useEffect(() => {
