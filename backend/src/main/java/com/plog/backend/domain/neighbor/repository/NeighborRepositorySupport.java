@@ -8,8 +8,9 @@ import org.springframework.stereotype.Repository;
 public class NeighborRepositorySupport extends QuerydslRepositorySupport {
     private JPAQueryFactory queryFactory = null;
 
-    public NeighborRepositorySupport(Class<?> domainClass) {
-        super(domainClass);
+    public NeighborRepositorySupport(JPAQueryFactory jpaQueryFactory) {
+        super(NeighborRepository.class);
+        this.queryFactory = jpaQueryFactory;
     }
 
 }

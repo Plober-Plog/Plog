@@ -1,5 +1,6 @@
 package com.plog.backend.domain.user.entity;
 
+import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +22,10 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+
+    @OneToOne
+    @JoinColumn(name="image_id", referencedColumnName = "imageId")
+    private Image image;
 
     @Column(nullable = false)
     private String email;

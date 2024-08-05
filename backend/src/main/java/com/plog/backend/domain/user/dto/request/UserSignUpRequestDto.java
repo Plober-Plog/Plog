@@ -7,7 +7,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 @Getter
-@ToString
+@Setter
+@ToString(exclude = "profile")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

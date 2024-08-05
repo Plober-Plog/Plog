@@ -1,5 +1,7 @@
 package com.plog.backend.domain.user.service;
 
+import com.plog.backend.domain.image.entity.Image;
+import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
@@ -41,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenUtil jwtTokenUtil;
     private final RedisUtil redisUtil;
+    private final ImageRepository imageRepository;
 
     @Override
     public User getUserBySearchId(String searchId) {
@@ -140,6 +143,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(UserSignUpRequestDto userSignUpRequestDto) {
         log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpRequestDto);
+
+        Image image = imageRepository.findByImageUrl(userSignUpRequestDto.getProfile())
+                .orElseThrow(() -> {
+                    return new NotValidRequestException("이미지가 없습니다.");
+                });
+
         User user = User.builder()
                 .email(userSignUpRequestDto.getEmail())
                 .gender(Gender.gender(userSignUpRequestDto.getGender()))
@@ -156,7 +165,7 @@ public class UserServiceImpl implements UserService {
                 .gugunCode(userSignUpRequestDto.getGugunCode())
                 .source(userSignUpRequestDto.getSource())
                 .birthDate(userSignUpRequestDto.getBirthDate())
-                //TODO [장현준] - image 추가
+                .image(image)
                 .build();
         User savedUser = userRepository.save(user);
         log.info(">>> createUser - 사용자 생성됨: {}", savedUser);
