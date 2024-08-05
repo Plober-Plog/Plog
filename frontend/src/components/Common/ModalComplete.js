@@ -1,5 +1,5 @@
 import React from "react";
-import Btn from "../Common/Btn";
+import Btn from "./Btn";
 import './Modal.css'
 
 const ModalComplete = ({ title, content, open, onClose }) => {
