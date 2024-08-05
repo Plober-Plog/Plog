@@ -1,9 +1,12 @@
 import axios from 'axios';
 import useAuthStore from '../stores/store';
+import { useNavigate } from 'react-router-dom';
 
 const API = axios.create({
   baseURL: 'https://i11b308.p.ssafy.io/api',
 });
+
+
 
 API.interceptors.request.use(
   (config) => {
@@ -25,6 +28,7 @@ API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const navigate = useNavigate()
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {

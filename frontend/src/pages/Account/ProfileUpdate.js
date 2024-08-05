@@ -12,9 +12,8 @@ const ProfileUpdate = () => {
           console.log('유정 정보 불러오기...');
           const response = await API.get('/user');
           console.log('응답 데이터:', response);
-          const data = response.data;
-          console.log('유저 데이터:', data);
-          setUserData(data);
+          console.log('유저 데이터:', response.data);
+          setUserData(response.data);
         } catch (error) {
           console.error('유저 정보 불러오기 실패 : ', error);
         }
