@@ -12,18 +12,19 @@ const Setting = () => {
   // 로그아웃
   const handleLogout = async () => {
     try {
-      const token = useAuthStore.getState().token;
-      if (!token) return;
+      const accessToken = useAuthStore.getState().accessToken;
+      if (!accessToken) {
+        console.log('이미 로그아웃된 회원입니다.');
+        console.log(accessToken) // null인지 확인
+        return;
+      }
 
       // 서버에 로그아웃 요청
-      await 
-      await axios.post('https://i11b308.p.ssafy.io/api/user/logout', {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await API.get('/user/logout')
+      console.log('로그아웃 성공:', response.data);
 
-      // 토큰 제거
+      // 토큰 제거 후 로그인 페이지로 이동
       clearToken();
-      // 로그아웃 후 로그인 페이지로 이동
       navigate('/login');
 
     } catch (error) {
