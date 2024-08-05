@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../apis/api';
+import axios from 'axios';
 import sha256 from 'js-sha256';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -10,6 +11,8 @@ import ModalComplete from '../../components/Common/ModalComplete';
 import './Account.css';
 
 const PasswordUpdate = () => {
+  const navigate = useNavigate();
+  const URI = 'https://i11b308.p.ssafy.io/api'
   // location
   const location = useLocation();
   const { userId } = location.state;
@@ -23,7 +26,6 @@ const PasswordUpdate = () => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordConfirmError, setPasswordConfirmError] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
-  const navigate = useNavigate();
 
 
   // 비밀번호 유효성 검사
@@ -58,7 +60,8 @@ const PasswordUpdate = () => {
     
     // 비밀번호 변경 요청
     try {
-      const response = await API.patch('/user/password', {
+      console.log(userId)
+      const response = await axios.patch(`${URI}/user/password`, {
         userId,
         password: sha256(password)
       })
@@ -93,7 +96,7 @@ const PasswordUpdate = () => {
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordError && <p>{passwordError}</p>}
+          {passwordError && <p className="error">{passwordError}</p>}
         </div>
         <div>
           <InputField
@@ -117,7 +120,12 @@ const PasswordUpdate = () => {
           className="button"
         />
       </form>
-      <ModalComplete title={'비밀번호 변경 완료'} content={'비밀번호 변경이 완료되었습니다'} open={openModal} onClose={closeModal}/>
+      <ModalComplete
+        title={'비밀번호 변경 완료'}
+        content={'비밀번호 변경이 완료되었습니다'}
+        open={openModal}
+        onClose={closeModal}
+      />
     </div>
   )
 }

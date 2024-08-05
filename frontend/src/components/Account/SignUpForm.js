@@ -211,7 +211,7 @@ const SignUpForm = () => {
 
   return (
     <div>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} className="form">
         <div>
           {!isFormValid && <p>필수 항목을 모두 입력해 주세요.</p>}
           <InputField
@@ -228,6 +228,7 @@ const SignUpForm = () => {
               }
             }}
             isRequired={true}
+            className="input"
           />
           <ATag content="중복확인" onClick={handleCheckSearchId}/>
           {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
@@ -248,6 +249,7 @@ const SignUpForm = () => {
             }}
             isRequired={true}
             disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+            className="input"
           />
           <ATag
             content="인증하기" onClick={handleCheckEmail}
@@ -263,6 +265,7 @@ const SignUpForm = () => {
               onChange={(e) => setEmailVerificationInput(e.target.value)}
               isRequired={true}
               disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+              className="input"
             />
             <p>{formatTime(timer)}</p>
             <ATag content="인증 확인" onClick={handleVerifyEmailCode} />
@@ -284,6 +287,7 @@ const SignUpForm = () => {
               }
             }}
             isRequired={true}
+            className="input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
@@ -306,6 +310,7 @@ const SignUpForm = () => {
               }
             }}
             isRequired={true}
+            className="input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
@@ -328,6 +333,7 @@ const SignUpForm = () => {
               }
             }}
             isRequired={false}
+            className="input"
           />
           {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
           <ATag content="추천받기" />
@@ -339,6 +345,7 @@ const SignUpForm = () => {
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
+            className="input"
           />
         </div>
         <SelectField
@@ -393,6 +400,7 @@ const SignUpForm = () => {
           content="회원가입"
           disabled={!isFormValid}
           onClick={handleSignUp}
+          className="button"
         />
       </form>
       <ModalComplete title={'회원가입 완료'} content={'회원가입이 완료되었습니다'} open={openModal} onClose={closeModal} />

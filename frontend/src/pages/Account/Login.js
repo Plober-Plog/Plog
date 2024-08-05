@@ -8,8 +8,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>로그인</h1>
+    <div className="container">
+      <h1 className="title">로그인</h1>
       <LoginForm />
       <ATag 
         content={'회원가입 하기'}

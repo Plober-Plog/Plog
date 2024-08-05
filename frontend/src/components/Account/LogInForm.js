@@ -55,7 +55,7 @@ const LoginForm = () => {
 
   return (
     <div>
-      <form onSubmit={e => e.preventDefault()}>
+      <form onSubmit={e => e.preventDefault()} className="form">
         <div>
           <InputField
             type="email" 
@@ -63,6 +63,7 @@ const LoginForm = () => {
             value={email} 
             onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
+            className="input"
           />
         </div>
         <div>
@@ -71,7 +72,8 @@ const LoginForm = () => {
             placeholder="비밀번호" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)}
-            isRequired={true} 
+            isRequired={true}
+            className="input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
@@ -83,6 +85,7 @@ const LoginForm = () => {
           content="로그인"
           disabled={!email || !password}
           onClick={handleLogin}
+          className="button"
         />
       </form>
     </div>

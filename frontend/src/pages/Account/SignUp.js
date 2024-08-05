@@ -8,8 +8,8 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1>회원가입</h1>
+    <div className="container">
+      <h1 className="title">회원가입</h1>
       <ATag
         content='로그인'
         onClick={() => navigate('/login')}
