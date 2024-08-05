@@ -80,7 +80,7 @@ const PasswordUpdate = () => {
   
 
   return (
-    <div className="container">
+    <div className="account-container">
       <h2 className="title">비밀번호 변경</h2>
       <form onSubmit={e => e.preventDefault()} className="form">
         <div>

@@ -67,12 +67,14 @@ const PasswordFind = () => {
   const handleCodeVerification = async () => {
     try {
       const response = await axios.post(`${URI}/user/password/check`, { email, verifyCode: emailVerificationInput });
+      console.log(response.data);
       if (response.data.result) {
         setIsEmailVerified(true);
         setUserId(response.data.userId); // 유저 pk
         setEmailVerificationMsg('이메일 인증 성공!');
       } else {
         setEmailVerificationMsg('인증 코드가 올바르지 않습니다.');
+        console.log(response.data.result);
       }
     } catch (error) {
       if (error.response && error.response.status === 408) {
@@ -97,9 +99,9 @@ const PasswordFind = () => {
 
 
   return (
-    <div>
-      <h2>비밀번호 찾기</h2>
-      <form onSubmit={e => e.preventDefault()}>
+    <div className="account-container">
+      <h1 className="title">비밀번호 찾기</h1>
+      <form onSubmit={e => e.preventDefault()} className="form">
         <div>
           <InputField
             type="email"
@@ -116,6 +118,7 @@ const PasswordFind = () => {
             }}
             isRequired={true}
             disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+            className="input"
           />
           <ATag
             content="인증하기" onClick={handleEmailVerification}
@@ -131,16 +134,18 @@ const PasswordFind = () => {
               onChange={(e) => setEmailVerificationInput(e.target.value)}
               isRequired={true}
               disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+              className="input"
             />
             <p>{formatTime(timer)}</p>
             <ATag content="인증 확인" onClick={handleCodeVerification} />
-            {emailVerificationMsg && <p>{emailVerificationMsg}</p>}
+            {emailVerificationMsg && <p className="error">{emailVerificationMsg}</p>}
           </div>
         )}
           <Btn
             content="비밀번호 찾기"
             disabled={!isEmailVerified}
             onClick={() => navigate('/password/update', { state: { userId } })}
+            className="button"
           />
       </form>
     </div>
