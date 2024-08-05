@@ -1,7 +1,7 @@
 import API from '../../apis/api';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from '../../stores/store';
+import useAuthStore from '../../stores/member';
 import ModalConfirm from "../../components/Common/ModalConfirm";
 
 const Setting = () => {

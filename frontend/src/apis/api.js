@@ -1,27 +1,25 @@
 import axios from 'axios';
-import useAuthStore from '../stores/store';
+import useAuthStore from '../stores/member';
 import { useNavigate } from 'react-router-dom';
 
 const API = axios.create({
   baseURL: 'https://i11b308.p.ssafy.io/api',
 });
 
-
 // 토큰 인터셉터
 API.interceptors.request.use(
   (config) => {
     const { accessToken } = useAuthStore.getState();
-    console.log('현재 토큰: ', accessToken);
+    console.log('현재 토큰 :', accessToken);
 
     if (accessToken) {
-      config.headers.Authorization =  accessToken;
+      config.headers.Authorization = accessToken;
       console.log('headers에 토큰 추가 :', config.headers.Authorization);
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
-
 
 // 리프레시 토큰 확인
 API.interceptors.response.use(
@@ -44,6 +42,7 @@ API.interceptors.response.use(
       } catch (refreshError) {
         // 만료됐으면 로그인 페이지로 이동
         useAuthStore.getState().clearToken();
+        useAuthStore.getState().clearUserData();
         useNavigate()('/login');
         return Promise.reject(refreshError);
       }

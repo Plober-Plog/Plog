@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
-import axios from 'axios';
 import sha256 from 'js-sha256';
-import useAuthStore from '../../stores/store';
+import useAuthStore from '../../stores/member';
 
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
@@ -17,7 +16,6 @@ const LoginForm = () => {
   const setToken = useAuthStore((state) => state.setToken);
 
   const navigate = useNavigate();
-  const URI = 'https://i11b308.p.ssafy.io/api'
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -28,7 +26,7 @@ const LoginForm = () => {
     };
 
     try {
-      const response = await axios.post(`${URI}/user/login`, userInfo);
+      const response = await API.post('/user/login', userInfo);
       const { accessToken, refreshToken } = response.data;
       console.log('토큰 정보 : ', response.data)
 
