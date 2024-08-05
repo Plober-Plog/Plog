@@ -11,9 +11,11 @@ import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
+import com.plog.backend.global.auth.PloberUserDetails;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
+import com.plog.backend.global.util.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -36,6 +40,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenUtil jwtTokenUtil;
+    private final RedisUtil redisUtil;
 
     @Override
     public User getUserBySearchId(String searchId) {
@@ -72,36 +77,33 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    @Override
-    public String userSignIn(String email, String password) {
-        log.info(">>> login - 이메일: {}, 패스워드: {}", email, password);
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.error(">>> login - 이메일 잘못됨: {}", email);
-                    return new NotValidRequestException("이메일 혹은 패스워드가 잘못 되었습니다.");
-                });
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            log.error(">>> login - 패스워드 잘못됨: {}", email);
-            throw new NotValidRequestException("이메일 혹은 패스워드가 잘못되었습니다.");
-        }
-
-        log.info(">>> login - 사용자 찾음: {}", user);
-
+    public Map<String, String> userSignIn(String email, String password) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUserId(), password)
+                new UsernamePasswordAuthenticationToken(email, password)
         );
-
-        log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwtToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
+        String accessToken = jwtTokenProvider.generateAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
 
-        log.info(">>> login - 생성된 JWT 토큰: {}", jwtToken);
+        // Redis에 토큰 저장 (Access 토큰: 1시간, Refresh 토큰: 7일)
+        User user = ((PloberUserDetails) authentication.getPrincipal()).getUser();
+        redisUtil.setDataExpire("accessToken:" + user.getUserId(), accessToken, 3600);
+        redisUtil.setDataExpire("refreshToken:" + user.getUserId(), refreshToken, 604800);
 
-        return jwtToken;
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return tokens;
+    }
+
+    public void userSignOut(String token) {
+        String userId = jwtTokenProvider.getPayload(token, null);
+        redisUtil.deleteData("accessToken:" + userId);
+        redisUtil.deleteData("refreshToken:" + userId);
+        SecurityContextHolder.clearContext();
     }
 
     @Override

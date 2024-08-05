@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -118,16 +120,29 @@ public class UserController {
 
     @Operation(summary = "로그인", description = "로그인을 처리하고 JWT 토큰을 발급합니다.")
     @PostMapping("/login")
-    public ResponseEntity<BaseResponseBody> signIn(@RequestBody UserSignInRequestDto userSignInRequestDto) {
+    public ResponseEntity<?> signIn(@RequestBody UserSignInRequestDto userSignInRequestDto) {
         log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", userSignInRequestDto);
         try {
-            String token = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
-            log.info(">>> [POST] /user/login - 로그인 성공, 토큰: {}", token);
-            return ResponseEntity.status(200).header("Authorization", token).body(BaseResponseBody.of(200, "로그인이 완료되었습니다."));
+            Map<String, String> tokens = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
+            log.info(">>> [POST] /user/login - 로그인 성공, 토큰: {}", tokens);
+            return ResponseEntity.status(200).body(tokens);
         } catch (Exception e) {
             log.error(">>> [POST] /user/login - 로그인 실패: {}", e.getMessage());
             return ResponseEntity.status(401).body(BaseResponseBody.of(401, "아이디 혹은 비밀번호가 맞지 않습니다."));
         }
+    }
+
+    @Operation(summary = "로그아웃", description = "로그아웃을 처리하고 Redis에서 토큰을 삭제합니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<BaseResponseBody> logout(@RequestHeader("Authorization") String token) {
+        log.info(">>> [POST] /user/logout - 로그아웃 요청: {}", token);
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            log.info(">>> [POST] /user/logout - Bearer 제거 후 토큰: {}", token);
+        }
+        userService.userSignOut(token);
+        log.info(">>> [POST] /user/logout - 로그아웃 완료");
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "로그아웃이 완료되었습니다."));
     }
 
     @Operation(summary = "회원 정보 조회", description = "회원 정보를 조회합니다.")
