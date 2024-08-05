@@ -110,7 +110,7 @@ const SignUpForm = () => {
       // 중복 X
       if (response.status === 200) {
         console.log('이메일 중복 확인 성공! (중복 X)');
-        setIsEmailVerified(true);
+        setIsEmailVerificationSent(true);
       }
     } catch (error) {
       // 중복 O
@@ -166,6 +166,7 @@ const SignUpForm = () => {
       console.log(response)
       console.log('이메일 인증 성공!');
       setIsEmailVerified(true);
+      setIsEmailVerificationSent(false); // 이메일 인증 성공 후 인증번호 입력 필드 비활성화
     } catch (error) {
       console.error('이메일 인증 확인 실패: ', error);
       setEmailVerificationMsg('인증번호가 일치하지 않습니다.');
@@ -251,9 +252,11 @@ const SignUpForm = () => {
             disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
             className="input"
           />
-          <ATag
-            content="인증하기" onClick={handleCheckEmail}
-          />
+          {!isEmailVerified && (
+            <ATag
+              content="인증번호 전송" onClick={handleCheckEmail}
+            />
+          )}
           {emailCheckMsg && <p className="error">{emailCheckMsg}</p>}
         </div>
         {isEmailVerificationSent && (
