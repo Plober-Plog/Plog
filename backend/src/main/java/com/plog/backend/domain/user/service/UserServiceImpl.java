@@ -277,6 +277,7 @@ public class UserServiceImpl implements UserService {
         log.info(">>> getMyProfile - 추출된 사용자 정보: {}", user);
 
         UserProfileResponseDto responseDto = UserProfileResponseDto.builder()
+                .searchId(user.getSearchId())
                 .title("기본 칭호")
                 .profile_info(user.getProfileInfo())
                 .total_exp(user.getTotalExp())
@@ -296,6 +297,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
 
         UserProfileResponseDto responseDto = UserProfileResponseDto.builder()
+                .searchId(user.getSearchId())
                 .title("기본 칭호")
                 .profile_info(user.getProfileInfo())
                 .total_exp(user.getTotalExp())
