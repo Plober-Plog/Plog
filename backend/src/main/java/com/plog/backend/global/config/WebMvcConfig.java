@@ -9,22 +9,22 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//         configuration.addAllowedOrigin("*");
-        configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.addExposedHeader(JwtTokenUtil.HEADER_STRING);
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+        configuration.addAllowedOriginPattern("*"); // 모든 도메인 허용
+        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
+        configuration.addAllowedHeader("*"); // 모든 헤더 허용
+        configuration.addExposedHeader(JwtTokenUtil.HEADER_STRING); // JWT 헤더 노출
+        configuration.setAllowCredentials(true); // 인증 정보 허용
+        configuration.setMaxAge(3600L); // 프리플라이트 요청 캐시 시간
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -41,11 +41,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
 
-        /*
-         *
-         * Front-end에서 참조하는 URL을 /dist로 매핑
-         *
-         */
         registry.addResourceHandler("/css/**")
                 .addResourceLocations("classpath:/dist/css/");
         registry.addResourceHandler("/fonts/**")
@@ -70,18 +65,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public FilterRegistrationBean loggingFilterRegistration() {
-        FilterRegistrationBean registration = new FilterRegistrationBean(requestLoggingFilter());
+        FilterRegistrationBean<Filter> registration = new FilterRegistrationBean<>(requestLoggingFilter());
         registration.addUrlPatterns("/api/*");
         return registration;
-    }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        WebMvcConfigurer.super.addCorsMappings(registry);
-        registry.addMapping("/**")
-                .allowedOrigins("${server.domain.host}")
-                .allowedOrigins("http://localhost:3000")
-                .exposedHeaders("Authorization")
-                .allowedMethods("OPTIONS","GET","POST","PUT","DELETE","PATCH");
     }
 }
