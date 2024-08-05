@@ -7,6 +7,7 @@ import com.plog.backend.domain.plant.dto.request.*;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
+import com.plog.backend.domain.plant.dto.response.PlantTypeIdsGetListByUserResponseDto;
 import com.plog.backend.domain.plant.entity.OtherPlantType;
 import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.entity.PlantCheck;
@@ -85,7 +86,8 @@ public class PlantServiceImpl implements PlantService {
                     log.info(">>> addPlant - 기본 식물 생성: {}", plantByPlantType);
                     plantRepository.save(plantByPlantType);
                 }
-                case 2 -> {// 기타 식물
+                case 2 -> { // 기타 식물
+
                     plantType.setPlantTypeId(1L);
                     otherPlantType.setOtherPlantTypeId(plantAddRequestDto.getOtherPlantTypeId());
 
@@ -124,24 +126,6 @@ public class PlantServiceImpl implements PlantService {
                     .isFixed(p.isFixed())
                     .deadDate(p.getDeadDate())
                     .isDeleted(p.isDeleted())
-                    .build();
-        } else {
-            throw new EntityNotFoundException();
-        }
-    }
-
-    @Override
-    public PlantTypeGetResponseDto getPlantType(Long plantTypeId) {
-        Optional<PlantType> plantType = plantTypeRepository.findById(plantTypeId);
-        if (plantType.isPresent()) {
-            PlantType pt = plantType.get();
-            return PlantTypeGetResponseDto.builder()
-                    .plantName(pt.getPlantName())
-                    .guide(pt.getGuide())
-                    .profile(pt.getImage() != null ? pt.getImage().getImageUrl() : null)
-                    .waterInterval(pt.getWaterInterval())
-                    .fertilizeInterval(pt.getFertilizeInterval())
-                    .repotInterval(pt.getRepotInterval())
                     .build();
         } else {
             throw new EntityNotFoundException();
@@ -448,6 +432,38 @@ public class PlantServiceImpl implements PlantService {
             }
         }
         return result;
+    }
+
+    @Override
+    public PlantTypeGetResponseDto getPlantType(Long plantTypeId) {
+        Optional<PlantType> plantType = plantTypeRepository.findById(plantTypeId);
+        if (plantType.isPresent()) {
+            PlantType pt = plantType.get();
+            return PlantTypeGetResponseDto.builder()
+                    .plantName(pt.getPlantName())
+                    .guide(pt.getGuide())
+                    .profile(pt.getImage() != null ? pt.getImage().getImageUrl() : null)
+                    .waterInterval(pt.getWaterInterval())
+                    .fertilizeInterval(pt.getFertilizeInterval())
+                    .repotInterval(pt.getRepotInterval())
+                    .build();
+        } else {
+            throw new EntityNotFoundException();
+        }
+    }
+
+    @Override
+    public PlantTypeIdsGetListByUserResponseDto getPlantTypeIdsByUserSearchId(String searchId) {
+        PlantTypeIdsGetListByUserResponseDto plantTypeIdsGetListByUserResponseDto = new PlantTypeIdsGetListByUserResponseDto();
+
+        plantTypeIdsGetListByUserResponseDto.setPlantTypes(
+                plantRepositorySupport.findDistinctPlantTypeIdtByUserSearchId(searchId)
+        );
+        plantTypeIdsGetListByUserResponseDto.setOtherPlantTypes(
+                plantRepositorySupport.findDistinctOtherPlantTypeIdByUserSearchId(searchId)
+        );
+        log.info(">>> getPlantTypeIdsByUserSearchId: {}", plantTypeIdsGetListByUserResponseDto);
+        return plantTypeIdsGetListByUserResponseDto;
     }
 
     public long getPlantTypeSize() {
