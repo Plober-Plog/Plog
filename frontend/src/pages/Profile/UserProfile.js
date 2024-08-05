@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
+import ArticleCardList from '../../components/Article/ArticleCardList';
+import axios from 'axios';
 
 const UserProfile = ({ userId = 1 }) => {
 
@@ -11,21 +13,19 @@ const UserProfile = ({ userId = 1 }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${URI}/user/plant/${userId}/info`);
-        const data = await response.json();
-        setUserData(data);
+        const response = await axios.get(`${URI}/user/plant/${userId}/info`);
+        setUserData(response.data);
       } catch (error) {
-        console.error("UserData Error:", error);
+        console.error("UserData Error:", error.response.data);
       }
     };
 
     const fetchArticles = async () => {
       try {
-        const response = await fetch(`${URI}/user/plant/${userId}/diary`);
-        const data = await response.json();
-        setArticles(data);
+        const response = await axios.get(`${URI}/user/plant/${userId}/diary`);
+        setArticles(response.data);
       } catch (error) {
-        console.error("CardList Error:", error)
+        console.error("CardList Error:", error.response.data);
       }
     };
 
@@ -40,8 +40,13 @@ const UserProfile = ({ userId = 1 }) => {
   return (
     <div>
       <ProfileHeader 
-        data={userData}
+        data={{ ...userData, ownerId: userId}}
         type='user'
+      />
+      <ArticleCardList
+        ownerId={userId}
+        articles={articles}
+        type="user"
       />
     </div>
   )
