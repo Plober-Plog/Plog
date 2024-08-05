@@ -46,6 +46,8 @@ const UserProfile = ({ userId = 1 }) => {
     searchId를 쉽게 반환할 수 있도록 만들어주면 아래 하드코딩을 수정해야 합니다.
   */
 
+  /* TODO: [예진] 탭 컴포넌트를 만들어 추가해야합니다. */
+
   return (
     <div>
       <ProfileHeader 

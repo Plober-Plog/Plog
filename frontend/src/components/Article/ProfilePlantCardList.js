@@ -53,6 +53,7 @@ const ProfilePlantCardList = ({ searchId }) => {
       {plants.map((plant) => (
         <ProfilePlantCard
           key={plant.plantId}
+          plantId={plant.plantId}
           profile={plant.profile}
           nickname={plant.nickname}
           plantTypeId={plant.plantTypeId}

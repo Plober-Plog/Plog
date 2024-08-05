@@ -1,9 +1,17 @@
 import React from "react";
+import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 
-const ProfilePlantCard = ({ profile, nickname, plantTypeId, birthDate }) => {
+const ProfilePlantCard = ({ plantId, profile, nickname, plantTypeId, birthDate }) => {
+  
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/plant/${plantId}`);
+  }
+  
   return (
-    <div>
+    <div onClick={handleClick}>
       <img
         src={profile || defaultImg}
         alt="thumbnail"
