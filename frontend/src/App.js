@@ -15,18 +15,19 @@ import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
 import PlantDetail from './pages/Plant/PlantDetail';
 import PlantRegister from './pages/Plant/PlantRegister';
 import ApiTest from './pages/Plant/ApiTest';
-// import Header from './components/Common/Header';
+import Header from './components/Common/Header';
+import UserProfile from './pages/Profile/UserProfile';
 
 function App() {
   return (
     <div className='container'>
       <header className='full-width'>
-        {/* <Header /> */}
+        <Header />
       </header>
       <main class='content'>
         <Router>
           <Routes>
-            <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profileupdate" element={<ProfileUpdate />} />
             <Route path="/password/change" element={<PasswordChange />} />
@@ -39,8 +40,6 @@ function App() {
             <Route path="/plant" element={<PlantDetail />} />
             {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
             <Route path="/plant/register" element={<PlantRegister />} />
-            {/* API TEST 용 */}
-            {/* <Route path="/" element={<ApiTest />} /> */}
           </Routes>
         </Router>
       </main>
