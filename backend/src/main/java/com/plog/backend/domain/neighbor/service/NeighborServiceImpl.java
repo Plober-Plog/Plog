@@ -1,5 +1,6 @@
 package com.plog.backend.domain.neighbor.service;
 
+import com.google.common.base.Optional;
 import com.plog.backend.domain.neighbor.entity.Neighbor;
 import com.plog.backend.domain.neighbor.entity.NeighborType;
 import com.plog.backend.domain.neighbor.repository.NeighborRepository;
@@ -35,14 +36,26 @@ public class NeighborServiceImpl implements NeighborService {
                 .neighborTo(neighborUser)
                 .neighborType(NeighborType.NEIGHBOR.getValue())
                 .build();
-        
+
         neighborRepository.save(neighbor);
     }
 
     @Override
-    public void deleteNeighbor(String token, Long userId) {
+    public void deleteNeighbor(String token, Long neighborId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId).get();
+        User neighborUser = userRepository.findById(neighborId)
+                .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
 
+        int neighborType = 1;
+
+        Optional<Neighbor> neighbor = neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, neighborType);
+        if(neighbor.isPresent())
+            neighborRepository.delete(neighbor.get());
+        else
+            throw new NotValidRequestException("해당 이웃 관계를 찾을 수 없습니다.");
     }
+
 
     @Override
     public void addMutualNeighbor(String token, Long userId) {
