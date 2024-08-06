@@ -208,7 +208,6 @@ public class UserServiceImpl implements UserService {
             user.setSource(request.getSource());
             user.setSidoCode(request.getSidoCode());
             user.setGugunCode(request.getGugunCode());
-
             User updatedUser = userRepository.save(user);
             log.info(">>> updateUser - 사용자 업데이트됨: {}", updatedUser);
             return updatedUser;

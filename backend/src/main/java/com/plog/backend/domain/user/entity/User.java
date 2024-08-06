@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"password","provider","providerId","image"})
 @Builder
 public class User extends BaseEntity {
     @Id

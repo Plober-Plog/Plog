@@ -11,10 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserUpdateRequestDto {
-    @NotBlank(message = "닉네임은 필수 입력 값입니다.")
     private String nickname;
-
-    @NotBlank(message = "검색 ID는 필수 입력 값입니다.")
     private String searchId;
     private String profile;
     private int gender;
