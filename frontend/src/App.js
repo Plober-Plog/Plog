@@ -1,50 +1,25 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-// Account
-import SignUp from './pages/Account/SignUp';
-import Login from './pages/Account/Login';
-import PasswordFind from './pages/Account/PasswordFind';
-import PasswordChange from './pages/Account/PasswordChange';
-import ProfileUpdate from './pages/Account/ProfileUpdate';
-import PasswordUpdate from './pages/Account/PasswordUpdate';
-import Setting from './pages/Account/Setting';
-// Plant
-import PlantDiaryWrite from './pages/Diary/PlantDiaryWrite';
-import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
-import PlantDetail from './pages/Plant/PlantDetail';
-import PlantRegister from './pages/Plant/PlantRegister';
-import ApiTest from './pages/Plant/ApiTest';
-import Header from './components/Common/Header';
-import UserProfile from './pages/Profile/UserProfile';
+import logo from './logo.svg';
+import './App.css';
 
 function App() {
   return (
-    <div className='container'>
-      <header className='full-width'>
-        <Header />
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
       </header>
-      <main class='content'>
-        <Router>
-          <Routes>
-          <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/profileupdate" element={<ProfileUpdate />} />
-            <Route path="/password/change" element={<PasswordChange />} />
-            <Route path="/password/find" element={<PasswordFind />} />
-            <Route path="/password/update" element={<PasswordUpdate />} />
-            <Route path="/setting" element={<Setting />} />
-            <Route path="/write" element={<PlantDiaryWrite />} />
-            <Route path="/diary/:plantDiaryId" element={<PlantDiaryDetail />} />
-            {/* <Route path="/plant/:plantId" element={<PlantDetail />} /> */}
-            <Route path="/plant" element={<PlantDetail />} />
-            {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
-            <Route path="/plant/register" element={<PlantRegister />} />
-          </Routes>
-        </Router>
-      </main>
     </div>
   );
-};
+}
 
 export default App;
