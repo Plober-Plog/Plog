@@ -40,10 +40,10 @@ public class UserController {
     @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping
     public ResponseEntity<BaseResponseBody> createUser(
-            @RequestPart("user") UserSignUpRequestDto userSignUpRequestDto,
+            @RequestPart(value = "userSignUpRequestDto") UserSignUpRequestDto userSignUpRequestDto,
             @RequestPart(value = "profile", required = false) MultipartFile[] profile) {
 
-        log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
+        log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}, 프로필: {}", userSignUpRequestDto, profile);
 
         if (userSignUpRequestDto.getEmail() == null || userSignUpRequestDto.getEmail().trim().isEmpty()) {
             log.error(">>> [POST] /user - 이메일이 필수 필드입니다.");

@@ -17,7 +17,6 @@ public class UserSignUpRequestDto {
     private String searchId;
     private String password;
     private String nickname;
-    private String profile;
     private int gender;
     @JsonProperty("birthDate")
     private LocalDate birthDate;
