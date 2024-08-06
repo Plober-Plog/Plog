@@ -39,7 +39,7 @@ public class UserController {
 
     @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping
-    public ResponseEntity<BaseResponseBody> createUser(@RequestPart("userInfo") UserSignUpRequestDto userSignUpRequestDto) {
+    public ResponseEntity<BaseResponseBody> createUser(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
         log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
 
         if(userSignUpRequestDto.getEmail() == null || userSignUpRequestDto.getEmail().trim().isEmpty()) {
