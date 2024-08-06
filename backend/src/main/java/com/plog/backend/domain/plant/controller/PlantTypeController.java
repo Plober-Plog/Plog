@@ -24,4 +24,8 @@ public class PlantTypeController {
         PlantTypeIdsGetListByUserResponseDto plantTypeIdsGetListByUserResponseDto = plantService.getPlantTypeIdsByUserSearchId(searchId);
         return ResponseEntity.status(200).body(plantTypeIdsGetListByUserResponseDto);
     }
+
+    //TODO [강윤서] 식물 종류 조회하는 API 만들기 {plantTypeId : plantName}
+//    @GetMapping("/all")
+//    public ResponseEntity<>
 }

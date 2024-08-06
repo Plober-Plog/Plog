@@ -29,6 +29,6 @@ public class PlantDiaryImage {
     private int order; // 1부터 시작
 
     @Column(nullable = false)
-    private boolean isThumbnail = false;
+    private boolean isThumbnail;
 
 }
