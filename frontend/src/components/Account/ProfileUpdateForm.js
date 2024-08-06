@@ -10,50 +10,30 @@ import SelectField from '../Common/SelectField';
 import ATag from '../Common/ATag';
 import ModalComplete from '../Common/ModalComplete';
 
-
-const ProfileUpdateForm = ({ userData }) => {
+const ProfileUpdateForm = () => {
   const navigate = useNavigate();
-  const setUserData = useAuthStore((state) => state.setUserData);
-  console.log(userData?.searchId);
-
-  // 회원 정보 변경 불가능
-  const email = userData?.email || '';
-  const source = userData?.source || '';
-
-  // 회원 정보 변경 가능
-  const [searchId, setSearchId] = useState('');
-  const [profile, setProfile] = useState(null);
-  const [nickname, setNickname] = useState('');
-  const [birthdate, setBirthdate] = useState('');
-  const [gender, setGender] = useState(1);
-  const [sido, setSido] = useState('');
-  const [gugun, setGugun] = useState('');
-  const [profileInfo, setProfileInfo] = useState('');
-  const [isAd, setIsAd] = useState(false);
-
-  // 유효성 검사
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
+  const { userData, setUserData } = useAuthStore();
+  console.log(userData)
+  console.log(userData.searchId)
+  
+  // 상태 초기화
+  const [searchId, setSearchId] = useState(userData?.searchId || '');
+  const [nickname, setNickname] = useState(userData?.nickname || '');
+  const [email, setEmail] = useState(userData?.email || '');
+  const [birthdate, setBirthdate] = useState(userData?.birthdate || '');
+  const [gender, setGender] = useState(userData?.gender || '');
+  const [source, setSource] = useState(userData?.source || '');
+  const [sido, setSido] = useState(userData?.sido || '');
+  const [gugun, setGugun] = useState(userData?.gugun || '');
+  const [profileInfo, setProfileInfo] = useState(userData?.profileInfo || '');
+  const [isAd, setIsAd] = useState(userData?.isAd || false);
+  const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
   const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(true);
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
-  const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
-  // useEffect를 사용하여 userData가 변경될 때마다 상태를 업데이트합니다.
-  useEffect(() => {
-    if (userData) {
-      setSearchId(userData.searchId || '');
-      setProfile(userData.profile);
-      setNickname(userData.nickname || '');
-      setBirthdate(userData.birthdate || '');
-      setGender(userData.gender);
-      setSido(userData.sidoCode || '');
-      setGugun(userData.gugunCode || '');
-      setProfileInfo(userData.profileInfo || '');
-      setIsAd(userData.isAd);
-    }
-  }, [userData]);
-
-  // 아이디, 닉네임 유효성 검사
+  // 폼 유효성 검사
   useEffect(() => {
     setIsFormValid(
       searchId &&
@@ -62,9 +42,8 @@ const ProfileUpdateForm = ({ userData }) => {
     );
   }, [searchId, nickname, isSearchIdAvailable]);
 
-  // 아이디 중복확인
+  // 아이디 중복 확인
   const handleCheckSearchId = async () => {
-    // 유효성 검사
     if (!/^[a-z0-9]{5,15}$/.test(searchId)) {
       console.log('아이디 형식이 올바르지 않습니다.');
       return;
@@ -72,20 +51,17 @@ const ProfileUpdateForm = ({ userData }) => {
 
     try {
       const response = await API.get(`/user/${searchId}`);
-      // 중복 X
       if (response.status === 200) {
         setSearchIdCheckMsg('사용 가능한 아이디입니다.');
         setIsSearchIdAvailable(true);
         console.log('아이디 중복확인 성공!');
       }
     } catch (error) {
-      // 중복 O
       if (error.response && error.response.status === 409) {
         setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
         setIsSearchIdAvailable(false);
         console.error('아이디 중복 확인: 이미 사용 중인 아이디입니다.');
       } else {
-        // 실패
         setSearchIdCheckMsg('아이디 중복확인 중 오류가 발생했습니다.');
         setIsSearchIdAvailable(false);
         console.error('아이디 중복확인 실패: ', error);
@@ -97,21 +73,20 @@ const ProfileUpdateForm = ({ userData }) => {
     const updatedUserData = {
       nickname,
       searchId,
-      profile,
+      email,
+      profileInfo,
       gender,
       birthdate,
       source,
       sido,
       gugun,
-      profileInfo,
       isAd
     };
 
-    // 회원정보 수정 요청
     try {
       const response = await API.patch('/user', updatedUserData);
       console.log('회원 정보 수정 성공:', response);
-      setUserData(updatedUserData); // 업데이트된 유저 정보를 전역 상태에 저장
+      setUserData(updatedUserData);
       setOpenModal(true);
     } catch (error) {
       console.error('회원 정보 수정 실패:', error);
@@ -127,7 +102,7 @@ const ProfileUpdateForm = ({ userData }) => {
     <div>
       <form onSubmit={(e) => e.preventDefault()} className="form">
         <div>
-         {/* TODO 이미지 수정 컴포넌트 추가 */}
+          {/* TODO 이미지 수정 컴포넌트 추가 */}
         </div>
         <div>
           {!isFormValid && <p>아이디를 입력해 주세요.</p>}
@@ -136,8 +111,8 @@ const ProfileUpdateForm = ({ userData }) => {
             placeholder="아이디"
             value={searchId}
             onChange={(e) => {
-              setSearchId(e.target.value)
-              setIsSearchIdAvailable(false)
+              setSearchId(e.target.value);
+              setIsSearchIdAvailable(false);
             }}
             isRequired={true}
             className="input"

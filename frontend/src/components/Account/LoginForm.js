@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
-import axiosa from 'axios';
+import axios from 'axios';
 import sha256 from 'js-sha256';
 import useAuthStore from '../../stores/member';
 import Btn from '../Common/Btn';
@@ -26,13 +26,14 @@ const LoginForm = () => {
     };
 
     try {
-      const response = await API.post('/user/login', userInfo);
-      // const response = await axios.post('https://i11b308.p.ssafy.io/api/user/login', userInfo);
+      // const response = await API.post('/user/login', userInfo);
+      const response = await axios.post('https://i11b308.p.ssafy.io/api/user/login', userInfo);
       const { accessToken, refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
         setToken(accessToken, refreshToken);
         const userResponse = await API.get('/user');
+        console.log('유저정보:',userResponse.data)
         setUserData(userResponse.data);
         navigate('/');
       } else {
