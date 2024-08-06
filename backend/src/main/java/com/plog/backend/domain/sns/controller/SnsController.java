@@ -1,9 +1,6 @@
 package com.plog.backend.domain.sns.controller;
 
-import com.plog.backend.domain.sns.dto.request.ArticleAddRequestDto;
-import com.plog.backend.domain.sns.dto.request.ArticleCommentUpdateRequestDto;
-import com.plog.backend.domain.sns.dto.request.ArticleUpdateRequestDto;
-import com.plog.backend.domain.sns.dto.request.ArticleCommentAddRequestDto;
+import com.plog.backend.domain.sns.dto.request.*;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
 import com.plog.backend.domain.sns.service.ArticleCommentService;
@@ -100,6 +97,17 @@ public class SnsController {
             @RequestHeader("Authorization") String token,
             @RequestBody ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto) {
         articleCommentService.updateArticleComment(token, articleCommentUpdateRequestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponseBody.of(200,"댓글이 수정되었습니다."));
+    }
+
+    @DeleteMapping("/comment")
+    public ResponseEntity<BaseResponseBody> deleteComment(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto) {
+        articleCommentService.deleteArticleComment(token, articleCommentDeleteRequestDto);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
