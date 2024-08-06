@@ -40,7 +40,7 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
   const [imgs, setImgs] = useState([]);
   const [plantDiaryId, setPlantDiaryId] = useState(null); //현재 날짜에 이미 작성된 일지가 있을 경우 해당 일지의 ID를 저장
   const [isEditMode, setIsEditMode] = useState(false);
-
+  const [hasPlantCheck, setHasPlantCheck] = useState(false); // 관리 기록이 있는지 여부를 저장하는 변수
 
   // 임시 데이터 
   const writerInfoData = {
@@ -76,6 +76,39 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
         setIsEditMode(true);
         if (data.plantDiary) {
           const { plantDiary } = data;
+          setPlantDiaryId(plantDiary.plantDiaryId);
+          setContent(plantDiary.content);
+          setImgs(plantDiary.images.map(img => ({ 
+            url: img.url, 
+            id: img.imageId,
+            isThumbnail: img.isThumbnail, 
+           })));
+          setIsWeather(plantDiary.weather);
+          setIsHumidity(plantDiary.humidity);
+          setIsTemperature(plantDiary.temperature);
+          setIsWatered(false);
+          setIsFertilized(false);
+          setIsRepotted(false); 
+        } 
+        if (data.plantCheck) {
+          const { plantCheck } = data;
+          setPlantDiaryId(null);
+          setContent('');
+          setImgs([]);
+          // setIsWeather(plantDiary.weather);
+          // setIsHumidity(plantDiary.humidity);
+          // setIsTemperature(plantDiary.temperature);
+          setIsWatered(plantCheck.watered);
+          setIsFertilized(plantCheck.fertilized);
+          setIsRepotted(plantCheck.repotted);  
+          setHasPlantCheck(true);     
+        } else {
+          setHasPlantCheck(false);
+        }
+
+        if (data.plantDiary && data.plantCheck) {
+          const { plantDiary } = data;
+          const { plantCheck } = data;
           setPlantDiaryId(plantDiary.plantId);
           setContent(plantDiary.content);
           setImgs(plantDiary.images.map(img => ({ 
@@ -86,22 +119,18 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
           setIsWeather(plantDiary.weather);
           setIsHumidity(plantDiary.humidity);
           setIsTemperature(plantDiary.temperature);
-        } else {
-          const { plantCheck } = data;
-          setPlantDiaryId(null);
-          setContent('');
-          setImgs([]);
           setIsWatered(plantCheck.watered);
           setIsFertilized(plantCheck.fertilized);
-          setIsRepotted(plantCheck.repotted);
+          setIsRepotted(plantCheck.repotted);     
         }
       } else {
-        // TODO [차유림]아직 날씨 데이터가 없기 때문에 주석처리 
-        // const { plantDiary } = data;
-        // setIsEditMode(false);
-        // setIsWeather(plantDiary.weather);
-        // setIsHumidity(plantDiary.humidity);
-        // setIsTemperaturer(plantDiary.temperature);
+        setPlantDiaryId(null);
+        setContent('');
+        setImgs([]);
+        setIsWatered(false);
+        setIsFertilized(false);
+        setIsRepotted(false); 
+        setHasPlantCheck(false);
         console.log('새로운 일지를 작성');
       }
     } catch (error) {
@@ -111,7 +140,7 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
   getDiaryAndPlantCheck();
 }, [date, plantId]);
 
-  // 이미지 업로드 .. => 잘 모루겟어서 지피티한테 물어봄 ㅜㅜ ..  
+  // 이미지 업로드 .. => 잘 모루겟어서 지피티한테 물어봄 ㅜㅜ .. 이미지 부분 수정 가능성 높습니다.. ..
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files); // 파일 입력에서 파일 배열을 만들기
     if (files.length + imgs.length > 5) { // 이미지가 5장을 초과하면 경고하고 반환
@@ -182,10 +211,11 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
       temperature,
       humidity,
       content,
-      thumbnailIdx,
+      // thumbnailIdx,
       recordDate: formattedDate,
     };
     console.log(diaryData);
+
     const plantData = {
       isWatered,
       isFertilized,
@@ -200,25 +230,6 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
 
     // 일지작성요청 2
     try {
-      // console.log(plantDiaryId)
-      // const diaryWriteResponse = await axios({
-      //   method: 'POST',
-      //   url: `${URI}/user/diary`,
-      //   data:diaryData,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
-      //   }
-        
-      // });
-      
-      // if (diaryWriteResponse.status !== 200) {
-      //   throw new Error('일지 저장에 실패했습니다.');
-      // }
-
-
-      // console.log(plantDiaryId)
-
       const diaryWriteResponse = await axios({
         method: plantDiaryId ? 'PATCH' : 'POST',
         url: plantDiaryId ? `${URI}/user/diary/${plantDiaryId}` : `${URI}/user/diary`,
@@ -226,7 +237,7 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
         },
-        diaryData: diaryData,
+        data: diaryData,
       });
       
       if (diaryWriteResponse.status !== 200) {
@@ -236,7 +247,7 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
       console.log(plantDiaryId)
       
       const plantCheckResponse = await axios({
-        method: plantDiaryId ? 'PATCH' : 'POST',
+        method: hasPlantCheck ? 'PATCH' : 'POST',
         url: `${URI}/user/plant/${plantId}/check`,
         headers: {
           'Content-Type': 'application/json',
@@ -272,42 +283,72 @@ const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {
   // 글 쓰기 페이지에서 날짜를 바꿨을 때 useEffect 부터 다시 실행되도록 함 
   const handleDateChange = async (newDate) => {
     const data = await fetchDiaryAndCheck(plantId, newDate);
-    if (data && (data.plantDiary || data.plantCheck)) {
+    if (data.plantDiary || data.plantCheck) {
       if (window.confirm('이미 작성된 일지가 있습니다. 확인하시겠습니까?')) {
         setDate(newDate);
         setIsEditMode(true);
         if (data.plantDiary) {
           const { plantDiary } = data;
-          setPlantDiaryId(plantDiary.plantId);
+          setPlantDiaryId(plantDiary.plantDiaryId);
           setContent(plantDiary.content);
-          setImgs(plantDiary.images.map(img => ({
-            url: img.url,
+          setImgs(plantDiary.images.map(img => ({ 
+            url: img.url, 
             id: img.imageId,
-            isThumbnail: img.isThumbnail,
-          })));
+            isThumbnail: img.isThumbnail, 
+           })));
           setIsWeather(plantDiary.weather);
           setIsHumidity(plantDiary.humidity);
           setIsTemperature(plantDiary.temperature);
-        } else {
-          setPlantDiaryId(null);
-          setContent('');
-          setImgs([]);          
-        }
+          setIsWatered(false);
+          setIsFertilized(false);
+          setIsRepotted(false); 
+        } 
         if (data.plantCheck) {
           const { plantCheck } = data;
+          setPlantDiaryId(null);
+          setContent('');
+          setImgs([]);
+          // setIsWeather(plantDiary.weather);
+          // setIsHumidity(plantDiary.humidity);
+          // setIsTemperature(plantDiary.temperature);
+          setIsWatered(plantCheck.watered);
+          setIsFertilized(plantCheck.fertilized);
+          setIsRepotted(plantCheck.repotted);  
+          setHasPlantCheck(true);     
+        } 
+
+        if (data.plantDiary && data.plantCheck) {
+          const { plantDiary } = data;
+          const { plantCheck } = data;
+          setPlantDiaryId(plantDiary.plantId);
+          setContent(plantDiary.content);
+          setImgs(plantDiary.images.map(img => ({ 
+            url: img.url, 
+            id: img.imageId,
+            isThumbnail: img.isThumbnail, 
+           })));
+          setIsWeather(plantDiary.weather);
+          setIsHumidity(plantDiary.humidity);
+          setIsTemperature(plantDiary.temperature);
           setIsWatered(plantCheck.watered);
           setIsFertilized(plantCheck.fertilized);
           setIsRepotted(plantCheck.repotted);
-        } else {
-          setIsWatered(false);
-          setIsFertilized(false);
-          setIsRepotted(false);         
+          setHasPlantCheck(true);      
         }
+      } else {
+        setPlantDiaryId(null);
+        setContent('');
+        setImgs([]);
+        setIsWatered(false);
+        setIsFertilized(false);
+        setIsRepotted(false); 
+        setHasPlantCheck(false);
+        console.log('새로운 일지를 작성');
       }
     } else {
       setDate(newDate);
       setIsEditMode(false);
-      
+      setHasPlantCheck(false); 
     }
   };
 
