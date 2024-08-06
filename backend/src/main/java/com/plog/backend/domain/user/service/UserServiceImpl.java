@@ -144,11 +144,6 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserSignUpRequestDto userSignUpRequestDto) {
         log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpRequestDto);
 
-        Image image = imageRepository.findByImageUrl(userSignUpRequestDto.getProfile())
-                .orElseThrow(() -> {
-                    return new NotValidRequestException("이미지가 없습니다.");
-                });
-
         User user = User.builder()
                 .email(userSignUpRequestDto.getEmail())
                 .gender(userSignUpRequestDto.getGender())
@@ -165,7 +160,6 @@ public class UserServiceImpl implements UserService {
                 .gugunCode(userSignUpRequestDto.getGugunCode())
                 .source(userSignUpRequestDto.getSource())
                 .birthDate(userSignUpRequestDto.getBirthDate())
-                .image(image)
                 .build();
         User savedUser = userRepository.save(user);
         log.info(">>> createUser - 사용자 생성됨: {}", savedUser);
