@@ -8,5 +8,5 @@ import com.plog.backend.domain.sns.entity.ArticleComment;
 public interface ArticleCommentService {
     void addArticleComment(String token, ArticleCommentAddRequestDto articleCommentAddRequestDto);
     void updateArticleComment(String token, ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto);
-    void deleteArticleComment(ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto);
+    void deleteArticleComment(String token, ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto);
 }

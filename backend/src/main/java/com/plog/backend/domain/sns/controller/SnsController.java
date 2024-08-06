@@ -1,6 +1,7 @@
 package com.plog.backend.domain.sns.controller;
 
 import com.plog.backend.domain.sns.dto.request.ArticleAddRequestDto;
+import com.plog.backend.domain.sns.dto.request.ArticleCommentUpdateRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleUpdateRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleCommentAddRequestDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
@@ -87,11 +88,22 @@ public class SnsController {
     public ResponseEntity<BaseResponseBody> addComment(
             @RequestHeader("Authorization") String token,
             @RequestBody ArticleCommentAddRequestDto articleCommentAddRequestDto) {
-            articleCommentService.addArticleComment(token, articleCommentAddRequestDto);
+        articleCommentService.addArticleComment(token, articleCommentAddRequestDto);
 
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(BaseResponseBody.of(200,"댓글이 생성되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponseBody.of(200,"댓글이 생성되었습니다."));
+    }
+
+    @PatchMapping("/comment")
+    public ResponseEntity<BaseResponseBody> updateComment(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto) {
+        articleCommentService.updateArticleComment(token, articleCommentUpdateRequestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponseBody.of(200,"댓글이 수정되었습니다."));
     }
 
     // ============================= 좋아요 =============================

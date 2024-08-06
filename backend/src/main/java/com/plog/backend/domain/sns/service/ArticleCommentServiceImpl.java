@@ -9,6 +9,7 @@ import com.plog.backend.domain.sns.repository.ArticleRepository;
 import com.plog.backend.domain.sns.entity.State;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
+import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
@@ -60,19 +61,21 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     @Transactional
     @Override
     public void updateArticleComment(String token, ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto) {
-        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        Long commentId = articleCommentUpdateRequestDto.getCommentId();
 
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     return new NotValidRequestException("없는 사용자 입니다.");}
                 );
 
-        Long commentId = articleCommentUpdateRequestDto.getCommentId();
-
         ArticleComment articleComment = articleCommentRepository.findById(commentId)
                 .orElseThrow(()-> {
                     return new NotValidRequestException("없는 댓글 입니다.");
                 });
+
+        if(!userId.equals(articleComment.getUser().getUserId()))
+            throw new NotAuthorizedRequestException("본인 댓글이 아닙니다. 수정할 수 없습니다.");
 
         articleComment.setContent(articleCommentUpdateRequestDto.getComment());
 
@@ -81,13 +84,22 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
 
     @Transactional
     @Override
-    public void deleteArticleComment(ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto) {
+    public void deleteArticleComment(String token, ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto) {
         Long commentId = articleCommentDeleteRequestDto.getCommentId();
+
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    return new NotValidRequestException("없는 사용자 입니다.");}
+                );
 
         ArticleComment articleComment = articleCommentRepository.findById(commentId)
                 .orElseThrow(()->{
                     return new NotValidRequestException("없는 댓글 입니다.");
                 });
+
+        if(!userId.equals(articleComment.getUser().getUserId()))
+            throw new NotAuthorizedRequestException("본인 댓글이 아닙니다. 삭제할 수 없습니다.");
 
         articleComment.setState(State.DELETE);
 
