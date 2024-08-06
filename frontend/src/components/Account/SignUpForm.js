@@ -173,40 +173,58 @@ const SignUpForm = () => {
   };
 
 
-  // 회원가입 버튼 클릭
-  const handleSignUp = async () => {
+// 회원가입 버튼 클릭
+const handleSignUp = async () => {
     
-    const userInfo = {
-      // TODO default 이미지 추가하기
-      email,
-      searchId,
-      password: sha256(password),
-      nickname,
-      profile: defaultProfile,
-      gender,
-      birthDate: birthdate,
-      source,
-      sidoCode: sido,
-      gugunCode: gugun,
-      profileInfo: "",
-      isAd: agreeAdvertisement
-    };
-
-    console.log('정보 받기 성공!');
-    console.log(userInfo);
-
-    // 회원가입 요청
-    try {
-      await axios.post(`${URI}/user`, userInfo);
-      setOpenModal(true);
-    } catch (error) {
-      console.error('회원가입 실패: ', error);
-    }
+  const userInfo = {
+    // TODO default 이미지 추가하기
+    email,
+    searchId,
+    password: sha256(password),
+    nickname,
+    gender,
+    birthDate: birthdate,
+    source,
+    sidoCode: sido,
+    gugunCode: gugun,
+    profileInfo: "",
+    isAd: agreeAdvertisement
   };
 
-  const closeModal = () => {
-    setOpenModal(false);
-  };
+  //// git push 전, 지울부분  -> 이해를 위해 남겨두겠음..!////
+  // 기본 프로필 이미지를 Blob으로 변환하여 추가
+  // 장현준 : 아니 하.. 그냥 defaultProfile로 보낼려 했으나..
+  // 뭔가 네트워크 쪽에서 싹 없애 버려서 null로 도착하는 문제가 있었음.
+  // Blob으로 실제 파일을 만들어서 보내니까 잘 감.
+  // 우려되는 부분은 await의 비동기 방식이라서 좀 느려질꺼같다는 우려..?
+  // 지금은 단순히 사진 하나를 전송하는거지만, 추후 이 부분을 고려해야할꺼같음
+  //// 지울부분 ////
+  const formData = new FormData();
+  formData.append('userSignUpRequestDto', new Blob([JSON.stringify(userInfo)], { type: 'application/json' }));
+  const response = await fetch(defaultProfile);
+  const blob = await response.blob();
+  const file = new File([blob], "../../assets/image/defaultprofile.png", { type: blob.type });
+  formData.append('profile', file);
+  
+  console.log('정보 받기 성공!');
+  console.log(userInfo);
+
+  // 회원가입 요청
+  try {
+    await axios.post(`${URI}/user`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    setOpenModal(true);
+  } catch (error) {
+    console.error('회원가입 실패: ', error);
+  }
+};
+
+const closeModal = () => {
+  setOpenModal(false);
+};
 
 
   return (
