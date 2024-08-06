@@ -68,15 +68,46 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     navigate(`/plant/register/${ownerId}`);
   }
 
-  const handleWriteDiary = () => {
+  // const handleWriteDiary = () => {
+  //   const currentDate = new Date().toISOString().split('T')[0];
+  //   navigate(`/plant/${ownerId}/${currentDate}/write`, {
+  //     state: {
+  //       date: currentDate,
+  //       plantId: ownerId
+  //     }
+  //   });
+  // };
+
+  const handleWriteDiary = async () => {
     const currentDate = new Date().toISOString().split('T')[0];
-    navigate(`/plant/${ownerId}/${currentDate}/write`, {
-      state: {
-        date: currentDate,
-        plantId: ownerId
+  
+    try {
+      const response = await axios.get(`${URI}/user/plant/${ownerId}`, {
+        params: {date: currentDate },
+        headers: {
+          'Authorization': `${TOKEN}`
+        }
+      })
+
+      if (response.data.plantDiary || response.data.plantCheck) {
+        navigate(`/plant/${ownerId}/${currentDate}`, {
+          state: {
+            date: currentDate,
+            plantId: ownerId
+          }
+        });
+      } else {
+        navigate(`/plant/${ownerId}/${currentDate}/write`, {
+          state: {
+            date: currentDate,
+            plantId: ownerId
+          }
+        })
       }
-    });
-  };
+    } catch (error) {
+      console.error('***일지 및 관리기록 체크하는 파트에서 오류***', error);
+    }
+  }
 
   return (
     <div>
