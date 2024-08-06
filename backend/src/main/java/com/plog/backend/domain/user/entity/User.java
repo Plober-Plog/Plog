@@ -44,18 +44,20 @@ public class User extends BaseEntity {
 
 //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Gender gender;
+    private int gender;
+    public Gender getGender() {return Gender.gender(gender);};
+    public void setGender(Gender gender) {this.gender = gender.getValue();}
 
     @Column
     private String source;
 
 //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private State state;
+    private int state;
 
 //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private int role;
 
 //    @Enumerated(EnumType.STRING)
     @Column
@@ -70,7 +72,7 @@ public class User extends BaseEntity {
 
 //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ChatAuth chatAuth;
+    private int chatAuth;
 
     @Column
     private String profileInfo;
