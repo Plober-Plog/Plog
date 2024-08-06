@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import SnsProfileTab from '../../components/Profile/SnSProfileTab';
 import axios from 'axios';
+// import TagFilter from '../../components/Profile/TagFilter';
 
 const UserProfile = ({ userId = 1 }) => {
 
@@ -23,8 +24,26 @@ const UserProfile = ({ userId = 1 }) => {
       }
     };
 
+    // const fetchTag = async () => {
+    //   try {
+    //     const response = await axios.get(`${URI}/tags`);
+    //     setTags(response.data);
+    //   } catch (error) {
+    //     console.error("***Tag Error: ***", error.response.data);
+    //   }
+    // }
+
     fetchUserData();
+    // fetchTag();
   }, [userId]);
+
+  // const handleTagClick = (tagId) => {
+  //   if (selectedTags.includes(tagId)) {
+  //     setSelectedTags(selectedTags.filter(id => id !== tagId));
+  //   } else {
+  //     setSelectedTags([...selectedTags, tagId]);
+  //   }
+  // };
 
   if (!userData) {
     return <div>Loading</div>
