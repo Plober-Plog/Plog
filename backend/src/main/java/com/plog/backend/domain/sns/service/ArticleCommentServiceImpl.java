@@ -6,6 +6,7 @@ import com.plog.backend.domain.sns.dto.request.ArticleCommentUpdateRequestDto;
 import com.plog.backend.domain.sns.entity.ArticleComment;
 import com.plog.backend.domain.sns.repository.ArticleCommentRepository;
 import com.plog.backend.domain.sns.repository.ArticleRepository;
+import com.plog.backend.domain.sns.entity.State;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.NotValidRequestException;
@@ -25,6 +26,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     public static JwtTokenUtil jwtTokenUtil;
     public static UserRepository userRepository;
 
+    @Transactional
     @Override
     public void addArticleComment(String token, ArticleCommentAddRequestDto articleCommentAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
@@ -44,7 +46,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
                 .user(user)
                 .parentId(!Comments.isEmpty() ? Comments.get(0).getParentId() : null)
                 .content(articleCommentAddRequestDto.getContent())
-                .state(1)
+                .state(State.PLAIN.getValue())
                 //TODO [장현준] TagName
                 .build();
 
@@ -77,8 +79,18 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         articleCommentRepository.save(articleComment);
     }
 
+    @Transactional
     @Override
-    public void deleteArticleComment(String token, ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto) {
+    public void deleteArticleComment(ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto) {
+        Long commentId = articleCommentDeleteRequestDto.getCommentId();
 
+        ArticleComment articleComment = articleCommentRepository.findById(commentId)
+                .orElseThrow(()->{
+                    return new NotValidRequestException("없는 댓글 입니다.");
+                });
+
+        articleComment.setState(State.DELETE);
+
+        articleCommentRepository.save(articleComment);
     }
 }
