@@ -38,7 +38,7 @@ const CustomCalendar = ({ plantId }) => {
 
   const fetchRecords = async (date) => {
     const year = date.getFullYear();
-    const month = date.getMonth(); // JavaScript에서 getMonth()는 0부터 시작하므로 1을 더해줍니다.
+    const month = date.getMonth();
 
     try {
       const currentData = await fetchMonthData(year, month);
@@ -90,6 +90,9 @@ const CustomCalendar = ({ plantId }) => {
     }
   };
 
+
+  const today = new Date();
+
   const colorBox = ({ date }) => {
     const checkRecord = checkRecords.find(record => new Date(record.checkDate).toDateString() === date.toDateString());
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
@@ -118,6 +121,7 @@ const CustomCalendar = ({ plantId }) => {
           setValue(activeStartDate);
           fetchRecords(activeStartDate);
         }}
+        maxDate={today}
       />
     </div>
   );
