@@ -95,7 +95,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        chain.doFilter(request, response);
+        try {
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            log.error("Exception occurred in JwtAuthenticationFilter", e);
+            e.printStackTrace();
+            throw new ServletException("Exception in JwtAuthenticationFilter", e);
+        }
     }
 
 }
