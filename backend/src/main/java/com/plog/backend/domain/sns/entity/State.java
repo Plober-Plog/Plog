@@ -2,14 +2,14 @@ package com.plog.backend.domain.sns.entity;
 
 import com.plog.backend.global.exception.NotValidRequestException;
 
-public enum DeleteType {
+public enum State {
     PLAIN(1),
     DELETE(2),
     BAN(3);
 
     private int value;
 
-    DeleteType(int value) {
+    State(int value) {
         this.value = value;
     }
 
@@ -17,10 +17,10 @@ public enum DeleteType {
         return value;
     }
 
-    public static DeleteType deleteType(int value) {
-        for (DeleteType deleteType : DeleteType.values()) {
-            if (deleteType.getValue() == value) {
-                return deleteType;
+    public static State state(int value) {
+        for (State state : State.values()) {
+            if (state.getValue() == value) {
+                return state;
             }
         }
         throw new NotValidRequestException("Invalid value: " + value);

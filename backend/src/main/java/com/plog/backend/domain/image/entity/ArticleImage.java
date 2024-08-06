@@ -1,6 +1,6 @@
 package com.plog.backend.domain.image.entity;
 
-import com.plog.backend.domain.diary.entity.PlantDiary;
+import com.plog.backend.domain.sns.entity.Article;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,8 +18,8 @@ public class ArticleImage {
     private Long articleImageId;
 
     @ManyToOne
-    @JoinColumn(name = "plant_diary_id", nullable = false)
-    private PlantDiary plantDiary;
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article article;
 
     @ManyToOne
     @JoinColumn(name = "image_id", nullable = false)

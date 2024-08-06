@@ -3,17 +3,17 @@ package com.plog.backend.domain.sns.entity;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "article")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @ToString
 public class Article extends BaseEntity {
@@ -34,6 +34,7 @@ public class Article extends BaseEntity {
     public Visibility getVisibility() {
         return Visibility.visibility(visibility);
     }
+
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility.getValue();
     }
@@ -42,12 +43,14 @@ public class Article extends BaseEntity {
     private int view;
 
     @Column
-    private int deleteType;
+    @ColumnDefault("1")
+    private int state;
 
-    public DeleteType getDeleteType() {
-        return DeleteType.deleteType(deleteType);
+    public State getState() {
+        return State.state(state);
     }
-    public void setVisibility(DeleteType deleteType) {
-        this.deleteType = deleteType.getValue();
+
+    public void setState(State state) {
+        this.state = state.getValue();
     }
 }
