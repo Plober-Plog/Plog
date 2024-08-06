@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
-public class CommentAddRequestDto {
+public class ArticleCommentAddRequestDto {
     private Long articleId;
     private String content;
 }

@@ -1,8 +1,8 @@
 package com.plog.backend.domain.sns.controller;
 
-import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
 import com.plog.backend.domain.sns.dto.request.ArticleAddRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleUpdateRequestDto;
+import com.plog.backend.domain.sns.dto.request.ArticleCommentAddRequestDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
 import com.plog.backend.domain.sns.service.ArticleCommentService;
@@ -82,7 +82,9 @@ public class SnsController {
 
     // ============================= 댓글 =============================
     @PostMapping("/comment")
-    public ResponseEntity<BaseResponseBody> addComment()
+    public ResponseEntity<BaseResponseBody> addComment(@RequestBody ArticleCommentAddRequestDto articleCommentAddRequestDto) {
+
+    }
 
     // ============================= 좋아요 =============================
 

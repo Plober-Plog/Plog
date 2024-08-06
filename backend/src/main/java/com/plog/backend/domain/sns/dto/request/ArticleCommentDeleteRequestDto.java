@@ -8,6 +8,6 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
-public class CommentDeleteRequestDto {
+public class ArticleCommentDeleteRequestDto {
     private Long commentId;
 }
