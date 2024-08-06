@@ -1,5 +1,6 @@
 package com.plog.backend.domain.sns.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @AllArgsConstructor
@@ -14,5 +15,6 @@ public class ArticleGetSimpleResponseDto {
     String content;
     int likeCnt;
     int commentCnt;
+    @JsonProperty("isBookmarked")
     boolean isBookmarked;
 }
