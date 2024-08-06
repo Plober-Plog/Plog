@@ -1,5 +1,6 @@
 import react from 'react';
 import ProfilePlantCardList from '../Article/ProfilePlantCardList';
+import ProfileSnsCardList from '../Article/ProfileSnsCardList'
 
 const SnsProfileTab = ({ activeTab, setActiveTab, searchId }) => {
 
@@ -13,13 +14,13 @@ const SnsProfileTab = ({ activeTab, setActiveTab, searchId }) => {
   return (
     <div>
       <div>
-        <button>식물</button>
-        <button>SNS</button>
+        <button className={activeTab === 'plant' ? 'active' : ''} onClick={() => setActiveTab('plant')}>식물</button>
+        <button className={activeTab === 'sns' ? 'active' : ''} onClick={() => setActiveTab('sns')}>SNS</button>
       </div>
 
       <div>
         {activeTab === 'plant' && <ProfilePlantCardList searchId={searchId} />}
-        {/* {activeTab === 'sns' && <ProfileSnsCardList searchId={searchId} />} */}
+        {activeTab === 'sns' && <ProfileSnsCardList searchId={searchId} />}
       </div>
 
     </div>

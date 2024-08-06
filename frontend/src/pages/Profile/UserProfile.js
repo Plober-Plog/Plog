@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
-import ProfilePlantCardList from '../../components/Article/ProfilePlantCardList';
 import SnsProfileTab from '../../components/Profile/SnSProfileTab';
 import axios from 'axios';
 
@@ -9,8 +8,6 @@ const UserProfile = ({ userId = 1 }) => {
   const URI = 'https://i11b308.p.ssafy.io/api'
 
   const [userData, setUserData] = useState(null);
-  const [articles, setArticles] = useState([]);
-
   /* TODO: [예진] 이 부분 현재는 plant가 기본 상태인데
     sns 기능이 완료된 뒤에 sns를 기본 상태로 수정할 것
   */
@@ -26,17 +23,7 @@ const UserProfile = ({ userId = 1 }) => {
       }
     };
 
-    const fetchArticles = async () => {
-      try {
-        const response = await axios.get(`${URI}/user/plant/${userId}/diary`);
-        setArticles(response.data);
-      } catch (error) {
-        console.error("CardList Error:", error.response.data);
-      }
-    };
-
     fetchUserData();
-    fetchArticles();
   }, [userId]);
 
   if (!userData) {
@@ -52,8 +39,6 @@ const UserProfile = ({ userId = 1 }) => {
     searchId를 쉽게 반환할 수 있도록 만들어주면 아래 하드코딩을 수정해야 합니다.
   */
 
-  /* TODO: [예진] 탭 컴포넌트를 만들어 추가해야합니다. */
-
   return (
     <div>
       <ProfileHeader 
@@ -65,10 +50,6 @@ const UserProfile = ({ userId = 1 }) => {
         setActiveTab={setActiveTab}
         searchId={'zpqmdh'}
       />
-
-      {/* <ProfilePlantCardList
-        searchId='zpqmdh'
-      /> */}
     </div>
   )
 };
