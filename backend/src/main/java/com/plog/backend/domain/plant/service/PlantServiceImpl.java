@@ -387,7 +387,7 @@ public class PlantServiceImpl implements PlantService {
 
         Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantId, date);
         if (plantCheck.isPresent()) {
-            log.info(">>> updatePlantCheck - 관리 기록 조회 완료 {}", plantCheck.get());
+            log.info(">>> updatePlantCheck - 관리 기록 조회 완료 {}", plantCheck.get().getPlantCheckId());
             PlantCheck pc = plantCheck.get();
             PlantCheckGetResponseDto plantCheckGetResponseDto = new PlantCheckGetResponseDto();
             plantCheckGetResponseDto.setCheckDate(pc.getCheckDate());
