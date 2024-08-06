@@ -31,14 +31,14 @@ const CustomCalendar = ({ plantId }) => {
 
       return { checkData: checkResponse.data, diaryData: diaryResponse.data };
     } catch (error) {
-      console.error('Error fetching month data:', error);
+      console.error('Error fetching month data:', error.response.data);
       return { checkData: [], diaryData: [] };
     }
   };
 
   const fetchRecords = async (date) => {
     const year = date.getFullYear();
-    const month = date.getMonth() +1; // JavaScript에서 getMonth()는 0부터 시작하므로 1을 더해줍니다.
+    const month = date.getMonth(); // JavaScript에서 getMonth()는 0부터 시작하므로 1을 더해줍니다.
 
     try {
       const currentData = await fetchMonthData(year, month);
@@ -74,7 +74,12 @@ const CustomCalendar = ({ plantId }) => {
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     const checkRecord = checkRecords.find(check => new Date(check.checkDate).toDateString() === date.toDateString());
     if (diaryRecord || checkRecord) {
-      navigate(`/plant/${plantId}/${formattedDate}`);
+      navigate(`/plant/${plantId}/${formattedDate}`, {
+        state: {
+          date: formattedDate,
+          plantId: plantId
+        }
+        });
     } else {
       navigate(`/plant/${plantId}/${formattedDate}/write`, {
         state: {
