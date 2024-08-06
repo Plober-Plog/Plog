@@ -138,4 +138,11 @@ public class SnsController {
             @PathVariable("articleId") Long articleId) {
         return null;
     }
+
+    @GetMapping("/bookmark")
+    public ResponseEntity<BaseResponseBody> getBookmark(
+            @RequestHeader("Authorization") String token
+    ) {
+        return null;
+    }
 }
