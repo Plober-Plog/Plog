@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
 import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
@@ -38,6 +39,7 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final PlantDiaryImageRepository plantDiaryImageRepository;
     private final AmazonS3 amazonS3;
+    private final PlantDiaryRepository plantDiaryRepository;
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -121,7 +123,7 @@ public class ImageServiceImpl implements ImageService {
                     Image img = optionalImage.get();
 
                     PlantDiaryImage plantDiaryImage = new PlantDiaryImage();
-                    plantDiaryImage.setPlantDiaryId(plantDiaryId);
+                    plantDiaryImage.setPlantDiary(plantDiaryRepository.getReferenceById(plantDiaryId));
                     plantDiaryImage.setImage(img);
                     if (order - 1 == thumbnailIdx)
                         plantDiaryImage.setThumbnail(true);
@@ -172,7 +174,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String loadImage(Long imageId) {
-        log.info(">>> loadImage - 이미지 로드 시작, ID: {}", imageId);
+//        log.info(">>> loadImage - 이미지 로드 시작, ID: {}", imageId);
         Optional<Image> optionalImage = imageRepository.findByImageIdAndIsDeletedFalse(imageId);
         if (optionalImage.isPresent()) {
             log.info(">>> loadImage - 이미지 로드 성공, ID: {}", imageId);
@@ -184,7 +186,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<PlantDiaryImageGetResponseDto> loadImagesByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadImagesByPlantDiaryId - 플랜트 다이어리 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
-        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
+        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
         if (plantDiaryImages.isEmpty()) {
             return new ArrayList<>();
         }
@@ -194,12 +196,11 @@ public class ImageServiceImpl implements ImageService {
             plantDiaryImageGetResponseDtoList.add(
                     PlantDiaryImageGetResponseDto.builder()
                             .plantDiaryImageId(plantDiaryImage.getPlantDiaryImageId())
-                            .plantDiaryId(plantDiaryImage.getPlantDiaryId())
+                            .plantDiaryId(plantDiaryImage.getPlantDiary().getPlantDiaryId())
                             .image(plantDiaryImage.getImage())
                             .order(plantDiaryImage.getOrder())
                             .isThumbnail(plantDiaryImage.isThumbnail())
                             .build());
-
         }
 
         log.info(">>> loadImagesByPlantDiaryId - 플랜트 다이어리 이미지 로드 성공, PlantDiaryId: {}", plantDiaryId);
@@ -209,7 +210,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<String> loadImageUrlsByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadImageUrlsByPlantDiaryId - 플랜트 다이어리 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
-        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
+        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
         if (plantDiaryImages.isEmpty()) {
             return new ArrayList<>();
         }
@@ -222,8 +223,8 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String loadThumbnailImageByPlantDiaryId(Long plantDiaryId) {
-        log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
-        Optional<PlantDiaryImage> thumbnailImage = plantDiaryImageRepository.findByPlantDiaryIdAndIsThumbnailTrue(plantDiaryId);
+//        log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
+        Optional<PlantDiaryImage> thumbnailImage = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndIsThumbnailTrue(plantDiaryId);
         if (thumbnailImage.isEmpty()) {
             return null;
         }

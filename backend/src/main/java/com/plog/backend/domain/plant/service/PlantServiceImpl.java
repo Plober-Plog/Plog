@@ -12,7 +12,6 @@ import com.plog.backend.domain.plant.entity.OtherPlantType;
 import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.entity.PlantCheck;
 import com.plog.backend.domain.plant.entity.PlantType;
-import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 import com.plog.backend.domain.plant.repository.*;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
