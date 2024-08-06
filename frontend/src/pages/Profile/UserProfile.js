@@ -7,6 +7,7 @@ import ProfileHeader from '../../components/Profile/ProfileHeader';
 
 const UserProfile = () => {
   const { searchId } = useParams();
+  console.log('searchId:', searchId)
   const URI = 'https://i11b308.p.ssafy.io/api';
 
   const [userData, setUserData] = useState(null);
@@ -20,10 +21,10 @@ const UserProfile = () => {
           console.error('Error: ', response.data.message);
           return;
         }
-        // console.log('User Data:', response.data);
+        console.log('User Data:', response.data);
         setUserData(response.data);
       } catch (error) {
-        console.error("UserData Error:", error.response.data);
+        console.error("***UserData Error:***", error);
       }
     };
 
