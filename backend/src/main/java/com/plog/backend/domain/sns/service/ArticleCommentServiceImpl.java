@@ -3,12 +3,15 @@ package com.plog.backend.domain.sns.service;
 import com.plog.backend.domain.sns.dto.request.ArticleCommentAddRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleCommentDeleteRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleCommentUpdateRequestDto;
+import com.plog.backend.domain.sns.entity.Article;
 import com.plog.backend.domain.sns.entity.ArticleComment;
 import com.plog.backend.domain.sns.repository.ArticleCommentRepository;
+import com.plog.backend.domain.sns.repository.ArticleCommentRepositorySupport;
 import com.plog.backend.domain.sns.repository.ArticleRepository;
 import com.plog.backend.domain.sns.entity.State;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
+import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
@@ -16,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     public static ArticleCommentRepository articleCommentRepository;
     public static JwtTokenUtil jwtTokenUtil;
     public static UserRepository userRepository;
+    private final ArticleCommentRepositorySupport articleCommentRepositorySupport;
 
     @Transactional
     @Override
@@ -34,7 +39,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                return new NotValidRequestException("없는 사용자 입니다.");}
+                return new NotValidRequestException("addArticleComment - 없는 사용자 입니다.");}
                 );
 
         Long articleId = articleCommentAddRequestDto.getArticleId();
@@ -66,16 +71,16 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    return new NotValidRequestException("없는 사용자 입니다.");}
+                    return new NotValidRequestException("updateArticleComment - 없는 사용자 입니다.");}
                 );
 
         ArticleComment articleComment = articleCommentRepository.findById(commentId)
                 .orElseThrow(()-> {
-                    return new NotValidRequestException("없는 댓글 입니다.");
+                    return new NotValidRequestException("updateArticleComment - 없는 댓글 입니다.");
                 });
 
         if(!userId.equals(articleComment.getUser().getUserId()))
-            throw new NotAuthorizedRequestException("본인 댓글이 아닙니다. 수정할 수 없습니다.");
+            throw new NotAuthorizedRequestException("updateArticleComment - 본인 댓글이 아닙니다. 수정할 수 없습니다.");
 
         articleComment.setContent(articleCommentUpdateRequestDto.getComment());
 
@@ -90,19 +95,41 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    return new NotValidRequestException("없는 사용자 입니다.");}
+                    return new NotValidRequestException("deleteArticleComment - 없는 사용자 입니다.");}
                 );
 
         ArticleComment articleComment = articleCommentRepository.findById(commentId)
                 .orElseThrow(()->{
-                    return new NotValidRequestException("없는 댓글 입니다.");
+                    return new NotValidRequestException("deleteArticleComment - 없는 댓글 입니다.");
                 });
 
         if(!userId.equals(articleComment.getUser().getUserId()))
-            throw new NotAuthorizedRequestException("본인 댓글이 아닙니다. 삭제할 수 없습니다.");
+            throw new NotAuthorizedRequestException("deleteArticleComment - 본인 댓글이 아닙니다. 삭제할 수 없습니다.");
 
         articleComment.setState(State.DELETE);
 
         articleCommentRepository.save(articleComment);
+    }
+
+    @Override
+    public List<List<ArticleComment>> getArticleComments(Long articleId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(()->{
+            return new EntityNotFoundException("getArticleComments - 없는 게시글 입니다.");
+        });
+        List<List<ArticleComment>> commentsWithReplies = new ArrayList<>();
+
+        // 부모 댓글들을 먼저 조회
+        List<ArticleComment> parentComments = articleCommentRepositorySupport.findParentCommentsByArticleId(article);
+
+        // 각 부모 댓글에 대한 자식 댓글들을 조회하여 리스트에 추가
+        for (ArticleComment parentComment : parentComments) {
+            List<ArticleComment> childComments = articleCommentRepositorySupport.findChildCommentsByParentId(parentComment.getArticleCommentId());
+            List<ArticleComment> parentWithChildren = new ArrayList<>();
+            parentWithChildren.add(parentComment); // 부모 댓글 추가
+            parentWithChildren.addAll(childComments); // 자식 댓글들 추가
+            commentsWithReplies.add(parentWithChildren);
+        }
+
+        return commentsWithReplies;
     }
 }

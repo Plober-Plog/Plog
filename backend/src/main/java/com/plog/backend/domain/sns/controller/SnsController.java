@@ -1,6 +1,7 @@
 package com.plog.backend.domain.sns.controller;
 
 import com.plog.backend.domain.sns.dto.request.*;
+import com.plog.backend.domain.sns.dto.response.ArticleCommentGetResponse;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
 import com.plog.backend.domain.sns.service.ArticleCommentService;
@@ -113,6 +114,13 @@ public class SnsController {
                 .status(HttpStatus.OK)
                 .body(BaseResponseBody.of(200,"댓글이 수정되었습니다."));
     }
+
+    @GetMapping("/{articleId}/comment")
+    public ResponseEntity<List<ArticleCommentGetResponse>> getComments(
+            @PathVariable("articleId") Long articleId) {
+            return null;
+    }
+
 
     // ============================= 좋아요 =============================
 
