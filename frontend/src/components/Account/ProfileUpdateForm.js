@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import API from '../../apis/api';
+import useAuthStore from '../../stores/member';
 
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
@@ -12,10 +13,12 @@ import ModalComplete from '../Common/ModalComplete';
 
 const ProfileUpdateForm = ({ userData }) => {
   const navigate = useNavigate();
+  const setUserData = useAuthStore((state) => state.setUserData);
+  console.log(userData?.searchId);
 
   // 회원 정보 변경 불가능
-  const email = userData.email || '';
-  const source = userData.source || '';
+  const email = userData?.email || '';
+  const source = userData?.source || '';
 
   // 회원 정보 변경 가능
   const [searchId, setSearchId] = useState('');
@@ -108,6 +111,7 @@ const ProfileUpdateForm = ({ userData }) => {
     try {
       const response = await API.patch('/user', updatedUserData);
       console.log('회원 정보 수정 성공:', response);
+      setUserData(updatedUserData); // 업데이트된 유저 정보를 전역 상태에 저장
       setOpenModal(true);
     } catch (error) {
       console.error('회원 정보 수정 실패:', error);

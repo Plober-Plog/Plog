@@ -14,6 +14,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
   const setToken = useAuthStore((state) => state.setToken);
+  const setUserData = useAuthStore((state) => state.setUserData);
 
   const navigate = useNavigate();
 
@@ -22,16 +23,18 @@ const LoginForm = () => {
 
     const userInfo = {
       email,
-      password: sha256(password),
+      password: sha256(password)
     };
 
     try {
       const response = await API.post('/user/login', userInfo);
       const { accessToken, refreshToken } = response.data;
-      console.log('토큰 정보 : ', response.data)
+      console.log('토큰 정보 : ', response.data);
 
       if (accessToken && refreshToken) {
         setToken(accessToken, refreshToken);
+        const userResponse = await API.get('/user');
+        setUserData(userResponse.data);
         navigate('/');
       } else {
         setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
