@@ -41,6 +41,8 @@ function App() {
               {/* <Route path="/plant" element={<PlantDetail />} /> */}
               {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
               <Route path="/plant/register" element={<PlantRegister />} />
+              {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
+              <Route path="/profile" element={<UserProfile />}/>
             </Routes>
 
         </main>

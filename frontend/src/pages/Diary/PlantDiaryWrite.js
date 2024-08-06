@@ -21,16 +21,14 @@ import repottedIcon from '../../assets/icon/repotted.png';
 
 import './PlantDiaryWrite.css';
 
-//TODO [차유림] 현재는 location 받아오는 게 없어서 오류가 남 우선 주석처리했음
 const PlantDiaryWrite = () => {  
   const location = useLocation();
   const navigate = useNavigate();
-  const { plantId, date: selectedDate } = location.state;
+  const { plantId, date: selectedDate } = location.state || {};
 
   const URI = 'https://i11b308.p.ssafy.io/api'
   const [content, setContent] = useState('');
   const [date, setDate] = useState(selectedDate); 
-  // const [date, setDate] = useState(new Date(currentDate));
   const [isWatered, setIsWatered] = useState(false);
   const [isFertilized, setIsFertilized] = useState(false);
   const [isRepotted, setIsRepotted] = useState(false);
@@ -48,9 +46,12 @@ const PlantDiaryWrite = () => {
     nickname: '조이',
     plantTypeId: '몬스테라'
   };
+  const thumbnailIdx = 0;
 
   // 해당 날짜에 작성된 식물 일지 기록 및 관리 기록 확인 
   const fetchDiaryAndCheck = async (plantId, date) => {
+    console.log(plantId.data);
+    console.log(date.data);
     try {
       const response = await axios.get(`${URI}/user/plant/${plantId}`, {
         params: { date },
@@ -72,6 +73,7 @@ const PlantDiaryWrite = () => {
   const getDiaryAndPlantCheck = async () => {
     try {
       const data = await fetchDiaryAndCheck(plantId, date);
+      console.log(data);
       if (data.plantDiary || data.plantCheck) {
         setIsEditMode(true);
         if (data.plantDiary) {
@@ -121,7 +123,8 @@ const PlantDiaryWrite = () => {
           setIsTemperature(plantDiary.temperature);
           setIsWatered(plantCheck.watered);
           setIsFertilized(plantCheck.fertilized);
-          setIsRepotted(plantCheck.repotted);     
+          setIsRepotted(plantCheck.repotted);   
+          setHasPlantCheck(true);  
         }
       } else {
         setPlantDiaryId(null);
@@ -142,23 +145,26 @@ const PlantDiaryWrite = () => {
 
   // 이미지 업로드 .. => 잘 모루겟어서 지피티한테 물어봄 ㅜㅜ .. 이미지 부분 수정 가능성 높습니다.. ..
   const handleImageUpload = (event) => {
-    const files = Array.from(event.target.files); // 파일 입력에서 파일 배열을 만들기
-    if (files.length + imgs.length > 5) { // 이미지가 5장을 초과하면 경고하고 반환
-      alert('최대 5장까지 업로드할 수 있습니다.');
-      return;
-    }
-    const newImgs = files.map((file, index) => ({
-      file,
-      url: URL.createObjectURL(file), // 파일 객체로부터 미리보기 URL을 생성
-      isThumbnail: imgs.length === 0 && index === 0
-    }));
+    console.log(event.target.files);
+    setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
+    
+    // if (files.length + imgs.length > 5) { // 이미지가 5장을 초과하면 경고하고 반환
+    //   alert('최대 5장까지 업로드할 수 있습니다.');
+    //   return;
+    // }
+    
+    // const newImgs = files.map((file, index) => ({
+    //   file,
+    //   url: URL.createObjectURL(file), // 파일 객체로부터 미리보기 URL을 생성
+    //   isThumbnail: imgs.length === 0 && index === 0
+    // }));
 
-    setImgs(prevImgs => {
-      if (prevImgs.length === 0 && newImgs.length > 0) { //길이가 0이고 새로운 이미지를 넣었을떄 길이가 0 이상이되면 
-        newImgs[0].isThumbnail = true; // 우선 대표사진으로 설정해줌
-      }
-      return [...prevImgs, ...newImgs];
-    });
+    // setImgs(prevImgs => {
+    //   if (prevImgs.length === 0 && newImgs.length > 0) { //길이가 0이고 새로운 이미지를 넣었을떄 길이가 0 이상이되면 
+    //     newImgs[0].isThumbnail = true; // 우선 대표사진으로 설정해줌
+    //   }
+    //   return [...prevImgs, ...newImgs];
+    // });
   };
 
   const handleDeleteImage = (index) => {
@@ -205,15 +211,22 @@ const PlantDiaryWrite = () => {
   const handleSave = async () => {
     const formattedDate = date instanceof Date ? date.toISOString().split('T')[0] : new Date(date).toISOString().split('T')[0];
 
-    const diaryData = {
-      plantId,
-      weather,
-      temperature,
-      humidity,
-      content,
-      // thumbnailIdx,
-      recordDate: formattedDate,
-    };
+    const diaryData = new FormData();
+    diaryData.append('plantId', plantId);
+    diaryData.append('weather', 1);
+    diaryData.append('temperature', 1);
+    diaryData.append('humidity', 1);
+    diaryData.append('content', content);
+    console.log(imgs);
+    // diaryData.append('thumbnailIdx', thumbnailIdx);
+    diaryData.append('recordDate', formattedDate);
+
+
+    imgs.forEach((img, index) => {
+      diaryData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
+      diaryData.append('thumbnailIdx', index);  // 'imageIdx' key를 사용하여 각각의 index를 추가
+    });
+
     console.log(diaryData);
 
     const plantData = {
@@ -223,13 +236,14 @@ const PlantDiaryWrite = () => {
       checkDate: formattedDate,
     }
     console.log(plantData);
-
+    console.log(thumbnailIdx);
     // const imgs = {
 
     // }
 
-    // 일지작성요청 2
+    // 일지작성요청 1
     try {
+
       const diaryWriteResponse = await axios({
         method: plantDiaryId ? 'PATCH' : 'POST',
         url: plantDiaryId ? `${URI}/user/diary/${plantDiaryId}` : `${URI}/user/diary`,
@@ -237,15 +251,15 @@ const PlantDiaryWrite = () => {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
         },
-        data: diaryData,
+        data : diaryData,
       });
       
       if (diaryWriteResponse.status !== 200) {
         throw new Error('일지 저장에 실패했습니다.');
       }
 
-      console.log(plantDiaryId)
-      
+      console.log(plantDiaryId);
+      console.log(plantData);
       const plantCheckResponse = await axios({
         method: hasPlantCheck ? 'PATCH' : 'POST',
         url: `${URI}/user/plant/${plantId}/check`,
@@ -253,7 +267,7 @@ const PlantDiaryWrite = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
         },
-        data: plantData,
+        plantData,
       });
 
       if (plantCheckResponse.status !== 200) {
@@ -283,74 +297,18 @@ const PlantDiaryWrite = () => {
   // 글 쓰기 페이지에서 날짜를 바꿨을 때 useEffect 부터 다시 실행되도록 함 
   const handleDateChange = async (newDate) => {
     const data = await fetchDiaryAndCheck(plantId, newDate);
+    setDate(newDate)
     if (data.plantDiary || data.plantCheck) {
       if (window.confirm('이미 작성된 일지가 있습니다. 확인하시겠습니까?')) {
-        setDate(newDate);
-        setIsEditMode(true);
-        if (data.plantDiary) {
-          const { plantDiary } = data;
-          setPlantDiaryId(plantDiary.plantDiaryId);
-          setContent(plantDiary.content);
-          setImgs(plantDiary.images.map(img => ({ 
-            url: img.url, 
-            id: img.imageId,
-            isThumbnail: img.isThumbnail, 
-           })));
-          setIsWeather(plantDiary.weather);
-          setIsHumidity(plantDiary.humidity);
-          setIsTemperature(plantDiary.temperature);
-          setIsWatered(false);
-          setIsFertilized(false);
-          setIsRepotted(false); 
-        } 
-        if (data.plantCheck) {
-          const { plantCheck } = data;
-          setPlantDiaryId(null);
-          setContent('');
-          setImgs([]);
-          // setIsWeather(plantDiary.weather);
-          // setIsHumidity(plantDiary.humidity);
-          // setIsTemperature(plantDiary.temperature);
-          setIsWatered(plantCheck.watered);
-          setIsFertilized(plantCheck.fertilized);
-          setIsRepotted(plantCheck.repotted);  
-          setHasPlantCheck(true);     
-        } 
-
-        if (data.plantDiary && data.plantCheck) {
-          const { plantDiary } = data;
-          const { plantCheck } = data;
-          setPlantDiaryId(plantDiary.plantId);
-          setContent(plantDiary.content);
-          setImgs(plantDiary.images.map(img => ({ 
-            url: img.url, 
-            id: img.imageId,
-            isThumbnail: img.isThumbnail, 
-           })));
-          setIsWeather(plantDiary.weather);
-          setIsHumidity(plantDiary.humidity);
-          setIsTemperature(plantDiary.temperature);
-          setIsWatered(plantCheck.watered);
-          setIsFertilized(plantCheck.fertilized);
-          setIsRepotted(plantCheck.repotted);
-          setHasPlantCheck(true);      
-        }
-      } else {
-        setPlantDiaryId(null);
-        setContent('');
-        setImgs([]);
-        setIsWatered(false);
-        setIsFertilized(false);
-        setIsRepotted(false); 
-        setHasPlantCheck(false);
-        console.log('새로운 일지를 작성');
-      }
-    } else {
-      setDate(newDate);
-      setIsEditMode(false);
-      setHasPlantCheck(false); 
-    }
-  };
+        navigate(`/plant/${plantId}/${newDate}`, {
+          state: {
+            date: newDate,
+            plantId: plantId
+          }
+          });
+      }    
+  }
+};
 
   return (
     <div className="plant-diary-container">
