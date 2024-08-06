@@ -40,7 +40,7 @@ const PasswordChange = () => {
   };
 
   return (
-    <div className="container">
+    <div className="account-container">
       <h2 className="title">비밀번호 변경</h2>
       <form onSubmit={handlePasswordChange} className="form">
         <InputField

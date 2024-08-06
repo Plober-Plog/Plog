@@ -8,7 +8,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container">
+    <div className="account-container">
       <h1 className="title">로그인</h1>
       <LoginForm />
       <ATag 
@@ -17,7 +17,7 @@ const Login = () => {
       />
       <ATag 
         content={'비밀번호 찾기'}
-        onClick={() => navigate('/passoword/find')}
+        onClick={() => navigate('/password/find')}
       />
       <SocialLogin />
     </div>
