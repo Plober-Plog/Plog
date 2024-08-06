@@ -182,7 +182,7 @@ const SignUpForm = () => {
       searchId,
       password: sha256(password),
       nickname,
-      profile: defaultProfile, // URL.createObjectURL(defaultProfile),
+      profile: URL.createObjectURL(defaultProfile),
       gender,
       birthDate: birthdate,
       source,
