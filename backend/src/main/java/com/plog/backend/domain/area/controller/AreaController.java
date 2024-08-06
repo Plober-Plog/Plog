@@ -28,7 +28,7 @@ public class AreaController {
     }
 
     @GetMapping("/gugun/{sidoCode}")
-    public ResponseEntity<List<GugunGetResponseDto>> getGugunList(@PathVariable String sidoCode) {
+    public ResponseEntity<List<GugunGetResponseDto>> getGugunList(@PathVariable("sidoCode") String sidoCode) {
         List<GugunGetResponseDto> gugunGetResponseDtoList = areaService.getGugunList(sidoCode);
         return ResponseEntity.ok().body(gugunGetResponseDtoList);
     }
