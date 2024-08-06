@@ -21,7 +21,7 @@ import java.util.List;
 public class AreaController {
     private final AreaService areaService;
 
-    @RequestMapping("/sido")
+    @GetMapping("/sido")
     public ResponseEntity<List<SidoGetResponseDto>> getSidoList() {
         List<SidoGetResponseDto> sidoGetResponseDtoList = areaService.getSidoList();
         return ResponseEntity.status(200).body(sidoGetResponseDtoList);
