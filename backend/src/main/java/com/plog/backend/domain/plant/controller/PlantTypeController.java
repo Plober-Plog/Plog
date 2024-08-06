@@ -38,7 +38,7 @@ public class PlantTypeController {
     }
 
     @GetMapping("/all")
-    @Operation(summary = "사용자의 식물 종류 목록 조회", description = "사용자의 검색 ID로 보유한 식물 종류를 조회합니다.")
+    @Operation(summary = "전체 식물 종류 목록 조회", description = "등록된 식물 종류 목록을 조회합니다.")
     public ResponseEntity<List<PlantTypeGetSimpleResponseDto>> getAllPlantTypes() {
         log.info(">>> [GET] /user/plant-type/all : 모든 식물 종류 리스트 반환");
         List<PlantTypeGetSimpleResponseDto> plantTypeGetSimpleResponseDtoList = plantTypeService.getAllPlantTypes();
