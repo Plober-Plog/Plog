@@ -2,24 +2,21 @@ import { create } from 'zustand';
 import { setCookie, getCookie, eraseCookie } from '../utils/cookieUtils';
 
 const useAuthStore = create((set) => ({
-  // 상태 초기화
   accessToken: getCookie('accessToken'),
   refreshToken: getCookie('refreshToken'),
-  userData: JSON.parse(getCookie('userData')),
+  userData: JSON.parse(getCookie('userData') || '{}'),
   isLogin: !!getCookie('accessToken'),
 
   // 토큰 저장
   setToken: (accessToken, refreshToken) => {
-    console.log('토큰 저장 함수 호출:', accessToken, refreshToken);
-    setCookie('accessToken', accessToken, 60); // 1시간 동안 유효
-    setCookie('refreshToken', refreshToken, 7 * 24 * 60); // 7일 동안 유효
+    setCookie('accessToken', accessToken, 60);
+    setCookie('refreshToken', refreshToken, 7 * 24 * 60);
     set({ accessToken, refreshToken, isLogin: true });
   },
 
   // 유저 정보 저장
   setUserData: (userData) => {
-    console.log('유저 정보 저장 함수 호출:', userData);
-    setCookie('userData', JSON.stringify(userData), 7 * 24 * 60); // 7일 동안 유효
+    setCookie('userData', JSON.stringify(userData), 7 * 24 * 60);
     set({ userData });
   },
 
@@ -36,9 +33,9 @@ const useAuthStore = create((set) => ({
     set({ userData: null });
   },
 
-  // searchId 가져오기
+  // 아이디 가져오기
   getSearchId: () => {
-    const userData = JSON.parse(getCookie('userData'));
+    const userData = JSON.parse(getCookie('userData') || '{}');
     return userData ? userData.searchId : null;
   },
 }));

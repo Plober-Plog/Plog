@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
+import axiosa from 'axios';
 import sha256 from 'js-sha256';
 import useAuthStore from '../../stores/member';
-
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
 import ATag from '../Common/ATag';
@@ -15,7 +15,6 @@ const LoginForm = () => {
   const [loginError, setLoginError] = useState('');
   const setToken = useAuthStore((state) => state.setToken);
   const setUserData = useAuthStore((state) => state.setUserData);
-
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
@@ -23,13 +22,13 @@ const LoginForm = () => {
 
     const userInfo = {
       email,
-      password: sha256(password)
+      password: sha256(password),
     };
 
     try {
       const response = await API.post('/user/login', userInfo);
+      // const response = await axios.post('https://i11b308.p.ssafy.io/api/user/login', userInfo);
       const { accessToken, refreshToken } = response.data;
-      console.log('토큰 정보 : ', response.data);
 
       if (accessToken && refreshToken) {
         setToken(accessToken, refreshToken);
@@ -40,10 +39,7 @@ const LoginForm = () => {
         setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
       }
     } catch (error) {
-      console.error('로그인 오류:', error);
-      if (error.response) {
-        setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
-      }
+      setLoginError('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.');
     }
   };
 
@@ -62,7 +58,7 @@ const LoginForm = () => {
         </div>
         <div>
           <InputField
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

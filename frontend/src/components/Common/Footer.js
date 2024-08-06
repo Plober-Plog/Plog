@@ -1,16 +1,17 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import useButtonStore from "../../stores/footer";
-import snsSelect from "../../assets/icon/footer/sns-select.png";
-import snsDefault from "../../assets/icon/footer/sns-default.png";
-import profileSelect from "../../assets/icon/footer/profile-select.png";
-import profileDefault from "../../assets/icon/footer/profile-default.png";
-import homeSelect from "../../assets/icon/footer/home-select.png";
-import homeDefault from "../../assets/icon/footer/home-default.png";
-import chatSelect from "../../assets/icon/footer/chat-select.png";
-import chatDefault from "../../assets/icon/footer/chat-default.png";
-import alarmSelect from "../../assets/icon/footer/alarm-select.png";
-import alarmDefault from "../../assets/icon/footer/alarm-default.png";
+import snsSelect from "../../assets/icon/footer/sns-select.svg";
+import snsDefault from "../../assets/icon/footer/sns-default.svg";
+import profileSelect from "../../assets/icon/footer/profile-select.svg";
+import profileDefault from "../../assets/icon/footer/profile-default.svg";
+import homeSelect from "../../assets/icon/footer/home-select.svg";
+import homeDefault from "../../assets/icon/footer/home-default.svg";
+import chatSelect from "../../assets/icon/footer/chat-select.svg";
+import chatDefault from "../../assets/icon/footer/chat-default.svg";
+import alarmSelect from "../../assets/icon/footer/alarm-select.svg";
+import alarmDefault from "../../assets/icon/footer/alarm-default.svg";
+import alarmNewDefault from "../../assets/icon/footer/alarm-new-default.svg";
 import "./Footer.css";
 
 const Footer = () => {
@@ -74,35 +75,35 @@ const Footer = () => {
         <img
           src={activeButton === "sns" ? snsSelect : snsDefault}
           alt="sns 아이콘"
-          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+          className={activeButton === "sns" ? "footer-icon-select" : "footer-icon"}
         />
       </button>
       <button className="footer-button" onClick={() => handleClick("profile")}>
         <img
           src={activeButton === "profile" ? profileSelect : profileDefault}
           alt="profile 아이콘"
-          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+          className={activeButton === "profile" ? "footer-icon-select" : "footer-icon"}
         />
       </button>
       <button className="footer-button" onClick={() => handleClick("home")}>
         <img
           src={activeButton === "home" ? homeSelect : homeDefault}
           alt="home 아이콘"
-          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+          className={activeButton === "home" ? "footer-icon-select" : "footer-icon"}
         />
       </button>
       <button className="footer-button" onClick={() => handleClick("chat")}>
         <img
           src={activeButton === "chat" ? chatSelect : chatDefault}
           alt="chat 아이콘"
-          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon"}
         />
       </button>
       <button className="footer-button" onClick={() => handleClick("alarm")}>
         <img
           src={activeButton === "alarm" ? alarmSelect : alarmDefault}
           alt="alarm 아이콘"
-          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+          className={activeButton === "alarm" ? "footer-icon-select" : "footer-icon"}
         />
       </button>
     </div>

@@ -23,6 +23,8 @@ export const getCookie = (name) => {
   return null;
 };
 
+
+// 쿠키 삭제
 export const eraseCookie = (name) => {
   document.cookie = name + '=; Max-Age=-99999999; path=/';
 };
