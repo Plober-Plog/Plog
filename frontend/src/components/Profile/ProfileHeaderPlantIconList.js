@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed, plantData }) => {
+const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData }) => {
 
   const URI = 'https://i11b308.p.ssafy.io/api';
   const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
@@ -16,7 +16,7 @@ const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed, plantData }
     const updatedFixedStatus = !nowFixed;
 
     try {
-      const response = await axios.patch(`${URI}/user/plant/${plantId}/fix`, 
+      const response = await axios.patch(`${URI}/user/plant/${ownerId}/fix`, 
         { isFixed: updatedFixedStatus },
         {
           headers: {
@@ -39,21 +39,20 @@ const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed, plantData }
   const handleToggleNotification = async () => {
     const updatedNotificationStatus = !nowNotified;
     const updatedPlantData = {
-      ...plantData,
+      ...profileData,
       hasNotified: updatedNotificationStatus
     };
 
     try {
-      const response = await fetch(`https://i11b308.p.ssafy.io/api/user/plant/${plantId}`, {
-        method: 'PATCH',
+      const response = await axios.patch(`${URI}/user/plant/${ownerId}`, updatedPlantData, {
         headers: {
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ',
+          'Authorization': `${TOKEN}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(updatedPlantData),
+        // body: JSON.stringify(updatedPlantData),
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         setNowNotified(updatedNotificationStatus);
       } else {
         console.error('Failed to update notification status');
@@ -64,16 +63,16 @@ const ProfileHeaderPlantIconList = ({ plantId, hasNotified, isFixed, plantData }
   };
 
   const handleEdit = () => {
-    navigate(`/plant/register/${plantId}`);
+    navigate(`/plant/register/${ownerId}`);
   }
 
   const handleWriteDiary = () => {
     const currentDate = new Date().toISOString().split('T')[0];
-    navigate(`/plant/${plantId}/${currentDate}/write`, {
+    navigate(`/plant/${ownerId}/${currentDate}/write`, {
       // 혹시 몰라 state로도 날짜를 보내겠습니다.
       state: {
         date: currentDate,
-        plantId: plantId
+        plantId: ownerId
       }
     });
   };

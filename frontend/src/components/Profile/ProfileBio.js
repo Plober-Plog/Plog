@@ -2,17 +2,18 @@ import React from 'react';
 import ProfileHeaderPlantIconList from './ProfileHeaderPlantIconList';
 import ProfileHeaderUserBtnList from './ProfileHeaderUserBtnList';
 
-const ProfileBio = ({ bio, type, plantId, hasNotified, plantData }) => {
+const ProfileBio = ({ bio, type, ownerId, hasNotified, isFixed, profileData }) => {
 
   const renderBtnIcon = () => {
     if (type === 'user') {
-      return <ProfileHeaderUserBtnList />;
+      return <ProfileHeaderUserBtnList ownerId={ownerId}/>;
     } else if (type === 'plant') {
       return (
         <ProfileHeaderPlantIconList 
-          plantId={plantId}
+          ownerId={ownerId}
           hasNotified={hasNotified}
-          plantData={plantData}
+          isFixed={isFixed}
+          profileData={profileData}
         />
       )
     } else {
