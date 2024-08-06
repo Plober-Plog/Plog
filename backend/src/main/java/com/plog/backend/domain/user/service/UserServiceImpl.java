@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .searchId(user.getSearchId())
                 .nickname(user.getNickname())
+                .profile(user.getImageId().getImageUrl())
                 .gender(user.getGender().getValue())
                 .birthDate(user.getBirthDate())
                 .sidoCode(user.getSidoCode())
@@ -89,6 +90,10 @@ public class UserServiceImpl implements UserService {
                     log.error(">>> [USER SIGN IN] - 이메일 잘못됨: {}", email);
                     return new NotValidRequestException("이메일 혹은 패스워드가 잘 못 되었습니다.");
                 });
+
+        if(user.getState().equals(State.DELETED)) {
+            throw new NotValidRequestException("삭제된 유저 입니다.");
+        }
 
         // 패스워드 검증
         if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -200,7 +205,7 @@ public class UserServiceImpl implements UserService {
             User user = userOptional.get();
             log.info(">>> updateUser - 사용자 찾음: {}", user);
             user.setNickname(request.getNickname());
-            user.setProfileInfo(request.getProfile());
+            user.setProfileInfo(request.getProfileInfo());
             user.setGender(Gender.gender(request.getGender()));
             user.setBirthDate(request.getBirthDate());
             user.setSource(request.getSource());
@@ -227,7 +232,7 @@ public class UserServiceImpl implements UserService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            user.setState(State.DELETED.getValue());
+            user.setState(State.DELETED);
             userRepository.save(user);
             log.info(">>> deleteUser - 사용자 삭제 완료: {}", user);
         } else {
@@ -288,7 +293,7 @@ public class UserServiceImpl implements UserService {
                 .profile_info(user.getProfileInfo())
                 .total_exp(user.getTotalExp())
                 .nickname(user.getNickname())
-                .profile("default.jpg")
+                .profile(user.getImageId().getImageUrl())
                 .build();
 
         log.info(">>> getMyProfile - 프로필 정보: {}", responseDto);
@@ -308,7 +313,7 @@ public class UserServiceImpl implements UserService {
                 .profile_info(user.getProfileInfo())
                 .total_exp(user.getTotalExp())
                 .nickname(user.getNickname())
-                .profile("default.jpg")
+                .profile(user.getImageId().getImageUrl())
                 .build();
 
         log.info(">>> getProfile - 프로필 정보: {}", responseDto);
