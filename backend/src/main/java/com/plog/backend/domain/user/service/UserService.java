@@ -17,7 +17,7 @@ public interface UserService {
     UserGetResponseDto getUser(String token);
     Map<String, String> userSignIn(String email, String password);
     void userSignOut(String token);
-    User createUser(UserSignUpRequestDto userSignUpRequestDto);
+    User createUser(UserSignUpRequestDto userSignUpRequestDto, String imageUrl);
     Boolean checkUserSearchId(String searchId);
     Boolean checkUserEmail(String email);
     User updateUser(String token, UserUpdateRequestDto request);

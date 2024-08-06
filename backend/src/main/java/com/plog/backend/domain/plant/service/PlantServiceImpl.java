@@ -332,25 +332,25 @@ public class PlantServiceImpl implements PlantService {
     @Override
     public void addPlantCheck(String token, PlantCheckAddRequestDto plantCheckAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        if (plantCheckAddRequestDto.getCheckDate().isAfter(LocalDate.now())) {
-            throw new NotValidRequestException("미래의 식물 관리 기록은 작성할 수 없습니다");
-        }
-        Optional<Plant> plant = plantRepository.findById(plantCheckAddRequestDto.getPlantId());
-        if (plant.isPresent()) {
-            if (userId != plant.get().getUser().getUserId())
-                throw new NotAuthorizedRequestException();
-            PlantCheck plantCheck = PlantCheck.builder()
-                    .plant(plant.get())
-                    .isWatered(plantCheckAddRequestDto.isWatered())
-                    .isFertilized(plantCheckAddRequestDto.isFertilized())
-                    .isRepotted(plantCheckAddRequestDto.isRepotted())
-                    .checkDate(plantCheckAddRequestDto.getCheckDate())
-                    .build();
-            plantCheckRepository.save(plantCheck);
-            log.info(">>> addPlantCheck - 관리 기록 추가 완료, 식물 ID: {}, 관리 날짜: {}", plantCheckAddRequestDto.getPlantId(), plantCheckAddRequestDto.getCheckDate());
-        } else {
-            throw new EntityNotFoundException("일치하는 식물이 없습니다.");
-        }
+//        if (plantCheckAddRequestDto.getCheckDate().isAfter(LocalDate.now())) {
+//            throw new NotValidRequestException("미래의 식물 관리 기록은 작성할 수 없습니다");
+//        }
+//        Optional<Plant> plant = plantRepository.findById(plantCheckAddRequestDto.getPlantId());
+//        if (plant.isPresent()) {
+//            if (userId != plant.get().getUser().getUserId())
+//                throw new NotAuthorizedRequestException();
+//            PlantCheck plantCheck = PlantCheck.builder()
+//                    .plant(plant.get())
+//                    .isWatered(plantCheckAddRequestDto.isWatered())
+//                    .isFertilized(plantCheckAddRequestDto.isFertilized())
+//                    .isRepotted(plantCheckAddRequestDto.isRepotted())
+//                    .checkDate(plantCheckAddRequestDto.getCheckDate())
+//                    .build();
+//            plantCheckRepository.save(plantCheck);
+//            log.info(">>> addPlantCheck - 관리 기록 추가 완료, 식물 ID: {}, 관리 날짜: {}", plantCheckAddRequestDto.getPlantId(), plantCheckAddRequestDto.getCheckDate());
+//        } else {
+//            throw new EntityNotFoundException("일치하는 식물이 없습니다.");
+//        }
     }
 
     @Transactional

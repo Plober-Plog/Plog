@@ -141,8 +141,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(UserSignUpRequestDto userSignUpRequestDto) {
-        log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpRequestDto);
+    public User createUser(UserSignUpRequestDto userSignUpRequestDto, String imageUrl) {
+        log.info(">>> createUser - 사용자 회원가입 데이터: {}, Image url {}", userSignUpRequestDto, imageUrl);
+
+        Image image = new Image(imageUrl);
+        imageRepository.save(image);
 
         User user = User.builder()
                 .email(userSignUpRequestDto.getEmail())
@@ -153,11 +156,12 @@ public class UserServiceImpl implements UserService {
                 .isAd(userSignUpRequestDto.isAd())
                 .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
+                .imageId(image)
                 .chatAuth(ChatAuth.PUBLIC.getValue())
                 .searchId(userSignUpRequestDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
-                .sidoCode(userSignUpRequestDto.getSidoCode())
-                .gugunCode(userSignUpRequestDto.getGugunCode())
+                .sidoCode(userSignUpRequestDto.getSidoCode().hashCode())
+                .gugunCode(userSignUpRequestDto.getGugunCode().hashCode())
                 .source(userSignUpRequestDto.getSource())
                 .birthDate(userSignUpRequestDto.getBirthDate())
                 .build();
