@@ -224,8 +224,8 @@ public class ImageServiceImpl implements ImageService {
     public String loadThumbnailImageByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
         Optional<PlantDiaryImage> thumbnailImage = plantDiaryImageRepository.findByPlantDiaryIdAndIsThumbnailTrue(plantDiaryId);
-        if (thumbnailImage == null) {
-            return "";
+        if (thumbnailImage.isEmpty()) {
+            return null;
         }
         log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 성공, PlantDiaryId: {}", plantDiaryId);
         return thumbnailImage.get().getImage().getImageUrl();
