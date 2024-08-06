@@ -83,6 +83,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("*")
                 .allowedOrigins("https://i11b308.p.ssafy.io/**")
                 .allowedOrigins("http://localhost:3000")
+                .allowedHeaders("*")
                 .exposedHeaders("Authorization")
                 .allowedMethods("OPTIONS","GET","POST","PUT","DELETE","PATCH");
     }
