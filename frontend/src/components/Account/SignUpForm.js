@@ -182,7 +182,7 @@ const SignUpForm = () => {
       searchId,
       password: sha256(password),
       nickname,
-      profile: defaultProfile,// URL.createObjectURL(defaultProfile),
+      profile: defaultProfile,
       gender,
       birthDate: birthdate,
       source,
@@ -355,6 +355,7 @@ const SignUpForm = () => {
           onChange={(e) => setSource(e.target.value)}
           options={['가입경로', '지인추천', '인터넷 검색']}
           isRequired={false}
+          className="drop-box"
         />
         <RadioField
           selectedValue={gender}
@@ -373,12 +374,14 @@ const SignUpForm = () => {
             onChange={(e) => setSido(e.target.value)}
             options={['시/도']}
             isRequired={false}
+            className="drop-box"
           />
           <SelectField
             value={gugun}
             onChange={(e) => setGugun(e.target.value)}
             options={['구/군']}
             isRequired={false}
+            className="drop-box"
           />
         </div>
         <div>
