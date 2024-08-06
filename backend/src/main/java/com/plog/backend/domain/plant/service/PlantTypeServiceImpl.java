@@ -4,7 +4,6 @@ import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetSimpleResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeIdsGetListByUserResponseDto;
 import com.plog.backend.domain.plant.entity.PlantType;
-import com.plog.backend.domain.plant.repository.PlantRepository;
 import com.plog.backend.domain.plant.repository.PlantRepositorySupport;
 import com.plog.backend.domain.plant.repository.PlantTypeRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
