@@ -5,6 +5,7 @@ import com.plog.backend.domain.plant.dto.response.PlantTypeGetSimpleResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeIdsGetListByUserResponseDto;
 import com.plog.backend.domain.plant.service.PlantTypeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user/plant-type")
+@Tag(name = "Plant Type Controller", description = "식물 종류 API")
 public class PlantTypeController {
     private final PlantTypeService plantTypeService;
 
