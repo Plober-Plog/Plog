@@ -58,7 +58,23 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     @Transactional
     @Override
     public void updateArticleComment(String token, ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    return new NotValidRequestException("없는 사용자 입니다.");}
+                );
+
+        Long commentId = articleCommentUpdateRequestDto.getCommentId();
+
+        ArticleComment articleComment = articleCommentRepository.findById(commentId)
+                .orElseThrow(()-> {
+                    return new NotValidRequestException("없는 댓글 입니다.");
+                });
+
+        articleComment.setContent(articleCommentUpdateRequestDto.getComment());
+
+        articleCommentRepository.save(articleComment);
     }
 
     @Override
