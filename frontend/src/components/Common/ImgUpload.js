@@ -31,7 +31,7 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
         }}
       />
       <div>
-        {imgs.map((img, index) => (
+        {/* {imgs.map((img, index) => (
           <ImgPreview 
             key={index} 
             src={img.url} 
@@ -39,7 +39,7 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
             onDelete={() => handleDeleteImage(index)} 
             onSetThumbnail={() => handleSetThumbnail(index)} 
           />
-        ))}
+        ))} */}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../../apis/api';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImageSlider from '../../components/Common/ImgSlider';
 import DiaryWeather from '../../components/Diary/DiaryWeather';
@@ -19,10 +19,8 @@ import './PlantDiaryWrite.css';
 const PlantDiaryDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // const { plantId, date } = location.state; 
-  const URI = 'https://i11b308.p.ssafy.io/api';
 
-  const {plantId, date } = location.state;
+  const { plantId, date } = location.state;
   const [plantCheck, setPlantCheck] = useState(null);
   const [plantDiary, setPlantDiary] = useState(null);
 
@@ -33,12 +31,8 @@ const PlantDiaryDetail = () => {
     const getPlantDetailDiary = async () => {
       try {
         console.log(plantId, date);
-        const response = await axios.get(`${URI}/user/plant/${plantId}`, {
-          params: { date },
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
-          },
+        const response = await API.get(`/user/plant/${plantId}`, {
+          params: { date }
         });
 
         const data = response.data;
@@ -102,7 +96,7 @@ const PlantDiaryDetail = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`/api/user/diary/${plantDiaryId}`, {
+      const response = await API.delete(`/api/user/diary/${plantDiaryId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,

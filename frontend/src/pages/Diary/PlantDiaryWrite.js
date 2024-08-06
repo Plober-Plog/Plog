@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-// import API from '../path/to/api';
+import API from '../../apis/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DateDisplay from '../../components/Common/DateDisplay';
 import Btn from '../../components/Common/Btn';
@@ -26,7 +25,6 @@ const PlantDiaryWrite = () => {
   const navigate = useNavigate();
   const { plantId, date: selectedDate } = location.state || {};
 
-  const URI = 'https://i11b308.p.ssafy.io/api'
   const [content, setContent] = useState('');
   const [date, setDate] = useState(selectedDate); 
   const [isWatered, setIsWatered] = useState(false);
@@ -39,13 +37,17 @@ const PlantDiaryWrite = () => {
   const [plantDiaryId, setPlantDiaryId] = useState(null); //현재 날짜에 이미 작성된 일지가 있을 경우 해당 일지의 ID를 저장
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasPlantCheck, setHasPlantCheck] = useState(false); // 관리 기록이 있는지 여부를 저장하는 변수
+  const [writerInfoData, setWriterInfoData] = useState({});
 
-  // 임시 데이터 
-  const writerInfoData = {
-    profile: defaultImg, 
-    nickname: '조이',
-    plantTypeId: '몬스테라'
+  const fetchWriterInfo = async (plantId) => {
+    try {
+      const response = await API.get(`/user/plant/${plantId}/info`);
+      setWriterInfoData(response.data);
+    } catch (error) {
+      console.error('식물 정보 조회 에러:', error);
+    }
   };
+
   const thumbnailIdx = 0;
 
   // 해당 날짜에 작성된 식물 일지 기록 및 관리 기록 확인 
@@ -53,12 +55,8 @@ const PlantDiaryWrite = () => {
     console.log(plantId.data);
     console.log(date.data);
     try {
-      const response = await axios.get(`${URI}/user/plant/${plantId}`, {
-        params: { date },
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
-        },
+      const response = await API.get(`/user/plant/${plantId}`, {
+        params: { date }
       });
       console.log(response);
       return response.data;
@@ -72,6 +70,7 @@ const PlantDiaryWrite = () => {
  useEffect(() => {
   const getDiaryAndPlantCheck = async () => {
     try {
+      await fetchWriterInfo(plantId);
       const data = await fetchDiaryAndCheck(plantId, date);
       console.log(data);
       if (data.plantDiary || data.plantCheck) {
@@ -145,26 +144,26 @@ const PlantDiaryWrite = () => {
 
   // 이미지 업로드 .. => 잘 모루겟어서 지피티한테 물어봄 ㅜㅜ .. 이미지 부분 수정 가능성 높습니다.. ..
   const handleImageUpload = (event) => {
-    console.log(event.target.files);
-    setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
+    const files = Array.from(event.target.files);
     
-    // if (files.length + imgs.length > 5) { // 이미지가 5장을 초과하면 경고하고 반환
-    //   alert('최대 5장까지 업로드할 수 있습니다.');
-    //   return;
-    // }
+    if (files.length + imgs.length > 5) {
+      alert('최대 5장까지 업로드할 수 있습니다.');
+      return;
+    }
     
-    // const newImgs = files.map((file, index) => ({
-    //   file,
-    //   url: URL.createObjectURL(file), // 파일 객체로부터 미리보기 URL을 생성
-    //   isThumbnail: imgs.length === 0 && index === 0
-    // }));
+    const newImgs = files.map((file, index) => ({
+      url: URL.createObjectURL(file),
+      file,
+      isThumbnail: imgs.length === 0 && index === 0,
+    }));
 
-    // setImgs(prevImgs => {
-    //   if (prevImgs.length === 0 && newImgs.length > 0) { //길이가 0이고 새로운 이미지를 넣었을떄 길이가 0 이상이되면 
-    //     newImgs[0].isThumbnail = true; // 우선 대표사진으로 설정해줌
-    //   }
-    //   return [...prevImgs, ...newImgs];
-    // });
+    setImgs(prevImgs => {
+      const updatedImgs = [...prevImgs, ...newImgs];
+      if (updatedImgs.length > 0 && !updatedImgs.some(img => img.isThumbnail)) {
+        updatedImgs[0].isThumbnail = true;
+      }
+      return updatedImgs;
+    });
   };
 
   const handleDeleteImage = (index) => {
@@ -224,7 +223,9 @@ const PlantDiaryWrite = () => {
 
     imgs.forEach((img, index) => {
       diaryData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
-      diaryData.append('thumbnailIdx', index);  // 'imageIdx' key를 사용하여 각각의 index를 추가
+      if (img.isThumbnail) {
+        diaryData.append('thumbnailIdx', index);  // 'thumbnailIdx' key를 사용하여 대표 이미지 인덱스를 추가
+      }
     });
 
     console.log(diaryData);
@@ -237,41 +238,38 @@ const PlantDiaryWrite = () => {
     }
     console.log(plantData);
     console.log(thumbnailIdx);
-    // const imgs = {
 
-    // }
 
     // 일지작성요청 1
     try {
-
-      const diaryWriteResponse = await axios({
-        method: plantDiaryId ? 'PATCH' : 'POST',
-        url: plantDiaryId ? `${URI}/user/diary/${plantDiaryId}` : `${URI}/user/diary`,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
-        },
-        data : diaryData,
-      });
-      
-      if (diaryWriteResponse.status !== 200) {
-        throw new Error('일지 저장에 실패했습니다.');
+      if (plantDiaryId) {
+        const diaryWriteResponse = await API.patch(`user/diary/${plantDiaryId}`, diaryData);
+        // header 가 'Content-Type': 'multipart/form-data' 였는데 이건 어떻게 되는지?
+        if (diaryWriteResponse.status !== 200) {
+          throw new Error('일지 수정에 실패했습니다.');
+        }
       }
-
+      else {
+        const diaryWriteResponse = await API.post(`user/diary`, diaryData);
+        if (diaryWriteResponse.status !== 200) {
+          throw new Error('일지 작성에 실패했습니다.');
+        }
+      }
+      
       console.log(plantDiaryId);
       console.log(plantData);
-      const plantCheckResponse = await axios({
-        method: hasPlantCheck ? 'PATCH' : 'POST',
-        url: `${URI}/user/plant/${plantId}/check`,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
-        },
-        plantData,
-      });
 
-      if (plantCheckResponse.status !== 200) {
-        throw new Error('식물 정보 저장에 실패했습니다.');
+      if (hasPlantCheck) {
+        const plantCheckResponse = await API.patch(`user/plant/${plantId}/check`,plantData);
+        if (plantCheckResponse.status !== 200) {
+          throw new Error('식물 정보 수정에 실패했습니다.');
+        }
+      }
+      else {
+        const plantCheckResponse = await API.post(`user/plant/${plantId}/check`,plantData);
+        if (plantCheckResponse.status !== 200) {
+          throw new Error('식물 정보 저장에 실패했습니다.');
+        }
       }
 
       navigate(`/plant/${plantId}/${formattedDate}`, {
