@@ -81,6 +81,8 @@ public class SnsController {
     }
 
     // ============================= 댓글 =============================
+    @PostMapping("/comment")
+    public ResponseEntity<BaseResponseBody> addComment()
 
     // ============================= 좋아요 =============================
 
