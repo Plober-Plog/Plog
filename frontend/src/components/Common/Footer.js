@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import useButtonStore from "../../stores/footer";
 import snsSelect from "../../assets/icon/footer/sns-select.png";
 import snsDefault from "../../assets/icon/footer/sns-default.png";
@@ -10,11 +11,39 @@ import chatSelect from "../../assets/icon/footer/chat-select.png";
 import chatDefault from "../../assets/icon/footer/chat-default.png";
 import alarmSelect from "../../assets/icon/footer/alarm-select.png";
 import alarmDefault from "../../assets/icon/footer/alarm-default.png";
+import "./Footer.css";
 
 const Footer = () => {
   const { activeButton, setActiveButton } = useButtonStore(); 
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // 활성 버튼 바뀔 때마다 해당 icon 활성화
+  useEffect(() => {
+    const path = location.pathname;
+    switch (path) {
+      case "/sns":
+        setActiveButton("sns");
+        break;
+      case "/profile":
+        setActiveButton("profile");
+        break;
+      case "/":
+        setActiveButton("home");
+        break;
+      case "/chat":
+        setActiveButton("chat");
+        break;
+      case "/alarm":
+        setActiveButton("alarm");
+        break;
+      default:
+        setActiveButton("home");
+        break;
+    }
+  }, [location.pathname, setActiveButton]);
+
+  // footer 이동
   const handleClick = (icon) => {
     setActiveButton(icon);
 
@@ -40,37 +69,42 @@ const Footer = () => {
   };
 
   return (
-    <div>
-      <img
-        src={activeButton === "sns" ? snsSelect : snsDefault}
-        alt="sns 아이콘"
-        onClick={() => handleClick("sns")}
-        style={{ width: '50px', height: '50px'}}
-      />
-      <img
-        src={activeButton === "profile" ? profileSelect : profileDefault}
-        alt="profile 아이콘"
-        onClick={() => handleClick("profile")}
-        style={{ width: '50px', height: '50px'}}
-      />
-      <img
-        src={activeButton === "home" ? homeSelect : homeDefault}
-        alt="home 아이콘"
-        onClick={() => handleClick("home")}
-        style={{ width: '50px', height: '50px'}}
-      />
-      <img
-        src={activeButton === "chat" ? chatSelect : chatDefault}
-        alt="chat 아이콘"
-        onClick={() => handleClick("chat")}
-        style={{ width: '50px', height: '50px'}}
-      />
-      <img
-        src={activeButton === "alarm" ? alarmSelect : alarmDefault}
-        alt="alarm 아이콘"
-        onClick={() => handleClick("alarm")}
-        style={{ width: '50px', height: '50px'}}
-      />
+    <div className="footer-container">
+      <button className="footer-button" onClick={() => handleClick("sns")}>
+        <img
+          src={activeButton === "sns" ? snsSelect : snsDefault}
+          alt="sns 아이콘"
+          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+        />
+      </button>
+      <button className="footer-button" onClick={() => handleClick("profile")}>
+        <img
+          src={activeButton === "profile" ? profileSelect : profileDefault}
+          alt="profile 아이콘"
+          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+        />
+      </button>
+      <button className="footer-button" onClick={() => handleClick("home")}>
+        <img
+          src={activeButton === "home" ? homeSelect : homeDefault}
+          alt="home 아이콘"
+          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+        />
+      </button>
+      <button className="footer-button" onClick={() => handleClick("chat")}>
+        <img
+          src={activeButton === "chat" ? chatSelect : chatDefault}
+          alt="chat 아이콘"
+          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+        />
+      </button>
+      <button className="footer-button" onClick={() => handleClick("alarm")}>
+        <img
+          src={activeButton === "alarm" ? alarmSelect : alarmDefault}
+          alt="alarm 아이콘"
+          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon-select"}
+        />
+      </button>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 const useButtonStore = create((set) => ({
-  activeButton: null,
+  activeButton: 'home',
   setActiveButton: (button) => set({ activeButton: button }),
 }));
 
