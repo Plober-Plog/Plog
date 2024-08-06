@@ -127,11 +127,11 @@ const SignUpForm = () => {
     // 이메일 인증번호 전송
     try {
       console.log("인증 이메일 전송 : ",email);
-      const response = await axios.post(`${URI}/user/email`, { email }, {
+      const response = await axios.post(`${URI}/user/email/send`, { email }, {
         headers: {
           'Content-Type': 'application/json',
         },
-        withCredentials: true // 자격 증명 포함
+        // withCredentials: true // 자격 증명 포함
       });
       console.log('이메일 인증번호 전송 성공!');
       console.log(response)
