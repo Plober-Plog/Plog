@@ -151,14 +151,14 @@ public class UserServiceImpl implements UserService {
 
         User user = User.builder()
                 .email(userSignUpRequestDto.getEmail())
-                .gender(Gender.gender(userSignUpRequestDto.getGender()))
-                .role(Role.role(1))
-                .state(State.state(1))
+                .gender(userSignUpRequestDto.getGender())
+                .role(Role.USER.getValue())
+                .state(State.ACTIVTE.getValue())
                 .profileInfo("안녕하세용")
                 .isAd(userSignUpRequestDto.isAd())
                 .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
-                .chatAuth(ChatAuth.chatAuth(1))
+                .chatAuth(ChatAuth.PUBLIC.getValue())
                 .searchId(userSignUpRequestDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
                 .sidoCode(userSignUpRequestDto.getSidoCode())
@@ -229,7 +229,7 @@ public class UserServiceImpl implements UserService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            user.setState(State.DELETED);
+            user.setState(State.DELETED.getValue());
             userRepository.save(user);
             log.info(">>> deleteUser - 사용자 삭제 완료: {}", user);
         } else {

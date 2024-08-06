@@ -64,15 +64,6 @@ public class UserController {
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
 
-        // 이미지 업로드 처리
-        String imageUrl = null;
-        if (profileImage != null && !profileImage.isEmpty()) {
-            String[] uploadedUrls = imageService.uploadImages(new MultipartFile[]{profileImage});
-            imageUrl = uploadedUrls[0];
-        }
-
-        userSignUpRequestDto.setProfile(imageUrl);
-
         User user = userService.createUser(userSignUpRequestDto);
         log.info(">>> [POST] /user - 회원 가입 완료: {}", user);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
