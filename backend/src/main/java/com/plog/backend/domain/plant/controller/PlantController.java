@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -69,8 +70,8 @@ public class PlantController {
     @GetMapping
     public ResponseEntity<List<PlantGetResponseDto>> getPlantList(
             @RequestParam String searchId,
-            @RequestParam(required = false) String plantTypeId,
-            @RequestParam(required = false) String otherPlantTypeId,
+            @RequestParam(required = false) List<Long> plantTypeId,
+            @RequestParam(required = false) List<Long> otherPlantTypeId,
             @RequestParam(required = false, defaultValue = "0") String page) {
 
         log.info(">>> [GET] /user/plant - 검색 ID: {}, plantTypeId: {}, " +
@@ -82,10 +83,10 @@ public class PlantController {
         plantGetRequestDto.setPage(Integer.parseInt(page));
 
         List<PlantGetResponseDto> plantGetResponseDtoList;
-
+        log.info(plantTypeId + " " + otherPlantTypeId);
         if (plantTypeId != null && otherPlantTypeId != null) {
-            plantGetRequestDto.setPlantTypeId(Long.parseLong(plantTypeId));
-            plantGetRequestDto.setOtherPlantTypeId(Long.parseLong(otherPlantTypeId));
+            plantGetRequestDto.setPlantTypeId(plantTypeId);
+            plantGetRequestDto.setOtherPlantTypeId(otherPlantTypeId);
             plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(plantGetRequestDto);
         } else {
             plantGetResponseDtoList = plantService.getPlantList(plantGetRequestDto);
