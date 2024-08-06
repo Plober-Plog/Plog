@@ -1,5 +1,7 @@
 package com.plog.backend.domain.user.controller;
 
+import com.plog.backend.domain.image.repository.ImageRepository;
+import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.user.dto.request.*;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -25,18 +28,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "User API", description = "User 관련 API")
-@CrossOrigin(origins = "http://localhost:3000", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.PUT })
 public class UserController {
     private final UserServiceImpl userService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ImageServiceImpl imageService;
+    private final ImageRepository imageRepository;
 
     private static final String EMAIL_PATTERN =
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
     @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping
-    public ResponseEntity<BaseResponseBody> createUser(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
+    public ResponseEntity<BaseResponseBody> createUser(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+                                                       @RequestPart("userInfo") UserSignUpRequestDto userSignUpRequestDto) {
         log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
+
         if(userSignUpRequestDto.getEmail() == null || userSignUpRequestDto.getEmail().trim().isEmpty()) {
             log.error(">>> [POST] /user - 이메일이 필수 필드입니다.");
             throw new NotValidRequestException("email은 필수 필드입니다.");
@@ -57,6 +63,15 @@ public class UserController {
             log.error(">>> [POST] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
+
+        // 이미지 업로드 처리
+        String imageUrl = null;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String[] uploadedUrls = imageService.uploadImages(new MultipartFile[]{profileImage});
+            imageUrl = uploadedUrls[0];
+        }
+
+        userSignUpRequestDto.setProfile(imageUrl);
 
         User user = userService.createUser(userSignUpRequestDto);
         log.info(">>> [POST] /user - 회원 가입 완료: {}", user);
@@ -215,3 +230,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
+
+//TODO [장현준] - User
+// 1. 탈퇴 후, 다시 가입을 할때는 => 원래 값에 위의 덮기
+// 2. 탈퇴 후, 가입을 못하게 해야한다.
+// 3. 회원 객체 프로필 사진
