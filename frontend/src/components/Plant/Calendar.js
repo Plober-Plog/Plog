@@ -74,7 +74,12 @@ const CustomCalendar = ({ plantId }) => {
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
     const checkRecord = checkRecords.find(check => new Date(check.checkDate).toDateString() === date.toDateString());
     if (diaryRecord || checkRecord) {
-      navigate(`/plant/${plantId}/${formattedDate}`);
+      navigate(`/plant/${plantId}/${formattedDate}`, {
+        state: {
+          date: formattedDate,
+          plantId: plantId
+        }
+        });
     } else {
       navigate(`/plant/${plantId}/${formattedDate}/write`, {
         state: {

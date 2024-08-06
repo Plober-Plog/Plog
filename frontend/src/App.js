@@ -35,10 +35,10 @@ function App() {
               <Route path="/password/find" element={<PasswordFind />} />
               <Route path="/password/update" element={<PasswordUpdate />} />
               <Route path="/setting" element={<Setting />} />
-              <Route path="/write" element={<PlantDiaryWrite />} />
-              <Route path="/diary/:plantDiaryId" element={<PlantDiaryDetail />} />
-              {/* <Route path="/plant/:plantId" element={<PlantDetail />} /> */}
-              <Route path="/plant" element={<PlantDetail />} />
+              <Route path="/plant/:plantId/:date/write" element={<PlantDiaryWrite />} />
+              <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
+              <Route path="/plant/:plantId" element={<PlantDetail />} />
+              {/* <Route path="/plant" element={<PlantDetail />} /> */}
               {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
               <Route path="/plant/register" element={<PlantRegister />} />
             </Routes>
