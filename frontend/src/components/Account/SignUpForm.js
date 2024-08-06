@@ -176,19 +176,32 @@ const SignUpForm = () => {
 // 회원가입 버튼 클릭
 const handleSignUp = async () => {
     
-  const userInfo = {
-    // TODO default 이미지 추가하기
-    email,
-    searchId,
-    password: sha256(password),
-    nickname,
-    gender,
-    birthDate: birthdate,
-    source,
-    sidoCode: sido,
-    gugunCode: gugun,
-    profileInfo: "",
-    isAd: agreeAdvertisement
+    const userInfo = {
+      // TODO default 이미지 추가하기
+      email,
+      searchId,
+      password: sha256(password),
+      nickname,
+      profile: defaultProfile,
+      gender,
+      birthDate: birthdate,
+      source,
+      sidoCode: sido,
+      gugunCode: gugun,
+      profileInfo: "",
+      isAd: agreeAdvertisement
+    };
+
+    console.log('정보 받기 성공!');
+    console.log(userInfo);
+
+    // 회원가입 요청
+    try {
+      await axios.post(`${URI}/user`, userInfo);
+      setOpenModal(true);
+    } catch (error) {
+      console.error('회원가입 실패: ', error);
+    }
   };
 
   //// git push 전, 지울부분  -> 이해를 위해 남겨두겠음..!////
