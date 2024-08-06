@@ -19,7 +19,7 @@ const UserProfile = ({ userId = 1 }) => {
         const response = await axios.get(`${URI}/user/plant/${userId}/info`);
         setUserData(response.data);
       } catch (error) {
-        console.error("UserData Error:", error.response.data);
+        console.error("UserData Error:", error);
       }
     };
 
