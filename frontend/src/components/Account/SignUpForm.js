@@ -209,6 +209,7 @@ const handleSignUp = async () => {
   console.log('정보 받기 성공!');
   console.log(userInfo);
 
+
   // 회원가입 요청
   try {
     await axios.post(`${URI}/user`, formData, {
