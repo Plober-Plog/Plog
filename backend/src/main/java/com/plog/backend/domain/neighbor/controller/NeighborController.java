@@ -23,7 +23,7 @@ public class NeighborController {
 
     // 이웃 추가
     @Operation(summary = "이웃 추가", description = "이웃을 추가합니다.")
-    @PostMapping
+    @PostMapping("/mutual/access")
     public ResponseEntity<?> createNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
         neighborService.addNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "이웃이 추가 되었습니다."));
@@ -31,7 +31,7 @@ public class NeighborController {
 
     // 이웃 삭제
     @Operation(summary = "이웃 삭제", description = "이웃을 삭제합니다.")
-    @DeleteMapping
+    @DeleteMapping("/mutual")
     public ResponseEntity<?> deleteNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
         neighborService.deleteNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "이웃이 삭제 되었습니다."));
