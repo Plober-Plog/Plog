@@ -38,7 +38,6 @@ public class NeighborController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "이웃이 삭제 되었습니다."));
     }
 
-
     // 서로 이웃 추가
     @Operation(summary = "서로 이웃 추가", description = "이웃을 추가합니다.")
     @PostMapping("/mutual/access")
@@ -55,5 +54,40 @@ public class NeighborController {
             throw new NotValidRequestException("삭제 후 이웃 관계를 설정이 필요합니다.");
         neighborService.deleteMutualNeighbor(token, neighborMutualAddRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "서로 이웃이 삭제 되었습니다."));
+    }
+
+    // 사용자가 추가한 이웃 목록
+    @Operation(summary = "사용자가 추가한 이웃 목록", description = "회원이 추가한 이웃 목록을 조회합니다.")
+    @GetMapping("/{searchId}/to")
+    public ResponseEntity<?> getNeighborsTo(@PathVariable("searchId") String searchId) {
+        return null;
+    }
+
+    // 사용자가 추가한 이웃 목록
+    @Operation(summary = "사용자가 추가한 이웃 목록", description = "회원이 추가한 이웃 목록을 조회합니다.")
+    @GetMapping("/{searchId}/to")
+    public ResponseEntity<?> getNeighborsToCount(@PathVariable("searchId") String searchId) {
+        return null;
+    }
+
+    // 사용자를 추가한 이웃 목록
+    @Operation(summary = "사용자가 추가한 이웃 목록", description = "회원이 추가한 이웃 목록을 조회합니다.")
+    @GetMapping("/{searchId}/to/count")
+    public ResponseEntity<?> getNeighborsFrom(@PathVariable("searchId") String searchId) {
+        return null;
+    }
+
+    // 사용자를 추가한 이웃 목록
+    @Operation(summary = "사용자가 추가한 이웃 목록", description = "회원이 추가한 이웃 목록을 조회합니다.")
+    @GetMapping("/{searchId}/from")
+    public ResponseEntity<?> getNeighborsFromCount(@PathVariable("searchId") String searchId) {
+        return null;
+    }
+
+    // 사용자를 추가한 이웃 목록
+    @Operation(summary = "사용자가 추가한 이웃 목록", description = "회원이 추가한 이웃 목록을 조회합니다.")
+    @GetMapping("/{searchId}/from/count")
+    public ResponseEntity<?> getMutualNeighbors(@PathVariable("searchId") String searchId) {
+        return null;
     }
 }
