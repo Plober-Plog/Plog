@@ -22,15 +22,15 @@ import repottedIcon from '../../assets/icon/repotted.png';
 import './PlantDiaryWrite.css';
 
 //TODO [차유림] 현재는 location 받아오는 게 없어서 오류가 남 우선 주석처리했음
-const PlantDiaryWrite = ({ currentDate = new Date(), plantId=1 }) => {  
-  // const location = useLocation();
+const PlantDiaryWrite = () => {  
+  const location = useLocation();
   const navigate = useNavigate();
-  // const { plantId, date: selectedDate } = location.state;
+  const { plantId, date: selectedDate } = location.state;
 
   const URI = 'https://i11b308.p.ssafy.io/api'
   const [content, setContent] = useState('');
-  // const [date, setDate] = useState(selectedDate); 
-  const [date, setDate] = useState(new Date(currentDate));
+  const [date, setDate] = useState(selectedDate); 
+  // const [date, setDate] = useState(new Date(currentDate));
   const [isWatered, setIsWatered] = useState(false);
   const [isFertilized, setIsFertilized] = useState(false);
   const [isRepotted, setIsRepotted] = useState(false);
