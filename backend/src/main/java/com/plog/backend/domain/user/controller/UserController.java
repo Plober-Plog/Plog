@@ -74,7 +74,7 @@ public class UserController {
             log.info(">>> [POST] /user - 프로필 이미지 저장 완료: {}", profileImageUrl[0]);
         }
 
-        User user = userService.createUser(userSignUpRequestDto);
+        User user = userService.createUser(userSignUpRequestDto, profileImageUrl[0]);
         log.info(">>> [POST] /user - 회원 가입 완료: {}", user);
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
