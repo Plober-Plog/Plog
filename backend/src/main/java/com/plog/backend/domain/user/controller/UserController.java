@@ -41,7 +41,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<BaseResponseBody> createUser(
             @RequestPart("user") UserSignUpRequestDto userSignUpRequestDto,
-            @RequestPart("profile") MultipartFile profile) {
+            @RequestPart(value = "profile", required = false) MultipartFile[] profile) {
 
         log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
 
@@ -66,16 +66,16 @@ public class UserController {
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
 
-//        // 프로필 이미지를 처리하는 로직 추가
-//        String profileImageUrl = null;
-//        if (profile != null && !profile.isEmpty()) {
-//            // 파일 저장 로직 예시
-//            profileImageUrl = imageService.uploadImages(profile);
-//            log.info(">>> [POST] /user - 프로필 이미지 저장 완료: {}", profileImageUrl);
-//        }
-//
-//        User user = userService.createUser(userSignUpRequestDto, profileImageUrl);
-//        log.info(">>> [POST] /user - 회원 가입 완료: {}", user);
+        // 프로필 이미지를 처리하는 로직 추가
+        String[] profileImageUrl = null;
+        if (profile.length > 0) {
+            // 파일 저장 로직 예시
+            profileImageUrl = imageService.uploadImages(profile);
+            log.info(">>> [POST] /user - 프로필 이미지 저장 완료: {}", profileImageUrl[0]);
+        }
+
+        User user = userService.createUser(userSignUpRequestDto);
+        log.info(">>> [POST] /user - 회원 가입 완료: {}", user);
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
     }

@@ -103,6 +103,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             e.printStackTrace();
             throw new ServletException("Exception in JwtAuthenticationFilter", e);
         }
+        logger.warn("JWT Filter chain finish");
     }
 
 }
