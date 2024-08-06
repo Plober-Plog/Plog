@@ -19,6 +19,9 @@ import ApiTest from './pages/Plant/ApiTest';
 import Header from './components/Common/Header';
 import UserProfile from './pages/Profile/UserProfile';
 
+// Test
+import ProfilePage from './pages/TestProfile/ProfilePage';
+
 function App() {
   return (
     <div className='container'>
@@ -26,7 +29,7 @@ function App() {
         <header className='full-width'>
           <Header />
         </header>
-        <main class='content'>
+        <main className='content'>
 
             <Routes>
               <Route path="/" element={<Home />}/>
@@ -44,7 +47,8 @@ function App() {
               {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
               <Route path="/plant/register" element={<PlantRegister />} />
               {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
-              <Route path="/profile" element={<UserProfile />}/>
+              <Route path="/profile/:searchId" element={<UserProfile />} />
+              {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
             </Routes>
 
         </main>
