@@ -130,7 +130,7 @@ const SignUpForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        withCredentials: true // 자격 증명 포함
+        // withCredentials: true // 자격 증명 포함
       });
       console.log('이메일 인증번호 전송 성공!');
       console.log(response)
