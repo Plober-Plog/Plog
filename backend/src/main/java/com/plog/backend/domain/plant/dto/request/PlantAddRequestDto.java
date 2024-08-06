@@ -16,8 +16,8 @@ public class PlantAddRequestDto {
     @Schema(description = "기본 식물 종류 ID (2부터 유효한 값)", example = "2")
     private Long plantTypeId;
 
-    @Schema(description = "기타 식물 종류 ID (2부터 유효한 값)", example = "1")
-    private Long otherPlantTypeId;
+    @Schema(description = "기타 식물 이름", example = "기타식물임")
+    private String otherPlantName;
 
     @Schema(description = "프로필 사진")
     private MultipartFile profile;

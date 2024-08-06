@@ -4,6 +4,7 @@ import com.plog.backend.domain.plant.dto.request.*;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
+import com.plog.backend.domain.plant.dto.response.PlantTypeIdsGetListByUserResponseDto;
 import com.plog.backend.domain.plant.exception.NotValidPlantTypeIdsException;
 
 import java.util.List;
@@ -12,8 +13,6 @@ public interface PlantService {
     void addPlant(String token, PlantAddRequestDto plantAddRequest);
 
     PlantGetResponseDto getPlant(Long plantId);
-
-    PlantTypeGetResponseDto getPlantType(Long plantTypeId);
 
     List<PlantGetResponseDto> getPlantList(PlantGetRequestDto plantGetRequestDto);
 
@@ -36,6 +35,10 @@ public interface PlantService {
     void deletePlantCheck(String token, Long plantId, String checkDate);
 
     List<PlantCheckGetResponseDto> getPlantCheckByYearAndMonth(PlantGetByYearAndMonthRequestDto plantGetByYearAndMonthRequestDto);
+
+    PlantTypeGetResponseDto getPlantType(Long plantTypeId);
+
+    PlantTypeIdsGetListByUserResponseDto getPlantTypeIdsByUserSearchId(String searchId);
 
     //TODO [강윤서]
     // - waterDate, fertilizeDate, repotDate 계산하는 로직

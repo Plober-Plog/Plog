@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
 import com.plog.backend.domain.image.exception.ImageNotFoundException;
@@ -122,9 +123,9 @@ public class ImageServiceImpl implements ImageService {
                     PlantDiaryImage plantDiaryImage = new PlantDiaryImage();
                     plantDiaryImage.setPlantDiaryId(plantDiaryId);
                     plantDiaryImage.setImage(img);
-                    plantDiaryImage.setOrder(order++);
                     if (order - 1 == thumbnailIdx)
                         plantDiaryImage.setThumbnail(true);
+                    plantDiaryImage.setOrder(order++);
                     plantDiaryImageList.add(plantDiaryImage);
                 }
             }
@@ -181,28 +182,52 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<String> loadImagesByPlantDiaryId(Long plantDiaryId) {
+    public List<PlantDiaryImageGetResponseDto> loadImagesByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadImagesByPlantDiaryId - 플랜트 다이어리 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
         List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
         if (plantDiaryImages.isEmpty()) {
-            throw new ImageNotFoundException("해당 플랜트 다이어리에 해당하는 이미지를 찾을 수 없습니다.");
+            return new ArrayList<>();
         }
 
+        List<PlantDiaryImageGetResponseDto> plantDiaryImageGetResponseDtoList = new ArrayList<>();
+        for (PlantDiaryImage plantDiaryImage : plantDiaryImages) {
+            plantDiaryImageGetResponseDtoList.add(
+                    PlantDiaryImageGetResponseDto.builder()
+                            .plantDiaryImageId(plantDiaryImage.getPlantDiaryImageId())
+                            .plantDiaryId(plantDiaryImage.getPlantDiaryId())
+                            .image(plantDiaryImage.getImage())
+                            .order(plantDiaryImage.getOrder())
+                            .isThumbnail(plantDiaryImage.isThumbnail())
+                            .build());
+
+        }
+
+        log.info(">>> loadImagesByPlantDiaryId - 플랜트 다이어리 이미지 로드 성공, PlantDiaryId: {}", plantDiaryId);
+        return plantDiaryImageGetResponseDtoList;
+    }
+
+    @Override
+    public List<String> loadImageUrlsByPlantDiaryId(Long plantDiaryId) {
+        log.info(">>> loadImageUrlsByPlantDiaryId - 플랜트 다이어리 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
+        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
+        if (plantDiaryImages.isEmpty()) {
+            return new ArrayList<>();
+        }
         List<String> imageUrls = new ArrayList<>();
         for (PlantDiaryImage plantDiaryImage : plantDiaryImages) {
             imageUrls.add(plantDiaryImage.getImage().getImageUrl());
         }
-
-        log.info(">>> loadImagesByPlantDiaryId - 플랜트 다이어리 이미지 로드 성공, PlantDiaryId: {}", plantDiaryId);
         return imageUrls;
     }
 
     @Override
     public String loadThumbnailImageByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
-        PlantDiaryImage thumbnailImage = plantDiaryImageRepository.findByPlantDiaryIdAndIsThumbnailTrue(plantDiaryId)
-                .orElseThrow(() -> new ImageNotFoundException("해당 플랜트 다이어리에 해당하는 썸네일 이미지를 찾을 수 없습니다."));
+        Optional<PlantDiaryImage> thumbnailImage = plantDiaryImageRepository.findByPlantDiaryIdAndIsThumbnailTrue(plantDiaryId);
+        if (thumbnailImage.isEmpty()) {
+            return null;
+        }
         log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 성공, PlantDiaryId: {}", plantDiaryId);
-        return thumbnailImage.getImage().getImageUrl();
+        return thumbnailImage.get().getImage().getImageUrl();
     }
 }

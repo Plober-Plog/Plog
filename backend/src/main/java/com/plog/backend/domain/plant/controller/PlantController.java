@@ -7,7 +7,6 @@ import com.plog.backend.domain.plant.dto.request.*;
 import com.plog.backend.domain.plant.dto.response.PlantCheckGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetRecordsResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
-import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.service.PlantService;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
@@ -15,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -32,8 +31,7 @@ public class PlantController {
     @PostMapping
     public ResponseEntity<BaseResponseBody> addPlant(
             @RequestHeader("Authorization") String token,
-            @RequestPart("profile") MultipartFile profile,
-            @RequestPart("plantData") PlantAddRequestDto plantAddRequestDto) {
+            @ModelAttribute PlantAddRequestDto plantAddRequestDto) {
         log.info(">>> [POST] /user/plant - 요청 데이터: {}", plantAddRequestDto);
         if (plantAddRequestDto.getNickname() == null || plantAddRequestDto.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
@@ -41,7 +39,6 @@ public class PlantController {
         if (plantAddRequestDto.getBirthDate() == null) {
             throw new NotValidRequestException("birthDate는 필수 필드입니다.");
         }
-        plantAddRequestDto.setProfile(profile);
         plantService.addPlant(token, plantAddRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 등록이 완료되었습니다."));
     }
@@ -73,8 +70,8 @@ public class PlantController {
     @GetMapping
     public ResponseEntity<List<PlantGetResponseDto>> getPlantList(
             @RequestParam String searchId,
-            @RequestParam(required = false) String plantTypeId,
-            @RequestParam(required = false) String otherPlantTypeId,
+            @RequestParam(required = false) List<Long> plantTypeId,
+            @RequestParam(required = false) List<Long> otherPlantTypeId,
             @RequestParam(required = false, defaultValue = "0") String page) {
 
         log.info(">>> [GET] /user/plant - 검색 ID: {}, plantTypeId: {}, " +
@@ -86,10 +83,10 @@ public class PlantController {
         plantGetRequestDto.setPage(Integer.parseInt(page));
 
         List<PlantGetResponseDto> plantGetResponseDtoList;
-
+        log.info(plantTypeId + " " + otherPlantTypeId);
         if (plantTypeId != null && otherPlantTypeId != null) {
-            plantGetRequestDto.setPlantTypeId(Long.parseLong(plantTypeId));
-            plantGetRequestDto.setOtherPlantTypeId(Long.parseLong(otherPlantTypeId));
+            plantGetRequestDto.setPlantTypeId(plantTypeId);
+            plantGetRequestDto.setOtherPlantTypeId(otherPlantTypeId);
             plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(plantGetRequestDto);
         } else {
             plantGetResponseDtoList = plantService.getPlantList(plantGetRequestDto);
@@ -103,7 +100,7 @@ public class PlantController {
     public ResponseEntity<BaseResponseBody> updatePlant(
             @RequestHeader("Authorization") String token,
             @PathVariable Long plantId,
-            @RequestBody PlantUpdateRequestDto plantUpdateRequestDto) {
+            @ModelAttribute PlantUpdateRequestDto plantUpdateRequestDto) {
         log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequestDto);
         plantUpdateRequestDto.setPlantId(plantId);
         plantService.updatePlant(token, plantUpdateRequestDto);

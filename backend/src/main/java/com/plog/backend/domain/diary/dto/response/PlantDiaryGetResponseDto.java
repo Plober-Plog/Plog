@@ -21,14 +21,14 @@ public class PlantDiaryGetResponseDto {
     @Schema(description = "식물 ID", example = "2")
     private Long plantId;
 
-    @Schema(description = "SUNNY, CLOUDY, VERY_CLOUDY, RAINY 순서대로 1부터 시작", example = "1")
-    private int weather;
+    @Schema(description = "SUNNY, CLOUDY, VERY_CLOUDY, RAINY 중 하나", example = "1")
+    private Weather weather;
 
     @Schema(description = "기온", example = "28.5")
     private float temperature;
 
-    @Schema(description = "DRY, CLEAN,  NORMAL, MOIST, WET 순서대로 1부터 시작", example = "2")
-    private int humidity;
+    @Schema(description = "DRY, CLEAN,  NORMAL, MOIST, WET", example = "2")
+    private Humidity humidity;
 
     @Schema(description = "식물 일지 내용", example = "오늘은 식물이 잘 자랐어요.")
     private String content;
