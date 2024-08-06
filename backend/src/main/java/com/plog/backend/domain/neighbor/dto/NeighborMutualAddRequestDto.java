@@ -10,5 +10,5 @@ import lombok.*;
 @Builder
 public class NeighborMutualAddRequestDto {
     private String neighborSearchId;
-    private boolean isDelete;
+    private Boolean isDelete;
 }

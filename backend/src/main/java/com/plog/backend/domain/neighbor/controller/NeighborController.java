@@ -3,6 +3,7 @@ package com.plog.backend.domain.neighbor.controller;
 import com.plog.backend.domain.neighbor.dto.NeighborAddRequestDto;
 import com.plog.backend.domain.neighbor.dto.NeighborMutualAddRequestDto;
 import com.plog.backend.domain.neighbor.service.NeighborServiceImpl;
+import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,14 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user/neighbor")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "User API", description = "User 관련 API")
+@Tag(name = "Neighbor API", description = "이웃 관련 API")
 public class NeighborController {
 
     private final NeighborServiceImpl neighborService;
 
     // 이웃 추가
     @Operation(summary = "이웃 추가", description = "이웃을 추가합니다.")
-    @PostMapping("/mutual/access")
+    @PostMapping
     public ResponseEntity<?> createNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
         neighborService.addNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "이웃이 추가 되었습니다."));
@@ -31,7 +32,7 @@ public class NeighborController {
 
     // 이웃 삭제
     @Operation(summary = "이웃 삭제", description = "이웃을 삭제합니다.")
-    @DeleteMapping("/mutual")
+    @DeleteMapping
     public ResponseEntity<?> deleteNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
         neighborService.deleteNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "이웃이 삭제 되었습니다."));
@@ -39,18 +40,20 @@ public class NeighborController {
 
 
     // 서로 이웃 추가
-    @Operation(summary = "이웃 추가", description = "이웃을 추가합니다.")
-    @PostMapping
+    @Operation(summary = "서로 이웃 추가", description = "이웃을 추가합니다.")
+    @PostMapping("/mutual/access")
     public ResponseEntity<?> createMutualNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborMutualAddRequestDto neighborAddRequestDto) {
-        neighborService.addNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
+        neighborService.addMutualNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "서로 이웃이 추가 되었습니다."));
     }
 
     // 서로 이웃 삭제
-    @Operation(summary = "이웃 삭제", description = "이웃을 삭제합니다.")
-    @DeleteMapping
-    public ResponseEntity<?> deleteMutualNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborMutualAddRequestDto neighborAddRequestDto) {
-        neighborService.deleteNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
+    @Operation(summary = "서로 이웃 삭제", description = "이웃을 삭제합니다.")
+    @DeleteMapping("/mutual")
+    public ResponseEntity<?> deleteMutualNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborMutualAddRequestDto neighborMutualAddRequestDto) {
+        if(neighborMutualAddRequestDto.getIsDelete() == null)
+            throw new NotValidRequestException("삭제 후 이웃 관계를 설정이 필요합니다.");
+        neighborService.deleteMutualNeighbor(token, neighborMutualAddRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "서로 이웃이 삭제 되었습니다."));
     }
 }

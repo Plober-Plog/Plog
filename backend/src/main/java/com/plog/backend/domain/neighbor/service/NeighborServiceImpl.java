@@ -6,6 +6,7 @@ import com.plog.backend.domain.neighbor.entity.NeighborType;
 import com.plog.backend.domain.neighbor.repository.NeighborRepository;
 import com.plog.backend.domain.neighbor.repository.NeighborRepositorySupport;
 import com.plog.backend.domain.user.entity.User;
+import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
@@ -34,10 +35,8 @@ public class NeighborServiceImpl implements NeighborService {
         User neighborUser = userRepository.findUserBySearchId(neighborSearchId)
                 .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
 
-        neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, NeighborType.NEIGHBOR.getValue())
-                .orElseThrow(() -> {
-                    return new EntityNotFoundException("이웃 관계가 없습니다.");
-                });
+        if(neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, NeighborType.NEIGHBOR.getValue()).isPresent())
+            throw new NotValidRequestException("이미 있는 이웃입니다.");
 
         Neighbor neighbor = Neighbor.builder()
                 .neighborFrom(user)
@@ -77,6 +76,9 @@ public class NeighborServiceImpl implements NeighborService {
         User neighborUser = userRepository.findUserBySearchId(neighborSearchId)
                 .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
 
+        if(neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, 2).isPresent())
+            throw new NotValidRequestException("이미 있는 서로 이웃입니다.");
+
         Neighbor neighborFrom = Neighbor.builder()
                 .neighborFrom(user)
                 .neighborTo(neighborUser)
@@ -99,7 +101,7 @@ public class NeighborServiceImpl implements NeighborService {
     public void deleteMutualNeighbor(String token, NeighborMutualAddRequestDto neighborMutualAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         String neighborSearchId = neighborMutualAddRequestDto.getNeighborSearchId();
-        boolean isDelete = neighborMutualAddRequestDto.isDelete();
+        boolean isDelete = neighborMutualAddRequestDto.getIsDelete();
 
         log.info(">>> 서로 이웃 삭제: userId={}, neighborId={}", userId, neighborSearchId);
 
