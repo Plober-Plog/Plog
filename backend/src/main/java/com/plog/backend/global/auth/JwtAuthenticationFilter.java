@@ -54,8 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
         if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
             chain.doFilter(request, response); // 필터 체인 계속 진행
-            log.info("reqeustURI" + requestURI + " requestMethod" + requestMethod);
-
             return;
         }
 
@@ -97,7 +95,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        logger.warn("go to next chain");
         try {
             chain.doFilter(request, response);
         } catch (Exception e) {
@@ -105,7 +102,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             e.printStackTrace();
             throw new ServletException("Exception in JwtAuthenticationFilter", e);
         }
-        logger.warn("JWT Filter chain finish");
     }
 
 }
