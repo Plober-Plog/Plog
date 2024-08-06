@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+// default
+import Header from './components/Common/Header';
+import Footer from './components/Common/Footer';
 // Account
 import SignUp from './pages/Account/SignUp';
 import Login from './pages/Account/Login';
@@ -15,7 +18,7 @@ import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
 import PlantDetail from './pages/Plant/PlantDetail';
 import PlantRegister from './pages/Plant/PlantRegister';
 import ApiTest from './pages/Plant/ApiTest';
-import Header from './components/Common/Header';
+// Profile
 import UserProfile from './pages/Profile/UserProfile';
 
 function App() {
@@ -44,8 +47,10 @@ function App() {
               {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
               <Route path="/profile" element={<UserProfile />}/>
             </Routes>
-
         </main>
+        <footer className='full-width'>
+          <Footer />
+        </footer>
       </Router>
     </div>
   );
