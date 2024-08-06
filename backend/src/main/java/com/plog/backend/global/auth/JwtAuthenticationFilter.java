@@ -34,28 +34,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final PloberUserDetailService userDetailsService;
 
-//    // JWT 검증을 건너뛰어야 하는 URI와 HTTP 메소드 목록
-//    private static final Map<String, List<String>> EXCLUDE_URLS = new HashMap<>() {{
-//        put("/api/user", List.of("POST")); // 회원가입 요청 제외
-//        put("/api/user/login", List.of("POST")); // 로그인 요청 제외
-//        // 필요한 다른 URI와 메소드 추가
-//    }};
+    // JWT 검증을 건너뛰어야 하는 URI와 HTTP 메소드 목록
+    private static final Map<String, List<String>> EXCLUDE_URLS = new HashMap<>() {{
+        put("/api/user", List.of("POST")); // 회원가입 요청 제외
+        put("/api/user/login", List.of("POST")); // 로그인 요청 제외
+        // 필요한 다른 URI와 메소드 추가
+    }};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         final String requestTokenHeader = request.getHeader(JwtTokenUtil.HEADER_STRING);
 
-//        String requestURI = request.getRequestURI();
-//        String requestMethod = request.getMethod();
-//
-//        log.info("JWT Filter 확인 : URI {}, Method {}", requestURI, requestMethod);
+        String requestURI = request.getRequestURI();
+        String requestMethod = request.getMethod();
 
-//        // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
-//        if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
-//            chain.doFilter(request, response); // 필터 체인 계속 진행
-//            return;
-//        }
+        log.info("JWT Filter 확인 : URI {}, Method {}", requestURI, requestMethod);
+
+        // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
+        if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
+            chain.doFilter(request, response); // 필터 체인 계속 진행
+            return;
+        }
 
         String userId = null;
         String jwtToken = null;
