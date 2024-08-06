@@ -67,8 +67,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private ChatAuth chatAuth;
 
-    @Column(nullable = false)
-    @ColumnDefault("'글을 남겨주세요.'")
+    @Column
     private String profileInfo;
 
     @Column

@@ -79,7 +79,7 @@ public class EmailController {
         try {
             boolean isVerify = emailService.verifyEmailCode(emailVerifyRequestDto.getEmail(), emailVerifyRequestDto.getVerifyCode());
             log.info(">>> [POST] /user/password/check - 비밀번호 찾기 인증코드 검증 결과: {}", isVerify);
-            verifyResponseDto = new VerifyResponseDto(isVerify, "", -1L);
+            verifyResponseDto = new VerifyResponseDto(isVerify, "", userRepositorySupport.findByEmail(emailVerifyRequestDto.getEmail()).getUserId());
             if(isVerify) {
                 verifyResponseDto.setMessage("인증코드가 확인 되었습니다.");
                 return ResponseEntity.status(HttpStatus.OK).body(verifyResponseDto);

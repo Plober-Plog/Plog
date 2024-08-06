@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 public class UserProfileResponseDto {
+    private String searchId;
     private String profile;
     private String nickname;
     private String profile_info;
