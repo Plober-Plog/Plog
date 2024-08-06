@@ -23,7 +23,10 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service("weatherService")
@@ -58,7 +61,7 @@ public class WeatherServiceImpl implements WeatherService {
                 LocalDate today = LocalDate.now();
                 String todayKey = "weather:" + today.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ":" + gugun.getGugunId();
 
-                log.info("Storing today's weather data in Redis for key: {}", todayKey);
+                log.info("Weather Data 키: {}", todayKey);
                 try {
                     redisTemplate.opsForHash().put(todayKey, "avgTempToday", weatherResult.getAvgTempToday());
                     redisTemplate.opsForHash().put(todayKey, "avgHumidityToday", weatherResult.getAvgHumidityToday());
@@ -69,15 +72,15 @@ public class WeatherServiceImpl implements WeatherService {
 
                     // Set expiration for today's key to 25 hours
                     redisTemplate.expire(todayKey, 25, TimeUnit.HOURS);
-                    log.info("Set expiration for key {} to 25 hours", todayKey);
+//                    log.info("Set expiration for key {} to 25 hours", todayKey);
 
                     // Verify data in Redis
-                    log.info("Verifying data stored in Redis for key: {}", todayKey);
+//                    log.info("Verifying data stored in Redis for key: {}", todayKey);
                     Map<Object, Object> todayData = redisTemplate.opsForHash().entries(todayKey);
-                    todayData.forEach((key, value) -> log.info("Redis key: {}, field: {}, value: {}", todayKey, key, value));
+                    todayData.forEach((key, value) -> log.info("Redis에 제대로 들어갔는지 검증 -> Redis key: {}, field: {}, value: {}", todayKey, key, value));
 
                 } catch (Exception e) {
-                    log.error("Redis 처리 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
+//                    log.error("Redis 처리 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
                     throw new WeatherUpdateException("Redis 처리 중 에러 발생 - Gugun: " + gugun.getGugunId());
                 }
 
@@ -106,11 +109,11 @@ public class WeatherServiceImpl implements WeatherService {
                     }
 
                 } catch (Exception e) {
-                    log.error("Redis에서 데이터 가져오기 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
+//                    log.error("Redis에서 데이터 가져오기 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
                     throw new WeatherUpdateException("Redis에서 데이터 가져오기 중 에러 발생 - Gugun: " + gugun.getGugunId());
                 }
 
-                log.info("Fetched yesterday's weather data from Redis for key: {}", yesterdayKey);
+//                log.info("Fetched yesterday's weather data from Redis for key: {}", yesterdayKey);
                 try {
                     if (!weatherRepository.existsByDateAndGugun(yesterday, gugun)) {
                         // Save to DB if not exists
@@ -138,7 +141,7 @@ public class WeatherServiceImpl implements WeatherService {
                     redisTemplate.delete(yesterdayKey);
                     log.info("Removed yesterday's weather data from Redis for key: {}", yesterdayKey);
                 } catch (Exception e) {
-                    log.error("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
+//                    log.error("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
                     throw new WeatherUpdateException("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: " + gugun.getGugunId());
                 }
             }
@@ -206,7 +209,7 @@ public class WeatherServiceImpl implements WeatherService {
 
             return processWeatherData(allItems);
         } catch (Exception e) {
-            log.error("날씨 데이터 조회 중 에러 발생", e);
+//            log.error("날씨 데이터 조회 중 에러 발생", e);
             throw new WeatherUpdateException("날씨 데이터 조회 중 에러 발생");
         }
     }

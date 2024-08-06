@@ -19,7 +19,7 @@ public class Weather {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long weatherId;
     @Column
     private LocalDate date;
     @Column
