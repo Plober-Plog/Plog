@@ -125,13 +125,17 @@ public class SnsController {
     // ============================= 좋아요 =============================
 
     // ============================= 북마크 =============================
-    @PostMapping("/bookmark/{")
-    public ResponseEntity<BaseResponseBody> addBookmark(@PathVariable("articleId") Long articleId) {
+    @PostMapping("/bookmark/{articleId}")
+    public ResponseEntity<BaseResponseBody> addBookmark(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("articleId") Long articleId) {
         return null;
     }
 
-    @DeleteMapping("/bookmark/{}")
-    public ResponseEntity<BaseResponseBody> deleteBookmark(@PathVariable("articleId") Long articleId) {
+    @DeleteMapping("/bookmark/{articleId}")
+    public ResponseEntity<BaseResponseBody> deleteBookmark(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("articleId") Long articleId) {
         return null;
     }
 }

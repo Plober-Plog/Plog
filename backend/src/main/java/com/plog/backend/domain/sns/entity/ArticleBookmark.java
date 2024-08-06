@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @ToString
 public class ArticleBookmark extends BaseEntity {
