@@ -10,6 +10,7 @@ import com.plog.backend.domain.sns.service.ArticleService;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,14 +77,21 @@ public class SnsController {
             @RequestParam(required = false, defaultValue = "0") String page
     ) {
         log.info(">>> [GET] /user/sns?{} - 게시글 목록 ID: {}", page);
-        List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList =  articleService.getArticleList(Integer.parseInt(page));
+        List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList =
+                articleService.getArticleList(Integer.parseInt(page));
         return ResponseEntity.status(200).body(articleGetSimpleResponseDtoList);
     }
 
     // ============================= 댓글 =============================
     @PostMapping("/comment")
-    public ResponseEntity<BaseResponseBody> addComment(@RequestBody ArticleCommentAddRequestDto articleCommentAddRequestDto) {
+    public ResponseEntity<BaseResponseBody> addComment(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ArticleCommentAddRequestDto articleCommentAddRequestDto) {
+            articleCommentService.addArticleComment(token, articleCommentAddRequestDto);
 
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(BaseResponseBody.of(200,"댓글이 생성되었습니다."));
     }
 
     // ============================= 좋아요 =============================

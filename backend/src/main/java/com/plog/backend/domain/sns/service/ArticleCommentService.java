@@ -6,7 +6,7 @@ import com.plog.backend.domain.sns.dto.request.ArticleCommentUpdateRequestDto;
 import com.plog.backend.domain.sns.entity.ArticleComment;
 
 public interface ArticleCommentService {
-    void addArticleComment(ArticleCommentAddRequestDto articleCommentAddRequestDto);
-    void updateArticleComment(ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto);
-    void deleteArticleComment(ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto);
+    void addArticleComment(String token, ArticleCommentAddRequestDto articleCommentAddRequestDto);
+    void updateArticleComment(String token, ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto);
+    void deleteArticleComment(String token, ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto);
 }
