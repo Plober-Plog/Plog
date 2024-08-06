@@ -1,9 +1,11 @@
 package com.plog.backend.domain.sns.controller;
 
 import com.plog.backend.domain.sns.dto.request.*;
+import com.plog.backend.domain.sns.dto.response.ArticleBookmarkGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleCommentGetResponse;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
+import com.plog.backend.domain.sns.service.ArticleBookmarkServiceImpl;
 import com.plog.backend.domain.sns.service.ArticleCommentService;
 import com.plog.backend.domain.sns.service.ArticleService;
 import com.plog.backend.global.model.response.BaseResponseBody;
@@ -23,6 +25,7 @@ import java.util.List;
 public class SnsController {
     private final ArticleService articleService;
     private final ArticleCommentService articleCommentService;
+    private final ArticleBookmarkServiceImpl articleBookmarkService;
 
     // ============================= 게시글 =============================
     @PostMapping
@@ -140,9 +143,8 @@ public class SnsController {
     }
 
     @GetMapping("/bookmark")
-    public ResponseEntity<BaseResponseBody> getBookmark(
-            @RequestHeader("Authorization") String token
-    ) {
-        return null;
+    public ResponseEntity<ArticleBookmarkGetResponseDto> getBookmark(
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.status(HttpStatus.OK).body(articleBookmarkService.getBookmarks(token));
     }
 }
