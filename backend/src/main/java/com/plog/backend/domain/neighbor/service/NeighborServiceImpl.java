@@ -6,9 +6,7 @@ import com.plog.backend.domain.neighbor.entity.NeighborType;
 import com.plog.backend.domain.neighbor.repository.NeighborRepository;
 import com.plog.backend.domain.neighbor.repository.NeighborRepositorySupport;
 import com.plog.backend.domain.user.entity.User;
-import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.repository.UserRepository;
-import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
@@ -117,7 +115,8 @@ public class NeighborServiceImpl implements NeighborService {
 
         if (isDelete) {
             neighborRepository.delete(neighborFrom);
-            neighborRepository.delete(neighborTo);
+            neighborTo.setNeighborType(NeighborType.NEIGHBOR);
+            neighborRepository.save(neighborTo);
             log.info(">>> 서로 이웃 삭제 성공: userId={}, neighborId={}", userId, neighborSearchId);
         } else {
             neighborFrom.setNeighborType(NeighborType.NEIGHBOR);
