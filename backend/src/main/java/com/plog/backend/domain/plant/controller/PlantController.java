@@ -94,12 +94,13 @@ public class PlantController {
         plantGetRequestDto.setPage(Integer.parseInt(page));
 
         List<PlantGetResponseDto> plantGetResponseDtoList;
-        log.info(plantTypeId + " " + otherPlantTypeId);
         if (plantTypeId != null || otherPlantTypeId != null) {
+            log.info("식물 종류 필터링 진행");
             plantGetRequestDto.setPlantTypeId(plantTypeId == null ? new ArrayList<>() : plantTypeId);
             plantGetRequestDto.setOtherPlantTypeId(otherPlantTypeId == null ? new ArrayList<>() : otherPlantTypeId);
             plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(plantGetRequestDto);
         } else {
+            log.info("식물 종류 필터링 진행 안 하고 전체 조회");
             plantGetResponseDtoList = plantService.getPlantList(plantGetRequestDto);
         }
 
