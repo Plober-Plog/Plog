@@ -1,5 +1,6 @@
 package com.plog.backend.domain.report.controller;
 
+import com.plog.backend.domain.report.dto.request.ReportCreateRequestDto;
 import com.plog.backend.domain.report.dto.response.ReportResultResponseDto;
 import com.plog.backend.domain.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,12 +20,13 @@ import org.springframework.web.bind.annotation.*;
 public class ReportController {
     private final ReportService reportService;
 
-    @PostMapping
+    @PostMapping("/{plantDiaryId}")
     @Operation(summary = "Create Report", description = "식물 일지 ID를 기반으로 보고서를 생성합니다.")
     public ResponseEntity<?> createReport(
-            @Parameter(description = "Plant Diary ID", required = true) @RequestParam Long plantDiaryId) {
+            @PathVariable("plantDiaryId") Long plantDiaryId,
+            @RequestBody ReportCreateRequestDto reportCreateRequestDto) {
         log.info("Received request to create report for plantDiaryId: {}", plantDiaryId);
-        ReportResultResponseDto responseDto = reportService.createReport(plantDiaryId);
+        ReportResultResponseDto responseDto = reportService.createReport(plantDiaryId, reportCreateRequestDto);
         log.info("Sending response: {}", responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

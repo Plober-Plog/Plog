@@ -2,6 +2,8 @@ package com.plog.backend.domain.report.dto.request;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -9,5 +11,6 @@ import lombok.*;
 @Setter
 @ToString
 public class ReportCreateRequestDto {
-    private Long plantDiaryId;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

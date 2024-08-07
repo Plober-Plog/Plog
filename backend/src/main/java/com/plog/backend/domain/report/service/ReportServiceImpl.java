@@ -7,9 +7,12 @@ import com.plog.backend.domain.plant.entity.PlantCheck;
 import com.plog.backend.domain.plant.entity.PlantType;
 import com.plog.backend.domain.plant.repository.PlantCheckRepository;
 import com.plog.backend.domain.plant.repository.PlantTypeRepository;
+import com.plog.backend.domain.report.dto.request.ReportCreateRequestDto;
 import com.plog.backend.domain.report.dto.response.ReportResultResponseDto;
 import com.plog.backend.domain.report.entity.ReportResult;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,19 +20,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service("ReportService")
 public class ReportServiceImpl implements ReportService {
 
-    private static PlantDiaryRepository plantDiaryRepository;
-    private static PlantTypeRepository plantTypeRepository;
+    private final PlantDiaryRepository plantDiaryRepository;
     private final PlantCheckRepository plantCheckRepository;
 
-    public ReportServiceImpl(PlantCheckRepository plantCheckRepository) {
-        this.plantCheckRepository = plantCheckRepository;
-    }
 
     @Override
-    public ReportResultResponseDto createReport(Long plantDiaryId) {
+    public ReportResultResponseDto createReport(Long plantDiaryId, ReportCreateRequestDto reportCreateRequestDto) {
         // 식물 일지 아이디 기준
         List<PlantDiary> plantDiary = plantDiaryRepository.findTop5ByPlantPlantIdOrderByRecordDateDesc(plantDiaryId);
 
@@ -41,8 +41,10 @@ public class ReportServiceImpl implements ReportService {
 
         List<PlantCheck> plantChecks = plantCheckRepository.findPlantChecksByPlantPlantId(plant.getPlantId());
 
-        LocalDate startDate = plantChecks.get(0).getCheckDate();
-        LocalDate endDate = plantChecks.get(plantChecks.size() - 1).getCheckDate();
+//        LocalDate startDate = plantChecks.get(0).getCheckDate();
+//        LocalDate endDate = plantChecks.get(plantChecks.size() - 1).getCheckDate();
+        LocalDate startDate = reportCreateRequestDto.getStartDate();
+        LocalDate endDate = reportCreateRequestDto.getEndDate();
 
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         log.info("키운 일 수: " + daysBetween);
