@@ -71,6 +71,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                 .join(plant.plantType, plantType)
                 .where(plant.user.searchId.eq(searchId)
                         .and(plant.plantType.plantTypeId.goe(validValue)))
+                .orderBy(plantType.plantTypeId.asc())
                 .fetch();
     }
 
@@ -85,6 +86,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                 .from(plant)
                 .where(plant.user.searchId.eq(searchId)
                         .and(plant.otherPlantType.otherPlantTypeId.goe(validValue)))
+                .orderBy(otherPlantType.otherPlantTypeId.asc())
                 .fetch();
     }
 }
