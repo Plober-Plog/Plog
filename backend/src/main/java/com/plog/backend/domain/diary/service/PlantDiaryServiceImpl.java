@@ -139,10 +139,10 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                         plantDiaryImageRepository.save(newThumbnailImage);
                         log.info(">>> updatePlantDiary - 새로운 일지 썸네일 지정 완료");
                     } else {
-                        log.info("해당 일지에는 사진이 등록되어 있지 않습니다.");
+                        log.info("thumbnailIdx가 유효한 값이 아닙니다.");
                     }
                 } else {
-                    throw new NotValidRequestException("일지 사진의 해당 인덱스에 접근할 수 없습니다.");
+                    log.info("해당 일지에는 사진이 등록되어 있지 않습니다.");
                 }
             } else {
                 throw new EntityNotFoundException("일치하는 식물을 찾을 수 없습니다.");
@@ -189,7 +189,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     public PlantDiaryGetResponseDto getPlantDiary(Long plantDiaryId) {
         log.info(">>> getPlantDiary - 요청 ID: {}", plantDiaryId);
 
-        Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findById(plantDiaryId);
+        Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findByPlantPlantIdAndIsDeletedFalse(plantDiaryId);
         if (optionalPlantDiary.isPresent()) {
             PlantDiary plantDiary = optionalPlantDiary.get();
             if (!plantDiary.isDeleted()) {
