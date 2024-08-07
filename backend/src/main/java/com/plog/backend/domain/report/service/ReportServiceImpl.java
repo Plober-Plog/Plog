@@ -51,19 +51,19 @@ public class ReportServiceImpl implements ReportService {
 
         // 특정 기간의 plantCheck 데이터를 가져옴
         List<PlantCheck> plantChecks = plantCheckRepository.findPlantChecksByPlantPlantIdAndCheckDateBetween(plant.getPlantId(), startDate, endDate);
-        log.info("PlantChecks: " + plantChecks);
+        log.info(">>> PlantChecks: " + plantChecks);
         
-        log.info("Start Date: " + startDate + ", End Date: " + endDate);
+        log.info(">>> Start Date: " + startDate + ", End Date: " + endDate);
 
 
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
-        log.info("키운 일 수: " + daysBetween);
+        log.info(">>> 키운 일 수: " + daysBetween);
 
         // 가이드 데이터
         int guideWater = (int)(daysBetween / plantType.getWaterInterval());
         int guideFertilize = (int)(daysBetween / plantType.getFertilizeInterval());
         int guideRepot = (int)(daysBetween / plantType.getRepotInterval());
-        log.info("Guide Water: " + guideWater + ", Guide Fertilize: " + guideFertilize + ", Guide Repot: " + guideRepot);
+        log.info(">>> Guide Water: " + guideWater + ", Guide Fertilize: " + guideFertilize + ", Guide Repot: " + guideRepot);
 
         // 식물 데이터
         int water = 0;
@@ -75,22 +75,22 @@ public class ReportServiceImpl implements ReportService {
             fertilize += plantCheck.isFertilized() ? 1 : 0;
             repot += plantCheck.isRepotted() ? 1 : 0;
         }
-        log.info("Water: " + water + ", Fertilize: " + fertilize + ", Repot: " + repot);
+        log.info(">>> Water: " + water + ", Fertilize: " + fertilize + ", Repot: " + repot);
 
-        // 두 개의 값을 뺄 때, 0에 가까우면 좋음.
+        // 두 개의 값을 뺄 때, 0에 가까우면 좋음. feat. 윤서 알고리즘 아이디어에 착안했습니다.
         // abs(guide - data)로 큰 값일수록 안 좋음. rating을 1~4(최고, 성장중, 아쉽다, 살려줘)
         int waterRating = Math.abs(guideWater - water);
         int fertilizeRating = Math.abs(guideFertilize - fertilize);
         int repoRating = Math.abs(guideRepot - repot);
-        log.info("Water Rating: " + waterRating + ", Fertilize Rating: " + fertilizeRating + ", Repo Rating: " + repoRating);
+        log.info(">>> Water Rating: " + waterRating + ", Fertilize Rating: " + fertilizeRating + ", Repo Rating: " + repoRating);
 
         ReportResult waterResult = ReportResult.getReportResult(waterRating);
         ReportResult fertilizeResult = ReportResult.getReportResult(fertilizeRating);
         ReportResult repoResult = ReportResult.getReportResult(repoRating);
 
-        log.info("Water Result: " + waterResult);
-        log.info("Fertilize Result: " + fertilizeResult);
-        log.info("Repo Result: " + repoResult);
+        log.info(">>> 물 주기 결과: " + waterResult);
+        log.info(">>> 영양분 주기 결과: " + fertilizeResult);
+        log.info(">>> 분갈이 주기 결과: " + repoResult);
 
         ReportResultResponseDto responseDto = ReportResultResponseDto.builder()
                 .plantName(plant.getNickname())
@@ -104,7 +104,7 @@ public class ReportServiceImpl implements ReportService {
                 .repotData(repot)
                 .build();
 
-        log.info("ReportResultResponseDto: " + responseDto);
+        log.info(">>> createReport - ReportResultResponseDto: " + responseDto);
 
         return responseDto;
     }

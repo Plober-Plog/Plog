@@ -25,9 +25,9 @@ public class ReportController {
     public ResponseEntity<?> createReport(
             @PathVariable("plantId") Long plantId,
             @RequestBody ReportCreateRequestDto reportCreateRequestDto) {
-        log.info("Received request to create report for plantDiaryId: {}", plantId);
+        log.info(">>> [POST] 분석 리포트 생성 plantId: {}", plantId);
         ReportResultResponseDto responseDto = reportService.createReport(plantId, reportCreateRequestDto);
-        log.info("Sending response: {}", responseDto);
+        log.info(">>> [POST] 분석 리포트 전송 : {}", responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
