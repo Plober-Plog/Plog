@@ -38,7 +38,8 @@ API.interceptors.response.use(
         const refreshTokenResponse = await axios.post('https://i11b308.p.ssafy.io/api/auth/refresh-token', { refreshToken });
         const { accessToken: newAccessToken } = refreshTokenResponse.data;
         setCookie('accessToken', newAccessToken, 60); // 새로운 엑세스 토큰 1시간 유효
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers['Authorization'] = newAccessToken;
+        // originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return axios(originalRequest);
       } catch (refreshError) {
         // 만료됐으면 로그인 페이지로 이동

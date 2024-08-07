@@ -20,6 +20,8 @@ import PlantRegister from './pages/Plant/PlantRegister';
 import ApiTest from './pages/Plant/ApiTest';
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
+// SNS
+import SnsWrite from './pages/Sns/SnsWrite';
 
 function App() {
   return (
@@ -46,6 +48,7 @@ function App() {
               <Route path="/plant/register" element={<PlantRegister />} />
               {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
               <Route path="/profile" element={<UserProfile />}/>
+              <Route path="/sns/write" element={<SnsWrite />}/>
             </Routes>
         </main>
         <footer className='full-width'>
