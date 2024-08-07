@@ -57,6 +57,7 @@ const ProfilePlantCardList = ({ searchId }) => {
           profile={plant.profile}
           nickname={plant.nickname}
           plantTypeId={plant.plantTypeId}
+          plantTypeName={plant.plantTypeName}
           birthDate={plant.birthDate}
         />
       ))}
