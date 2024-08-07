@@ -34,8 +34,7 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
         {imgs.map((img, index) => (
           <ImgPreview 
           key={index} 
-          src={img.url} 
-          isThumbnail={index === 0} 
+          src={URL.createObjectURL(img)} 
           onDelete={() => handleDeleteImage(index)} 
         />
         ))}
