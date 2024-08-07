@@ -36,7 +36,7 @@ public class PlantDiaryController {
         log.info(">>> [POST] /user/diary - 요청 데이터: {} 이미지 개수: {}", plantDiaryAddRequestDto, images.length);
         Long plantDiaryId = plantDiaryService.addPlantDiary(token, plantDiaryAddRequestDto);
         // 요청으로 넘어온 이미지 리스트가 있으면 호출
-        if (images.length > 0) {
+        if (images != null && images.length > 0) {
             plantDiaryService.uploadPlantDiaryImages(images, plantDiaryAddRequestDto.getThumbnailIdx(), plantDiaryId);
         }
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 등록이 완료되었습니다."));
