@@ -7,7 +7,7 @@ import com.plog.backend.domain.sns.entity.ArticleBookmark;
 import java.util.List;
 
 public interface ArticleBookmarkService {
-    void addBookmark(String token, ArticleBookmarkRequestDto articleBookmarkRequestDto);
-    void deleteBookmark(String token, ArticleBookmarkRequestDto articleBookmarkRequestDto);
+    void addBookmark(String token, Long articleId);
+    void deleteBookmark(String token, Long articleId);
     ArticleBookmarkGetResponseDto getBookmarks(String token);
 }
