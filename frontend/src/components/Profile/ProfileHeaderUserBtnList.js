@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import useAuthStore from '../../stores/member';
+import API from '../../apis/api';
 
 
 /* TODO: 추후 유저 프로필을 구현하게 될 때
@@ -14,6 +15,31 @@ import useAuthStore from '../../stores/member';
 
 const ProfileHeaderUserBtnList = ({ ownerId }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
+
+  const [profileUserRel, setProfileUserRel] = useState(null);
+  const [requestUserRel, setRequestUserRel] = useState(null);
+
+  useEffect(() => {
+    const fetchRel = async () => {
+      try {
+        const response = await API.get(`/user/neighbor/${ownerId}`);
+        // setProfileUserRel(response.data.profileUserRel);
+        // setRequestUserRel(response.data.requestUserRel);
+        console.log('@@@ProfileUserRel:@@@', response.data);
+      } catch (error) {
+        console.error('@@@Rel Error:', error, '@@@');
+      }
+    };
+
+    if (authSearchId) {
+      fetchRel();
+    }
+  }, [authSearchId, ownerId]);
+
+
+  if (profileUserRel === null || requestUserRel === null) {
+    return null;
+  }
 
   return (
     <div>
