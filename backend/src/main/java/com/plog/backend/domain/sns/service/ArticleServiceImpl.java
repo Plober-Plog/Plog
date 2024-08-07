@@ -59,7 +59,6 @@ public class ArticleServiceImpl implements ArticleService {
             TagType tagType = tagTypeRepository.findById(tagTypeId)
                     .orElseThrow(() -> new EntityNotFoundException("TagType not found with id " + tagTypeId));
             articleTag.setTagType(tagType);
-            log.info(articleTag.toString());
             articleTagList.add(articleTag);
         }
         articleTagRepository.saveAll(articleTagList);
