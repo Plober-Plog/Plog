@@ -8,6 +8,6 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class ReportAddRequestDto {
+public class ReportCreateRequestDto {
     private Long plantDiaryId;
 }
