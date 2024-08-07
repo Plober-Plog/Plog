@@ -19,5 +19,4 @@ public interface PlantDiaryRepository extends JpaRepository<PlantDiary, Long> {
 
     List<PlantDiary> findPlantDiariesByPlantPlantIdAndRecordDateBetween(Long plantDiaryId, LocalDate startDate, LocalDate endDate);
 
-    boolean findByPlantDiaryId(Long plantDiaryId);
 }

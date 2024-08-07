@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.*;
 public class ReportController {
     private final ReportService reportService;
 
-    @PostMapping("/{plantDiaryId}")
+    @PostMapping("/{plantId}")
     @Operation(summary = "Create Report", description = "식물 일지 ID를 기반으로 보고서를 생성합니다.")
     public ResponseEntity<?> createReport(
-            @PathVariable("plantDiaryId") Long plantDiaryId,
+            @PathVariable("plantId") Long plantId,
             @RequestBody ReportCreateRequestDto reportCreateRequestDto) {
-        log.info("Received request to create report for plantDiaryId: {}", plantDiaryId);
-        ReportResultResponseDto responseDto = reportService.createReport(plantDiaryId, reportCreateRequestDto);
+        log.info("Received request to create report for plantDiaryId: {}", plantId);
+        ReportResultResponseDto responseDto = reportService.createReport(plantId, reportCreateRequestDto);
         log.info("Sending response: {}", responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

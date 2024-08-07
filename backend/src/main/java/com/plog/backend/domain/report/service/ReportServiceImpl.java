@@ -29,12 +29,12 @@ public class ReportServiceImpl implements ReportService {
     private final PlantCheckRepository plantCheckRepository;
 
     @Override
-    public ReportResultResponseDto createReport(Long plantDiaryId, ReportCreateRequestDto reportCreateRequestDto) {
+    public ReportResultResponseDto createReport(Long plantId, ReportCreateRequestDto reportCreateRequestDto) {
         LocalDate startDate = reportCreateRequestDto.getStartDate();
         LocalDate endDate = reportCreateRequestDto.getEndDate();
 
         // 식물 일지 아이디 기준으로 특정 기간의 데이터를 가져옴
-        List<PlantDiary> plantDiary = plantDiaryRepository.findPlantDiariesByPlantPlantIdAndRecordDateBetween(plantDiaryId, startDate, endDate);
+        List<PlantDiary> plantDiary = plantDiaryRepository.findPlantDiariesByPlantPlantIdAndRecordDateBetween(plantId, startDate, endDate);
 
         if (plantDiary.size() == 0) {
             throw new EntityNotFoundException(">>> 없는 식물 일지 입니다.");
