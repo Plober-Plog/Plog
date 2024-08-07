@@ -121,25 +121,26 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                     PlantDiaryImage plantDiaryImage = plantDiaryImageOptional.get();
                     plantDiaryImage.setThumbnail(false);
                     plantDiaryImageRepository.save(plantDiaryImage);
-                } else {
-                    throw new ImageNotFoundException("썸네일로 등록된 사진을 조회할 수 없습니다.");
-                }
-                log.info(">>> updatePlantDiary - 기존 썸네일 해제 완료");
-                // 새로 들어온 thumbnailIdx 에 해당하는 order 이미지의 isThumbnail 을 true로 update
-                int thumbnailIdx = plantDiaryUpdateRequestDto.getThumbnailIdx();
-                List<PlantDiaryImageGetResponseDto> plantDiaryImageGetResponseDtoList = imageService.loadImagesByPlantDiaryId(plantDiaryUpdateRequestDto.getPlantDiaryId());
-                if (thumbnailIdx >= 0
-                        && thumbnailIdx < plantDiaryImageGetResponseDtoList.size()) {
-                    PlantDiaryImageGetResponseDto newThumbnailPlantDiaryImage = plantDiaryImageGetResponseDtoList.get(thumbnailIdx);
-                    PlantDiaryImage newThumbnailImage = PlantDiaryImage.builder()
-                            .plantDiaryImageId(newThumbnailPlantDiaryImage.getPlantDiaryImageId())
-                            .plantDiary(pd)
-                            .order(newThumbnailPlantDiaryImage.getOrder())
-                            .isThumbnail(true) // 새로 썸네일로 지정
-                            .image(newThumbnailPlantDiaryImage.getImage())
-                            .build();
-                    plantDiaryImageRepository.save(newThumbnailImage);
-                    log.info(">>> updatePlantDiary - 새로운 일지 썸네일 지정 완료");
+                    log.info(">>> updatePlantDiary - 기존 썸네일 해제 완료");
+
+                    // 새로 들어온 thumbnailIdx 에 해당하는 order 이미지의 isThumbnail 을 true로 update
+                    int thumbnailIdx = plantDiaryUpdateRequestDto.getThumbnailIdx();
+                    List<PlantDiaryImageGetResponseDto> plantDiaryImageGetResponseDtoList = imageService.loadImagesByPlantDiaryId(plantDiaryUpdateRequestDto.getPlantDiaryId());
+                    if (thumbnailIdx >= 0
+                            && thumbnailIdx < plantDiaryImageGetResponseDtoList.size()) {
+                        PlantDiaryImageGetResponseDto newThumbnailPlantDiaryImage = plantDiaryImageGetResponseDtoList.get(thumbnailIdx);
+                        PlantDiaryImage newThumbnailImage = PlantDiaryImage.builder()
+                                .plantDiaryImageId(newThumbnailPlantDiaryImage.getPlantDiaryImageId())
+                                .plantDiary(pd)
+                                .order(newThumbnailPlantDiaryImage.getOrder())
+                                .isThumbnail(true) // 새로 썸네일로 지정
+                                .image(newThumbnailPlantDiaryImage.getImage())
+                                .build();
+                        plantDiaryImageRepository.save(newThumbnailImage);
+                        log.info(">>> updatePlantDiary - 새로운 일지 썸네일 지정 완료");
+                    } else {
+                        log.info("해당 일지에는 사진이 등록되어 있지 않습니다.");
+                    }
                 } else {
                     throw new NotValidRequestException("일지 사진의 해당 인덱스에 접근할 수 없습니다.");
                 }
