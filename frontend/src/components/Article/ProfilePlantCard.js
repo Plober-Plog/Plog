@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 
-const ProfilePlantCard = ({ plantId, profile, nickname, plantTypeId, birthDate }) => {
+const ProfilePlantCard = ({ plantId, profile, nickname, plantTypeId, birthDate, plantTypeName }) => {
   
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const ProfilePlantCard = ({ plantId, profile, nickname, plantTypeId, birthDate }
         alt="thumbnail"
       />
       <p>{nickname}</p>
-      <p>{plantTypeId}</p>
+      <p>{plantTypeName}</p>
       <p>생일: {birthDate}</p>
     </div>
   );
