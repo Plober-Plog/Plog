@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@Builder
 @ToString
 public class ArticleComment extends BaseEntity {
     @Id
@@ -34,6 +35,9 @@ public class ArticleComment extends BaseEntity {
 
     @Column
     private String tagName;
+
+    @Column
+    private String content;
 
     @Column
     @ColumnDefault("1")
