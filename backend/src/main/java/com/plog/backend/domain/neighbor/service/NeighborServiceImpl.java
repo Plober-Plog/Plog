@@ -7,6 +7,7 @@ import com.plog.backend.domain.neighbor.dto.response.NeighborToResponseDto;
 import com.plog.backend.domain.neighbor.entity.Neighbor;
 import com.plog.backend.domain.neighbor.entity.NeighborType;
 import com.plog.backend.domain.neighbor.repository.NeighborRepository;
+import com.plog.backend.domain.neighbor.repository.NeighborRepositorySupport;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.NotValidRequestException;
@@ -26,6 +27,7 @@ public class NeighborServiceImpl implements NeighborService {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
     private final NeighborRepository neighborRepository;
+    private final NeighborRepositorySupport neighborRepositorySupport;
 
     private NeighborToResponseDto mapToDto(Neighbor neighbor) {
         return NeighborToResponseDto.builder()
@@ -198,8 +200,8 @@ public class NeighborServiceImpl implements NeighborService {
 
         return NeighborCheckResponseDto
                 .builder()
-                .requestUserRel(neighborRepository.findByNeighborTypeByNeighborToAndNeighborFrom(userId, neighbor.getUserId()))
-                .profileUserRel(neighborRepository.findByNeighborTypeByNeighborToAndNeighborFrom(neighbor.getUserId(), userId))
+                .requestUserRel(neighborRepositorySupport.findNeighborTypeByNeighborToAndNeighborFrom(userId, neighbor.getUserId()))
+                .profileUserRel(neighborRepositorySupport.findNeighborTypeByNeighborToAndNeighborFrom(neighbor.getUserId(), userId))
                 .build();
     }
 }
