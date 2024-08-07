@@ -10,7 +10,6 @@ import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
-import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,7 +97,7 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
 
         List<ArticleBookmarkGetResponseDto.BookmarkDto> bookmarkDtos = articleBookmarks.stream()
                 .map(bookmark -> ArticleBookmarkGetResponseDto.BookmarkDto.builder()
-                        .id(bookmark.getArticleBookmarkId())
+                        .bookmarkId(bookmark.getArticleBookmarkId())
                         .articleId(bookmark.getArticle().getArticleId())
                         .articleContent(bookmark.getArticle().getContent())
                         .build())

@@ -20,7 +20,7 @@ public class ArticleBookmarkGetResponseDto {
     @Builder
     @ToString
     public static class BookmarkDto {
-        private Long id;
+        private Long bookmarkId;
         private Long articleId;
         private String articleTitle;
         private String articleContent;
