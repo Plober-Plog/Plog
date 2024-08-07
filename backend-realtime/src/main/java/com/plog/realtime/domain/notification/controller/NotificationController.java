@@ -1,19 +1,17 @@
 package com.plog.realtime.domain.notification.controller;
 
 import com.plog.realtime.domain.notification.dto.NotificationMessageResponseDto;
-import com.plog.realtime.domain.notification.entity.Notification;
 import com.plog.realtime.domain.notification.entity.NotificationType;
 import com.plog.realtime.domain.notification.service.NotificationService;
-import com.plog.realtime.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.springframework.http.MediaType;
 
 @Slf4j
 @RequiredArgsConstructor
