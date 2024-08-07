@@ -10,6 +10,7 @@ import com.plog.backend.domain.plant.repository.PlantTypeRepository;
 import com.plog.backend.domain.report.dto.request.ReportCreateRequestDto;
 import com.plog.backend.domain.report.dto.response.ReportResultResponseDto;
 import com.plog.backend.domain.report.entity.ReportResult;
+import com.plog.backend.global.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.core.Local;
@@ -25,7 +26,6 @@ import java.util.List;
 public class ReportServiceImpl implements ReportService {
 
     private final PlantDiaryRepository plantDiaryRepository;
-    private final PlantTypeRepository plantTypeRepository;
     private final PlantCheckRepository plantCheckRepository;
 
     @Override

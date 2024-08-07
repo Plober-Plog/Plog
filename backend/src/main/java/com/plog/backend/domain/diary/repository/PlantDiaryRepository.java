@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlantDiaryRepository extends JpaRepository<PlantDiary, Long> {
@@ -17,4 +18,6 @@ public interface PlantDiaryRepository extends JpaRepository<PlantDiary, Long> {
     List<PlantDiary> findTop5ByPlantPlantIdOrderByRecordDateDesc(Long plantId);
 
     List<PlantDiary> findPlantDiariesByPlantPlantIdAndRecordDateBetween(Long plantDiaryId, LocalDate startDate, LocalDate endDate);
+
+    boolean findByPlantDiaryId(Long plantDiaryId);
 }
