@@ -7,6 +7,7 @@ import com.plog.backend.domain.weather.entity.Weather;
 import com.plog.backend.domain.weather.exception.WeatherUpdateException;
 import com.plog.backend.domain.weather.repository.WeatherRepository;
 import com.plog.backend.global.util.LatXLngY;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -307,6 +308,7 @@ public class WeatherServiceImpl implements WeatherService {
         return com.plog.backend.domain.diary.entity.Weather.SUNNY.getValue();
     }
 
+    @PostConstruct
     @Override
     public void updateWeatherData() {
         updateAllWeatherForecast();

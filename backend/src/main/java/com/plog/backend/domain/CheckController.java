@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/forever")
 public class CheckController {
 
-    public WeatherService weatherService;
+    private final WeatherService weatherService;
 
     @GetMapping
     public String test() {
