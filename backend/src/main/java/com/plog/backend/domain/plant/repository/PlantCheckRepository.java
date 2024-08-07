@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface PlantCheckRepository extends JpaRepository<PlantCheck, Long> {
     Optional<List<PlantCheck>> findAllByPlantPlantId(Long plantId);
     Optional<PlantCheck> findByPlantPlantIdAndCheckDate(Long plantId, LocalDate checkDate);
-    List<PlantCheck> findPlantChecksByPlantPlantId(Long plantId);
+    List<PlantCheck> findPlantChecksByPlantPlantIdAndCheckDateBetween(Long plantId, LocalDate startDate, LocalDate endDate);
 }

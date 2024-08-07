@@ -7,8 +7,10 @@ import com.plog.backend.domain.plant.entity.PlantCheck;
 import com.plog.backend.domain.plant.entity.PlantType;
 import com.plog.backend.domain.plant.repository.PlantCheckRepository;
 import com.plog.backend.domain.plant.repository.PlantTypeRepository;
+import com.plog.backend.domain.report.dto.request.ReportCreateRequestDto;
 import com.plog.backend.domain.report.dto.response.ReportResultResponseDto;
 import com.plog.backend.domain.report.entity.ReportResult;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,32 +19,36 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service("ReportService")
 public class ReportServiceImpl implements ReportService {
 
-    private static PlantDiaryRepository plantDiaryRepository;
-    private static PlantTypeRepository plantTypeRepository;
+    private final PlantDiaryRepository plantDiaryRepository;
+    private final PlantTypeRepository plantTypeRepository;
     private final PlantCheckRepository plantCheckRepository;
 
-    public ReportServiceImpl(PlantCheckRepository plantCheckRepository) {
-        this.plantCheckRepository = plantCheckRepository;
-    }
-
     @Override
-    public ReportResultResponseDto createReport(Long plantDiaryId) {
-        // 식물 일지 아이디 기준
-        List<PlantDiary> plantDiary = plantDiaryRepository.findTop5ByPlantPlantIdOrderByRecordDateDesc(plantDiaryId);
+    public ReportResultResponseDto createReport(Long plantDiaryId, ReportCreateRequestDto reportCreateRequestDto) {
+        LocalDate startDate = reportCreateRequestDto.getStartDate();
+        LocalDate endDate = reportCreateRequestDto.getEndDate();
+
+        // 식물 일지 아이디 기준으로 특정 기간의 데이터를 가져옴
+        List<PlantDiary> plantDiary = plantDiaryRepository.findPlantDiariesByPlantPlantIdAndRecordDateBetween(plantDiaryId, startDate, endDate);
 
         Plant plant = plantDiary.get(0).getPlant();
         PlantType plantType = plant.getPlantType();
+        log.info(">>> Plant: " + plant + ", PlantType: " + plantType);
 
         String firstDayImageUrl = plant.getImage().getImageUrl();
         String recentImageUrl = plantDiary.get(plantDiary.size() - 1).getPlant().getImage().getImageUrl(); // 제일 최근 사진
+        log.info("첫 번째 날 이미지 URL: " + firstDayImageUrl);
+        log.info("최근 이미지 URL: " + recentImageUrl);
 
-        List<PlantCheck> plantChecks = plantCheckRepository.findPlantChecksByPlantPlantId(plant.getPlantId());
+        // 특정 기간의 plantCheck 데이터를 가져옴
+        List<PlantCheck> plantChecks = plantCheckRepository.findPlantChecksByPlantPlantIdAndCheckDateBetween(plant.getPlantId(), startDate, endDate);
+        log.info("PlantChecks: " + plantChecks);
 
-        LocalDate startDate = plantChecks.get(0).getCheckDate();
-        LocalDate endDate = plantChecks.get(plantChecks.size() - 1).getCheckDate();
+        log.info("Start Date: " + startDate + ", End Date: " + endDate);
 
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         log.info("키운 일 수: " + daysBetween);
@@ -51,6 +57,7 @@ public class ReportServiceImpl implements ReportService {
         int guideWater = (int)(daysBetween / plantType.getWaterInterval());
         int guideFertilize = (int)(daysBetween / plantType.getFertilizeInterval());
         int guideRepot = (int)(plantType.getRepotInterval());
+        log.info("Guide Water: " + guideWater + ", Guide Fertilize: " + guideFertilize + ", Guide Repot: " + guideRepot);
 
         // 식물 데이터
         int water = 0;
@@ -62,20 +69,22 @@ public class ReportServiceImpl implements ReportService {
             fertilize += plantCheck.isFertilized() ? 1 : 0;
             repot += plantCheck.isRepotted() ? 1 : 0;
         }
+        log.info("Water: " + water + ", Fertilize: " + fertilize + ", Repot: " + repot);
 
         // 두 개의 값을 뺄 때, 0에 가까우면 좋음.
         // abs(guide - data)로 큰 값일수록 안 좋음. rating을 1~4(최고, 성장중, 아쉽다, 살려줘)
         int waterRating = Math.abs(guideWater - water);
         int fertilizeRating = Math.abs(guideFertilize - fertilize);
         int repoRating = Math.abs(guideRepot - repot);
+        log.info("Water Rating: " + waterRating + ", Fertilize Rating: " + fertilizeRating + ", Repo Rating: " + repoRating);
 
         ReportResult waterResult = ReportResult.getReportResult(waterRating);
         ReportResult fertilizeResult = ReportResult.getReportResult(fertilizeRating);
         ReportResult repoResult = ReportResult.getReportResult(repoRating);
 
-        log.info("Water Rating: " + waterResult);
-        log.info("Fertilize Rating: " + fertilizeResult);
-        log.info("Repo Rating: " + repoResult);
+        log.info("Water Result: " + waterResult);
+        log.info("Fertilize Result: " + fertilizeResult);
+        log.info("Repo Result: " + repoResult);
 
         ReportResultResponseDto responseDto = ReportResultResponseDto.builder()
                 .plantName(plant.getNickname())
@@ -88,6 +97,8 @@ public class ReportServiceImpl implements ReportService {
                 .fertilizeData(fertilize)
                 .repotData(repot)
                 .build();
+
+        log.info("ReportResultResponseDto: " + responseDto);
 
         return responseDto;
     }

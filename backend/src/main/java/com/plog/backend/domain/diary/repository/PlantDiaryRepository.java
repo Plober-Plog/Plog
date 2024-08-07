@@ -16,5 +16,5 @@ public interface PlantDiaryRepository extends JpaRepository<PlantDiary, Long> {
 
     List<PlantDiary> findTop5ByPlantPlantIdOrderByRecordDateDesc(Long plantId);
 
-    PlantDiary findPlantDiaryByPlantDiaryId(Long plantId);
+    List<PlantDiary> findPlantDiariesByPlantPlantIdAndRecordDateBetween(Long plantDiaryId, LocalDate startDate, LocalDate endDate);
 }
