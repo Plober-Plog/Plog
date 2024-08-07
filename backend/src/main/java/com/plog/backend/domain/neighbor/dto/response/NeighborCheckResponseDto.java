@@ -9,6 +9,6 @@ import lombok.*;
 @Getter
 @ToString
 public class NeighborCheckResponseDto {
-    private int to;
-    private int from;
+    private int profileUserRel;
+    private int requestUserRel;
 }
