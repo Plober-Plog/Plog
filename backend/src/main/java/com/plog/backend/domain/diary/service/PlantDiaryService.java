@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface PlantDiaryService {
+    void getWeatherData(String token, String date);
+
     void uploadPlantDiaryImages(MultipartFile[] images, int thumbnailIdx, Long plantDiaryId);
 
     Long addPlantDiary(String token, PlantDiaryAddRequestDto plantDiaryAddRequestDto);

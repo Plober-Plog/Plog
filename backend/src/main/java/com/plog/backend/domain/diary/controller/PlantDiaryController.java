@@ -24,6 +24,16 @@ import java.util.List;
 public class PlantDiaryController {
     private final PlantDiaryService plantDiaryService;
 
+    @GetMapping("/get-weather")
+    public ResponseEntity<BaseResponseBody> getWeather(
+            @RequestHeader("Authorization") String token,
+            @RequestParam String date
+    ) {
+        if (date == null)
+            throw new NotValidRequestException("date 값은 필수 값입니다.");
+        plantDiaryService.getWeatherData(token, date);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 등록이 완료되었습니다."));
+    }
     @PostMapping
     public ResponseEntity<BaseResponseBody> addPlantDiary(
             @RequestHeader("Authorization") String token,
@@ -31,8 +41,9 @@ public class PlantDiaryController {
             @RequestPart(value = "images", required = false) MultipartFile[] images) {
         if (plantDiaryAddRequestDto.getPlantId() == null)
             throw new NotValidRequestException("plantId 는 필수값입니다.");
-        if (plantDiaryAddRequestDto.getRecordDate() == null)
+        if (plantDiaryAddRequestDto.getRecordDate() == null) {
             throw new NotValidRequestException("recordDate 는 필수값입니다.");
+        }
         log.info(">>> [POST] /user/diary - 요청 데이터: {} 이미지 여부: {}", plantDiaryAddRequestDto, images == null ? "X" : "O");
         Long plantDiaryId = plantDiaryService.addPlantDiary(token, plantDiaryAddRequestDto);
         // 요청으로 넘어온 이미지 리스트가 있으면 호출

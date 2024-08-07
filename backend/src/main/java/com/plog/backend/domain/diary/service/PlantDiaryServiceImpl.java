@@ -1,5 +1,7 @@
 package com.plog.backend.domain.diary.service;
 
+import com.plog.backend.domain.area.entity.Gugun;
+import com.plog.backend.domain.area.repository.GugunRepository;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryAddRequestDto;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryUpdateRequestDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
@@ -10,21 +12,25 @@ import com.plog.backend.domain.diary.entity.Weather;
 import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
 import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
-import com.plog.backend.domain.image.exception.ImageNotFoundException;
 import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.repository.PlantRepository;
+import com.plog.backend.domain.user.entity.User;
+import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,10 +42,25 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 @Service("plantDiaryService")
 public class PlantDiaryServiceImpl implements PlantDiaryService {
 
+    private final RedisTemplate<String, Object> redisTemplate;
     private final PlantDiaryRepository plantDiaryRepository;
     private final PlantRepository plantRepository;
     private final ImageServiceImpl imageService;
     private final PlantDiaryImageRepository plantDiaryImageRepository;
+    private final UserRepository userRepository;
+    private final GugunRepository gugunRepository;
+
+    @Override
+    public void getWeatherData(String token, String date) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("일치하는 회원을 찾을 수 없습니다."));
+        LocalDate recordDate = LocalDate.parse(date); // 일지를 작성할 날짜
+        Gugun gugun = gugunRepository.findBySidoSidoCodeAndGugunCode(
+                user.getSidoCode(), user.getGugunCode()
+        ).orElseThrow(() -> new EntityNotFoundException("일치하는 위치 정보를 조회할 수 없습니다."));
+        String keyValue = "weather:" + recordDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ":" + gugun.getGugunId();
+        log.info("Weather Data 키: {}", keyValue);
+    }
 
     @Transactional
     public void uploadPlantDiaryImages(MultipartFile[] images, int thumbnailIdx, Long plantDiaryId) {
