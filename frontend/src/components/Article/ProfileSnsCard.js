@@ -9,13 +9,15 @@ const ProfileSnsCard = ({ articleId, nickname, image, content, likeCnt, commentC
     navigate(`/sns/${articleId}`);
   }
 
+  const cutContent = content.length > 30? content.slice(0, 30) + "..." : content;
+
   return (
     <div onClick={handleClick}>
       <img
         src={image || defaultImg}
         alt="thumbnail"
       />
-      <p>{content}</p>
+      <p>{cutContent}</p>
       <p>좋아요 수:{likeCnt}</p>
       <p>댓글 수:{commentCnt}</p>
       <i title="좋아요">
