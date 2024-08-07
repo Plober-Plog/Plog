@@ -36,6 +36,10 @@ public class ReportServiceImpl implements ReportService {
         // 식물 일지 아이디 기준으로 특정 기간의 데이터를 가져옴
         List<PlantDiary> plantDiary = plantDiaryRepository.findPlantDiariesByPlantPlantIdAndRecordDateBetween(plantDiaryId, startDate, endDate);
 
+        if (plantDiary.size() == 0) {
+            throw new EntityNotFoundException(">>> 없는 식물 일지 입니다.");
+        }
+
         Plant plant = plantDiary.get(0).getPlant();
         PlantType plantType = plant.getPlantType();
         log.info(">>> Plant: " + plant + ", PlantType: " + plantType);
