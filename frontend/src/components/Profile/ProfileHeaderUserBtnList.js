@@ -1,4 +1,6 @@
 import React from 'react';
+import useAuthStore from '../../stores/member';
+
 
 /* TODO: 추후 유저 프로필을 구현하게 될 때
   요청 유저와 페이지 유저의 관계를 체크 후 관계에 따라 다르게 렌더해야 함
@@ -10,9 +12,14 @@ import React from 'react';
     (추후 모달로 이웃으로 전환, 완전히 이웃 끊기 선택지 제공)
 */
 
-const ProfileHeaderUserBtnList = ({}) => {
+const ProfileHeaderUserBtnList = ({ ownerId }) => {
+  const authSearchId = useAuthStore((state) => state.getSearchId());
+
   return (
     <div>
+      {authSearchId === ownerId && (
+        <button>🔖</button>
+      )}
       <button style={{ margin: '10px' }}>이웃 신청</button>
       <button style={{ margin: '10px' }}>서로이웃 신청</button>
       <button style={{ margin: '10px' }}>이웃 끊기</button>
