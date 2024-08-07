@@ -4,11 +4,13 @@ import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImgPreview from '../../components/Common/ImgPreview'; 
 import Btn from '../../components/Common/Btn'; 
 
-const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  handleSetThumbnail }) => {
+const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage, isDisabled }) => {
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
-    fileInputRef.current.click();
+    if (!isDisabled) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -16,7 +18,13 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
       <Btn 
         content={<DiaryTodoIcon src={cameraIcon} alt="upload" />}
         onClick={handleClick}
-        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+        style={{ 
+          background: 'none', 
+          border: 'none', 
+          cursor: 'pointer',
+          filter: isDisabled ? 'grayscale(100%)' : 'none' // 비활성화 시 회색으로 변경
+        }}
+        disabled={isDisabled}
       />
       <input
         type="file"
@@ -24,19 +32,23 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
         style={{ display: 'none' }}
         multiple
         accept="image/*"
-        capture="environment" // environment 주면 카메라로 직접 찍기 설정 및 갤러리 접근 가능
+        capture="environment"
         onChange={(e) => {
-          handleImageUpload(e);
-          e.target.value = ''; // 사진을 삭제하고 나서도 같은 사진을 올릴수 있게 하기 위해 초기화
+          if (!isDisabled) {
+            handleImageUpload(e);
+            e.target.value = '';
+          }
         }}
+        disabled={isDisabled}
       />
       <div>
         {imgs.map((img, index) => (
           <ImgPreview 
-          key={index} 
-          src={img.src} 
-          onDelete={() => handleDeleteImage(index)} 
-        />
+            key={index} 
+            src={img.src} 
+            onDelete={() => handleDeleteImage(index)} 
+            isDisabled={isDisabled} // 비활성화 상태 전달
+          />
         ))}
       </div>
     </div>
@@ -46,11 +58,16 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
 ImgUpload.propTypes = {
   cameraIcon: PropTypes.string.isRequired,
   imgs: PropTypes.arrayOf(PropTypes.shape({
-    image: PropTypes.string.isRequired,
+    src: PropTypes.string.isRequired,
   })).isRequired,
   handleImageUpload: PropTypes.func.isRequired,
   handleDeleteImage: PropTypes.func.isRequired,
   handleSetThumbnail: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool, // isDisabled prop 추가
+};
+
+ImgUpload.defaultProps = {
+  isDisabled: false, // 기본값은 false로 설정
 };
 
 export default ImgUpload;

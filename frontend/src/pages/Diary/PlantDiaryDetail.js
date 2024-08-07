@@ -77,6 +77,7 @@ const PlantDiaryDetail = () => {
           isFertilized,
           isRepotted,
           imgs: images.map(img => img.url),
+          isEditImage: false,
         },
         plantData: {
           plantId, 
@@ -112,7 +113,7 @@ const PlantDiaryDetail = () => {
       }
 
       alert('일지가 삭제되었습니다.');
-      navigate(-1); 
+      navigate(`/plant/${plantId}`);
     } catch (error) {
       console.error('Error:', error);
       alert('일지 삭제 중 오류가 발생했습니다.');

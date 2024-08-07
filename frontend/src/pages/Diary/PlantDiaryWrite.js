@@ -23,8 +23,9 @@ import './PlantDiaryWrite.css';
 const PlantDiaryWrite = () => {  
   const location = useLocation();
   const navigate = useNavigate();
-  const { plantId, date: selectedDate } = location.state || {};
+  const { plantId, date: selectedDate, diaryData } = location.state || {};
 
+  const [isEditImage, setIsEditImage] = useState(diaryData?.isEditImage ?? true); // 이미지 편집 비활성화 설정
   const [content, setContent] = useState('');
   const [date, setDate] = useState(selectedDate); 
   const [isWatered, setIsWatered] = useState(false);
@@ -149,20 +150,24 @@ useEffect(() => {
   console.log("Updated plantDiaryId:", plantDiaryId);
 }, [plantDiaryId]);
 
-  // 이미지 업로드 .. => 잘 모루겟어서 지피티한테 물어봄 ㅜㅜ .. 이미지 부분 수정 가능성 높습니다.. ..
+  // 이미지 업로드
   
-  const handleImageUpload = (event) => {
-    console.log(event.target.files);
-    setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
-  };
+// 이미지 업로드 핸들러 비활성화 조건 추가
+const handleImageUpload = (event) => {
+  if (!isEditImage) return;
+  console.log(event.target.files);
+  setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
+};
 
-  const handleDeleteImage = (index) => {
-    const newImgs = imgs.filter((_, i) => i !== index);
-    setImgs(newImgs);
-    if (index === 0 && newImgs.length > 0) {
-      newImgs[0].isThumbnail = true;
-    }
-  };
+// 이미지 삭제 핸들러 비활성화 조건 추가
+const handleDeleteImage = (index) => {
+  if (!isEditImage) return;
+  const newImgs = imgs.filter((_, i) => i !== index);
+  setImgs(newImgs);
+  if (index === 0 && newImgs.length > 0) {
+    newImgs[0].isThumbnail = true;
+  }
+};
 
   const toggleWatered = () => {
     const newState = !isWatered;
@@ -341,6 +346,7 @@ useEffect(() => {
           imgs={imgs} 
           handleImageUpload={handleImageUpload} 
           handleDeleteImage={handleDeleteImage} 
+          isDisabled={!isEditImage}
         />
       </div>
       <div className="section">
