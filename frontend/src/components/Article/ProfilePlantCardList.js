@@ -52,6 +52,7 @@ const ProfilePlantCardList = ({ searchId }) => {
 
   return (
     <div>
+      <h3>유저의 식물 목록</h3>
       {plants.map((plant) => (
         <ProfilePlantCard
           key={plant.plantId}

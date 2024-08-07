@@ -44,7 +44,9 @@ const UserProfile = () => {
     );
   };
 
-  const handleAddSns = () => {}
+  const handleAddSns = () => {
+    navigate(`/sns/write`)
+  };
 
   return (
     <div>
