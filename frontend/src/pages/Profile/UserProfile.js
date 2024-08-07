@@ -38,9 +38,9 @@ const UserProfile = () => {
   }
 
   const handleAddPlant = () => {
-    navigate('/plant/register',
-      {state: '0'}
-    )
+    navigate(`/plant/register`,
+      { state: { plantId: '0' } }
+    );
   };
 
   const handleAddSns = () => {}
