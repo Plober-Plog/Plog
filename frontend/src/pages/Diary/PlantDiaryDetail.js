@@ -52,9 +52,9 @@ const PlantDiaryDetail = () => {
     return <div>Loading...</div>;
   }
 
-  const isWatered = plantCheck.watered || false;
-  const isFertilized = plantCheck.fertilized || false;
-  const isRepotted = plantCheck.repotted || false;
+  const isWatered = plantCheck.isWatered || false;
+  const isFertilized = plantCheck.isFertilized || false;
+  const isRepotted = plantCheck.isRepotted || false;
 
   const weather = plantDiary.weather || '1';
   const temperature = plantDiary.temperature || '1';
@@ -79,6 +79,7 @@ const PlantDiaryDetail = () => {
           imgs: images.map(img => img.url),
         },
         plantData: {
+          plantId, 
           isWatered,
           isFertilized,
           isRepotted,
@@ -96,12 +97,7 @@ const PlantDiaryDetail = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await API.delete(`/api/user/diary/${plantDiaryId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjM5MTIyNjEsImlhdCI6MTcyMjcwMjY2MX0.wp3fqP8MHxSy4i-CUZUHnt85iRjS0cksuhu4bbtvhzw`,
-        },
-      });
+      const response = await API.delete(`/user/diary/${plantDiaryId}`);
 
       if (response.status !== 200) {
         throw new Error('일지 삭제에 실패했습니다.');

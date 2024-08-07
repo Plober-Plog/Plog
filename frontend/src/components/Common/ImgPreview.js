@@ -8,7 +8,7 @@ const ImgPreview = ({ src, isThumbnail, onSetThumbnail, onDelete }) => {
       <img src={src} alt="preview" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       <div>
         <Btn content="X" type="button" onClick={onDelete} />
-        <Btn content={isThumbnail ? '대표사진' : '대표사진 변경'} type="button" onClick={onSetThumbnail} />
+        <Btn content={isThumbnail ? '대표사진' : null} type="button" onClick={onSetThumbnail} />
       </div>
     </div>
   );

@@ -33,12 +33,11 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
       <div>
         {imgs.map((img, index) => (
           <ImgPreview 
-            key={index} 
-            src={img.url} 
-            isThumbnail={img.isThumbnail} 
-            onDelete={() => handleDeleteImage(index)} 
-            onSetThumbnail={() => handleSetThumbnail(index)} 
-          />
+          key={index} 
+          src={img.url} 
+          isThumbnail={index === 0} 
+          onDelete={() => handleDeleteImage(index)} 
+        />
         ))}
       </div>
     </div>

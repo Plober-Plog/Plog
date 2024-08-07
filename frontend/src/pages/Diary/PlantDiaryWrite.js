@@ -3,7 +3,7 @@ import API from '../../apis/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DateDisplay from '../../components/Common/DateDisplay';
 import Btn from '../../components/Common/Btn';
-import Content from '../../components/Common/Content';
+import TextareaField from '../../components/Common/TextareaField';
 import WriterInfo from '../../components/Common/WriterInfo';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImgUpload from '../../components/Common/ImgUpload';
@@ -47,8 +47,6 @@ const PlantDiaryWrite = () => {
       console.error('식물 정보 조회 에러:', error);
     }
   };
-
-  // const thumbnailIdx = 0;
 
   // 해당 날짜에 작성된 식물 일지 기록 및 관리 기록 확인 
   const fetchDiaryAndCheck = async (plantId, date) => {
@@ -99,9 +97,9 @@ const PlantDiaryWrite = () => {
           // setIsWeather(plantDiary.weather);
           // setIsHumidity(plantDiary.humidity);
           // setIsTemperature(plantDiary.temperature);
-          setIsWatered(plantCheck.watered);
-          setIsFertilized(plantCheck.fertilized);
-          setIsRepotted(plantCheck.repotted);  
+          setIsWatered(plantCheck.isWatered);
+          setIsFertilized(plantCheck.isFertilized);
+          setIsRepotted(plantCheck.isRepotted);  
           setHasPlantCheck(true);     
         } else {
           setHasPlantCheck(false);
@@ -120,9 +118,9 @@ const PlantDiaryWrite = () => {
           setIsWeather(plantDiary.weather);
           setIsHumidity(plantDiary.humidity);
           setIsTemperature(plantDiary.temperature);
-          setIsWatered(plantCheck.watered);
-          setIsFertilized(plantCheck.fertilized);
-          setIsRepotted(plantCheck.repotted);   
+          setIsWatered(plantCheck.isWatered);
+          setIsFertilized(plantCheck.isFertilized);
+          setIsRepotted(plantCheck.isRepotted);   
           setHasPlantCheck(true);  
         }
       } else {
@@ -144,52 +142,17 @@ const PlantDiaryWrite = () => {
 
   // 이미지 업로드 .. => 잘 모루겟어서 지피티한테 물어봄 ㅜㅜ .. 이미지 부분 수정 가능성 높습니다.. ..
   
-  // const handleImageUpload = (event) => {
-  //   console.log(event.target.files);
-  //   setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
-  // };
-
   const handleImageUpload = (event) => {
     console.log(event.target.files);
-    const files = Array.from(event.target.files);
-    
-    if (files.length + imgs.length > 5) {
-      alert('최대 5장까지 업로드할 수 있습니다.');
-      return;
-    }
-    
-    const newImgs = files.map((file, index) => ({
-      url: URL.createObjectURL(file),
-      file,
-      isThumbnail: imgs.length === 0 && index === 0,
-    }));
-
-    setImgs(prevImgs => {
-      const updatedImgs = [...prevImgs, ...newImgs];
-      if (updatedImgs.length > 0 && !updatedImgs.some(img => img.isThumbnail)) {
-        updatedImgs[0].isThumbnail = true;
-      }
-      return updatedImgs;
-    });
+    setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
   };
 
   const handleDeleteImage = (index) => {
-    setImgs(prevImgs => {
-      // 선택한 인덱스의 이미지를 제외한 새로운 배열 생성
-      const updatedImgs = prevImgs.filter((_, i) => i !== index);
-      // 남은 이미지가 존재하며, 그 중에 썸네일 이미지가 없는 경우
-      if (updatedImgs.length > 0 && !updatedImgs.some(img => img.isThumbnail)) { // 우선 대표사진으로 설정해줌
-        updatedImgs[0].isThumbnail = true;
-      }
-      return updatedImgs;
-    });
-  };
-
-  const handleSetThumbnail = (index) => {
-    setImgs(prevImgs => prevImgs.map((img, i) => ({
-      ...img,
-      isThumbnail: i === index
-    })));
+    const newImgs = imgs.filter((_, i) => i !== index);
+    setImgs(newImgs);
+    if (index === 0 && newImgs.length > 0) {
+      newImgs[0].isThumbnail = true;
+    }
   };
 
   const toggleWatered = () => {
@@ -216,9 +179,9 @@ const PlantDiaryWrite = () => {
   // 저장 버튼 클릭
   const handleSave = async () => {
     const formattedDate = date instanceof Date ? date.toISOString().split('T')[0] : new Date(date).toISOString().split('T')[0];
-    const thumbnailIdx = imgs.findIndex(img => img.isThumbnail);
+    const thumbnailIdx = 0;
+
     const diaryData = new FormData();
-    console.log(plantDiaryId); //헉 왜 null 값이지///..,,...
     diaryData.append('plantDiaryId', plantDiaryId);
     diaryData.append('plantId', plantId);
     diaryData.append('weather', 1);
@@ -226,16 +189,12 @@ const PlantDiaryWrite = () => {
     diaryData.append('humidity', 1);
     diaryData.append('content', content);
     console.log(imgs);
-    // diaryData.append('thumbnailIdx', thumbnailIdx);
+    diaryData.append('thumbnailIdx', thumbnailIdx);
     diaryData.append('recordDate', formattedDate);
     
-    
-    imgs.forEach((img, index) => {
+  
+    imgs.forEach((img) => {
       diaryData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
-      if (img.isThumbnail) {
-        console.log('thumbnailIdx:', thumbnailIdx);
-        diaryData.append('thumbnailIdx', index);  // 'thumbnailIdx' key를 사용하여 대표 이미지 인덱스를 추가
-      }
     });
 
     console.log(diaryData);
@@ -264,9 +223,12 @@ const PlantDiaryWrite = () => {
         }
       }
       else {
-        const diaryWriteResponse = await API.post(`user/diary`, diaryData);
-        console.log(diaryWriteResponse.data)
-;        if (diaryWriteResponse.status !== 200) {
+        const diaryWriteResponse = await API.post(`user/diary`, diaryData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        if (diaryWriteResponse.status !== 200) {
           throw new Error('일지 작성에 실패했습니다.');
         }
       }
@@ -339,7 +301,6 @@ const PlantDiaryWrite = () => {
           imgs={imgs} 
           handleImageUpload={handleImageUpload} 
           handleDeleteImage={handleDeleteImage} 
-          handleSetThumbnail={handleSetThumbnail}
         />
       </div>
       <div className="section">
@@ -365,7 +326,11 @@ const PlantDiaryWrite = () => {
       </div>
       <div className="section">
         <h2>일지 작성</h2>
-        <Content content={content} setContent={setContent} />
+        <TextareaField 
+          placeholder='일지를 입력하세요.'
+          value={content} 
+          onChange={(e) => setContent(e.target.value)}   
+        />
       </div>
       <div>
         <Btn content={isEditMode ? "수정하기" : "작성하기"} onClick={handleSave} />
