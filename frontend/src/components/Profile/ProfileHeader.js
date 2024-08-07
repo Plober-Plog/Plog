@@ -15,6 +15,7 @@ const ProfileHeader = ({ data = {}, type }) => {
     profileData.hasNotified = data.hasNotified;
     profileData.isFixed = data.isFixed;
   } else if (type === 'user') {
+    console.log('ProfileHeader Data:', data)
     profileData.imgSrc = data.profile || '';
     profileData.title = data.title || '타이틀이 없습니다';
     profileData.nickname = data.nickname || '닉네임 없음';

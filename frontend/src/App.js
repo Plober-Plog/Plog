@@ -30,10 +30,11 @@ function App() {
         <header className='full-width'>
           <Header />
         </header>
-        <main class='content'>
+        <main className='content'>
 
             <Routes>
-            <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Home />}/>
+              <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/profileupdate" element={<ProfileUpdate />} />
               <Route path="/password/change" element={<PasswordChange />} />
@@ -47,8 +48,8 @@ function App() {
               {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
               <Route path="/plant/register" element={<PlantRegister />} />
               {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
-              <Route path="/profile" element={<UserProfile />}/>
-              <Route path="/sns/write" element={<SnsWrite />}/>
+              <Route path="/profile/:searchId" element={<UserProfile />} />
+              {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
             </Routes>
         </main>
         <footer className='full-width'>
