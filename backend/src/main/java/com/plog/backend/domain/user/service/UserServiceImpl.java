@@ -10,10 +10,10 @@ import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.entity.*;
+import com.plog.backend.global.exception.DuplicateEntityException;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
-import com.plog.backend.global.auth.PloberUserDetails;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
@@ -148,6 +148,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(UserSignUpRequestDto userSignUpRequestDto, String imageUrl) {
         log.info(">>> createUser - 사용자 회원가입 데이터: {}, Image url {}", userSignUpRequestDto, imageUrl);
+
+        if(userRepository.findByEmail(userSignUpRequestDto.getEmail()).isPresent())
+            throw new DuplicateEntityException("중복 가입입니다.");
 
         Image image = new Image(imageUrl);
         imageRepository.save(image);

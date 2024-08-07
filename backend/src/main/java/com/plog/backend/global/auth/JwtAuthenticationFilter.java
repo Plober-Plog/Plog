@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // JWT 검증을 건너뛰어야 하는 URI와 HTTP 메소드 목록
     private static final Map<String, List<String>> EXCLUDE_URLS = new HashMap<>() {{
         put("/api/user", List.of("POST")); // 회원가입 요청 제외
-        put("/api/user/**", List.of("POST")); // 로그인 요청 제외
+        put("/api/user/login", List.of("POST")); // 로그인 요청 제외
         // 필요한 다른 URI와 메소드 추가
     }};
 
@@ -53,6 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
         if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
+            log.info(">>> JWT Filter 제외");
             chain.doFilter(request, response); // 필터 체인 계속 진행
             return;
         }
@@ -67,18 +68,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.info("jwtToken 속 정보 확인 : {}", userId);
             } catch (TimeoutException e) {
                 SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
-                response.getWriter().write(e.getMessage());
+                log.info("JWT Filter - JWT 토큰이 만료되었습니다.");
                 return;
             } catch (NotValidRequestException e) {
                 SecurityContextHolder.clearContext();
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().write(e.getMessage());
+                log.info("JWT Filter - JWT 토큰이 유효하지 않습니다.");
                 return;
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid or expired JWT token");
+                response.getWriter().write("JWT Filter - Invalid or expired JWT token");
                 return;
             }
         } else {

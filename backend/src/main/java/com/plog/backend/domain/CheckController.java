@@ -1,17 +1,18 @@
 package com.plog.backend.domain;
 
 import com.plog.backend.domain.weather.service.WeatherService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/forever")
 public class CheckController {
 
-    @Autowired
-    WeatherService weatherService;
+    public WeatherService weatherService;
 
     @GetMapping
     public String test() {

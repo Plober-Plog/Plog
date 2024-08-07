@@ -1,10 +1,7 @@
 package com.plog.backend.global.exception.handler;
 
-import com.plog.backend.global.exception.EntityNotFoundException;
-import com.plog.backend.global.exception.NotAuthorizedRequestException;
-import com.plog.backend.global.exception.TimeoutException;
+import com.plog.backend.global.exception.*;
 import com.plog.backend.global.exception.model.ExceptionResponseDto;
-import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -76,6 +73,20 @@ public class GlobalExceptionHandler {
                 request.getMethod(),
                 request.getRequestURI(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // 중복된 Entity를 저장시 발생 409에러
+    @ExceptionHandler(DuplicateEntityException.class)
+    public ResponseEntity<ExceptionResponseDto> handleDuplicateEntityException(
+            Exception ex, HttpServletRequest request) {
+        log.error("DuplicateEntityException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        ExceptionResponseDto response = ExceptionResponseDto.of(
+                request.getMethod(),
+                request.getRequestURI(),
+                HttpStatus.CONFLICT.value(),
                 ex.getMessage()
         );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
