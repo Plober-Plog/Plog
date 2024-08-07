@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -82,7 +83,7 @@ public class PlantController {
             @Parameter(description = "사용자 검색 ID", required = true) @RequestParam String searchId,
             @Parameter(description = "식물 종류 ID 목록") @RequestParam(required = false) List<Long> plantTypeId,
             @Parameter(description = "기타 식물 종류 ID 목록") @RequestParam(required = false) List<Long> otherPlantTypeId,
-            @Parameter(description = "페이지 번호 : 0이 기본", required = false) @RequestParam String page) {
+            @Parameter(description = "페이지 번호 : 0이 기본") @RequestParam(required = false, defaultValue = "0") String page) {
 
         log.info(">>> [GET] /user/plant - 검색 ID: {}, plantTypeId: {}, " +
                         "otherPlantTypeId: {}, page: {}",
@@ -94,9 +95,9 @@ public class PlantController {
 
         List<PlantGetResponseDto> plantGetResponseDtoList;
         log.info(plantTypeId + " " + otherPlantTypeId);
-        if (plantTypeId != null && otherPlantTypeId != null) {
-            plantGetRequestDto.setPlantTypeId(plantTypeId);
-            plantGetRequestDto.setOtherPlantTypeId(otherPlantTypeId);
+        if (plantTypeId != null || otherPlantTypeId != null) {
+            plantGetRequestDto.setPlantTypeId(plantTypeId == null ? new ArrayList<>() : plantTypeId);
+            plantGetRequestDto.setOtherPlantTypeId(otherPlantTypeId == null ? new ArrayList<>() : otherPlantTypeId);
             plantGetResponseDtoList = plantService.getPlantListByPlantTypeIds(plantGetRequestDto);
         } else {
             plantGetResponseDtoList = plantService.getPlantList(plantGetRequestDto);
