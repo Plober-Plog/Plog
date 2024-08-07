@@ -198,8 +198,8 @@ public class NeighborServiceImpl implements NeighborService {
 
         return NeighborCheckResponseDto
                 .builder()
-                .profileUserRel(neighborRepository.findByNeighborTypeByNeighborToAndNeighborFrom(userId, neighbor.getUserId()))
-                .requestUserRel(neighborRepository.findByNeighborTypeByNeighborToAndNeighborFrom(neighbor.getUserId(), userId))
+                .requestUserRel(neighborRepository.findByNeighborTypeByNeighborToAndNeighborFrom(userId, neighbor.getUserId()))
+                .profileUserRel(neighborRepository.findByNeighborTypeByNeighborToAndNeighborFrom(neighbor.getUserId(), userId))
                 .build();
     }
 }
