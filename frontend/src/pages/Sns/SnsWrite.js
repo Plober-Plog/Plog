@@ -14,7 +14,7 @@ const SnsWrite = () => {
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
-  const [tagTypeList, setTagTypeList] = useState([]); // 태그 리스트 상태 추가
+  const [tagTypeList, setTagTypeList] = useState([]); // 선택된 태그 리스트 상태
   const tags = [
     { id: 1, label: '일지' },
     { id: 2, label: '분석 레포트' },
@@ -32,7 +32,6 @@ const SnsWrite = () => {
       prevTags.includes(id) ? prevTags.filter(tag => tag !== id) : [...prevTags, id]
     );
   };
-
   // 태그 변경 확인
   useEffect(() => {
     console.log(tagTypeList);
@@ -40,7 +39,6 @@ const SnsWrite = () => {
 
 
   // 이미지 업로드
-  // TODO 유효성 검사 추가
   const handleImageUpload = (event) => {
     console.log(event.target.files);
     setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
@@ -58,7 +56,6 @@ const SnsWrite = () => {
 
     // FormData 생성
     const snsData = new FormData();
-  
     snsData.append('content', content);
     snsData.append('visibility', selectedVisibility);
     
@@ -76,7 +73,7 @@ const SnsWrite = () => {
     console.log(Array.from(snsData.entries()));
   
     try {
-      // 요청
+      // 게시물 작성 요청
       const response = await API.post('/user/sns', snsData, {
         headers: {
           'Content-Type': 'multipart/form-data',

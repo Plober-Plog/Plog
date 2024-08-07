@@ -23,6 +23,7 @@ import ApiTest from './pages/Plant/ApiTest';
 import UserProfile from './pages/Profile/UserProfile';
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
+import SnsDetail from './pages/Sns/SnsDetail';
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
               {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
               {/* sns */}
               <Route path="/sns/write" element={<SnsWrite />} />
+              <Route path="/sns/:articleId" element={<SnsDetail />} />
             </Routes>
         </main>
         <footer className='full-width'>

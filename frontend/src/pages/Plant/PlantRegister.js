@@ -12,8 +12,6 @@ const PlantRegister = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { plantId } = location.state;
-  // const plantId = 0; // 임시 plantId (작성)
-  // const plantId = 52; // 임시 plantId (수정)
 
   // 식물 정보
   const [plantTypeId, setPlantTypeId] = useState(2);
