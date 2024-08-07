@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 
@@ -6,6 +6,7 @@ import ImgUpload from '../../components/Common/ImgUpload';
 import Btn from '../../components/Common/Btn';
 import Tab from '../../components/Sns/Tab';
 import TextareaField from '../../components/Common/TextareaField';
+import Tags from '../../components/Sns/Tags';
 
 import cameraIcon from '../../assets/icon/camera.png';
 
@@ -13,19 +14,46 @@ const SnsWrite = () => {
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
-  const [tagTypeList, setTagTypeList] = useState([1, 2, 3]); // 태그 리스트 상태 추가
+  const [tagTypeList, setTagTypeList] = useState([]); // 태그 리스트 상태 추가
+  const tags = [
+    { id: 1, label: '일지' },
+    { id: 2, label: '분석 레포트' },
+    { id: 3, label: '질문' },
+    { id: 4, label: '일기' },
+    { id: 5, label: '식물' },
+    { id: 6, label: '정보' },
+    { id: 7, label: '룸꾸미기' }
+  ];
+
+  
+  // 태그 선택
+  const handleTagSelect = (id) => {
+    setTagTypeList(prevTags =>
+      prevTags.includes(id) ? prevTags.filter(tag => tag !== id) : [...prevTags, id]
+    );
+  };
+
+  // 태그 변경 확인
+  useEffect(() => {
+    console.log(tagTypeList);
+  }, [tagTypeList]);
+
 
   // 이미지 업로드
+  // TODO 유효성 검사 추가
   const handleImageUpload = (event) => {
     console.log(event.target.files);
     setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
   };
+
 
   // 이미지 삭제
   const handleDeleteImage = (index) => {
     setImgs(prevImgs => prevImgs.filter((_, i) => i !== index));
   };
 
+
+  // 게시물 작성
   const handleSave = async () => {
 
     // FormData 생성
@@ -70,6 +98,9 @@ const SnsWrite = () => {
           selectedVisibility={selectedVisibility}
           setSelectedVisibility={setSelectedVisibility}
         />
+      </div>
+      <div>
+        <Tags selectedTags={tagTypeList} onTagSelect={handleTagSelect} tags={tags} />
       </div>
       <div>
         <ImgUpload 
