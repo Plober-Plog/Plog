@@ -189,7 +189,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     public PlantDiaryGetResponseDto getPlantDiary(Long plantDiaryId) {
         log.info(">>> getPlantDiary - 요청 ID: {}", plantDiaryId);
 
-        Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findByPlantPlantIdAndIsDeletedFalse(plantDiaryId);
+        Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findByPlantDiaryIdAndIsDeletedFalse(plantDiaryId);
         if (optionalPlantDiary.isPresent()) {
             PlantDiary plantDiary = optionalPlantDiary.get();
             if (!plantDiary.isDeleted()) {
