@@ -60,7 +60,9 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
   };
 
   const handleEdit = () => {
-    navigate(`/plant/register/${ownerId}`);
+    navigate(`/plant/register/${ownerId}`,
+      { state: { plantId: ownerId } }
+    );
   }
 
   const handleWriteDiary = async () => {
