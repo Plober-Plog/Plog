@@ -26,42 +26,42 @@ const SnsWrite = () => {
     setImgs(prevImgs => prevImgs.filter((_, i) => i !== index));
   };
 
-  // 작성버튼 클릭
   const handleSave = async () => {
+
+    // FormData 생성
+    const snsData = new FormData();
+  
+    snsData.append('content', content);
+    snsData.append('visibility', selectedVisibility);
+    
+    // 이미지 넣기
+    imgs.forEach((img, index) => {
+      snsData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
+    });
+    
+    // 태그 넣기
+    tagTypeList.forEach((tagType, index) => {
+      snsData.append(`tagTypeList[${index}]`, tagType);  // 'tagTypeList' key를 사용하여 각각의 태그를 추가
+    });
+  
+    // FormData 확인
+    console.log(Array.from(snsData.entries()));
+  
     try {
-      // FormData 생성
-      const snsData = new FormData();
-      const articleAddRequestDto = {
-        content: content,
-        images: [], // 이미지 파일 이름을 포함하는 배열
-        tagTypeList: tagTypeList,
-        visibility: selectedVisibility
-      };
-
-      imgs.forEach((img, index) => {
-        snsData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
-        articleAddRequestDto.images.push(`image${index}`); // 이미지 이름을 배열에 추가
-      });
-
-      snsData.append('articleAddRequestDto', JSON.stringify(articleAddRequestDto));
-      
-      console.log(Array.from(snsData.entries()));
-
-      return;
-
       // 요청
       const response = await API.post('/user/sns', snsData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       // 응답 처리
       console.log(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   return (
     <div>

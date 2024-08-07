@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 
 import defaultImage from '../../assets/icon/default.png';
@@ -10,9 +10,10 @@ import Btn from '../../components/Common/Btn';
 
 const PlantRegister = () => {
   const location = useLocation();
-  // const { plantId } = location.state;
+  const navigate = useNavigate();
+  const { plantId } = location.state;
   // const plantId = 0; // 임시 plantId (작성)
-  const plantId = 58; // 임시 plantId (수정)
+  // const plantId = 52; // 임시 plantId (수정)
 
   // 식물 정보
   const [plantTypeId, setPlantTypeId] = useState(2);
@@ -117,6 +118,8 @@ const PlantRegister = () => {
       }
 
       console.log(plantId === 0 ? '식물 등록 성공:' : '식물 수정 성공:', response.data);
+      // navigate(`/plant/${plantId}`);
+      // TODO 작성시 식물 plantId 넘겨주기 변경
     } catch (err) {
       console.error('식물 등록/수정 실패 : ', err);
     }
