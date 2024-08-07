@@ -25,11 +25,19 @@ public class Gugun {
     @JoinColumn(name = "sido_code", referencedColumnName = "sido_code", nullable = false)
     Sido sido;
 
+    @Column(nullable = false)
+    private double latitude;
+
+    @Column(nullable = false)
+    private double longitude;
+
     @Builder
-    public Gugun(Long gugunId, int gugunCode, String gugunName, Sido sido) {
+    public Gugun(Long gugunId, int gugunCode, String gugunName, Sido sido, double latitude, double longitude) {
         this.gugunId = gugunId;
         this.gugunCode = gugunCode;
         this.gugunName = gugunName;
         this.sido = sido;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }
