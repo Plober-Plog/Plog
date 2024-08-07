@@ -26,4 +26,16 @@ public class ArticleBookmarkRepositorySupport extends QuerydslRepositorySupport 
                 .orderBy(qArticleBookmark.createdAt.desc()) //TODO [장현준] - 최신순 부터?
                 .fetch();
     }
+
+    public boolean isBookmarkedByUser(Long userId, Long articleId) {
+        QArticleBookmark qArticleBookmark = QArticleBookmark.articleBookmark;
+
+        int count = (int) queryFactory
+                .selectFrom(qArticleBookmark)
+                .where(qArticleBookmark.user.userId.eq(userId)
+                        .and(qArticleBookmark.article.articleId.eq(articleId)))
+                .fetchCount();
+
+        return count > 0;
+    }
 }

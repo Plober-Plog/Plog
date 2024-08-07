@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ArticleLikeRepository extends JpaRepository<ArticleLike, Long> {
     Optional<ArticleLike> findByUserUserIdAndArticleArticleId(Long userId, Long articleId);
+    // 특정 게시글에 대한 좋아요 수를 조회하는 메서드
+    int countByArticleArticleId(Long articleId);
 }
