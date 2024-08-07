@@ -39,8 +39,7 @@ public class UserController {
 
     @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping
-    public ResponseEntity<BaseResponseBody> createUser(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-                                                       @RequestPart("userInfo") UserSignUpRequestDto userSignUpRequestDto) {
+    public ResponseEntity<BaseResponseBody> createUser(@RequestPart("userInfo") UserSignUpRequestDto userSignUpRequestDto) {
         log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
 
         if(userSignUpRequestDto.getEmail() == null || userSignUpRequestDto.getEmail().trim().isEmpty()) {
@@ -63,15 +62,6 @@ public class UserController {
             log.error(">>> [POST] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
-
-        // 이미지 업로드 처리
-        String imageUrl = null;
-        if (profileImage != null && !profileImage.isEmpty()) {
-            String[] uploadedUrls = imageService.uploadImages(new MultipartFile[]{profileImage});
-            imageUrl = uploadedUrls[0];
-        }
-
-        userSignUpRequestDto.setProfile(imageUrl);
 
         User user = userService.createUser(userSignUpRequestDto);
         log.info(">>> [POST] /user - 회원 가입 완료: {}", user);

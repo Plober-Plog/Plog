@@ -1,8 +1,8 @@
 package com.plog.backend.domain.neighbor.repository;
 
-import com.google.common.base.Optional;
 import com.plog.backend.domain.neighbor.entity.Neighbor;
 import com.plog.backend.domain.user.entity.User;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

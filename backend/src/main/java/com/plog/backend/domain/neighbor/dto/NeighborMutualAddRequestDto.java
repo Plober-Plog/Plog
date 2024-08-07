@@ -8,6 +8,7 @@ import lombok.*;
 @Setter
 @ToString
 @Builder
-public class NeighborAddRequestDto {
+public class NeighborMutualAddRequestDto {
     private String neighborSearchId;
+    private Boolean isDelete;
 }

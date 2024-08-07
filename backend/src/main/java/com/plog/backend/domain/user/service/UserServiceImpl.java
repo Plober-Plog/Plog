@@ -144,28 +144,22 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserSignUpRequestDto userSignUpRequestDto) {
         log.info(">>> createUser - 사용자 회원가입 데이터: {}", userSignUpRequestDto);
 
-        Image image = imageRepository.findByImageUrl(userSignUpRequestDto.getProfile())
-                .orElseThrow(() -> {
-                    return new NotValidRequestException("이미지가 없습니다.");
-                });
-
         User user = User.builder()
                 .email(userSignUpRequestDto.getEmail())
-                .gender(Gender.gender(userSignUpRequestDto.getGender()))
-                .role(Role.role(1))
-                .state(State.state(1))
+                .gender(userSignUpRequestDto.getGender())
+                .role(Role.USER.getValue())
+                .state(State.ACTIVTE.getValue())
                 .profileInfo("안녕하세용")
                 .isAd(userSignUpRequestDto.isAd())
                 .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
-                .chatAuth(ChatAuth.chatAuth(1))
+                .chatAuth(ChatAuth.PUBLIC.getValue())
                 .searchId(userSignUpRequestDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
                 .sidoCode(userSignUpRequestDto.getSidoCode())
                 .gugunCode(userSignUpRequestDto.getGugunCode())
                 .source(userSignUpRequestDto.getSource())
                 .birthDate(userSignUpRequestDto.getBirthDate())
-                .image(image)
                 .build();
         User savedUser = userRepository.save(user);
         log.info(">>> createUser - 사용자 생성됨: {}", savedUser);
@@ -229,7 +223,7 @@ public class UserServiceImpl implements UserService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            user.setState(State.DELETED);
+            user.setState(State.DELETED.getValue());
             userRepository.save(user);
             log.info(">>> deleteUser - 사용자 삭제 완료: {}", user);
         } else {
