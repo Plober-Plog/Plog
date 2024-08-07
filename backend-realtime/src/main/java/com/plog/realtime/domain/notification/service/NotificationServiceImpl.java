@@ -30,34 +30,48 @@ public class NotificationServiceImpl implements NotificationService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ChannelTopic topic;
 
-
     @Override
     public List<NotificationMessageResponseDto> getNotifications(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new RuntimeException("User not found"));
+        log.info("getNotifications 시작 - searchId: {}", searchId);
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> {
+            log.error("getNotifications 실패 - User not found, searchId: {}", searchId);
+            return new RuntimeException("User not found");
+        });
         List<NotificationMessageResponseDto> notificationMessageResponseDtos = new ArrayList<>();
         List<Notification> notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
         for (Notification notification : notifications) {
-            notificationMessageResponseDtos.add(NotificationMessageResponseDto
-                    .toNotificationDTO(notification));
+            notificationMessageResponseDtos.add(NotificationMessageResponseDto.toNotificationDTO(notification));
         }
+        log.info("getNotifications 완료 - searchId: {}", searchId);
         return notificationMessageResponseDtos;
     }
 
     @Override
     @Transactional
     public NotificationMessageResponseDto sendNotification(String requireSource, String targetSearchId, NotificationType type) {
-        log.info("sendNotification");
-        User targetUser = userRepository.findUserBySearchId(targetSearchId).orElseThrow(() -> new RuntimeException("User not found"));
-        log.info(targetUser.toString());
+        log.info("sendNotification 시작 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
+        User targetUser = userRepository.findUserBySearchId(targetSearchId).orElseThrow(() -> {
+            log.error("sendNotification 실패 - User not found, targetSearchId: {}", targetSearchId);
+            return new RuntimeException("User not found");
+        });
+        log.info("targetUser 정보: {}", targetUser);
+
         String messageTemplate = type.getDefaultMessage();
         String formattedMessage;
-        log.info(messageTemplate);
+
+        log.info("messageTemplate: {}", messageTemplate);
 
         if (type.requiresSource()) {
-            User sourceUser = userRepository.findUserBySearchId(requireSource).orElseThrow(() -> new RuntimeException("Source user not found"));
+            User sourceUser = userRepository.findUserBySearchId(requireSource).orElseThrow(() -> {
+                log.error("sendNotification 실패 - Source user not found, requireSource: {}", requireSource);
+                return new RuntimeException("Source user not found");
+            });
             formattedMessage = String.format(messageTemplate, requireSource, targetSearchId);
         } else if (type.requiresPlant()) {
-            Plant plant = plantRepository.findById((long) Integer.parseInt(requireSource)).orElseThrow(() -> new RuntimeException("Plant not found"));
+            Plant plant = plantRepository.findById((long) Integer.parseInt(requireSource)).orElseThrow(() -> {
+                log.error("sendNotification 실패 - Plant not found, requireSource: {}", requireSource);
+                return new RuntimeException("Plant not found");
+            });
             formattedMessage = String.format(messageTemplate, targetSearchId, plant.getNickname());
         } else {
             formattedMessage = String.format(messageTemplate, targetSearchId);
@@ -68,19 +82,20 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setContent(formattedMessage);
         notification.setType(type.getValue());
         notificationRepository.save(notification);
-        log.info("완료?");
+        log.info("알림 저장 완료 - notificationId: {}", notification.getNotificationId());
 
         NotificationMessageResponseDto notificationMessageResponseDto = NotificationMessageResponseDto.toNotificationDTO(notification);
 
         // Redis를 통해 메시지를 전송합니다.
         redisTemplate.convertAndSend(topic.getTopic(), notificationMessageResponseDto);
-        log.info("완료!");
+        log.info("sendNotification 완료 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
 
         return notificationMessageResponseDto;
     }
 
     @Override
     public void checkPlantNotifications() {
+        log.info("checkPlantNotifications 시작");
         List<Plant> plants = plantRepository.findAll();
 
         for (Plant plant : plants) {
@@ -98,9 +113,11 @@ public class NotificationServiceImpl implements NotificationService {
                 checkWaterNotification(plant, user, today);
             }
         }
+        log.info("checkPlantNotifications 완료");
     }
 
     private void checkWaterNotification(Plant plant, User user, LocalDate today) {
+        log.info("checkWaterNotification 시작 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
         LocalDate waterDate = plant.getWaterDate();
         int waterMid = plant.getPlantType().getWaterMid();
         int waterInterval = plant.getPlantType().getWaterInterval();
@@ -110,9 +127,11 @@ public class NotificationServiceImpl implements NotificationService {
         if (!today.isBefore(startWaterDate) && !today.isAfter(endWaterDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), NotificationType.WATER_REMINDER);
         }
+        log.info("checkWaterNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
     }
 
     private void checkFertilizeNotification(Plant plant, User user, LocalDate today) {
+        log.info("checkFertilizeNotification 시작 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
         LocalDate fertilizeDate = plant.getFertilizeDate();
         int fertilizeMid = plant.getPlantType().getFertilizeMid();
         int fertilizeInterval = plant.getPlantType().getFertilizeInterval();
@@ -122,9 +141,11 @@ public class NotificationServiceImpl implements NotificationService {
         if (!today.isBefore(startFertilizeDate) && !today.isAfter(endFertilizeDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), NotificationType.FERTILIZE_REMINDER);
         }
+        log.info("checkFertilizeNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
     }
 
     private void checkRepotNotification(Plant plant, User user, LocalDate today) {
+        log.info("checkRepotNotification 시작 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
         LocalDate repotDate = plant.getRepotDate();
         int repotMid = plant.getPlantType().getRepotMid();
         int repotInterval = plant.getPlantType().getRepotInterval();
@@ -134,49 +155,66 @@ public class NotificationServiceImpl implements NotificationService {
         if (!today.isBefore(startRepotDate) && !today.isAfter(endRepotDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), NotificationType.REPOT_REMINDER);
         }
+        log.info("checkRepotNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
     }
 
     @Override
     public List<NotificationMessageResponseDto> getUnreadNotifications(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new RuntimeException("User not found"));
+        log.info("getUnreadNotifications 시작 - searchId: {}", searchId);
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> {
+            log.error("getUnreadNotifications 실패 - User not found, searchId: {}", searchId);
+            return new RuntimeException("User not found");
+        });
         List<Notification> notifications = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
         List<NotificationMessageResponseDto> notificationMessageResponseDtos = new ArrayList<>();
         for (Notification notification : notifications) {
-            notificationMessageResponseDtos.add(NotificationMessageResponseDto
-                    .toNotificationDTO(notification));
+            notificationMessageResponseDtos.add(NotificationMessageResponseDto.toNotificationDTO(notification));
             notification.setIsRead(true);
             notificationRepository.save(notification);
         }
+        log.info("getUnreadNotifications 완료 - searchId: {}", searchId);
         return notificationMessageResponseDtos;
     }
 
     @Override
     public void markAsRead(Long notificationId) {
-        Notification notification = notificationRepository.findById(notificationId).orElseThrow(() -> new RuntimeException("Notification not found"));
+        log.info("markAsRead 시작 - notificationId: {}", notificationId);
+        Notification notification = notificationRepository.findById(notificationId).orElseThrow(() -> {
+            log.error("markAsRead 실패 - Notification not found, notificationId: {}", notificationId);
+            return new RuntimeException("Notification not found");
+        });
         notification.setIsRead(true);
         notificationRepository.save(notification);
+        log.info("markAsRead 완료 - notificationId: {}", notificationId);
     }
 
     @Override
     public List<NotificationMessageResponseDto> getUnsentNotifications(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new RuntimeException("User not found"));
+        log.info("getUnsentNotifications 시작 - searchId: {}", searchId);
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> {
+            log.error("getUnsentNotifications 실패 - User not found, searchId: {}", searchId);
+            return new RuntimeException("User not found");
+        });
         List<Notification> notifications = notificationRepository.findByUserAndIsSentFalseOrderByCreatedAtDesc(user);
         List<NotificationMessageResponseDto> notificationMessageResponseDtos = new ArrayList<>();
         for (Notification notification : notifications) {
-            notificationMessageResponseDtos.add(NotificationMessageResponseDto
-                    .toNotificationDTO(notification));
+            notificationMessageResponseDtos.add(NotificationMessageResponseDto.toNotificationDTO(notification));
             notification.setIsSent(true);
             notificationRepository.save(notification);
         }
+        log.info("getUnsentNotifications 완료 - searchId: {}", searchId);
         return notificationMessageResponseDtos;
     }
 
     @Override
     public void markAsSent(Long notificationId) {
-        Notification notification = notificationRepository.findById(notificationId).orElseThrow(() -> new RuntimeException("Notification not found"));
+        log.info("markAsSent 시작 - notificationId: {}", notificationId);
+        Notification notification = notificationRepository.findById(notificationId).orElseThrow(() -> {
+            log.error("markAsSent 실패 - Notification not found, notificationId: {}", notificationId);
+            return new RuntimeException("Notification not found");
+        });
         notification.setIsSent(true);
         notificationRepository.save(notification);
+        log.info("markAsSent 완료 - notificationId: {}", notificationId);
     }
-
-
 }

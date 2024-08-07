@@ -20,15 +20,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class NotificationController {
 
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
-
     private final NotificationService notificationService;
-
     private static final long SSE_TIMEOUT = 30 * 60 * 1000L; // 30분
 
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@RequestParam String searchId) {
-        log.info("Subscribing with searchId: {}", searchId);
-//        SseEmitter emitter = new SseEmitter(60 * 1000L);
+        log.info("subscribe 시작 - searchId: {}", searchId);
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);
         emitters.add(emitter);
 
@@ -52,37 +49,49 @@ public class NotificationController {
         unsentNotifications.forEach(notification -> {
             try {
                 emitter.send(SseEmitter.event().name("notification").data(notification));
+                notificationService.markAsSent(notification.getNotificationId());
             } catch (IOException e) {
                 log.error("Error sending unsent notification: {}", e.getMessage());
             }
         });
 
+        log.info("subscribe 완료 - searchId: {}", searchId);
         return emitter;
     }
 
     @PostMapping("/send")
     public void sendNotification(@RequestParam String sourceSearchId, @RequestParam String targetSearchId, @RequestParam NotificationType type) {
-        log.info("Sending notification: {} {} {} ", sourceSearchId, targetSearchId, type);
+        log.info("sendNotification 시작 - sourceSearchId: {}, targetSearchId: {}, type: {}", sourceSearchId, targetSearchId, type);
         NotificationMessageResponseDto notification = notificationService.sendNotification(sourceSearchId, targetSearchId, type);
         sendSseEvent(notification);
+        log.info("sendNotification 완료 - sourceSearchId: {}, targetSearchId: {}, type: {}", sourceSearchId, targetSearchId, type);
     }
 
     @GetMapping("/history")
     public List<NotificationMessageResponseDto> getNotificationHistory(@RequestParam String searchId) {
-        return notificationService.getNotifications(searchId);
+        log.info("getNotificationHistory 시작 - searchId: {}", searchId);
+        List<NotificationMessageResponseDto> history = notificationService.getNotifications(searchId);
+        log.info("getNotificationHistory 완료 - searchId: {}", searchId);
+        return history;
     }
 
     @GetMapping("/unread")
     public List<NotificationMessageResponseDto> getUnreadNotifications(@RequestParam String searchId) {
-        return notificationService.getUnreadNotifications(searchId);
+        log.info("getUnreadNotifications 시작 - searchId: {}", searchId);
+        List<NotificationMessageResponseDto> unreadNotifications = notificationService.getUnreadNotifications(searchId);
+        log.info("getUnreadNotifications 완료 - searchId: {}", searchId);
+        return unreadNotifications;
     }
 
     @PutMapping("/mark-as-read")
     public void markAsRead(@RequestParam Long notificationId) {
+        log.info("markAsRead 시작 - notificationId: {}", notificationId);
         notificationService.markAsRead(notificationId);
+        log.info("markAsRead 완료 - notificationId: {}", notificationId);
     }
 
     public void sendSseEvent(NotificationMessageResponseDto notification) {
+        log.info("sendSseEvent 시작 - notificationId: {}", notification.getNotificationId());
         for (SseEmitter emitter : emitters) {
             try {
                 emitter.send(SseEmitter.event().name("notification").data(notification));
@@ -92,5 +101,6 @@ public class NotificationController {
                 emitters.remove(emitter);
             }
         }
+        log.info("sendSseEvent 완료 - notificationId: {}", notification.getNotificationId());
     }
 }
