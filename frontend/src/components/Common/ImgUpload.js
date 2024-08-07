@@ -4,7 +4,7 @@ import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImgPreview from '../../components/Common/ImgPreview'; 
 import Btn from '../../components/Common/Btn'; 
 
-const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) => {
+const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  handleSetThumbnail }) => {
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
@@ -32,7 +32,13 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) =
       />
       <div>
         {imgs.map((img, index) => (
-          <ImgPreview key={index} src={img} onDelete={() => handleDeleteImage(index)} />
+          <ImgPreview 
+            key={index} 
+            src={img.url} 
+            isThumbnail={img.isThumbnail} 
+            onDelete={() => handleDeleteImage(index)} 
+            onSetThumbnail={() => handleSetThumbnail(index)} 
+          />
         ))}
       </div>
     </div>
@@ -40,10 +46,14 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) =
 };
 
 ImgUpload.propTypes = {
-  uploadIcon: PropTypes.string.isRequired,
-  imgs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  cameraIcon: PropTypes.string.isRequired,
+  imgs: PropTypes.arrayOf(PropTypes.shape({
+    image: PropTypes.string.isRequired,
+    isThumbnail: PropTypes.bool.isRequired,
+  })).isRequired,
   handleImageUpload: PropTypes.func.isRequired,
   handleDeleteImage: PropTypes.func.isRequired,
+  handleSetThumbnail: PropTypes.func.isRequired,
 };
 
 export default ImgUpload;

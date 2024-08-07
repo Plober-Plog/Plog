@@ -1,0 +1,54 @@
+.social-login {
+  text-align: center;
+}
+
+.social-login p {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 20px 0;
+  position: relative;
+}
+
+.social-login p::before,
+.social-login p::after {
+  content: "";
+  display: inline-block;
+  width: 100px;
+  height: 1px;
+  background-color: #000;
+  vertical-align: middle;
+}
+
+.social-login p::before {
+  margin-right: 10px;
+}
+
+.social-login p::after {
+  margin-left: 10px;
+}
+
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px; /* 버튼 사이 간격 조정 */
+  margin-top: 20px;
+}
+
+.social-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.social-icon {
+  width: 80px; /* 아이콘 크기 조정 */
+  height: 80px;
+  border-radius: 50%; /* 원형으로 만들기 */
+  transition: transform 0.3s; /* 호버 효과를 위한 트랜지션 */
+}
+
+.social-icon:hover {
+  transform: scale(1.1); /* 호버 시 확대 효과 */
+}

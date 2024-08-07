@@ -1,0 +1,82 @@
+.react-calendar {
+  width: 400px;
+  border: 1px solid #e6e6e6;
+  border-radius: 15px;
+}
+
+/* 네비 바 (연, 월, 버튼) */
+.react-calendar__navigation {
+  display: flex;
+  margin: 20px;
+}
+
+.react-calendar__navigation__label {
+  font-size: 20px;
+  background-color: white;
+  border: 0;
+  flex-grow: 0;
+}
+
+.react-calendar__navigation__arrow {
+  /* background-color: white; */
+  /* border: 0; */
+  /* font-size: larges; */
+  flex-grow: 1;
+  /* justify-content: center; */
+}
+
+.react-calendar__navigation__prev2-button,
+.react-calendar__navigation__next2-button {
+  display: none;
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.react-calendar__tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 60px;
+  /* border: 1px solid black; */
+  background-color: white;
+}
+
+.react-calendar__tile--active {
+  background-color: #f5f5f5;
+}
+
+.color-box {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.indicator {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.watered {
+  background-color: #A8D8E7;
+  height: 8px;
+}
+
+.fertilized {
+  background-color: #FFB9B9;
+  height: 8px;
+}
+
+.repotted {
+  background-color: #99DA9B;
+  height: 8px;
+}
+
+.diary {
+  background-color: #F7D98B;
+  height: 8px;
+}

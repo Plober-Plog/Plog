@@ -1,37 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import ProfileHeader from "../../components/Profile/ProfileHeader";
-import Calender from "../../components/Plant/Calender";
+import CustomCalendar from "../../components/Plant/Calendar";
 import ArticleCardList from "../../components/Article/ArticleCardList";
 import ReportBanner from "../../components/Plant/ReportBanner";
 import Btn from "../../components/Common/Btn";
+// import './PlantDetail.css';
+import axios from 'axios';
+import defaultImg from '../../assets/icon/default.png';
 
-
+/* TODO: 이 전의 페이지가 업데이트 되면 하드코딩 부분 수정할 것 */
 const PlantDetail = () => {
 
-  // FE 체크를 위한 더미 데이터
-  // 이후 API 만들어지면 수정할 것
-  const plantData = {
-    profile: "",
-    plantTypeId: "튤립",
-    nickname: "조이",
-    bio: "행복한 조이"
-  }
+  const { plantId } = useParams();
 
-  // FE 체크를 위한 더미 데이터
-  // 이후 API 만들어지면 수정할 것
-  const articles = [
-    { id: 1, log: "24.07.01", thumbnail: "" },
-    { id: 2, log: "24.07.31", thumbnail: "" }
-  ];
+  const URI = 'https://i11b308.p.ssafy.io/api'
+  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
+
+  const [plantData, setPlantData] = useState(null);
+  const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    const fetchPlantData = async () => {
+      try {
+        const response = await axios.get(`${URI}/user/plant/${plantId}/info`);
+        setPlantData(response.data);
+      } catch (error) {
+        console.error("PlantData Error:", error.response.data);
+      }
+    };
+
+    const fetchArticles = async () => {
+      try {
+        const response = await axios.get(`${URI}/user/plant/${plantId}/diary`);
+        setArticles(response.data);
+      } catch (error) {
+        console.error("CardList Error:", error.response.data);
+      }
+    };
+
+    fetchPlantData();
+    fetchArticles();
+  }, [plantId]);
+
+  if (!plantData) {
+    return <div>Loading</div>
+  };
 
   return (
     <div>
       <ProfileHeader
-        data={plantData}
+        data={{ ...plantData, ownerId:plantId }}
         type="plant"
       />
-      <Calender />
+      <CustomCalendar 
+        plantId={plantId}
+      />
       <ArticleCardList 
+        ownerId={plantId}
         articles={articles}
         type="plant"
       />
