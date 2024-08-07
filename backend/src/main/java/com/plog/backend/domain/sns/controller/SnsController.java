@@ -1,18 +1,21 @@
 package com.plog.backend.domain.sns.controller;
 
-import com.plog.backend.domain.sns.dto.request.ArticleAddRequestDto;
-import com.plog.backend.domain.sns.dto.request.ArticleUpdateRequestDto;
+
+import com.plog.backend.domain.sns.dto.request.*;
+import com.plog.backend.domain.sns.dto.response.ArticleBookmarkGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
+import com.plog.backend.global.model.response.BaseResponseBody;
+import com.plog.backend.domain.sns.service.ArticleBookmarkServiceImpl;
 import com.plog.backend.domain.sns.service.ArticleCommentService;
 import com.plog.backend.domain.sns.service.ArticleLikeServiceImpl;
 import com.plog.backend.domain.sns.service.ArticleService;
-import com.plog.backend.global.model.response.BaseResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +26,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user/sns")
-@Tag(name = "SNS Controller", description = "SNS API")
+@Tag(name = "SNS API", description = "SNS 관련 API")
 public class SnsController {
     private final ArticleService articleService;
     private final ArticleCommentService articleCommentService;
     private final ArticleLikeServiceImpl articleLikeService;
+    private final ArticleBookmarkServiceImpl articleBookmarkService;
 
     // ============================= 게시글 =============================
     @PostMapping
@@ -89,6 +93,56 @@ public class SnsController {
         return ResponseEntity.status(200).body(articleGetSimpleResponseDtoList);
     }
 
+    // ============================= 댓글 =============================
+    @PostMapping("/comment")
+    @Operation(summary = "댓글 등록", description = "새로운 댓글을 등록합니다.")
+    public ResponseEntity<BaseResponseBody> addComment(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ArticleCommentAddRequestDto articleCommentAddRequestDto) {
+        log.info(">>> [POST] /user/sns/comment - 댓글 생성 요청 데이터: {}", articleCommentAddRequestDto);
+        articleCommentService.addArticleComment(token, articleCommentAddRequestDto);
+        log.info(">>> [POST] /user/sns/comment - 댓글 생성 완료");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponseBody.of(200, "댓글이 생성되었습니다."));
+    }
+
+    @PatchMapping("/comment")
+    @Operation(summary = "댓글 수정", description = "기존 댓글을 수정합니다.")
+    public ResponseEntity<BaseResponseBody> updateComment(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto) {
+        log.info(">>> [PATCH] /user/sns/comment - 댓글 수정 요청 데이터: {}", articleCommentUpdateRequestDto);
+        articleCommentService.updateArticleComment(token, articleCommentUpdateRequestDto);
+        log.info(">>> [PATCH] /user/sns/comment - 댓글 수정 완료");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponseBody.of(200, "댓글이 수정되었습니다."));
+    }
+
+    @DeleteMapping("/comment")
+    @Operation(summary = "댓글 삭제", description = "기존 댓글을 삭제합니다.")
+    public ResponseEntity<BaseResponseBody> deleteComment(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto) {
+        log.info(">>> [DELETE] /user/sns/comment - 댓글 삭제 요청 데이터: {}", articleCommentDeleteRequestDto);
+        articleCommentService.deleteArticleComment(token, articleCommentDeleteRequestDto);
+        log.info(">>> [DELETE] /user/sns/comment - 댓글 삭제 완료");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponseBody.of(200, "댓글이 삭제되었습니다."));
+    }
+
+//    @GetMapping("/{articleId}/comment")
+//    @Operation(summary = "댓글 목록 조회", description = "특정 게시글의 모든 댓글을 조회합니다.")
+//    public ResponseEntity<List<ArticleCommentGetResponse>> getComments(
+//            @PathVariable("articleId") Long articleId) {
+//        log.info(">>> [GET] /user/sns/{}/comment - 댓글 목록 조회 요청", articleId);
+//        List<ArticleCommentGetResponse> comments = articleCommentService.getComments(articleId);
+//        log.info(">>> [GET] /user/sns/{}/comment - 댓글 목록 조회 완료", articleId);
+//        return ResponseEntity.status(HttpStatus.OK).body(comments);
+//    }
+
     // ============================= 좋아요 =============================
     @PostMapping("/like")
     @Operation(summary = "게시글 좋아요 추가", description = "게시글에 좋아요를 추가합니다.")
@@ -110,4 +164,35 @@ public class SnsController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "좋아요 해제가 완료되었습니다."));
     }
     // ============================= 북마크 =============================
+    @PostMapping("/bookmark/{articleId}")
+    @Operation(summary = "북마크 추가", description = "특정 게시글을 북마크에 추가합니다.")
+    public ResponseEntity<BaseResponseBody> addBookmark(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("articleId") Long articleId) {
+        log.info(">>> [POST] /user/sns/bookmark/{} - 북마크 추가 요청", articleId);
+        articleBookmarkService.addBookmark(token, articleId);
+        log.info(">>> [POST] /user/sns/bookmark/{} - 북마크 추가 완료", articleId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "북마크 등록이 되었습니다."));
+    }
+
+    @DeleteMapping("/bookmark/{articleId}")
+    @Operation(summary = "북마크 삭제", description = "특정 게시글을 북마크에서 삭제합니다.")
+    public ResponseEntity<BaseResponseBody> deleteBookmark(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("articleId") Long articleId) {
+        log.info(">>> [DELETE] /user/sns/bookmark/{} - 북마크 삭제 요청", articleId);
+        articleBookmarkService.deleteBookmark(token, articleId);
+        log.info(">>> [DELETE] /user/sns/bookmark/{} - 북마크 삭제 완료", articleId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "북마크 삭제 되었습니다."));
+    }
+
+    @GetMapping("/bookmark")
+    @Operation(summary = "북마크 목록 조회", description = "사용자의 모든 북마크를 조회합니다.")
+    public ResponseEntity<ArticleBookmarkGetResponseDto> getBookmark(
+            @RequestHeader("Authorization") String token) {
+        log.info(">>> [GET] /user/sns/bookmark - 북마크 목록 조회 요청");
+        ArticleBookmarkGetResponseDto response = articleBookmarkService.getBookmarks(token);
+        log.info(">>> [GET] /user/sns/bookmark - 북마크 목록 조회 완료");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
