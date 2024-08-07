@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
 import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 
 @Slf4j
@@ -32,20 +34,22 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
     @Transactional
     @Override
     public void addBookmark(String token, Long articleId) {
-        log.info(">>> [addBookmark] - AccessToken: {}", token);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> [addBookmark] - 사용자 ID: {}, 게시글 ID: {}", userId, articleId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.error(">>> [addBookmark] - 없는 사용자 ID: {}", userId);
-                    return new NotValidRequestException("addArticleBookmark - 없는 사용자 입니다.");
-                });
+                .orElseThrow(() ->
+                        new NotValidRequestException("addArticleBookmark - 없는 사용자 입니다.")
+                );
 
-        Article article = articleRepository.findById(articleId).orElseThrow(() -> {
-            log.error(">>> [addBookmark] - 없는 게시글 ID: {}", articleId);
-            return new EntityNotFoundException("addBookmarkt - 없는 게시글 입니다.");
-        });
+        Article article = articleRepository.findById(articleId).orElseThrow(() ->
+                new EntityNotFoundException("addBookmark - 없는 게시글 입니다.")
+        );
+
+        Optional<ArticleBookmark> articleBookmarkOptional = articleBookmarkRepository.findById(articleId);
+
+        if (articleBookmarkOptional.isPresent())
+            throw new NotValidRequestException("이미 북마크한 게시글입니다.");
 
         ArticleBookmark articleBookmark = ArticleBookmark.builder()
                 .article(article)
@@ -62,21 +66,18 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> [deleteBookmark] - 사용자 ID: {}, 게시글 ID: {}", userId, articleId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.error(">>> [deleteBookmark] - 없는 사용자 ID: {}", userId);
-                    return new NotValidRequestException("deleteArticleBookmark - 없는 사용자 입니다.");
-                });
+        userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new NotValidRequestException("deleteArticleBookmark - 없는 사용자 입니다.")
+                );
 
-        Article article = articleRepository.findById(articleId).orElseThrow(() -> {
-            log.error(">>> [deleteBookmark] - 없는 게시글 ID: {}", articleId);
-            return new EntityNotFoundException("deleteArticleBookmark - 없는 게시글 입니다.");
-        });
 
-        ArticleBookmark articleBookmark = articleBookmarkRepository.findById(articleId).orElseThrow(() -> {
-            log.error(">>> [deleteBookmark] - 없는 북마크 ID: {}", articleId);
-            return new EntityNotFoundException("deleteArticleBookmark - 없는 북마크입니다.");
-        });
+        articleRepository.findById(articleId).orElseThrow(() ->
+                new EntityNotFoundException("deleteArticleBookmark - 없는 게시글 입니다.")
+        );
+
+        ArticleBookmark articleBookmark = articleBookmarkRepository.findById(articleId).orElseThrow(() -> new EntityNotFoundException("deleteArticleBookmark - 없는 북마크입니다.")
+        );
 
         articleBookmarkRepository.delete(articleBookmark);
         log.info(">>> [deleteBookmark] - 북마크 삭제 완료, 사용자 ID: {}, 게시글 ID: {}", userId, articleId);
@@ -88,10 +89,9 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
         log.info(">>> [getBookmarks] - 사용자 ID: {}", userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.error(">>> [getBookmarks] - 없는 사용자 ID: {}", userId);
-                    return new NotValidRequestException("deleteArticleBookmark - 없는 사용자 입니다.");
-                });
+                .orElseThrow(() ->
+                        new NotValidRequestException("deleteArticleBookmark - 없는 사용자 입니다.")
+                );
 
         List<ArticleBookmark> articleBookmarks = articleBookmarkRepositorySupport.findByUser(user);
 

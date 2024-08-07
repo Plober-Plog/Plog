@@ -216,8 +216,8 @@ public class PlantController {
     @GetMapping("/{plantId}/diary")
     @Operation(summary = "식물 일지 조회", description = "식물 ID와 날짜로 식물의 일지를 조회합니다. 만약 연-월이 넘어오지 않았으면 최근 기록 5개를 조회합니다.")
     public ResponseEntity<List<PlantDiaryGetSimpleResponseDto>> getPlantDiaryList(@Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
-                                                                                  @Parameter(description = "조회 연도") @RequestParam(required = false) String year,
-                                                                                  @Parameter(description = "조회 월") @RequestParam(required = false) String month) {
+                                                                                  @Parameter(description = "조회 연도") @RequestParam(value="year", required = false) String year,
+                                                                                  @Parameter(description = "조회 월") @RequestParam(value="month", required = false) String month) {
         if (year != null && month != null) {
             log.info(">>> [GET] /user/plant/{}/diary - 연도: {}, 월: {}", plantId, year, month);
             List<PlantDiaryGetSimpleResponseDto> plantDiaryGetResponseDtoList = plantDiaryService.getPlantDiaryByYearAndMonth(plantId, year, month);
