@@ -1,36 +1,61 @@
 package com.plog.backend.domain.neighbor.service;
 
-import com.google.common.base.Optional;
+import com.plog.backend.domain.neighbor.dto.request.NeighborMutualAddRequestDto;
+import com.plog.backend.domain.neighbor.dto.response.NeighborFromResponseDto;
+import com.plog.backend.domain.neighbor.dto.response.NeighborToResponseDto;
 import com.plog.backend.domain.neighbor.entity.Neighbor;
 import com.plog.backend.domain.neighbor.entity.NeighborType;
 import com.plog.backend.domain.neighbor.repository.NeighborRepository;
-import com.plog.backend.domain.neighbor.repository.NeighborRepositorySupport;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service("neighborService")
 @RequiredArgsConstructor
 public class NeighborServiceImpl implements NeighborService {
-    private final NeighborRepositorySupport neighborRepositorySupport;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
     private final NeighborRepository neighborRepository;
 
+    private NeighborToResponseDto mapToDto(Neighbor neighbor) {
+        return NeighborToResponseDto.builder()
+                .searchId(neighbor.getNeighborFrom().getSearchId())
+                .profile(neighbor.getNeighborFrom().getImageId().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
+                .nickname(neighbor.getNeighborFrom().getNickname())
+                .neighborType(neighbor.getNeighborType().getValue())
+                .build();
+    }
+
+    private NeighborFromResponseDto mapFromDto(Neighbor neighbor) {
+        return NeighborFromResponseDto.builder()
+                .searchId(neighbor.getNeighborTo().getSearchId())
+                .profile(neighbor.getNeighborTo().getImageId().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
+                .nickname(neighbor.getNeighborTo().getNickname())
+                .neighborType(neighbor.getNeighborType().getValue())
+                .build();
+    }
+
     @Override
-    public void addNeighbor(String token, Long neighborId) {
+    public void addNeighbor(String token, String neighborSearchId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        log.info(">>> 이웃 추가: userId={}, neighborId={}", userId, neighborId);
+        log.info(">>> 이웃 추가: userId={}, neighborId={}", userId, neighborSearchId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
-        User neighborUser = userRepository.findById(neighborId)
+        User neighborUser = userRepository.findUserBySearchId(neighborSearchId)
                 .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
+
+        if(neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, NeighborType.NEIGHBOR.getValue()).isPresent())
+            throw new NotValidRequestException("이미 있는 이웃입니다.");
 
         Neighbor neighbor = Neighbor.builder()
                 .neighborFrom(user)
@@ -39,70 +64,129 @@ public class NeighborServiceImpl implements NeighborService {
                 .build();
 
         neighborRepository.save(neighbor);
-        log.info(">> 이웃 추가 성공: userId={}, neighborId={}", userId, neighborId);
+        log.info(">> 이웃 추가 성공: userId={}, neighborId={}", userId, neighborSearchId);
     }
 
     @Override
-    public void deleteNeighbor(String token, Long neighborId) {
+    public void deleteNeighbor(String token, String neighborSearchId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        log.info(">>> 이웃 삭제 : userId={}, neighborId={}", userId, neighborId);
+        log.info(">>> 이웃 삭제 : userId={}, neighborId={}", userId, neighborSearchId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
-        User neighborUser = userRepository.findById(neighborId)
+        User neighborUser = userRepository.findUserBySearchId(neighborSearchId)
                 .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
 
-        int neighborType = NeighborType.NEIGHBOR.getValue();
+        Neighbor neighbor = neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, NeighborType.NEIGHBOR.getValue())
+                .orElseThrow(() -> new NotValidRequestException("해당 이웃 관계를 찾을 수 없습니다."));
 
-        Optional<Neighbor> neighbor = neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, neighborType);
-        if (neighbor.isPresent()) {
-            neighborRepository.delete(neighbor.get());
-            log.info(">>> 이웃 삭제 성공: userId={}, neighborId={}", userId, neighborId);
-        } else {
-            log.warn(">>> 해당 이웃 관계를 못 찾음: userId={}, neighborId={}", userId, neighborId);
-            throw new NotValidRequestException("해당 이웃 관계를 찾을 수 없습니다.");
-        }
+        neighborRepository.delete(neighbor);
+        log.info(">>> 이웃 삭제 성공: userId={}, neighborId={}", userId, neighborSearchId);
     }
 
+    @Transactional
     @Override
-    public void addMutualNeighbor(String token, Long neighborId) {
+    public void addMutualNeighbor(String token, String neighborSearchId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        log.info(">>> 서로 이웃 추가: userId={}, neighborId={}", userId, neighborId);
+        log.info(">>> 서로 이웃 추가: userId={}, neighborId={}", userId, neighborSearchId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
-        User neighborUser = userRepository.findById(neighborId)
+        User neighborUser = userRepository.findUserBySearchId(neighborSearchId)
                 .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
 
-        Neighbor neighbor = Neighbor.builder()
+        if(neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, 2).isPresent())
+            throw new NotValidRequestException("이미 있는 서로 이웃입니다.");
+
+        Neighbor neighborFrom = Neighbor.builder()
                 .neighborFrom(user)
                 .neighborTo(neighborUser)
-                .neighborType(NeighborType.NEIGHBOR.getValue())
+                .neighborType(NeighborType.MUTUAL_NEIGHBOR.getValue())
                 .build();
+        neighborRepository.save(neighborFrom);
 
-        neighborRepository.save(neighbor);
-        log.info(">>> 서로 이웃 추가 성공: userId={}, neighborId={}", userId, neighborId);
+        Neighbor neighborTo = Neighbor.builder()
+                .neighborFrom(neighborUser)
+                .neighborTo(user)
+                .neighborType(NeighborType.MUTUAL_NEIGHBOR.getValue())
+                .build();
+        neighborRepository.save(neighborTo);
+
+        log.info(">>> 서로 이웃 추가 성공: userId={}, neighborId={}", userId, neighborSearchId);
     }
 
+    @Transactional
     @Override
-    public void deleteMutualNeighbor(String token, Long neighborId) {
+    public void deleteMutualNeighbor(String token, NeighborMutualAddRequestDto neighborMutualAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        log.info(">>> 서로 이웃 삭제: userId={}, neighborId={}", userId, neighborId);
+        String neighborSearchId = neighborMutualAddRequestDto.getNeighborSearchId();
+        boolean isDelete = neighborMutualAddRequestDto.getIsDelete();
+
+        log.info(">>> 서로 이웃 삭제: userId={}, neighborId={}", userId, neighborSearchId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotValidRequestException("사용자를 찾을 수 없습니다."));
-        User neighborUser = userRepository.findById(neighborId)
+        User neighborUser = userRepository.findUserBySearchId(neighborSearchId)
                 .orElseThrow(() -> new NotValidRequestException("이웃을 찾을 수 없습니다."));
 
-        int neighborType = NeighborType.NEIGHBOR.getValue();
+        Neighbor neighborFrom = neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, NeighborType.MUTUAL_NEIGHBOR.getValue())
+                .orElseThrow(() -> new NotValidRequestException("해당 서로 이웃 관계를 찾을 수 없습니다."));
+        Neighbor neighborTo = neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(neighborUser, user, NeighborType.MUTUAL_NEIGHBOR.getValue())
+                .orElseThrow(() -> new NotValidRequestException("해당 서로 이웃 관계를 찾을 수 없습니다."));
 
-        Optional<Neighbor> neighbor = neighborRepository.findByNeighborFromAndNeighborToAndNeighborType(user, neighborUser, neighborType);
-        if (neighbor.isPresent()) {
-            neighborRepository.delete(neighbor.get());
-            log.info(">>> 서로 이웃 삭제 성공: userId={}, neighborId={}", userId, neighborId);
+        if (isDelete) {
+            neighborRepository.delete(neighborFrom);
+            neighborTo.setNeighborType(NeighborType.NEIGHBOR);
+            neighborRepository.save(neighborTo);
+            log.info(">>> 서로 이웃 삭제 성공: userId={}, neighborId={}", userId, neighborSearchId);
         } else {
-            log.warn(">>> 서로 이웃 관게를 못 찾음: userId={}, neighborId={}", userId, neighborId);
-            throw new NotValidRequestException("해당 이웃 관계를 찾을 수 없습니다.");
+            neighborFrom.setNeighborType(NeighborType.NEIGHBOR);
+            neighborTo.setNeighborType(NeighborType.NEIGHBOR);
+            neighborRepository.save(neighborFrom);
+            neighborRepository.save(neighborTo);
+            log.info(">>> 서로 이웃 관계를 일반 이웃으로 변경: userId={}, neighborId={}", userId, neighborSearchId);
         }
+    }
+
+    @Override
+    public List<NeighborToResponseDto> getNeighborTo(String searchId) {
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("NeighborService : 이웃이 없습니다."));
+        return neighborRepository.findByNeighborTo(user).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getNeighborToCount(String searchId) {
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("NeighborService : 이웃이 없습니다."));
+        return neighborRepository.countByNeighborTo(user);
+    }
+
+    @Override
+    public List<NeighborFromResponseDto> getNeighborFrom(String searchId) {
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return neighborRepository.findByNeighborFrom(user).stream()
+                .map(this::mapFromDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getNeighborFromCount(String searchId) {
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return neighborRepository.countByNeighborFrom(user);
+    }
+
+    @Override
+    public List<NeighborToResponseDto> getMutualNeighborFrom(String searchId) {
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return neighborRepository.findByNeighborToAndNeighborType(user, NeighborType.MUTUAL_NEIGHBOR.getValue()).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getMutualNeighborFromCount(String searchId) {
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return neighborRepository.findByNeighborToAndNeighborType(user, NeighborType.MUTUAL_NEIGHBOR.getValue()).size();
     }
 }

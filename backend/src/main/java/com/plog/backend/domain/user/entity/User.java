@@ -25,7 +25,7 @@ public class User extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name="image_id", referencedColumnName = "imageId")
-    private Image image;
+    private Image imageId;
 
     @Column(nullable = false)
     private String email;
@@ -44,22 +44,30 @@ public class User extends BaseEntity {
 
 //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Gender gender;
+    private int gender;
+    public Gender getGender() {return Gender.gender(gender);};
+    public void setGender(Gender gender) {this.gender = gender.getValue();}
 
     @Column
     private String source;
 
 //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private State state;
+    private int state;
+    public State getState() {return State.state(state);};
+    public void setState(State state) {this.state = state.getValue();}
 
 //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private int role;
+    public Role getRole() {return Role.role(role);};
+    public void setRole(Role role) {this.role = role.getValue();}
 
 //    @Enumerated(EnumType.STRING)
     @Column
-    private Provider provider;
+    private int provider;
+    public Provider getProvider() {return Provider.provider(provider);};
+    public void setProvider(Provider provider) {this.provider = provider.getValue();}
 
     @Column
     private String providerId;
@@ -70,7 +78,9 @@ public class User extends BaseEntity {
 
 //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ChatAuth chatAuth;
+    private int chatAuth;
+    public ChatAuth getChatAuth() {return ChatAuth.chatAuth(chatAuth);};
+    public void setChatAuth(ChatAuth chatAuth) {this.chatAuth = chatAuth.getValue();}
 
     @Column
     private String profileInfo;
