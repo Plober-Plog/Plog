@@ -34,7 +34,7 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage,  ha
         {imgs.map((img, index) => (
           <ImgPreview 
           key={index} 
-          src={URL.createObjectURL(img)} 
+          src={img.src} 
           onDelete={() => handleDeleteImage(index)} 
         />
         ))}
@@ -47,7 +47,6 @@ ImgUpload.propTypes = {
   cameraIcon: PropTypes.string.isRequired,
   imgs: PropTypes.arrayOf(PropTypes.shape({
     image: PropTypes.string.isRequired,
-    isThumbnail: PropTypes.bool.isRequired,
   })).isRequired,
   handleImageUpload: PropTypes.func.isRequired,
   handleDeleteImage: PropTypes.func.isRequired,

@@ -9,7 +9,6 @@ import WriterInfo from '../../components/Common/WriterInfo';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImgUpload from '../../components/Common/ImgUpload';
 import InputField from '../../components/Common/InputField';
-import DiaryWeather from '../../components/Diary/DiaryWeather';
 
 import weatherIcon from '../../assets/icon/weather.png'; 
 import humidityIcon from '../../assets/icon/humidity.png'; 
@@ -37,7 +36,7 @@ const PlantDiaryWrite = () => {
   const [imgs, setImgs] = useState([]);
   const [plantDiaryId, setPlantDiaryId] = useState(null); //현재 날짜에 이미 작성된 일지가 있을 경우 해당 일지의 ID를 저장
   const [isEditMode, setIsEditMode] = useState(false); // 전체 수정 모드 여부
-  const [isEditPlantCheck, setEditPlantCheck] = useState(false); // 관리 기록이 있는지 여부를 저장하는 변수
+  const [isEditPlantCheck, setIsEditPlantCheck] = useState(false); // 관리 기록이 있는지 여부를 저장하는 변수
   const [isEditPlantDiary, setIsEditPlantDiary] = useState(false); // 일지 작성 수정 여부
   const [writerInfoData, setWriterInfoData] = useState({});
 
@@ -92,6 +91,7 @@ const PlantDiaryWrite = () => {
           setIsFertilized(false);
           setIsRepotted(false);
           setIsEditMode(true);
+          setIsEditPlantDiary(true);
         } 
         if (data.plantCheck) {
           const { plantDiary } = data;
@@ -105,7 +105,8 @@ const PlantDiaryWrite = () => {
           setIsWatered(plantCheck.isWatered);
           setIsFertilized(plantCheck.isFertilized);
           setIsRepotted(plantCheck.isRepotted);  
-          setIsEditMode(true);    
+          setIsEditMode(true); 
+          setIsEditPlantCheck(true);    
         } 
 
         if (data.plantDiary && data.plantCheck) {
@@ -115,8 +116,7 @@ const PlantDiaryWrite = () => {
           setContent(plantDiary.content);
           setImgs(plantDiary.images.map(img => ({ 
             url: img.url, 
-            id: img.imageId,
-            isThumbnail: img.isThumbnail, 
+            id: img.imageId, 
            })));
           setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
           setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
@@ -125,6 +125,8 @@ const PlantDiaryWrite = () => {
           setIsFertilized(plantCheck.isFertilized);
           setIsRepotted(plantCheck.isRepotted);   
           setIsEditMode(true); 
+          setIsEditPlantCheck(true);
+          setIsEditPlantDiary(true);
         }
       } else {
         setPlantDiaryId(null);
@@ -226,32 +228,16 @@ useEffect(() => {
     
     // 일지작성요청 1
     try {
-      if (plantDiaryId) {
+      if (isEditMode) {
         const diaryWriteResponse = await API.patch(`user/diary/${plantDiaryId}`, diaryDataPatch, {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
-        );
+        });
         if (diaryWriteResponse.status !== 200) {
           throw new Error('일지 수정에 실패했습니다.');
         }
-      }
-      else {
-        const diaryWriteResponse = await API.post(`user/diary`, diaryData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        if (diaryWriteResponse.status !== 200) {
-          throw new Error('일지 작성에 실패했습니다.');
-        }
-      }
-      
-      console.log(plantDiaryId);
-      console.log(plantData);
-      
-      if (setIsEditMode) {
+
         const plantCheckResponse = await API.patch(`user/plant/${plantId}/check`,plantData, {
           headers: {
             'Content-Type': 'application/json',
@@ -261,7 +247,21 @@ useEffect(() => {
           throw new Error('식물 정보 수정에 실패했습니다.');
         }
       }
-      else {
+
+      console.log(plantDiaryId);
+      console.log(plantData);  
+      console.log(diaryDataPatch);
+      
+      if (!isEditMode) {
+        const diaryWriteResponse = await API.post(`user/diary`, diaryData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        if (diaryWriteResponse.status !== 200) {
+          throw new Error('일지 작성에 실패했습니다.');
+        }
+
         const plantCheckResponse = await API.post(`user/plant/${plantId}/check`,plantData, {
           headers: {
             'Content-Type': 'application/json',
@@ -270,7 +270,8 @@ useEffect(() => {
         if (plantCheckResponse.status !== 200) {
           throw new Error('식물 정보 저장에 실패했습니다.');
         }
-      }
+      } 
+      
       
       navigate(`/plant/${plantId}/${formattedDate}`, {
         state: {
