@@ -17,14 +17,13 @@ public class UserSignUpRequestDto {
     private String searchId;
     private String password;
     private String nickname;
-    private String profile;
     private int gender;
     @JsonProperty("birthDate")
     private LocalDate birthDate;
     private String source;
     private boolean isAd;
-    private int sidoCode;
-    private int gugunCode;
+    private String sidoCode;
+    private String gugunCode;
 
     private String profileInfo;
 }

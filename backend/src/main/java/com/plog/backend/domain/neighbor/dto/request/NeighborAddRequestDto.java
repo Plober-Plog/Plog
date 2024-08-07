@@ -1,4 +1,4 @@
-package com.plog.backend.domain.neighbor.dto;
+package com.plog.backend.domain.neighbor.dto.request;
 
 import lombok.*;
 
@@ -9,5 +9,5 @@ import lombok.*;
 @ToString
 @Builder
 public class NeighborAddRequestDto {
-    private Long neighborId;
+    private String neighborSearchId;
 }
