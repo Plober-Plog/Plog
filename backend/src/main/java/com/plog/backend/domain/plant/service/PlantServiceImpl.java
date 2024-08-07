@@ -72,7 +72,7 @@ public class PlantServiceImpl implements PlantService {
                 plantType = plantTypeRepository.getReferenceById(plantAddRequestDto.getPlantTypeId());
                 otherPlantType = otherPlantTypeRepository.getReferenceById(1L);
 
-                Plant plantByPlantType = Plant.builder()
+                Plant plantByPlantType = plantRepository.save(Plant.builder()
                         .user(user.get())
                         .plantType(plantType)
                         .otherPlantType(otherPlantType)
@@ -80,9 +80,8 @@ public class PlantServiceImpl implements PlantService {
                         .image(plantImage.get())
                         .birthDate(plantAddRequestDto.getBirthDate())
                         .bio(plantAddRequestDto.getBio())
-                        .build();
+                        .build());
                 log.info(">>> addPlant - 기본 식물 생성: {}", plantByPlantType.getPlantId());
-                plantRepository.save(plantByPlantType);
             } else { // 2. 기타 식물
                 if (plantAddRequestDto.getOtherPlantName() == null
                         || plantAddRequestDto.getOtherPlantName() == "")
@@ -101,7 +100,7 @@ public class PlantServiceImpl implements PlantService {
                     );
                     otherPlantType.setOtherPlantTypeId(newOtherPlantType.getOtherPlantTypeId());
                     otherPlantType.setPlantName(newOtherPlantType.getPlantName());
-                    log.info(">>> 새로 추가된 기타 식물 : {}", existingOtherPlantType.getPlantName());
+                    log.info(">>> 새로 추가된 기타 식물 : {}", newOtherPlantType.getPlantName());
                 }
 
                 Plant plantByOtherPlantType = Plant.builder()
@@ -169,7 +168,7 @@ public class PlantServiceImpl implements PlantService {
             List<PlantGetResponseDto> plantGetResponseDtoList = new ArrayList<>();
             List<Plant> plantList = plantRepositorySupport.findByUserSearchId(plantGetRequestDto.getSearchId(), plantGetRequestDto.getPage());
             makePlantGetResponseDto(plantGetResponseDtoList, plantList);
-            log.info(">>> getPlantList - 회원 {}의 식물 목록 조회 완료: {}", user.get().getSearchId());
+            log.info(">>> getPlantList - 회원 {}의 식물 목록 조회 완료", user.get().getSearchId());
             return plantGetResponseDtoList;
         } else {
             throw new EntityNotFoundException("일치하는 회원이 없습니다.");
