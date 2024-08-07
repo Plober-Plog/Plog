@@ -5,7 +5,7 @@ const DiaryTodoIcon = ({ src, active, onClick }) => (
     <img
         src={src}
         alt="todo icon"
-        style={{ width: '50px', height: '50px', opacity: active ? 1 : 0.5 }}
+        style={{ width: '50px', height: '50px', opacity: active ? 1 : 0.5 , cursor: 'pointer'}}
         onClick={onClick}
     />
 );
