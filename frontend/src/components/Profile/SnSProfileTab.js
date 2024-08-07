@@ -13,16 +13,8 @@ const SnsProfileTab = ({ activeTab, setActiveTab, searchId }) => {
   */
   return (
     <div>
-      <div>
-        <button className={activeTab === 'plant' ? 'active' : ''} onClick={() => setActiveTab('plant')}>식물</button>
-        <button className={activeTab === 'sns' ? 'active' : ''} onClick={() => setActiveTab('sns')}>SNS</button>
-      </div>
-
-      <div>
-        {activeTab === 'plant' && <ProfilePlantCardList searchId={searchId} />}
-        {activeTab === 'sns' && <ProfileSnsCardList searchId={searchId} />}
-      </div>
-
+      {activeTab === 'plant' && <ProfilePlantCardList searchId={searchId} />}
+      {activeTab === 'sns' && <ProfileSnsCardList searchId={searchId} />}
     </div>
   )
 }

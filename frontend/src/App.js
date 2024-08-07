@@ -15,12 +15,8 @@ import PlantDiaryWrite from './pages/Diary/PlantDiaryWrite';
 import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
 import PlantDetail from './pages/Plant/PlantDetail';
 import PlantRegister from './pages/Plant/PlantRegister';
-import ApiTest from './pages/Plant/ApiTest';
 import Header from './components/Common/Header';
 import UserProfile from './pages/Profile/UserProfile';
-
-// Test
-import ProfilePage from './pages/TestProfile/ProfilePage';
 
 function App() {
   return (

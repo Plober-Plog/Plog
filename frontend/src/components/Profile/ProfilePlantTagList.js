@@ -31,9 +31,9 @@ const ProfilePlantTagList = ({ searchId }) => {
   return (
     <div className="plant-tag-list">
       {plantTags.map((plant) => (
-        <span key={plant.plantTypeId} className="plant-tag">
+        <button key={plant.plantTypeId} className="plant-tag" style={{ marginRight: '10px' }}>
           {plant.plantName}
-        </span>
+        </button>
       ))}
     </div>
   );

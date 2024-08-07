@@ -42,6 +42,10 @@ const UserProfile = () => {
         ownerId={searchId}
         type='user'
       />
+      <div>
+        <button className={activeTab === 'plant' ? 'active' : ''} onClick={() => setActiveTab('plant')}>식물</button>
+        <button className={activeTab === 'sns' ? 'active' : ''} onClick={() => setActiveTab('sns')}>SNS</button>
+      </div>
       {activeTab === 'plant' && <ProfilePlantTagList searchId={searchId} />}
       <SnsProfileTab 
         activeTab={activeTab}
