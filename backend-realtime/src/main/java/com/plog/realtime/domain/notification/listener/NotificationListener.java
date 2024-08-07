@@ -3,7 +3,6 @@ package com.plog.realtime.domain.notification.listener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plog.realtime.domain.notification.controller.NotificationController;
 import com.plog.realtime.domain.notification.dto.NotificationMessageResponseDto;
-import com.plog.realtime.domain.notification.entity.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;

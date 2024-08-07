@@ -2,7 +2,6 @@ package com.plog.realtime.global.exception;
 
 import lombok.Getter;
 
-// TODO [장현준] JWT Token이 만료되거나, 인증 메일이 만료되었을 때
 @Getter
 public class TimeoutException extends RuntimeException {
     private final String message;
