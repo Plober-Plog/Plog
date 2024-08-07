@@ -4,10 +4,11 @@ import SnsProfileTab from '../../components/Profile/SnSProfileTab';
 import ProfilePlantTagList from '../../components/Profile/ProfilePlantTagList';
 import axios from 'axios';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
+import API from '../../apis/api';
+import useAuthStore from '../../stores/member';
 
 const UserProfile = () => {
   const { searchId } = useParams();
-  console.log('searchId:', searchId)
   const URI = 'https://i11b308.p.ssafy.io/api';
 
   const [userData, setUserData] = useState(null);
