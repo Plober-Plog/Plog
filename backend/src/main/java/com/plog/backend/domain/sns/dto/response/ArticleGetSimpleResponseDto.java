@@ -15,6 +15,9 @@ public class ArticleGetSimpleResponseDto {
     String content;
     int likeCnt;
     int commentCnt;
+    int view;
+    @JsonProperty("isLiked")
+    boolean isLiked;
     @JsonProperty("isBookmarked")
     boolean isBookmarked;
 }

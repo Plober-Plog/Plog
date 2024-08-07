@@ -3,13 +3,16 @@ package com.plog.backend.domain.sns.controller;
 
 import com.plog.backend.domain.sns.dto.request.*;
 import com.plog.backend.domain.sns.dto.response.ArticleBookmarkGetResponseDto;
+import com.plog.backend.domain.sns.dto.response.ArticleCommentGetResponse;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
-import com.plog.backend.global.model.response.BaseResponseBody;
+import com.plog.backend.domain.sns.entity.TagType;
 import com.plog.backend.domain.sns.service.ArticleBookmarkServiceImpl;
 import com.plog.backend.domain.sns.service.ArticleCommentService;
 import com.plog.backend.domain.sns.service.ArticleLikeServiceImpl;
 import com.plog.backend.domain.sns.service.ArticleService;
+import com.plog.backend.global.model.response.BaseResponseBody;
+import com.plog.backend.global.util.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +35,14 @@ public class SnsController {
     private final ArticleCommentService articleCommentService;
     private final ArticleLikeServiceImpl articleLikeService;
     private final ArticleBookmarkServiceImpl articleBookmarkService;
+
+    // ============================= 게시글 태그 =============================
+    @GetMapping("/tag")
+    public ResponseEntity<List<TagType>> getTagTypeList() {
+        log.info(">>> [GET] /user/sns/tag : 게시글 태그 목록 조회");
+        List<TagType> tagTypeList = articleService.getTagTypeList();
+        return ResponseEntity.status(200).body(tagTypeList);
+    }
 
     // ============================= 게시글 =============================
     @PostMapping
@@ -77,19 +88,38 @@ public class SnsController {
     @GetMapping("/{articleId}")
     @Operation(summary = "게시글 조회", description = "게시글 ID로 게시글을 조회합니다.")
     public ResponseEntity<ArticleGetResponseDto> getArticle(
-            @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId) {
-        log.info(">>> [GET] /user/sns/{} - 요청 ID: {}", articleId, articleId);
-        ArticleGetResponseDto articleGetResponseDto = articleService.getArticle(articleId);
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId
+    ) {
+        Long userId = 0L;
+        if (token != null)
+            userId = JwtTokenUtil.jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> [GET] /user/sns/{} - 요청 ID: {} | 현재 로그인한 회원의 id: {}", articleId, articleId, userId);
+        ArticleGetResponseDto articleGetResponseDto = articleService.getArticle(userId, articleId);
         return ResponseEntity.status(200).body(articleGetResponseDto);
     }
 
     @GetMapping
     @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 조회합니다.")
     public ResponseEntity<List<ArticleGetSimpleResponseDto>> getArticleList(
-            @Parameter(description = "페이지 번호", required = false, example = "0") @RequestParam(required = false, defaultValue = "0") String page
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @Parameter(description = "작성자 ID", example = "testid")
+            @RequestParam(value = "searchId", required = false) String searchId,
+            @Parameter(description = "페이지 번호", example = "0")
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @Parameter(description = "게시글 태그 필터링", example = "[1, 2]")
+            @RequestParam(value = "tagType", required = false) List<Integer> tagType,
+            @Parameter(description = "검색할 내용", example = "식물")
+            @RequestParam(value = "keyword", required = false) String keyword
     ) {
-        log.info(">>> [GET] /user/sns?{} - 게시글 목록 ID: {}", page);
-        List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = articleService.getArticleList(Integer.parseInt(page));
+        Long userId = 0L;
+        if (token != null)
+            userId = JwtTokenUtil.jwtTokenUtil.getUserIdFromToken(token);
+
+        log.info(">>> [GET] /user/sns?page={}&searchId={}&tagType={}&keyword={} | 현재 로그인한 회원의 id: {}", page, searchId, tagType, keyword, userId);
+
+        ArticleGetListRequestDto articleGetListRequestDto = new ArticleGetListRequestDto(userId, searchId, page, tagType, keyword);
+        List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = articleService.getArticleList(articleGetListRequestDto);
         return ResponseEntity.status(200).body(articleGetSimpleResponseDtoList);
     }
 
@@ -133,36 +163,38 @@ public class SnsController {
                 .body(BaseResponseBody.of(200, "댓글이 삭제되었습니다."));
     }
 
-//    @GetMapping("/{articleId}/comment")
-//    @Operation(summary = "댓글 목록 조회", description = "특정 게시글의 모든 댓글을 조회합니다.")
-//    public ResponseEntity<List<ArticleCommentGetResponse>> getComments(
-//            @PathVariable("articleId") Long articleId) {
-//        log.info(">>> [GET] /user/sns/{}/comment - 댓글 목록 조회 요청", articleId);
-//        List<ArticleCommentGetResponse> comments = articleCommentService.getComments(articleId);
-//        log.info(">>> [GET] /user/sns/{}/comment - 댓글 목록 조회 완료", articleId);
-//        return ResponseEntity.status(HttpStatus.OK).body(comments);
-//    }
+    @GetMapping("/{articleId}/comment")
+    @Operation(summary = "댓글 목록 조회", description = "특정 게시글의 모든 댓글을 조회합니다.")
+    public ResponseEntity<List<List<ArticleCommentGetResponse>>> getComments(
+            @PathVariable("articleId") Long articleId) {
+        log.info(">>> [GET] /user/sns/{}/comment - 댓글 목록 조회 요청", articleId);
+        List<List<ArticleCommentGetResponse>> comments = articleCommentService.getArticleComments(articleId);
+        log.info(">>> [GET] /user/sns/{}/comment - 댓글 목록 조회 완료", articleId);
+        return ResponseEntity.status(HttpStatus.OK).body(comments);
+    }
+
 
     // ============================= 좋아요 =============================
-    @PostMapping("/like")
+    @PostMapping("/like/{articleId}")
     @Operation(summary = "게시글 좋아요 추가", description = "게시글에 좋아요를 추가합니다.")
     public ResponseEntity<BaseResponseBody> addLikeToArticle(
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
-            @Parameter(description = "게시글 ID", required = true) @RequestBody Long articleId
+            @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId
     ) {
         articleLikeService.addLikeToArticle(token, articleId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "좋아요 등록이 완료되었습니다."));
     }
 
-    @DeleteMapping("/like")
+    @DeleteMapping("/like/{articleId}")
     @Operation(summary = "게시글 좋아요 삭제", description = "게시글에 좋아요를 삭제합니다.")
     public ResponseEntity<BaseResponseBody> removeLikeFromArticle(
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
-            @Parameter(description = "게시글 ID", required = true) @RequestBody Long articleId
+            @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId
     ) {
         articleLikeService.removeLikeFromArticle(token, articleId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "좋아요 해제가 완료되었습니다."));
     }
+
     // ============================= 북마크 =============================
     @PostMapping("/bookmark/{articleId}")
     @Operation(summary = "북마크 추가", description = "특정 게시글을 북마크에 추가합니다.")

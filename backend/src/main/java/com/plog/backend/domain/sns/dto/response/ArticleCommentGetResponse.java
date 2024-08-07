@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class ArticleCommentGetResponse {
+    Long articleCommentId;
     Long userId;
     String profile;
     String nickname;

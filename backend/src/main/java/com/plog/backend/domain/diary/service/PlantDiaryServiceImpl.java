@@ -11,7 +11,6 @@ import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
 import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
 import com.plog.backend.domain.image.exception.ImageNotFoundException;
-import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.plant.entity.Plant;
@@ -40,7 +39,6 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     private final PlantDiaryRepository plantDiaryRepository;
     private final PlantRepository plantRepository;
     private final ImageServiceImpl imageService;
-    private final ImageRepository imageRepository;
     private final PlantDiaryImageRepository plantDiaryImageRepository;
 
     @Transactional
@@ -49,7 +47,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
             throw new NotValidRequestException("일지에는 최대 5개 사진을 업로드 할 수 있습니다.");
 
         // 이미지 업로드
-        String[] imageUrls = imageService.plantDiaryUploadImages(images, plantDiaryId, thumbnailIdx);
+        imageService.plantDiaryUploadImages(images, plantDiaryId, thumbnailIdx);
     }
 
     @Transactional
@@ -67,7 +65,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         if (plant.isPresent()) {
             if (userId != plant.get().getUser().getUserId())
                 throw new NotAuthorizedRequestException();
-            PlantDiary existPlantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDate(
+            PlantDiary existPlantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDateAndIsDeletedFalse(
                     plantDiaryAddRequestDto.getPlantId(), plantDiaryAddRequestDto.getRecordDate());
             if (existPlantDiary != null)
                 throw new NotValidRequestException("이미 해당 일자에 작성된 일지가 존재합니다.");
@@ -123,27 +121,28 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                     PlantDiaryImage plantDiaryImage = plantDiaryImageOptional.get();
                     plantDiaryImage.setThumbnail(false);
                     plantDiaryImageRepository.save(plantDiaryImage);
+                    log.info(">>> updatePlantDiary - 기존 썸네일 해제 완료");
+
+                    // 새로 들어온 thumbnailIdx 에 해당하는 order 이미지의 isThumbnail 을 true로 update
+                    int thumbnailIdx = plantDiaryUpdateRequestDto.getThumbnailIdx();
+                    List<PlantDiaryImageGetResponseDto> plantDiaryImageGetResponseDtoList = imageService.loadImagesByPlantDiaryId(plantDiaryUpdateRequestDto.getPlantDiaryId());
+                    if (thumbnailIdx >= 0
+                            && thumbnailIdx < plantDiaryImageGetResponseDtoList.size()) {
+                        PlantDiaryImageGetResponseDto newThumbnailPlantDiaryImage = plantDiaryImageGetResponseDtoList.get(thumbnailIdx);
+                        PlantDiaryImage newThumbnailImage = PlantDiaryImage.builder()
+                                .plantDiaryImageId(newThumbnailPlantDiaryImage.getPlantDiaryImageId())
+                                .plantDiary(pd)
+                                .order(newThumbnailPlantDiaryImage.getOrder())
+                                .isThumbnail(true) // 새로 썸네일로 지정
+                                .image(newThumbnailPlantDiaryImage.getImage())
+                                .build();
+                        plantDiaryImageRepository.save(newThumbnailImage);
+                        log.info(">>> updatePlantDiary - 새로운 일지 썸네일 지정 완료");
+                    } else {
+                        log.info("thumbnailIdx가 유효한 값이 아닙니다.");
+                    }
                 } else {
-                    throw new ImageNotFoundException("썸네일로 등록된 사진을 조회할 수 없습니다.");
-                }
-                log.info(">>> updatePlantDiary - 기존 썸네일 해제 완료");
-                // 새로 들어온 thumbnailIdx 에 해당하는 order 이미지의 isThumbnail 을 true로 update
-                int thumbnailIdx = plantDiaryUpdateRequestDto.getThumbnailIdx();
-                List<PlantDiaryImageGetResponseDto> plantDiaryImageGetResponseDtoList = imageService.loadImagesByPlantDiaryId(plantDiaryUpdateRequestDto.getPlantDiaryId());
-                if (thumbnailIdx >= 0
-                        && thumbnailIdx < plantDiaryImageGetResponseDtoList.size()) {
-                    PlantDiaryImageGetResponseDto newThumbnailPlantDiaryImage = plantDiaryImageGetResponseDtoList.get(thumbnailIdx);
-                    PlantDiaryImage newThumbnailImage = PlantDiaryImage.builder()
-                            .plantDiaryImageId(newThumbnailPlantDiaryImage.getPlantDiaryImageId())
-                            .plantDiary(pd)
-                            .order(newThumbnailPlantDiaryImage.getOrder())
-                            .isThumbnail(true) // 새로 썸네일로 지정
-                            .image(newThumbnailPlantDiaryImage.getImage())
-                            .build();
-                    plantDiaryImageRepository.save(newThumbnailImage);
-                    log.info(">>> updatePlantDiary - 새로운 일지 썸네일 지정 완료");
-                } else {
-                    throw new NotValidRequestException("일지 사진의 해당 인덱스에 접근할 수 없습니다.");
+                    log.info("해당 일지에는 사진이 등록되어 있지 않습니다.");
                 }
             } else {
                 throw new EntityNotFoundException("일치하는 식물을 찾을 수 없습니다.");
@@ -190,7 +189,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     public PlantDiaryGetResponseDto getPlantDiary(Long plantDiaryId) {
         log.info(">>> getPlantDiary - 요청 ID: {}", plantDiaryId);
 
-        Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findById(plantDiaryId);
+        Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findByPlantPlantIdAndIsDeletedFalse(plantDiaryId);
         if (optionalPlantDiary.isPresent()) {
             PlantDiary plantDiary = optionalPlantDiary.get();
             if (!plantDiary.isDeleted()) {
@@ -216,7 +215,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
 
     @Override
     public PlantDiaryGetResponseDto getPlantDiaryByRecordDate(Long plantId, String recordDate) {
-        PlantDiary plantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDate(plantId, LocalDate.parse(recordDate));
+        PlantDiary plantDiary = plantDiaryRepository.findByPlantPlantIdAndRecordDateAndIsDeletedFalse(plantId, LocalDate.parse(recordDate));
         log.info(">>> getPlantDiaryByRecordDate 조회 완료 ");
         if (plantDiary == null) return null;
 
@@ -240,7 +239,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         LocalDate startDate = LocalDate.of(yearInt, monthInt, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
-        List<PlantDiary> plantDiaryList = plantDiaryRepository.findAllByPlantPlantIdAndRecordDateBetween(plantId, startDate, endDate);
+        List<PlantDiary> plantDiaryList = plantDiaryRepository.findAllByPlantPlantIdAndIsDeletedFalseAndRecordDateBetween(plantId, startDate, endDate);
         log.info(">>> getPlantDiaryByYearAndMonth 조회 완료");
         List<PlantDiaryGetSimpleResponseDto> plantDiaryGetSimpleResponseDtoList = new ArrayList<>();
         for (PlantDiary plantDiary : plantDiaryList) {
@@ -258,7 +257,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
 
     @Override
     public List<PlantDiaryGetSimpleResponseDto> getPlantDiaryRecentFive(Long plantId) {
-        List<PlantDiary> plantDiaryList = plantDiaryRepository.findTop5ByPlantPlantIdOrderByRecordDateDesc(plantId);
+        List<PlantDiary> plantDiaryList = plantDiaryRepository.findTop5ByPlantPlantIdAndIsDeletedFalseOrderByRecordDateDesc(plantId);
         log.info(">>> getPlantDiaryRecentFive 조회 완료");
         List<PlantDiaryGetSimpleResponseDto> plantDiaryGetSimpleResponseDtoList = new ArrayList<>();
         for (PlantDiary plantDiary : plantDiaryList) {

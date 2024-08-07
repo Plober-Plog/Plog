@@ -6,13 +6,15 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlantDiaryRepository extends JpaRepository<PlantDiary, Long> {
+    Optional<PlantDiary> findByPlantPlantIdAndIsDeletedFalse(Long plantId);
     PlantDiary
-    findByPlantPlantIdAndRecordDate(Long plantId, LocalDate recordDate);
+    findByPlantPlantIdAndRecordDateAndIsDeletedFalse(Long plantId, LocalDate recordDate);
 
-    List<PlantDiary> findAllByPlantPlantIdAndRecordDateBetween(Long plantId, LocalDate startDate, LocalDate endDate);
+    List<PlantDiary> findAllByPlantPlantIdAndIsDeletedFalseAndRecordDateBetween(Long plantId, LocalDate startDate, LocalDate endDate);
 
-    List<PlantDiary> findTop5ByPlantPlantIdOrderByRecordDateDesc(Long plantId);
+    List<PlantDiary> findTop5ByPlantPlantIdAndIsDeletedFalseOrderByRecordDateDesc(Long plantId);
 }

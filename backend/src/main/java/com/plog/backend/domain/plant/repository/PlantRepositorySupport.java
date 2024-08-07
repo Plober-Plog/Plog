@@ -143,7 +143,11 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                 )
                 .from(plant)
                 .leftJoin(otherPlantType).on(plant.otherPlantType.otherPlantTypeId.eq(otherPlantType.otherPlantTypeId))
-                .where(plant.user.searchId.eq(searchId).and(plant.otherPlantType.otherPlantTypeId.eq(otherPlantTypeId)))
+                .where(
+                        plant.user.searchId.eq(searchId)
+                                .and(plant.otherPlantType.otherPlantTypeId.eq(otherPlantTypeId))
+                                .and(plant.isDeleted.eq(false))
+                )
                 .orderBy(plant.isFixed.desc(), plant.fixedAt.desc(), plant.createdAt.desc())
                 .offset(page * size)
                 .limit(size)
@@ -178,7 +182,9 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                 .from(plant)
                 .join(plant.plantType, plantType)
                 .where(plant.user.searchId.eq(searchId)
-                        .and(plant.plantType.plantTypeId.goe(validValue)))
+                        .and(plant.plantType.plantTypeId.goe(validValue))
+                        .and(plant.isDeleted.eq(false))
+                )
                 .fetch();
     }
 
@@ -192,7 +198,9 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                 .distinct()
                 .from(plant)
                 .where(plant.user.searchId.eq(searchId)
-                        .and(plant.otherPlantType.otherPlantTypeId.goe(validValue)))
+                        .and(plant.otherPlantType.otherPlantTypeId.goe(validValue))
+                        .and(plant.isDeleted.eq(false))
+                )
                 .fetch();
     }
 }
