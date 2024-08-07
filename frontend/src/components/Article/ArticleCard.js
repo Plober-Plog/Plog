@@ -15,7 +15,13 @@ const ArticleCard = ({ plantId, id, log, thumbnail, type }) => {
 
   const handleClick = () => {
     if (type === 'plant') {
-      navigate(`/plant/${plantId}/${id}`);
+      navigate(`/plant/${plantId}/${log}`, {
+        state: {
+          date: log,
+          plantId: plantId
+        }
+      });
+
     } else if (type === 'sns') {
       navigate(`/sns/${id}`);
     } else {

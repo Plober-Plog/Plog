@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import './Calendar.css';
-import axios from 'axios';
+import API from '../../apis/api';
+
 
 const CustomCalendar = ({ plantId }) => {
-  const URI = 'https://i11b308.p.ssafy.io/api';
-  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
 
   const [value, setValue] = useState(new Date());
   const [checkRecords, setCheckRecords] = useState([]);
@@ -15,19 +14,13 @@ const CustomCalendar = ({ plantId }) => {
 
   const fetchMonthData = async (year, month) => {
     try {
-      // console.log(`Fetching data for year: ${year}, month: ${month}`); // 로그 추가
-      const checkResponse = await axios.get(`${URI}/user/plant/${plantId}/check`, {
+      const checkResponse = await API.get(`/user/plant/${plantId}/check`, {
         params: { year, month },
-        headers: { 'Authorization': TOKEN }
       });
       
-      const diaryResponse = await axios.get(`${URI}/user/plant/${plantId}/diary`, {
+      const diaryResponse = await API.get(`/user/plant/${plantId}/diary`, {
         params: { year, month },
-        headers: { 'Authorization': TOKEN }
       });
-  
-      // console.log('checkResponse:', checkResponse.data); // 로그 추가
-      // console.log('diaryResponse:', diaryResponse.data); // 로그 추가
 
       return { checkData: checkResponse.data, diaryData: diaryResponse.data };
     } catch (error) {
@@ -38,7 +31,7 @@ const CustomCalendar = ({ plantId }) => {
 
   const fetchRecords = async (date) => {
     const year = date.getFullYear();
-    const month = date.getMonth(); // JavaScript에서 getMonth()는 0부터 시작하므로 1을 더해줍니다.
+    const month = date.getMonth();
 
     try {
       const currentData = await fetchMonthData(year, month);
@@ -90,6 +83,9 @@ const CustomCalendar = ({ plantId }) => {
     }
   };
 
+
+  const today = new Date();
+
   const colorBox = ({ date }) => {
     const checkRecord = checkRecords.find(record => new Date(record.checkDate).toDateString() === date.toDateString());
     const diaryRecord = diaryRecords.find(diary => new Date(diary.recordDate).toDateString() === date.toDateString());
@@ -118,6 +114,7 @@ const CustomCalendar = ({ plantId }) => {
           setValue(activeStartDate);
           fetchRecords(activeStartDate);
         }}
+        maxDate={today}
       />
     </div>
   );

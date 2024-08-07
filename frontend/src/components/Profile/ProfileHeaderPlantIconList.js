@@ -1,26 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../../apis/api';
 
 const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData }) => {
-
-  const URI = 'https://i11b308.p.ssafy.io/api';
-  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
 
   const navigate = useNavigate();
   const [nowNotified, setNowNotified] = useState(hasNotified);
   const [nowFixed, setNowFixed] = useState(isFixed);
 
-
   const handleToggleFixed = async () => {
     const updatedFixedStatus = !nowFixed;
 
     try {
-      const response = await axios.patch(`${URI}/user/plant/${ownerId}/fix`, 
+      const response = await API.patch(`/user/plant/${ownerId}/fix`, 
         { isFixed: updatedFixedStatus },
         {
           headers: {
-            'Authorization': `${TOKEN}`,
             'Content-Type': 'application/json'
           }
         }
@@ -36,6 +31,10 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     }
   };
 
+
+  /* TODO: [예진] 윤서가 알람 api PATCH 메서드 추가해주면 이 부분 수정할 것
+    아마도 알람 api를 따로 뺄 거라고 합니다
+  */
   const handleToggleNotification = async () => {
     const updatedNotificationStatus = !nowNotified;
     const updatedPlantData = {
@@ -44,12 +43,10 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     };
 
     try {
-      const response = await axios.patch(`${URI}/user/plant/${ownerId}`, updatedPlantData, {
+      const response = await API.patch(`/user/plant/${ownerId}`, updatedPlantData, {
         headers: {
-          'Authorization': `${TOKEN}`,
           'Content-Type': 'application/json'
         },
-        // body: JSON.stringify(updatedPlantData),
       });
 
       if (response.status === 200) {
@@ -66,16 +63,33 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     navigate(`/plant/register/${ownerId}`);
   }
 
-  const handleWriteDiary = () => {
+  const handleWriteDiary = async () => {
     const currentDate = new Date().toISOString().split('T')[0];
-    navigate(`/plant/${ownerId}/${currentDate}/write`, {
-      // 혹시 몰라 state로도 날짜를 보내겠습니다.
-      state: {
-        date: currentDate,
-        plantId: ownerId
+  
+    try {
+      const response = await API.get(`/user/plant/${ownerId}`, {
+        params: {date: currentDate }
+      })
+
+      if (response.data.plantDiary || response.data.plantCheck) {
+        navigate(`/plant/${ownerId}/${currentDate}`, {
+          state: {
+            date: currentDate,
+            plantId: ownerId
+          }
+        });
+      } else {
+        navigate(`/plant/${ownerId}/${currentDate}/write`, {
+          state: {
+            date: currentDate,
+            plantId: ownerId
+          }
+        })
       }
-    });
-  };
+    } catch (error) {
+      console.error('***일지 및 관리기록 체크하는 파트에서 오류***', error);
+    }
+  }
 
   return (
     <div>

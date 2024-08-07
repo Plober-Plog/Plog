@@ -13,9 +13,9 @@ import React from 'react';
 const ProfileHeaderUserBtnList = ({}) => {
   return (
     <div>
-      <button>이웃 신청</button>
-      <button>서로이웃 신청</button>
-      <button>이웃 끊기</button>
+      <button style={{ margin: '10px' }}>이웃 신청</button>
+      <button style={{ margin: '10px' }}>서로이웃 신청</button>
+      <button style={{ margin: '10px' }}>이웃 끊기</button>
     </div>
   );
 };

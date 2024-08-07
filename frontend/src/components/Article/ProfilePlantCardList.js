@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import ProfilePlantCard from './ProfilePlantCard';
+import API from '../../apis/api';
 
 const ProfilePlantCardList = ({ searchId }) => {
-
-  const URI = 'https://i11b308.p.ssafy.io/api';
-  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ';
 
   const [plants, setPlants] = useState([]);
   const [page, setPage] = useState(0);
@@ -15,9 +12,8 @@ const ProfilePlantCardList = ({ searchId }) => {
   const fetchPlants = async (searchId, page) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${URI}/user/plant`, {
-        params: { searchId, page },
-        headers: { 'Authorization': TOKEN }
+      const response = await API.get(`/user/plant`, {
+        params: { searchId, page }
       });
 
       if (response.data.length === 0) {
