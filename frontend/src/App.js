@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // default
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
+import Home from './pages/Home/Home';
 // Account
 import SignUp from './pages/Account/SignUp';
 import Login from './pages/Account/Login';
