@@ -11,7 +11,6 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
   const [nowNotified, setNowNotified] = useState(hasNotified);
   const [nowFixed, setNowFixed] = useState(isFixed);
 
-
   const handleToggleFixed = async () => {
     const updatedFixedStatus = !nowFixed;
 
@@ -36,6 +35,10 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     }
   };
 
+
+  /* TODO: [예진] 윤서가 알람 api PATCH 메서드 추가해주면 이 부분 수정할 것
+    아마도 알람 api를 따로 뺄 거라고 합니다
+  */
   const handleToggleNotification = async () => {
     const updatedNotificationStatus = !nowNotified;
     const updatedPlantData = {
@@ -49,7 +52,6 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
           'Authorization': `${TOKEN}`,
           'Content-Type': 'application/json'
         },
-        // body: JSON.stringify(updatedPlantData),
       });
 
       if (response.status === 200) {
@@ -66,16 +68,46 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     navigate(`/plant/register/${ownerId}`);
   }
 
-  const handleWriteDiary = () => {
+  // const handleWriteDiary = () => {
+  //   const currentDate = new Date().toISOString().split('T')[0];
+  //   navigate(`/plant/${ownerId}/${currentDate}/write`, {
+  //     state: {
+  //       date: currentDate,
+  //       plantId: ownerId
+  //     }
+  //   });
+  // };
+
+  const handleWriteDiary = async () => {
     const currentDate = new Date().toISOString().split('T')[0];
-    navigate(`/plant/${ownerId}/${currentDate}/write`, {
-      // 혹시 몰라 state로도 날짜를 보내겠습니다.
-      state: {
-        date: currentDate,
-        plantId: ownerId
+  
+    try {
+      const response = await axios.get(`${URI}/user/plant/${ownerId}`, {
+        params: {date: currentDate },
+        headers: {
+          'Authorization': `${TOKEN}`
+        }
+      })
+
+      if (response.data.plantDiary || response.data.plantCheck) {
+        navigate(`/plant/${ownerId}/${currentDate}`, {
+          state: {
+            date: currentDate,
+            plantId: ownerId
+          }
+        });
+      } else {
+        navigate(`/plant/${ownerId}/${currentDate}/write`, {
+          state: {
+            date: currentDate,
+            plantId: ownerId
+          }
+        })
       }
-    });
-  };
+    } catch (error) {
+      console.error('***일지 및 관리기록 체크하는 파트에서 오류***', error);
+    }
+  }
 
   return (
     <div>
