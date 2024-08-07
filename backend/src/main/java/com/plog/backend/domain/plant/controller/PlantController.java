@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +69,9 @@ public class PlantController {
         log.info(">>> [GET] /user/plant/{} - 요청 ID: {}, 조회 날짜: {}", plantId, plantId, date);
 
         PlantGetRecordsResponseDto plantGetRecordsResponseDto = new PlantGetRecordsResponseDto();
+
+        plantGetRecordsResponseDto.setPlantId(plantId);
+        plantGetRecordsResponseDto.setDate(LocalDate.parse(date, DateTimeFormatter.ISO_DATE));
 
         PlantCheckGetResponseDto plantCheckGetResponseDto = plantCheckService.getPlantCheck(plantId, date);
         plantGetRecordsResponseDto.setPlantCheck(plantCheckGetResponseDto.getCheckDate() != null ? plantCheckGetResponseDto : null);
