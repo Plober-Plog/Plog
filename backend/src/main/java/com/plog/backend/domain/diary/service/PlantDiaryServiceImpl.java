@@ -25,9 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 
@@ -57,7 +59,8 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         log.info(">>> addPlantDiary - 요청 데이터: {}", plantDiaryAddRequestDto);
 
         LocalDate recordDate = plantDiaryAddRequestDto.getRecordDate();
-        if (recordDate.isAfter(LocalDate.now())) {
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if (recordDate.isAfter(currentDate)) {
             throw new NotValidRequestException("미래의 식물 일지는 작성할 수 없습니다");
         }
 
@@ -92,7 +95,8 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         log.info(">>> updatePlantDiary - 요청 ID: {}, 업데이트 데이터: {}", plantDiaryUpdateRequestDto.getPlantDiaryId(), plantDiaryUpdateRequestDto);
 
         LocalDate recordDate = plantDiaryUpdateRequestDto.getRecordDate();
-        if (recordDate.isAfter(LocalDate.now())) {
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if (recordDate.isAfter(currentDate)) {
             throw new NotValidRequestException("미래의 식물 일지는 작성할 수 없습니다");
         }
 
