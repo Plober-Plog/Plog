@@ -6,7 +6,8 @@ public enum Weather {
     SUNNY(1),
     CLOUDY(2),
     VERY_CLOUDY(3),
-    RAINY(4);
+    RAINY(4),
+    SNOWY(5);
 
     private int value;
 

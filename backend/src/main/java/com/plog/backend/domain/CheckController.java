@@ -1,5 +1,7 @@
 package com.plog.backend.domain;
 
+import com.plog.backend.domain.weather.service.WeatherService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -7,6 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/forever")
 public class CheckController {
+
+    @Autowired
+    WeatherService weatherService;
+
     @GetMapping
     public String test() {
         StringBuilder sb = new StringBuilder();
@@ -15,4 +21,12 @@ public class CheckController {
         sb.append("우리팀 파이팅 힘내세요 파이팅~~!!!!!!!!!!!!!");
         return sb.toString();
     }
+
+    @GetMapping("/weather/test")
+    public String updateWeatherData() {
+        weatherService.updateWeatherData();
+        return "Weather data updated successfully.";
+    }
+
+
 }

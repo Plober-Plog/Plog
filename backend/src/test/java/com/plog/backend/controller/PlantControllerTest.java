@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plog.backend.domain.diary.service.PlantDiaryService;
 import com.plog.backend.domain.plant.controller.PlantController;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
+import com.plog.backend.domain.plant.service.PlantCheckService;
 import com.plog.backend.domain.plant.service.PlantService;
 import com.plog.backend.global.auth.PloberUserDetailService;
 import com.plog.backend.global.util.JwtTokenUtil;
@@ -30,7 +31,8 @@ public class PlantControllerTest {
 
     @MockBean
     private PlantService plantService;
-
+    @MockBean
+    private PlantCheckService plantCheckService;
     @MockBean
     private PlantDiaryService plantDiaryService;
 

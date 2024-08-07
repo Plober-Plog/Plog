@@ -7,6 +7,7 @@ import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
 import com.plog.backend.domain.diary.service.PlantDiaryService;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user/diary")
+@Tag(name = "Plant Diary Controller", description = "식물 일지 API")
 public class PlantDiaryController {
     private final PlantDiaryService plantDiaryService;
 

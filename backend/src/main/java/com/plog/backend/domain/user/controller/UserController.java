@@ -39,10 +39,13 @@ public class UserController {
 
     @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping
-    public ResponseEntity<BaseResponseBody> createUser(@RequestPart("userInfo") UserSignUpRequestDto userSignUpRequestDto) {
-        log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}", userSignUpRequestDto);
+    public ResponseEntity<BaseResponseBody> createUser(
+            @RequestPart(value = "userSignUpRequestDto") UserSignUpRequestDto userSignUpRequestDto,
+            @RequestPart(value = "profile", required = false) MultipartFile[] profile) {
 
-        if(userSignUpRequestDto.getEmail() == null || userSignUpRequestDto.getEmail().trim().isEmpty()) {
+        log.info(">>> [POST] /user - 회원 가입 요청 데이터: {}, 프로필: {}", userSignUpRequestDto, profile);
+
+        if (userSignUpRequestDto.getEmail() == null || userSignUpRequestDto.getEmail().trim().isEmpty()) {
             log.error(">>> [POST] /user - 이메일이 필수 필드입니다.");
             throw new NotValidRequestException("email은 필수 필드입니다.");
         }
@@ -50,21 +53,30 @@ public class UserController {
             log.error(">>> [POST] /user - 유효하지 않은 이메일 형식입니다: {}", userSignUpRequestDto.getEmail());
             throw new InvalidEmailFormatException("Invalid email format");
         }
-        if(userSignUpRequestDto.getPassword() == null || userSignUpRequestDto.getPassword().trim().isEmpty()) {
+        if (userSignUpRequestDto.getPassword() == null || userSignUpRequestDto.getPassword().trim().isEmpty()) {
             log.error(">>> [POST] /user - 비밀번호가 필수 필드입니다.");
             throw new NotValidRequestException("password는 필수 필드입니다.");
         }
-        if(userSignUpRequestDto.getSearchId() == null || userSignUpRequestDto.getSearchId().trim().isEmpty()) {
+        if (userSignUpRequestDto.getSearchId() == null || userSignUpRequestDto.getSearchId().trim().isEmpty()) {
             log.error(">>> [POST] /user - 검색 ID가 필수 필드입니다.");
             throw new NotValidRequestException("검색 ID는 필수 입력 값입니다.");
         }
-        if(userSignUpRequestDto.getNickname() == null || userSignUpRequestDto.getNickname().trim().isEmpty()) {
+        if (userSignUpRequestDto.getNickname() == null || userSignUpRequestDto.getNickname().trim().isEmpty()) {
             log.error(">>> [POST] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
 
-        User user = userService.createUser(userSignUpRequestDto);
+        // 프로필 이미지를 처리하는 로직 추가
+        String[] profileImageUrl = null;
+        if (profile.length > 0) {
+            // 파일 저장 로직 예시
+            profileImageUrl = imageService.uploadImages(profile);
+            log.info(">>> [POST] /user - 프로필 이미지 저장 완료: {}", profileImageUrl[0]);
+        }
+
+        User user = userService.createUser(userSignUpRequestDto, profileImageUrl[0]);
         log.info(">>> [POST] /user - 회원 가입 완료: {}", user);
+
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
     }
 
@@ -220,8 +232,3 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
-
-//TODO [장현준] - User
-// 1. 탈퇴 후, 다시 가입을 할때는 => 원래 값에 위의 덮기
-// 2. 탈퇴 후, 가입을 못하게 해야한다.
-// 3. 회원 객체 프로필 사진

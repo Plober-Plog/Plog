@@ -1,4 +1,4 @@
-package com.plog.backend.domain.neighbor.dto;
+package com.plog.backend.domain.neighbor.dto.request;
 
 import lombok.*;
 

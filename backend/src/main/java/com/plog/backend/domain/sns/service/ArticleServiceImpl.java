@@ -32,6 +32,9 @@ public class ArticleServiceImpl implements ArticleService {
     private final TagTypeRepository tagTypeRepository;
     private final ArticleRepositorySupport articleRepositorySupport;
 
+    //TODO [강윤서] - 임시 이미지 url
+    private final String tempImageUrl = "https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png";
+
     @Override
     public void uploadArticleImages(MultipartFile[] images, Long plantDiaryId) {
 
@@ -87,6 +90,18 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleGetSimpleResponseDto> getArticleList(int page) {
         List<Article> articleList = articleRepositorySupport.loadArticleList(page);
         List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = new ArrayList<>();
+        for (Article article : articleList) {
+            articleGetSimpleResponseDtoList.add(
+                    ArticleGetSimpleResponseDto.builder()
+                            .image(tempImageUrl)
+                            .likeCnt(14)
+                            .nickname("임시닉네임...")
+                            .commentCnt(12)
+                            .isBookmarked(false)
+                            .content(article.getContent())
+                            .build()
+            );
+        }
         //TODO [강윤서] - 게시글 목록 조회
         return articleGetSimpleResponseDtoList;
     }

@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // JWT 검증을 건너뛰어야 하는 URI와 HTTP 메소드 목록
     private static final Map<String, List<String>> EXCLUDE_URLS = new HashMap<>() {{
         put("/api/user", List.of("POST")); // 회원가입 요청 제외
-        put("/api/user/login", List.of("POST")); // 로그인 요청 제외
+        put("/api/user/**", List.of("POST")); // 로그인 요청 제외
         // 필요한 다른 URI와 메소드 추가
     }};
 
@@ -95,7 +95,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        chain.doFilter(request, response);
+        try {
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            log.error("Exception occurred in JwtAuthenticationFilter", e);
+            e.printStackTrace();
+            throw new ServletException("Exception in JwtAuthenticationFilter", e);
+        }
     }
 
 }
