@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SnsProfileTab from '../../components/Profile/SnSProfileTab';
 import ProfilePlantTagList from '../../components/Profile/ProfilePlantTagList';
-import axios from 'axios';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import API from '../../apis/api';
+import useAuthStore from '../../stores/member';
 
 const UserProfile = () => {
   const { searchId } = useParams();
-  // const URI = 'https://i11b308.p.ssafy.io/api';
+  const { searchId: authSearchId } = useAuthStore();
+  
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState(null);
@@ -18,7 +19,6 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       try {
         const response = await API.get(`/user/profile/${searchId}`);
-        // const response = await axios.get(`${URI}/user/profile/${searchId}`);
         if (response.data && response.data.message === '없는 검색 ID 입니다.') {
           console.error('Error: ', response.data.message);
           return;
@@ -59,14 +59,14 @@ const UserProfile = () => {
 
       {activeTab === 'plant' && (
         <>
-          <button onClick={handleAddPlant}>plantAdd</button>
+          {searchId === authSearchId && <button onClick={handleAddPlant}>plantAdd</button>}
           <ProfilePlantTagList searchId={searchId} />
         </>
       )}
       
       {activeTab === 'sns' && (
         <>
-          <button onClick={handleAddSns}>snsAdd</button>
+          {searchId === authSearchId && <button onClick={handleAddSns}>snsAdd</button>}
         </>
       )}
       <SnsProfileTab 
