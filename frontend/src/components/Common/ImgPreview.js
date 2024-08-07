@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Btn from './Btn';
+import Img from './Img';
 
 const ImgPreview = ({ src, isThumbnail, onSetThumbnail, onDelete }) => {
   return (
