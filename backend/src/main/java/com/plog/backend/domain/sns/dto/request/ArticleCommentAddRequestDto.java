@@ -11,4 +11,5 @@ import lombok.*;
 public class ArticleCommentAddRequestDto {
     private Long articleId;
     private String content;
+    private Long parentId;
 }
