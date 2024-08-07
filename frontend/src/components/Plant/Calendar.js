@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import './Calendar.css';
-import axios from 'axios';
+import API from '../../apis/api';
+
 
 const CustomCalendar = ({ plantId }) => {
-  const URI = 'https://i11b308.p.ssafy.io/api';
-  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
 
   const [value, setValue] = useState(new Date());
   const [checkRecords, setCheckRecords] = useState([]);
@@ -15,19 +14,13 @@ const CustomCalendar = ({ plantId }) => {
 
   const fetchMonthData = async (year, month) => {
     try {
-      // console.log(`Fetching data for year: ${year}, month: ${month}`); // 로그 추가
-      const checkResponse = await axios.get(`${URI}/user/plant/${plantId}/check`, {
+      const checkResponse = await API.get(`/user/plant/${plantId}/check`, {
         params: { year, month },
-        headers: { 'Authorization': TOKEN }
       });
       
-      const diaryResponse = await axios.get(`${URI}/user/plant/${plantId}/diary`, {
+      const diaryResponse = await API.get(`/user/plant/${plantId}/diary`, {
         params: { year, month },
-        headers: { 'Authorization': TOKEN }
       });
-  
-      // console.log('checkResponse:', checkResponse.data); // 로그 추가
-      // console.log('diaryResponse:', diaryResponse.data); // 로그 추가
 
       return { checkData: checkResponse.data, diaryData: diaryResponse.data };
     } catch (error) {

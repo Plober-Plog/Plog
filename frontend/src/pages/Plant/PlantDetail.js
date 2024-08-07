@@ -10,13 +10,14 @@ import Btn from "../../components/Common/Btn";
 import axios from 'axios';
 import defaultImg from '../../assets/icon/default.png';
 
-/* TODO: 이 전의 페이지가 업데이트 되면 하드코딩 부분 수정할 것 */
+import API from '../../apis/api';
+import useAuthStore from '../../stores/member';
+
 const PlantDetail = () => {
 
   const { plantId } = useParams();
 
   const URI = 'https://i11b308.p.ssafy.io/api'
-  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
 
   const [plantData, setPlantData] = useState(null);
   const [articles, setArticles] = useState([]);

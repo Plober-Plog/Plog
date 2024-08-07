@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../../apis/api';
 
 const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData }) => {
-
-  const URI = 'https://i11b308.p.ssafy.io/api';
-  const TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDg3MDYsImlhdCI6MTcyMjgzOTEwNn0.zyGGYRJrG4SELAACBabt-AiBKPOC_TvVsBZdrk8IfZQ'
 
   const navigate = useNavigate();
   const [nowNotified, setNowNotified] = useState(hasNotified);
@@ -15,11 +12,10 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     const updatedFixedStatus = !nowFixed;
 
     try {
-      const response = await axios.patch(`${URI}/user/plant/${ownerId}/fix`, 
+      const response = await API.patch(`/user/plant/${ownerId}/fix`, 
         { isFixed: updatedFixedStatus },
         {
           headers: {
-            'Authorization': `${TOKEN}`,
             'Content-Type': 'application/json'
           }
         }
@@ -47,9 +43,8 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     };
 
     try {
-      const response = await axios.patch(`${URI}/user/plant/${ownerId}`, updatedPlantData, {
+      const response = await API.patch(`/user/plant/${ownerId}`, updatedPlantData, {
         headers: {
-          'Authorization': `${TOKEN}`,
           'Content-Type': 'application/json'
         },
       });
@@ -68,25 +63,12 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
     navigate(`/plant/register/${ownerId}`);
   }
 
-  // const handleWriteDiary = () => {
-  //   const currentDate = new Date().toISOString().split('T')[0];
-  //   navigate(`/plant/${ownerId}/${currentDate}/write`, {
-  //     state: {
-  //       date: currentDate,
-  //       plantId: ownerId
-  //     }
-  //   });
-  // };
-
   const handleWriteDiary = async () => {
     const currentDate = new Date().toISOString().split('T')[0];
   
     try {
-      const response = await axios.get(`${URI}/user/plant/${ownerId}`, {
-        params: {date: currentDate },
-        headers: {
-          'Authorization': `${TOKEN}`
-        }
+      const response = await API.get(`/user/plant/${ownerId}`, {
+        params: {date: currentDate }
       })
 
       if (response.data.plantDiary || response.data.plantCheck) {
