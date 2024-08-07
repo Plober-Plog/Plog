@@ -12,6 +12,7 @@ import com.plog.backend.domain.report.dto.response.ReportResultResponseDto;
 import com.plog.backend.domain.report.entity.ReportResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -47,8 +48,9 @@ public class ReportServiceImpl implements ReportService {
         // 특정 기간의 plantCheck 데이터를 가져옴
         List<PlantCheck> plantChecks = plantCheckRepository.findPlantChecksByPlantPlantIdAndCheckDateBetween(plant.getPlantId(), startDate, endDate);
         log.info("PlantChecks: " + plantChecks);
-
+        
         log.info("Start Date: " + startDate + ", End Date: " + endDate);
+
 
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         log.info("키운 일 수: " + daysBetween);
@@ -56,7 +58,7 @@ public class ReportServiceImpl implements ReportService {
         // 가이드 데이터
         int guideWater = (int)(daysBetween / plantType.getWaterInterval());
         int guideFertilize = (int)(daysBetween / plantType.getFertilizeInterval());
-        int guideRepot = (int)(plantType.getRepotInterval());
+        int guideRepot = (int)(daysBetween / plantType.getRepotInterval());
         log.info("Guide Water: " + guideWater + ", Guide Fertilize: " + guideFertilize + ", Guide Repot: " + guideRepot);
 
         // 식물 데이터
