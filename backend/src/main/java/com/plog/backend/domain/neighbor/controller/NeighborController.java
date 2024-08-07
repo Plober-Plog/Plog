@@ -2,6 +2,7 @@ package com.plog.backend.domain.neighbor.controller;
 
 import com.plog.backend.domain.neighbor.dto.request.NeighborAddRequestDto;
 import com.plog.backend.domain.neighbor.dto.request.NeighborMutualAddRequestDto;
+import com.plog.backend.domain.neighbor.dto.response.NeighborCheckResponseDto;
 import com.plog.backend.domain.neighbor.dto.response.NeighborFromResponseDto;
 import com.plog.backend.domain.neighbor.dto.response.NeighborToResponseDto;
 import com.plog.backend.domain.neighbor.service.NeighborServiceImpl;
@@ -100,6 +101,15 @@ public class NeighborController {
     public ResponseEntity<BaseResponseBody> getMutalNeighborsFromCount(@PathVariable("searchId") String searchId) {
         int count = neighborService.getMutualNeighborFromCount(searchId);
         return ResponseEntity.ok(BaseResponseBody.of(200, String.valueOf(count)));
+    }
+
+    // 이웃 비교
+    @Operation(summary = "이웃 관계 비교", description = "현재 회원(토큰 기준)을과 비교할 회원(searchId)의 이웃 관계")
+    @GetMapping("/{searchId}")
+    public ResponseEntity<NeighborCheckResponseDto> checkNeighbor(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("searchId") String searchId) {
+        return ResponseEntity.ok(neighborService.checkNeighbor(token, searchId));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.plog.backend.domain.neighbor.service;
 
 import com.plog.backend.domain.neighbor.dto.request.NeighborMutualAddRequestDto;
+import com.plog.backend.domain.neighbor.dto.response.NeighborCheckResponseDto;
 import com.plog.backend.domain.neighbor.dto.response.NeighborFromResponseDto;
 import com.plog.backend.domain.neighbor.dto.response.NeighborToResponseDto;
 
@@ -17,4 +18,5 @@ public interface NeighborService {
     int getNeighborFromCount(String searchId);
     List<NeighborToResponseDto>  getMutualNeighborFrom(String searchId);
     int getMutualNeighborFromCount(String searchId);
+    NeighborCheckResponseDto checkNeighbor(String token, String searchId);
 }

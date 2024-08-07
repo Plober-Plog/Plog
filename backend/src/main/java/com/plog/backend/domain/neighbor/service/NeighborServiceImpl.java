@@ -1,6 +1,7 @@
 package com.plog.backend.domain.neighbor.service;
 
 import com.plog.backend.domain.neighbor.dto.request.NeighborMutualAddRequestDto;
+import com.plog.backend.domain.neighbor.dto.response.NeighborCheckResponseDto;
 import com.plog.backend.domain.neighbor.dto.response.NeighborFromResponseDto;
 import com.plog.backend.domain.neighbor.dto.response.NeighborToResponseDto;
 import com.plog.backend.domain.neighbor.entity.Neighbor;
@@ -164,7 +165,7 @@ public class NeighborServiceImpl implements NeighborService {
 
     @Override
     public List<NeighborFromResponseDto> getNeighborFrom(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("User not found"));
         return neighborRepository.findByNeighborFrom(user).stream()
                 .map(this::mapFromDto)
                 .collect(Collectors.toList());
@@ -172,13 +173,13 @@ public class NeighborServiceImpl implements NeighborService {
 
     @Override
     public int getNeighborFromCount(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("User not found"));
         return neighborRepository.countByNeighborFrom(user);
     }
 
     @Override
     public List<NeighborToResponseDto> getMutualNeighborFrom(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("User not found"));
         return neighborRepository.findByNeighborToAndNeighborType(user, NeighborType.MUTUAL_NEIGHBOR.getValue()).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -186,7 +187,19 @@ public class NeighborServiceImpl implements NeighborService {
 
     @Override
     public int getMutualNeighborFromCount(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("User not found"));
         return neighborRepository.findByNeighborToAndNeighborType(user, NeighborType.MUTUAL_NEIGHBOR.getValue()).size();
+    }
+
+    @Override
+    public NeighborCheckResponseDto checkNeighbor(String token, String searchId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        User neighbor = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("NeighborService : 이웃이 없습니다."));
+
+        return NeighborCheckResponseDto
+                .builder()
+                .requestUserRel(neighborRepository.findByNeighborTypeByNeighborToAndNeighborFrom(userId, neighbor.getUserId()))
+                .profileUserRel(neighborRepository.findByNeighborTypeByNeighborToAndNeighborFrom(neighbor.getUserId(), userId))
+                .build();
     }
 }
