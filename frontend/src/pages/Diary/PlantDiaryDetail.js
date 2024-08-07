@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../../apis/api';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImageSlider from '../../components/Common/ImgSlider';
 import DiaryWeather from '../../components/Diary/DiaryWeather';
@@ -19,15 +19,52 @@ import './PlantDiaryWrite.css';
 const PlantDiaryDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // TODO 여기도 plantDiaryId에 저장된 정보받아올듯
-  const { plantDiaryId, plantId, date, content, weather, temperature, humidity, isWatered, isFertilized, isRepotted, imgs } = location.state; 
-  // const plantDiaryId = location.state?.plantDiaryId;
 
-  // 임시 데이터
-  const weathercontent = '강수량이 많고 습도가 높으니 어쩌구 하세요'
+  const { plantId, date } = location.state;
+  const [plantCheck, setPlantCheck] = useState(null);
+  const [plantDiary, setPlantDiary] = useState(null);
+
+  // console.log(location);
+
+  // 일지 디테일 불러오기
+  useEffect(() => {
+    const getPlantDetailDiary = async () => {
+      try {
+        console.log(plantId, date);
+        const response = await API.get(`/user/plant/${plantId}`, {
+          params: { date }
+        });
+
+        const data = response.data;
+        console.log(data);
+        setPlantCheck(data.plantCheck || {});
+        setPlantDiary(data.plantDiary || {});
+
+      } catch (error) {
+        console.error('작성된 일지 확인 에러:', error);
+      }
+    };
+
+    getPlantDetailDiary();
+  }, [plantId, date]);
+
+  if (!plantCheck || !plantDiary) {
+    return <div>Loading...</div>;
+  }
+
+  const isWatered = plantCheck.isWatered || false;
+  const isFertilized = plantCheck.isFertilized || false;
+  const isRepotted = plantCheck.isRepotted || false;
+
+  const weather = plantDiary.weather || '1';
+  const temperature = plantDiary.temperature || '1';
+  const humidity = plantDiary.humidity || '1';
+  const content = plantDiary.content || '작성된 일지 내용이 없습니다.';
+  const images = plantDiary.images || [];
+  const plantDiaryId = plantDiary.plantDiaryId;
 
   const handleEdit = () => {
-    navigate(`/plant/${plantId}/${date}/edit`, {
+    navigate(`/plant/${plantId}/${date}/write`, {
       state: {
         diaryData: {
           plantDiaryId,
@@ -39,29 +76,28 @@ const PlantDiaryDetail = () => {
           isWatered,
           isFertilized,
           isRepotted,
-          imgs,
+          imgs: images.map(img => img.url),
         },
         plantData: {
+          plantId, 
           isWatered,
           isFertilized,
           isRepotted,
           checkDate: date,
         },
+        plantId: plantId,
+        date: date,
       },
     });
   };
+
   const handleSNSUpload = () => {
     navigate('/sns', { state: { diaryData: location.state } });
   };
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`/api/user/diary/${plantDiaryId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer YOUR_TOKEN_HERE`,
-        },
-      });
+      const response = await API.delete(`/user/diary/${plantDiaryId}`);
 
       if (response.status !== 200) {
         throw new Error('일지 삭제에 실패했습니다.');
@@ -75,30 +111,38 @@ const PlantDiaryDetail = () => {
     }
   };
 
+  const weatherContent = `날씨는 ${weather}이고 온도는 ${temperature}'C 이며 습도는 ${humidity}입니다. 그러니 어쩌구 하세요.`;
+
   return (
     <div className="plant-diary-container">
       <div className="section">
         <h2>{date}</h2>
         <DiaryTodoIcon src={pencilIcon} onClick={handleEdit} />
-        <Btn content="X" onClick={() => navigate(`plant/${plantId}`)} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
+        <Btn content="X" onClick={() => navigate(`/plant/${plantId}`)} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
       </div>
       <div className="section">
-        <ImageSlider imgs={imgs} />
+        <ImageSlider imgs={images.map(img => img)} />
       </div>
       <div className="section">
-        {isWatered && (
+        {(!isWatered && !isFertilized && !isRepotted) ? (
+          <div>식물관리내역이 없습니다.</div>
+        ) : (
           <div>
-            <DiaryTodoIcon src={waterIcon} /> 물주기 완료!
-          </div>
-        )}
-        {isFertilized && (
-          <div>
-            <DiaryTodoIcon src={fertilizedIcon} /> 영양제주기 완료!
-          </div>
-        )}
-        {isRepotted && (
-          <div>
-            <DiaryTodoIcon src={repottedIcon} /> 분갈이 완료!
+            {isWatered && (
+              <div>
+                <DiaryTodoIcon src={waterIcon} /> 물주기 완료!
+              </div>
+            )}
+            {isFertilized && (
+              <div>
+                <DiaryTodoIcon src={fertilizedIcon} /> 영양제주기 완료!
+              </div>
+            )}
+            {isRepotted && (
+              <div>
+                <DiaryTodoIcon src={repottedIcon} /> 분갈이 완료!
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -112,19 +156,18 @@ const PlantDiaryDetail = () => {
           weather={weather}
           temperature={temperature}
           humidity={humidity}
-          content={weathercontent}
+          content={weatherContent}
         />
       </div>
       <div className="section">
-        <DiaryDetailContent detailContent={content}/>
+        <DiaryDetailContent detailContent={content} />
       </div>
       <div>
-        <Btn content="삭제하기" onClick={handleDelete}/> 
-        <Btn content="SNS 업로드" onClick={handleSNSUpload}/> 
+        <Btn content="삭제하기" onClick={handleDelete} /> 
+        <Btn content="SNS 업로드" onClick={handleSNSUpload} /> 
       </div>
     </div>
   );
 };
-
 
 export default PlantDiaryDetail;
