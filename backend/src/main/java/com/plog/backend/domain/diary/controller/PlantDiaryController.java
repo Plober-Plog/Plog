@@ -33,7 +33,7 @@ public class PlantDiaryController {
             throw new NotValidRequestException("plantId 는 필수값입니다.");
         if (plantDiaryAddRequestDto.getRecordDate() == null)
             throw new NotValidRequestException("recordDate 는 필수값입니다.");
-        log.info(">>> [POST] /user/diary - 요청 데이터: {} 이미지 개수: {}", plantDiaryAddRequestDto, images.length);
+        log.info(">>> [POST] /user/diary - 요청 데이터: {} 이미지 여부: {}", plantDiaryAddRequestDto, images == null ? "X" : "O");
         Long plantDiaryId = plantDiaryService.addPlantDiary(token, plantDiaryAddRequestDto);
         // 요청으로 넘어온 이미지 리스트가 있으면 호출
         if (images != null && images.length > 0) {

@@ -41,7 +41,7 @@ public class SnsController {
             @Parameter(description = "게시글 추가 요청 데이터", required = true) @ModelAttribute ArticleAddRequestDto articleAddRequestDto,
             @Parameter(description = "이미지 파일 목록") @RequestPart(value = "images", required = false) MultipartFile[] images
     ) {
-        log.info(">>> [POST] /user/sns - 요청 데이터: {} 이미지: {}",
+        log.info(">>> [POST] /user/sns - 요청 데이터: {} 이미지 여부: {}",
                 articleAddRequestDto, images == null ? "X" : "O");
         Long articleId = articleService.addArticle(token, articleAddRequestDto);
         if (images != null && images.length > 0) {
