@@ -12,7 +12,6 @@ import DiaryWeather from '../../components/Diary/DiaryWeather';
 import weatherIcon from '../../assets/icon/weather.png'; 
 import humidityIcon from '../../assets/icon/humidity.png'; 
 import temperatureIcon from '../../assets/icon/temperature.png'; 
-import defaultImg from '../../assets/icon/default.png';
 import cameraIcon from '../../assets/icon/camera.png';
 import waterIcon from '../../assets/icon/water.png'; 
 import fertilizedIcon from '../../assets/icon/fertilized.png'; 
@@ -39,6 +38,7 @@ const PlantDiaryWrite = () => {
   const [hasPlantCheck, setHasPlantCheck] = useState(false); // 관리 기록이 있는지 여부를 저장하는 변수
   const [writerInfoData, setWriterInfoData] = useState({});
 
+  // 식물 프로필을 위한 정보 기록 확인  
   const fetchWriterInfo = async (plantId) => {
     try {
       const response = await API.get(`/user/plant/${plantId}/info`);
@@ -48,7 +48,7 @@ const PlantDiaryWrite = () => {
     }
   };
 
-  const thumbnailIdx = 0;
+  // const thumbnailIdx = 0;
 
   // 해당 날짜에 작성된 식물 일지 기록 및 관리 기록 확인 
   const fetchDiaryAndCheck = async (plantId, date) => {
@@ -143,7 +143,14 @@ const PlantDiaryWrite = () => {
 }, [date, plantId]);
 
   // 이미지 업로드 .. => 잘 모루겟어서 지피티한테 물어봄 ㅜㅜ .. 이미지 부분 수정 가능성 높습니다.. ..
+  
+  // const handleImageUpload = (event) => {
+  //   console.log(event.target.files);
+  //   setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
+  // };
+
   const handleImageUpload = (event) => {
+    console.log(event.target.files);
     const files = Array.from(event.target.files);
     
     if (files.length + imgs.length > 5) {
@@ -209,8 +216,10 @@ const PlantDiaryWrite = () => {
   // 저장 버튼 클릭
   const handleSave = async () => {
     const formattedDate = date instanceof Date ? date.toISOString().split('T')[0] : new Date(date).toISOString().split('T')[0];
-
+    const thumbnailIdx = imgs.findIndex(img => img.isThumbnail);
     const diaryData = new FormData();
+    console.log(plantDiaryId); //헉 왜 null 값이지///..,,...
+    diaryData.append('plantDiaryId', plantDiaryId);
     diaryData.append('plantId', plantId);
     diaryData.append('weather', 1);
     diaryData.append('temperature', 1);
@@ -219,11 +228,12 @@ const PlantDiaryWrite = () => {
     console.log(imgs);
     // diaryData.append('thumbnailIdx', thumbnailIdx);
     diaryData.append('recordDate', formattedDate);
-
-
+    
+    
     imgs.forEach((img, index) => {
       diaryData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
       if (img.isThumbnail) {
+        console.log('thumbnailIdx:', thumbnailIdx);
         diaryData.append('thumbnailIdx', index);  // 'thumbnailIdx' key를 사용하여 대표 이미지 인덱스를 추가
       }
     });
@@ -231,19 +241,23 @@ const PlantDiaryWrite = () => {
     console.log(diaryData);
 
     const plantData = {
+      plantId,
       isWatered,
       isFertilized,
       isRepotted,
       checkDate: formattedDate,
     }
     console.log(plantData);
-    console.log(thumbnailIdx);
 
 
     // 일지작성요청 1
     try {
       if (plantDiaryId) {
-        const diaryWriteResponse = await API.patch(`user/diary/${plantDiaryId}`, diaryData);
+        const diaryWriteResponse = await API.patch(`user/diary/${plantDiaryId}`, diaryData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
         // header 가 'Content-Type': 'multipart/form-data' 였는데 이건 어떻게 되는지?
         if (diaryWriteResponse.status !== 200) {
           throw new Error('일지 수정에 실패했습니다.');
@@ -251,7 +265,8 @@ const PlantDiaryWrite = () => {
       }
       else {
         const diaryWriteResponse = await API.post(`user/diary`, diaryData);
-        if (diaryWriteResponse.status !== 200) {
+        console.log(diaryWriteResponse.data)
+;        if (diaryWriteResponse.status !== 200) {
           throw new Error('일지 작성에 실패했습니다.');
         }
       }
@@ -274,6 +289,7 @@ const PlantDiaryWrite = () => {
 
       navigate(`/plant/${plantId}/${formattedDate}`, {
         state: {
+          plantId,
           plantDiaryId,
           date: formattedDate,
           content,
