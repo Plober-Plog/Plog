@@ -34,9 +34,6 @@ public class ArticleComment extends BaseEntity {
     private Long parentId;
 
     @Column
-    private String tagName;
-
-    @Column
     private String content;
 
     @Column

@@ -1,6 +1,10 @@
 package com.plog.backend.domain.sns.service;
 
+import com.plog.backend.domain.image.entity.ArticleImage;
+import com.plog.backend.domain.image.repository.ArticleImageRepository;
+import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.sns.dto.request.ArticleAddRequestDto;
+import com.plog.backend.domain.sns.dto.request.ArticleGetListRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleUpdateRequestDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
@@ -9,6 +13,7 @@ import com.plog.backend.domain.sns.repository.*;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotAuthorizedRequestException;
+import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +36,27 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleTagRepositorySupport articleTagRepositorySupport;
     private final TagTypeRepository tagTypeRepository;
     private final ArticleRepositorySupport articleRepositorySupport;
+    private final ArticleImageRepository articleImageRepository;
+    private final ArticleBookmarkRepositorySupport articleBookmarkRepositorySupport;
 
     //TODO [강윤서] - 임시 이미지 url
     private final String tempImageUrl = "https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png";
+    private final ArticleLikeRepository articleLikeRepository;
+    private final ImageServiceImpl imageService;
+    private final ArticleCommentRepository articleCommentRepository;
+    private final ArticleBookmarkRepository articleBookmarkRepository;
+    private final ArticleLikeRepositorySupport articleLikeRepositorySupport;
 
     @Override
-    public void uploadArticleImages(MultipartFile[] images, Long plantDiaryId) {
+    public List<TagType> getTagTypeList() {
+        return tagTypeRepository.findAll();
+    }
 
+    @Override
+    public void uploadArticleImages(MultipartFile[] images, Long articleId) {
+        if (images.length > 10)
+            throw new NotValidRequestException("게시글에는 최대 10개 사진을 업로드 할 수 있습니다.");
+        imageService.ArticleUploadImages(images, articleId);
     }
 
     @Override
@@ -59,7 +78,6 @@ public class ArticleServiceImpl implements ArticleService {
             TagType tagType = tagTypeRepository.findById(tagTypeId)
                     .orElseThrow(() -> new EntityNotFoundException("TagType not found with id " + tagTypeId));
             articleTag.setTagType(tagType);
-            log.info(articleTag.toString());
             articleTagList.add(articleTag);
         }
         articleTagRepository.saveAll(articleTagList);
@@ -67,19 +85,29 @@ public class ArticleServiceImpl implements ArticleService {
         return article.getArticleId();
     }
 
+
     @Override
-    public ArticleGetResponseDto getArticle(Long articleId) {
-        //TODO [강윤서] - 게시글 조회 시 조회수 증가
+    public ArticleGetResponseDto getArticle(Long userId, Long articleId) {
         Optional<Article> article = articleRepository.findById(articleId);
         if (article.isPresent()) {
+            updateView(articleId); // 조회수 증가
             List<TagType> tagTypeList = articleTagRepositorySupport.findTagTypeByArticleId(articleId);
+            List<String> articleImageList = imageService.loadImagUrlsByArticleId(articleId);
+            log.info(">>> getArticle - 게시글 조회 완료 : id {}", articleId);
+            int likeCnt = articleLikeRepository.countByArticleArticleId(articleId);
+            boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, articleId);
+            boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(userId, articleId);
             return ArticleGetResponseDto.builder()
-                    .userId(article.get().getUser().getUserId())
+                    .searchId(article.get().getUser().getSearchId())
                     .articleId(article.get().getArticleId())
                     .content(article.get().getContent())
                     .view(article.get().getView())
                     .tagTypeList(tagTypeList)
                     .visibility(article.get().getVisibility())
+                    .images(articleImageList)
+                    .likeCnt(likeCnt)
+                    .isLiked(isLiked)
+                    .isBookmarked(isBookmarked)
                     .build();
         } else {
             throw new EntityNotFoundException("게시글을 조회할 수 없습니다.");
@@ -87,22 +115,32 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleGetSimpleResponseDto> getArticleList(int page) {
-        List<Article> articleList = articleRepositorySupport.loadArticleList(page);
+    public List<ArticleGetSimpleResponseDto> getArticleList(ArticleGetListRequestDto articleGetListRequestDto) {
+        int page = articleGetListRequestDto.getPage();
+        String searchId = articleGetListRequestDto.getSearchId();
+        List<Integer> tagTypeList = articleGetListRequestDto.getTagType();
+        String keyword = articleGetListRequestDto.getKeyword();
+
+        List<Article> articleList = articleRepositorySupport.loadArticleList(page, searchId, tagTypeList, keyword);
         List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = new ArrayList<>();
         for (Article article : articleList) {
+            List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
+            int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
+            int commentCnt = articleCommentRepository.countByArticleArticleId(article.getArticleId());
+            boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(articleGetListRequestDto.getUserId(), article.getArticleId());
             articleGetSimpleResponseDtoList.add(
                     ArticleGetSimpleResponseDto.builder()
-                            .image(tempImageUrl)
-                            .likeCnt(14)
-                            .nickname("임시닉네임...")
-                            .commentCnt(12)
-                            .isBookmarked(false)
+                            .articleId(article.getArticleId())
+                            .image(articleImageList.size() == 0 ? null : articleImageList.get(0)) // 첫 번째 사진의 url 전달
+                            .likeCnt(likeCnt)
+                            .view(article.getView())
+                            .nickname(article.getUser().getNickname())
+                            .commentCnt(commentCnt)
+                            .isBookmarked(isBookmarked)
                             .content(article.getContent())
                             .build()
             );
         }
-        //TODO [강윤서] - 게시글 목록 조회
         return articleGetSimpleResponseDtoList;
     }
 
@@ -151,12 +189,28 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = articleOptional.get();
             if (userId != article.getUser().getUserId())
                 throw new NotAuthorizedRequestException();
-            //TODO [강윤서] articleImageRepository에서 리스트 조회 후 삭제 -> 반복문으로 진행
+            List<ArticleImage> articleImageList = articleImageRepository.findByArticleArticleIdAndImageIsDeletedFalseOrderByOrderAsc(articleId);
+            for (ArticleImage articleImage : articleImageList) {
+                imageService.deleteImage(articleImage.getImage().getImageUrl());
+            }
             article.setState(State.DELETE);
             articleRepository.save(article);
             log.info(">>> deleteArticle - 게시글 삭제 완료: {}", article.getArticleId());
         } else {
             throw new EntityNotFoundException();
+        }
+    }
+
+    @Override
+    public void updateView(Long articleId) {
+        Optional<Article> articleOptional = articleRepository.findById(articleId);
+        if (articleOptional.isPresent()) {
+            int view = articleOptional.get().getView();
+            articleOptional.get().setView(view+1);
+            articleRepository.save(articleOptional.get());
+            log.info(">>> updateView - 게시글 조회수 +1 증가: {}");
+        } else {
+            throw new EntityNotFoundException("일치하는 게시글을 조회할 수 없습니다.");
         }
     }
 }

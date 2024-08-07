@@ -9,18 +9,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class PlantDiaryImageGetResponseDto {
+public class ArticleImageGetResponseDto {
+    private Long articleImageId;
 
-    private Long plantDiaryImageId;
-
-
-    private Long plantDiaryId;
-
+    private Long articleId;
 
     private Image image;
 
-
     private int order;
-
-    private boolean isThumbnail;
 }

@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,13 @@ public class PlantCheckServiceImpl implements PlantCheckService {
     @Override
     public void addPlantCheck(String token, PlantCheckAddRequestDto plantCheckAddRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        if (plantCheckAddRequestDto.getCheckDate().isAfter(LocalDate.now())) {
+
+        LocalDate recordDate = plantCheckAddRequestDto.getCheckDate();
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if (recordDate.isAfter(currentDate)) {
             throw new NotValidRequestException("미래의 식물 관리 기록은 작성할 수 없습니다");
         }
+
         Optional<Plant> plant = plantRepository.findById(plantCheckAddRequestDto.getPlantId());
         if (plant.isPresent()) {
             if (userId != plant.get().getUser().getUserId())
@@ -59,9 +64,13 @@ public class PlantCheckServiceImpl implements PlantCheckService {
     @Override
     public void updatePlantCheck(String token, PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        if (plantCheckUpdateRequestDto.getCheckDate().isAfter(LocalDate.now())) {
+
+        LocalDate recordDate = plantCheckUpdateRequestDto.getCheckDate();
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if (recordDate.isAfter(currentDate)) {
             throw new NotValidRequestException("미래의 관리 기록을 수정 할 수 없습니다");
         }
+
         Optional<Plant> plant = plantRepository.findById(plantCheckUpdateRequestDto.getPlantId());
         if (plant.isPresent()) {
             if (userId != plant.get().getUser().getUserId())

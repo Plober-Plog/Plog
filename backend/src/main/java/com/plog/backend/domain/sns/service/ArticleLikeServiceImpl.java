@@ -6,6 +6,7 @@ import com.plog.backend.domain.sns.repository.ArticleLikeRepository;
 import com.plog.backend.domain.sns.repository.ArticleRepository;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
+import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,9 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
 
         Optional<Article> article = articleRepository.findById(articleId);
         if (article.isPresent()) {
+            Optional<ArticleLike> articleLikeOptional = articleLikeRepository.findByUserUserIdAndArticleArticleId(userId, articleId);
+            if (articleLikeOptional.isPresent())
+                throw new NotValidRequestException("이미 좋아요한 게시글입니다.");
             ArticleLike articleLike = new ArticleLike();
             articleLike.setArticle(article.get());
             articleLike.setUser(userRepository.getReferenceById(userId));

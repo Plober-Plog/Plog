@@ -13,7 +13,7 @@ import lombok.*;
 public class TagType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tagTypeId;
+    private int tagTypeId;
 
     @Column
     private String tagName;

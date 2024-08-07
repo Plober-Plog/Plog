@@ -24,7 +24,7 @@ public class ArticleCommentRepositorySupport extends QuerydslRepositorySupport {
         return queryFactory
                 .selectFrom(articleComment)
                 .where(articleComment.article.eq(article)
-                        .and(articleComment.parentId.isNull()))
+                        .and(articleComment.parentId.eq(articleComment.articleCommentId))) // articleCommentId = parentId -> 본인이 root
                 .orderBy(articleComment.createdAt.asc())  // createdAt 기준 오름차순 정렬
                 .fetch();
     }

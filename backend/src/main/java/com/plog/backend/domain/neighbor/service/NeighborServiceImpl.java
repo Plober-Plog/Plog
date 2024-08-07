@@ -29,7 +29,7 @@ public class NeighborServiceImpl implements NeighborService {
     private NeighborToResponseDto mapToDto(Neighbor neighbor) {
         return NeighborToResponseDto.builder()
                 .searchId(neighbor.getNeighborFrom().getSearchId())
-                .profile(neighbor.getNeighborFrom().getImageId().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
+                .profile(neighbor.getNeighborFrom().getImage().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
                 .nickname(neighbor.getNeighborFrom().getNickname())
                 .neighborType(neighbor.getNeighborType().getValue())
                 .build();
@@ -38,7 +38,7 @@ public class NeighborServiceImpl implements NeighborService {
     private NeighborFromResponseDto mapFromDto(Neighbor neighbor) {
         return NeighborFromResponseDto.builder()
                 .searchId(neighbor.getNeighborTo().getSearchId())
-                .profile(neighbor.getNeighborTo().getImageId().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
+                .profile(neighbor.getNeighborTo().getImage().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
                 .nickname(neighbor.getNeighborTo().getNickname())
                 .neighborType(neighbor.getNeighborType().getValue())
                 .build();
