@@ -8,8 +8,9 @@ import useAuthStore from '../../stores/member';
 
 const UserProfile = () => {
   const { searchId } = useParams();
-  const { searchId: authSearchId } = useAuthStore();
-  
+  const authSearchId = useAuthStore((state) => state.getSearchId());
+  console.log('****authSearchId:****', authSearchId);
+
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState(null);

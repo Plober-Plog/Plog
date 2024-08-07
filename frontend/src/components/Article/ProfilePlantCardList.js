@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import ProfilePlantCard from './ProfilePlantCard';
 import API from '../../apis/api';
+import useAuthStore from '../../stores/member';
 
 const ProfilePlantCardList = ({ searchId }) => {
+  const authSearchId = useAuthStore((state) => state.getSearchId());
 
   const [plants, setPlants] = useState([]);
   const [page, setPage] = useState(0);
@@ -59,6 +61,7 @@ const ProfilePlantCardList = ({ searchId }) => {
           plantTypeId={plant.plantTypeId}
           plantTypeName={plant.plantTypeName}
           birthDate={plant.birthDate}
+          isClickalbe={authSearchId === searchId}
         />
       ))}
       {loading && <div>Loading...</div>}
