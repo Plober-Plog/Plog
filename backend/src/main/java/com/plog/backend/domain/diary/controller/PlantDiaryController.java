@@ -7,6 +7,7 @@ import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
 import com.plog.backend.domain.diary.service.PlantDiaryService;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user/diary")
+@Tag(name = "Plant Diary Controller", description = "식물 일지 API")
 public class PlantDiaryController {
     private final PlantDiaryService plantDiaryService;
 
@@ -27,10 +29,14 @@ public class PlantDiaryController {
             @RequestHeader("Authorization") String token,
             @ModelAttribute PlantDiaryAddRequestDto plantDiaryAddRequestDto,
             @RequestPart(value = "images", required = false) MultipartFile[] images) {
-        log.info(">>> [POST] /user/diary - 요청 데이터: {} 이미지 {}", plantDiaryAddRequestDto, images == null ? "X" : "O");
+        if (plantDiaryAddRequestDto.getPlantId() == null)
+            throw new NotValidRequestException("plantId 는 필수값입니다.");
+        if (plantDiaryAddRequestDto.getRecordDate() == null)
+            throw new NotValidRequestException("recordDate 는 필수값입니다.");
+        log.info(">>> [POST] /user/diary - 요청 데이터: {} 이미지 개수: {}", plantDiaryAddRequestDto, images.length);
         Long plantDiaryId = plantDiaryService.addPlantDiary(token, plantDiaryAddRequestDto);
         // 요청으로 넘어온 이미지 리스트가 있으면 호출
-        if (images != null) {
+        if (images.length > 0) {
             plantDiaryService.uploadPlantDiaryImages(images, plantDiaryAddRequestDto.getThumbnailIdx(), plantDiaryId);
         }
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 등록이 완료되었습니다."));

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface PlantDiaryImageRepository extends JpaRepository<PlantDiaryImage, Long> {
-    List<PlantDiaryImage> findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(Long plantDiaryId);
+    List<PlantDiaryImage> findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(Long plantDiaryId);
 
-    Optional<PlantDiaryImage> findByPlantDiaryIdAndIsThumbnailTrue(Long plantDiaryId);
+    Optional<PlantDiaryImage> findByPlantDiaryPlantDiaryIdAndIsThumbnailTrue(Long plantDiaryId);
 }

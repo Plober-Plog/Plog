@@ -25,7 +25,7 @@ public class PlantCheckUpdateRequestDto {
     private boolean isFertilized;
 
     @Schema(description = "분갈이 여부", example = "false")
-    @JsonProperty("isFertilized")
+    @JsonProperty("isRepotted")
     private boolean isRepotted;
 
     @Schema(description = "점검 날짜", example = "2024-01-01")

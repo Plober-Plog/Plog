@@ -1,25 +1,25 @@
 package com.plog.backend.domain.image.entity;
 
-import com.plog.backend.domain.diary.entity.PlantDiary;
+import com.plog.backend.domain.sns.entity.Article;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "plant_diary_image")
+@Table(name = "article_image")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class PlantDiaryImage {
+public class ArticleImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long plantDiaryImageId;
+    private Long articleImageId;
 
     @ManyToOne
-    @JoinColumn(name = "plant_diary_id", nullable = false)
-    private PlantDiary plantDiary;
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article article;
 
     @ManyToOne
     @JoinColumn(name = "image_id", nullable = false)
@@ -27,8 +27,4 @@ public class PlantDiaryImage {
 
     @Column(name = "`order`", nullable = false)
     private int order; // 1부터 시작
-
-    @Column(nullable = false)
-    private boolean isThumbnail;
-
 }

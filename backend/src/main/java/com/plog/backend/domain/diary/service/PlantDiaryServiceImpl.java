@@ -71,18 +71,17 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                     plantDiaryAddRequestDto.getPlantId(), plantDiaryAddRequestDto.getRecordDate());
             if (existPlantDiary != null)
                 throw new NotValidRequestException("이미 해당 일자에 작성된 일지가 존재합니다.");
-            PlantDiary plantDiary = PlantDiary.builder()
+            PlantDiary plantDiary = plantDiaryRepository.save(PlantDiary.builder()
                     .plant(plant.get())
                     .weather(plantDiaryAddRequestDto.getWeather())
                     .temperature(plantDiaryAddRequestDto.getTemperature())
                     .humidity(plantDiaryAddRequestDto.getHumidity())
                     .content(plantDiaryAddRequestDto.getContent())
                     .recordDate(recordDate)
-                    .build();
-            PlantDiary pd = plantDiaryRepository.save(plantDiary);
+                    .build());
 
             log.info(">>> addPlantDiary - 일지 저장 완료 : 일지 id {}", plantDiary.getPlantDiaryId());
-            return pd.getPlantDiaryId();
+            return plantDiary.getPlantDiaryId();
         } else {
             throw new NotValidRequestException("일지를 작성할 식물이 없습니다.");
         }
@@ -119,7 +118,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
 
                 log.info(">>> updatePlantDiary - 일지 내용 수정 완료: {}", pd.getPlantDiaryId());
                 // 일지 대표 사진 수정
-                Optional<PlantDiaryImage> plantDiaryImageOptional = plantDiaryImageRepository.findByPlantDiaryIdAndIsThumbnailTrue(plantDiary.get().getPlantDiaryId());
+                Optional<PlantDiaryImage> plantDiaryImageOptional = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndIsThumbnailTrue(plantDiary.get().getPlantDiaryId());
                 if (plantDiaryImageOptional.isPresent()) { // 등록되어 있으면 기존 썸네일 해제 진행
                     PlantDiaryImage plantDiaryImage = plantDiaryImageOptional.get();
                     plantDiaryImage.setThumbnail(false);
@@ -131,11 +130,12 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
                 // 새로 들어온 thumbnailIdx 에 해당하는 order 이미지의 isThumbnail 을 true로 update
                 int thumbnailIdx = plantDiaryUpdateRequestDto.getThumbnailIdx();
                 List<PlantDiaryImageGetResponseDto> plantDiaryImageGetResponseDtoList = imageService.loadImagesByPlantDiaryId(plantDiaryUpdateRequestDto.getPlantDiaryId());
-                if (thumbnailIdx >= 0 && thumbnailIdx < plantDiaryImageGetResponseDtoList.size()) {
+                if (thumbnailIdx >= 0
+                        && thumbnailIdx < plantDiaryImageGetResponseDtoList.size()) {
                     PlantDiaryImageGetResponseDto newThumbnailPlantDiaryImage = plantDiaryImageGetResponseDtoList.get(thumbnailIdx);
                     PlantDiaryImage newThumbnailImage = PlantDiaryImage.builder()
                             .plantDiaryImageId(newThumbnailPlantDiaryImage.getPlantDiaryImageId())
-                            .plantDiaryId(newThumbnailPlantDiaryImage.getPlantDiaryId())
+                            .plantDiary(pd)
                             .order(newThumbnailPlantDiaryImage.getOrder())
                             .isThumbnail(true) // 새로 썸네일로 지정
                             .image(newThumbnailPlantDiaryImage.getImage())
@@ -169,7 +169,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
             if (plant.isPresent()) {
                 if (userId != plant.get().getUser().getUserId())
                     throw new NotAuthorizedRequestException();
-                List<PlantDiaryImage> plantDiaryImageList = plantDiaryImageRepository.findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
+                List<PlantDiaryImage> plantDiaryImageList = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
                 for (PlantDiaryImage plantDiaryImage : plantDiaryImageList) {
                     imageService.deleteImage(plantDiaryImage.getImage().getImageUrl());
                 }
