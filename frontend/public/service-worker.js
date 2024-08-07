@@ -1,10 +1,8 @@
 const CACHE_NAME = 'pwa-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
+  // '/',
+  // '/index.html',
+  // '/manifest.json'
 ];
 
 self.addEventListener('install', event => {
@@ -14,6 +12,8 @@ self.addEventListener('install', event => {
   );
 });
 
+
+//fetch 이벤트에서 캐시된 파일 제공
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)

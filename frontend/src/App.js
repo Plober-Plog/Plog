@@ -2,10 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // default
-import Home from './pages/Home/Home';
+import Home from './pages/Main/Home';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
+<<<<<<< HEAD
 
+=======
+>>>>>>> e9838b428d7b03e2ca86fe04dca8195145d28d96
 // Account
 import SignUp from './pages/Account/SignUp';
 import Login from './pages/Account/Login';
