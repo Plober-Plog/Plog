@@ -133,7 +133,7 @@ public class PlantServiceImpl implements PlantService {
                     .bio(p.getBio())
                     .profile(p.getImage() != null ? p.getImage().getImageUrl() : null)
                     .birthDate(p.getBirthDate())
-                    .hasNotified(p.isHasNotified())
+                    .notifySetting(p.getNotifySetting())
                     .isFixed(p.isFixed())
                     .deadDate(p.getDeadDate())
                     .isDeleted(p.isDeleted())

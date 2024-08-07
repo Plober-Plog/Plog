@@ -43,7 +43,7 @@ public class PlantGetResponseDto {
     private LocalDate deadDate;
 
     @Schema(description = "알림 여부", example = "true")
-    private boolean hasNotified;
+    private int notifySetting;
 
     @Schema(description = "고정 여부", example = "true")
     boolean isFixed;

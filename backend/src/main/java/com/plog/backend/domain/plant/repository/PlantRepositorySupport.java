@@ -44,7 +44,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                         plant.image.imageUrl,
                         plant.birthDate,
                         plant.deadDate,
-                        plant.hasNotified,
+                        plant.notifySetting,
                         plant.isFixed,
                         plant.isDeleted
                 )
@@ -69,7 +69,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                         .profile(tuple.get(plant.image.imageUrl))
                         .birthDate(tuple.get(plant.birthDate))
                         .deadDate(tuple.get(plant.deadDate))
-                        .hasNotified(tuple.get(plant.hasNotified))
+                        .notifySetting(tuple.get(plant.notifySetting))
                         .isFixed(tuple.get(plant.isFixed))
                         .isDeleted(tuple.get(plant.isDeleted))
                         .build()
@@ -92,7 +92,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                         plant.image.imageUrl,
                         plant.birthDate,
                         plant.deadDate,
-                        plant.hasNotified,
+                        plant.notifySetting,
                         plant.isFixed,
                         plant.isDeleted
                 )
@@ -115,7 +115,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                         .profile(tuple.get(plant.image.imageUrl))
                         .birthDate(tuple.get(plant.birthDate))
                         .deadDate(tuple.get(plant.deadDate))
-                        .hasNotified(tuple.get(plant.hasNotified))
+                        .notifySetting(tuple.get(plant.notifySetting))
                         .isFixed(tuple.get(plant.isFixed))
                         .isDeleted(tuple.get(plant.isDeleted))
                         .build()
@@ -137,7 +137,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                         plant.image.imageUrl,
                         plant.birthDate,
                         plant.deadDate,
-                        plant.hasNotified,
+                        plant.notifySetting,
                         plant.isFixed,
                         plant.isDeleted
                 )
@@ -160,7 +160,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                         .profile(tuple.get(plant.image.imageUrl))
                         .birthDate(tuple.get(plant.birthDate))
                         .deadDate(tuple.get(plant.deadDate))
-                        .hasNotified(tuple.get(plant.hasNotified))
+                        .notifySetting(tuple.get(plant.notifySetting))
                         .isFixed(tuple.get(plant.isFixed))
                         .isDeleted(tuple.get(plant.isDeleted))
                         .build()

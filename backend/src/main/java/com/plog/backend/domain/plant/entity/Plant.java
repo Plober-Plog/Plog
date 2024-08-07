@@ -53,7 +53,7 @@ public class Plant extends BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("7")
-    private int hasNotified;
+    private int notifySetting;
 
     @Column(nullable = false)
     @ColumnDefault("false")
