@@ -29,7 +29,7 @@ API.interceptors.response.use(
     const originalRequest = error.config;
 
     // 엑세스 토큰 만료시
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 408 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {

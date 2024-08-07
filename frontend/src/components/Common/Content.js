@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import './Content.css';
 
 const Content = ({ content, setContent }) => {
   const handleChange = (event) => {
@@ -13,6 +13,7 @@ const Content = ({ content, setContent }) => {
         value={content} 
         onChange={handleChange} 
         placeholder="글을 입력하세요."
+        className="textarea"
       />
     </div>
   );

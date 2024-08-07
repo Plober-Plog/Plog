@@ -21,6 +21,9 @@ import PlantRegister from './pages/Plant/PlantRegister';
 import ApiTest from './pages/Plant/ApiTest';
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
+// SNS
+import SnsWrite from './pages/Sns/SnsWrite';
+import SnsDetail from './pages/Sns/SnsDetail';
 
 function App() {
   return (
@@ -32,7 +35,8 @@ function App() {
         <main className='content'>
 
             <Routes>
-              <Route path="/" element={<Home />}/>
+              {/* <Route path="/" element={<Home />}/> */}
+              {/* Account */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/profileupdate" element={<ProfileUpdate />} />
@@ -40,15 +44,20 @@ function App() {
               <Route path="/password/find" element={<PasswordFind />} />
               <Route path="/password/update" element={<PasswordUpdate />} />
               <Route path="/setting" element={<Setting />} />
+              {/* plant */}
               <Route path="/plant/:plantId/:date/write" element={<PlantDiaryWrite />} />
               <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
               <Route path="/plant/:plantId" element={<PlantDetail />} />
               {/* <Route path="/plant" element={<PlantDetail />} /> */}
               {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
               <Route path="/plant/register" element={<PlantRegister />} />
+              {/* profile */}
               {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
               <Route path="/profile/:searchId" element={<UserProfile />} />
               {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
+              {/* sns */}
+              <Route path="/sns/write" element={<SnsWrite />} />
+              <Route path="/sns/:articleId" element={<SnsDetail />} />
             </Routes>
         </main>
         <footer className='full-width'>
