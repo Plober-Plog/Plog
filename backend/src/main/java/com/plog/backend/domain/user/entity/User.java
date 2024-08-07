@@ -25,7 +25,7 @@ public class User extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name="image_id", referencedColumnName = "imageId")
-    private Image imageId;
+    private Image image;
 
     @Column(nullable = false)
     private String email;

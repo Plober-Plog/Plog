@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .searchId(user.getSearchId())
                 .nickname(user.getNickname())
-                .profile(user.getImageId().getImageUrl())
+                .profile(user.getImage().getImageUrl())
                 .gender(user.getGender().getValue())
                 .birthDate(user.getBirthDate())
                 .sidoCode(user.getSidoCode())
@@ -164,7 +164,7 @@ public class UserServiceImpl implements UserService {
                 .isAd(userSignUpRequestDto.isAd())
                 .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
-                .imageId(image)
+                .image(image)
                 .chatAuth(ChatAuth.PUBLIC.getValue())
                 .searchId(userSignUpRequestDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
@@ -296,7 +296,7 @@ public class UserServiceImpl implements UserService {
                 .profile_info(user.getProfileInfo())
                 .total_exp(user.getTotalExp())
                 .nickname(user.getNickname())
-                .profile(user.getImageId().getImageUrl())
+                .profile(user.getImage().getImageUrl())
                 .build();
 
         log.info(">>> getMyProfile - 프로필 정보: {}", responseDto);
@@ -316,7 +316,7 @@ public class UserServiceImpl implements UserService {
                 .profile_info(user.getProfileInfo())
                 .total_exp(user.getTotalExp())
                 .nickname(user.getNickname())
-                .profile(user.getImageId().getImageUrl())
+                .profile(user.getImage().getImageUrl())
                 .build();
 
         log.info(">>> getProfile - 프로필 정보: {}", responseDto);
