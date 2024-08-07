@@ -50,7 +50,7 @@ public class PlantTypeServiceImpl implements PlantTypeService {
         plantTypeIdsGetListByUserResponseDto.setOtherPlantTypes(
                 plantRepositorySupport.findDistinctOtherPlantTypeIdByUserSearchId(searchId)
         );
-        log.info(">>> getPlantTypeIdsByUserSearchId: {}", plantTypeIdsGetListByUserResponseDto);
+        log.info(">>> getPlantTypeIdsByUserSearchId 조회 완료");
         return plantTypeIdsGetListByUserResponseDto;
     }
 
@@ -60,6 +60,7 @@ public class PlantTypeServiceImpl implements PlantTypeService {
         plantTypeRepository.findAll().forEach(plantType -> {
             plantTypeGetSimpleResponseDtoList.add(new PlantTypeGetSimpleResponseDto(plantType.getPlantTypeId(), plantType.getPlantName()));
         });
+        log.info(">>> getAllPlantTypes 조회 완료");
         return plantTypeGetSimpleResponseDtoList;
     }
 }
