@@ -52,7 +52,7 @@ const PlantDiaryWrite = () => {
   };
 
   // 해당 날짜에 작성된 식물 일지 기록 및 관리 기록 확인 
-  const fetchDiaryAndCheck = async ( plantId, date) => {
+  const fetchDiaryAndCheck = async ( plantId, date ) => {
     console.log(plantId.data);
     console.log(date.data);
     try {
@@ -82,7 +82,7 @@ const PlantDiaryWrite = () => {
           setContent(plantDiary.content);
           setImgs(plantDiary.images.map(img => ({ 
             url: img.url, 
-            id: img.imageId,
+            id: img.nimageId,
             isThumbnail: img.isThumbnail, 
            })));
           setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
@@ -133,6 +133,7 @@ const PlantDiaryWrite = () => {
         setIsWatered(false);
         setIsFertilized(false);
         setIsRepotted(false); 
+        setIsEditMode(false);
         console.log('새로운 일지를 작성');
       }
     } catch (error) {
