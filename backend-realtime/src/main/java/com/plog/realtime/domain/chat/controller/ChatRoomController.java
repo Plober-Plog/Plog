@@ -2,6 +2,7 @@ package com.plog.realtime.domain.chat.controller;
 
 import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
 import com.plog.realtime.domain.chat.service.ChatRoomService;
+import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.model.dto.BaseEntity;
 import com.plog.realtime.global.model.response.BaseResponseBody;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,12 @@ public class ChatRoomController {
     public ResponseEntity<?> createChatRoom(
             @RequestHeader("Authorization") String token,
             @RequestBody ChatRoomCreateRequestDto createRequestDto){
+        if(createRequestDto.getChatRoomName() == null || createRequestDto.getChatRoomName().isEmpty()){
+            throw new NotValidRequestException("채팅방 제목은 필수 입력입니다.");
+        }
+        if(!(createRequestDto.getType() == 1 || createRequestDto.getType() == 2)) {
+            throw new NotValidRequestException("유효하지 않은 방 종류 입니다.");
+        }
         return ResponseEntity.ok(chatRoomService.createChatRoom(token, createRequestDto));
     }
     // get -> 내가 소속되어 있는 채팅방 리스트 조회
