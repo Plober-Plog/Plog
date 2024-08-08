@@ -32,5 +32,5 @@ public class ChatRoom extends BaseEntity {
     private String chatRoomName;
 
     @Column
-    private boolean isDelete;
+    private boolean isDeleted;
 }

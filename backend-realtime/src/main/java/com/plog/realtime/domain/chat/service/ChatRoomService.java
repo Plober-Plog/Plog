@@ -1,6 +1,7 @@
 package com.plog.realtime.domain.chat.service;
 
 import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
+import com.plog.realtime.domain.chat.dto.request.ChatRoomUpdateRequestDto;
 import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.user.entity.User;
 import com.plog.realtime.global.model.dto.BaseEntity;
@@ -14,7 +15,7 @@ public interface ChatRoomService {
     public List<ChatRoom> getAllChatRooms(String token);
     public List<User> getChatRoomUsers(Long chatRoomId);
     public ChatRoom getChatRoom(Long chatRoomId);
-    public BaseResponseBody updateChatRoom(String token, Long chatRoomId);
+    public BaseResponseBody updateChatRoom(String token, ChatRoomUpdateRequestDto chatRoomUpdateRequestDto);
     public BaseResponseBody deleteChatRoom(String token, Long chatRoomId);
     public BaseResponseBody leaveChatRoom(String token, Long chatRoomId);
 }

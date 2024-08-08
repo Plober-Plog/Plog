@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-public class ChatRoomCreateRequestDto {
-    private int chatRoomType;
+public class ChatRoomUpdateRequestDto {
+    private Long chatRoomId;
     private String chatRoomName;
 }

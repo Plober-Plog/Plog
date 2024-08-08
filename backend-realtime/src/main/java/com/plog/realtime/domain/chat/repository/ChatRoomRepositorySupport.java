@@ -20,7 +20,7 @@ public class ChatRoomRepositorySupport extends QuerydslRepositorySupport {
     public List<ChatRoom> findByChatUserId(Long chatUserId) {
         QChatRoom qChatRoom = QChatRoom.chatRoom;
         return queryFactory.selectFrom(qChatRoom)
-                .where(qChatRoom.isDelete.eq(false))
+                .where(qChatRoom.isDeleted.eq(false))
                 .fetch();
     }
 }
