@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class ChatGetResponseDto {
+    Long userId;
     String nickname;
     String profile;
     String message;
-    ChatType chatType;
     LocalDateTime createdAt;
 }

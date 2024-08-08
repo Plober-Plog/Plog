@@ -11,9 +11,8 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class ChatGetRequestDto {
-    String nickname;
-    String profile;
-    String message;
-    ChatType chatType;
-    LocalDateTime createdAt;
+    private Long userId;
+    private Long chatRoomId;
+    private String message;
+    private ChatType chatType;
 }
