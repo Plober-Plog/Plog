@@ -49,6 +49,8 @@ const UserProfile = () => {
     setFilteredPlants(plants);
   };
 
+  console.log('User Data:', userData);
+
   return (
     <div>
       <ProfileHeader 
