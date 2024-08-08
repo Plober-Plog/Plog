@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './Calendar.css';
 import API from '../../apis/api';
 
-
 const CustomCalendar = ({ plantId }) => {
-
   const [value, setValue] = useState(new Date());
   const [checkRecords, setCheckRecords] = useState([]);
   const [diaryRecords, setDiaryRecords] = useState([]);
