@@ -120,7 +120,7 @@ const PlantDiaryDetail = () => {
     }
   };
 
-  const weatherContent = `날씨는 ${weather}이고 온도는 ${temperature}'C 이며 습도는 ${humidity}입니다. 그러니 어쩌구 하세요.`;
+  const weatherContent = `날씨는 ${weather}이고 온도는 ${temperature}'C 이며 습도는 ${humidity}입니다.`;
 
   return (
     <div className="plant-diary-container">
