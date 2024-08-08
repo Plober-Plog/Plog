@@ -51,9 +51,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         log.info("JWT Filter 확인 : URI {}, Method {}", requestURI, requestMethod);
 
+        if(requestMethod.equals("GET") || requestMethod.equals("OPTIONS")) {
+            log.info(">>> JWT Filter 제외 - GET 혹은 OPTIONS 제외");
+            chain.doFilter(request, response);
+            return;
+        }
+
         // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
         if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
-            log.info(">>> JWT Filter 제외");
+            log.info(">>> JWT Filter - 제외 목록에서 제외");
             chain.doFilter(request, response); // 필터 체인 계속 진행
             return;
         }
@@ -83,7 +89,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         } else {
-            logger.warn("JWT Token does not begin with Bearer String");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("JWT Token is missing or does not begin with Bearer String");
+            return;
         }
 
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
