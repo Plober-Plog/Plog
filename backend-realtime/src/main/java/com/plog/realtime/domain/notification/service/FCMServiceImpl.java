@@ -10,9 +10,10 @@ import org.springframework.stereotype.Service;
 public class FCMServiceImpl implements FCMService {
 
     @Override
-    public void sendNotification(String token, String message) {
+    public void sendNotification(String token, String title, String message) {
         Message msg = Message.builder()
-                .putData("message", message)
+                .putData("title", title)
+                .putData("body", message)
                 .setToken(token)
                 .build();
 
