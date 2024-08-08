@@ -1,6 +1,7 @@
 package com.plog.backend.global.config;
 
 import com.plog.backend.global.auth.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,19 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/user/**").permitAll() // JWT 없이 접근 가능
 //                        .anyRequest().authenticated() // 나머지 요청은 JWT 필요
                 )
+//                .headers(headers -> headers
+//                        .addHeaderWriter((request, response) -> {
+//                            response.addHeader("Access-Control-Allow-Origin", "*");
+//                            response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//                            response.addHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
+//                            response.addHeader("Access-Control-Expose-Headers", "xsrf-token");
+//                            response.addHeader("Access-Control-Allow-Credentials", "true");
+//                            if (request.getMethod().equals("OPTIONS")) {
+//                                response.setStatus(HttpServletResponse.SC_OK);
+//                            }
+//                        })
+//                )
+
 //                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
