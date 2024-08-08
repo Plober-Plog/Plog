@@ -1,64 +1,58 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import API from "../../apis/api";
+
+import WriterInfo from "../../components/Common/WriterInfo";
+import Comment from '../../components/Sns/Comment';
+import Tags from "../../components/Sns/Tags";
+import ImgSlider from "../../components/Common/ImgSlider";
 
 const SnsDetail = () => {
   const location = useLocation();
   // const { articleId } = location.state;
-  const articleId = 50; // 임시 번호
+  const articleId = 49;
+  const [article, setArticle] = useState({});
+  const [userInfo, setUserInfo] = useState({});
 
-  const [article, setArticle] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
+  console.log(article.tagTypeList)
 
-
+  // 게시물 불러오기
   useEffect(() => {
     const fetchArticle = async () => {
       try {
         const response = await API.get(`/user/sns/${articleId}`);
         console.log('게시글 정보:', response.data);
-        setArticle(response.data)
+        setArticle(response.data);
 
+        // 유저 정보 가져오기
+        try {
+          const userResponse = await API.get(`/user/profile/${response.data.searchId}`);
+          console.log('유저 정보:', userResponse.data);
+          setUserInfo(userResponse.data);
+        } catch (err) {
+          console.error('유저 정보 불러오기 실패 : ', err);
+        }
       } catch (err) {
         console.error('게시물 불러오기 실패 : ', err);
       }
     };
     fetchArticle();
-  }, [articleId]);
+  }, []);
 
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await API.get(`/user/profile/${article.searchId}`);
-        console.log('유저 정보:', response.data);
-        setUserInfo(response.data);
-        
-      } catch (err) {
-        console.error('유저 정보 불러오기 실�� : ', err);
-      }
-    }
-
-    fetchUser();
-
-  }, [article])
-
-
-  if (!article) {
-    return <div>Loading...</div>; // 데이터를 가져오는 동안 로딩 상태를 표시
+  if (!article || !userInfo.profile) {
+    return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <img src='' alt="게시글 이미지"/>
-      <div>
-        <p>{article.content}</p>
-      </div>
-
+      <WriterInfo data={userInfo} type="user" />
+      <ImgSlider imgs={article.images} />
+      <Tags selectedTags={article.tagTypeList} tags={article.tagTypeList} />
+      <p>{article.content}</p>
+      <button>버튼</button>
+      <Comment articleId={articleId} userInfo={userInfo} />
     </div>
   );
 }
-
-
 
 export default SnsDetail;

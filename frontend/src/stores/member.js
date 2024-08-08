@@ -22,19 +22,13 @@ const useAuthStore = create((set) => ({
     console.log('유저정보 저장:', userData)
   },
 
-  // 토큰 삭제
+  // 유저 정보 삭제
   clearToken: () => {
     eraseCookie('accessToken');
     eraseCookie('refreshToken');
-    set({ accessToken: null, refreshToken: null, isLogin: false });
-    console.log('토큰 쿠키 삭제 완료!');
-  },
-
-  // 유저 정보 삭제
-  clearUserData: () => {
     eraseCookie('userData');
-    set({ userData: null });
-    console.log('유저정보 쿠키 삭제 완료!');
+    set({ accessToken: null, refreshToken: null, isLogin: false, userData: null });
+    console.log('유저 정보 삭제 완료!');
   },
 
   // 아이디 가져오기
