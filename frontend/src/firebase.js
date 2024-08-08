@@ -1,3 +1,5 @@
+// firebase.js
+
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
@@ -19,15 +21,18 @@ const messaging = getMessaging(app);
 
 export const requestForToken = async () => {
   try {
+    console.log(process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY);
     const currentToken = await getToken(messaging, { vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY });
     if (currentToken) {
       console.log('current token for client: ', currentToken);
-      // Perform any action with the token here
+      return currentToken;  // 토큰을 반환하도록 수정
     } else {
       console.log('No registration token available. Request permission to generate one.');
+      return null;
     }
   } catch (err) {
     console.log('An error occurred while retrieving token. ', err);
+    return null;
   }
 };
 
