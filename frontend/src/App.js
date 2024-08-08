@@ -35,17 +35,23 @@ import Neighbor from './pages/Profile/Neighbor';
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 
+if (Notification.permission !== 'granted') {
+  requestForToken();
+} else {
+  getToken(getMessaging(firebaseApp), {
+    vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY
+  }).then((currentToken) => {
+    if (currentToken) {
+      document.cookie = `fcmToken=${currentToken}; path=/; SameSite=Lax`;
+    }
+  });
+  onMessageListener().then((payload) => {
+    const { title, body } = payload.notification || payload.data;
+    new Notification(title, { body });
+  }).catch((err) => console.log('failed: ', err));
+}
+
 function App() {
-
-  useEffect(() => {
-    const messaging = getMessaging(firebaseApp);
-
-    onMessageListener().then((payload) => {
-      console.log('foreground message received: ', payload);
-      const { title, body } = payload.notification;
-      new Notification(title, { body });
-    }).catch((err) => console.log('failed: ', err));
-  }, []);
 
   return (
     <div className='container'>
