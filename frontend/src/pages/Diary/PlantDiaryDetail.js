@@ -56,9 +56,9 @@ const PlantDiaryDetail = () => {
   const isFertilized = plantCheck.isFertilized || false;
   const isRepotted = plantCheck.isRepotted || false;
 
-  const weather = plantDiary.weather || '1';
-  const temperature = plantDiary.temperature || '1';
-  const humidity = plantDiary.humidity || '1';
+  const weather = plantDiary.weather || 1;
+  const temperature = plantDiary.temperature || 0.0;
+  const humidity = plantDiary.humidity || 1;
   const content = plantDiary.content || '작성된 일지 내용이 없습니다.';
   const images = plantDiary.images || [];
   const plantDiaryId = plantDiary.plantDiaryId;
@@ -76,7 +76,7 @@ const PlantDiaryDetail = () => {
           isWatered,
           isFertilized,
           isRepotted,
-          imgs: images.map(img => img.url),
+          imgs: images.map(img => ({ url: img.url })),
           isEditImage: false,
         },
         plantData: {

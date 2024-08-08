@@ -45,7 +45,7 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage, isD
         {imgs.map((img, index) => (
           <ImgPreview 
             key={index} 
-            src={img.src} 
+            src={img.url} 
             onDelete={() => handleDeleteImage(index)} 
             isDisabled={isDisabled} // 비활성화 상태 전달
           />
@@ -58,16 +58,15 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage, isD
 ImgUpload.propTypes = {
   cameraIcon: PropTypes.string.isRequired,
   imgs: PropTypes.arrayOf(PropTypes.shape({
-    src: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
   })).isRequired,
   handleImageUpload: PropTypes.func.isRequired,
   handleDeleteImage: PropTypes.func.isRequired,
-  handleSetThumbnail: PropTypes.func.isRequired,
-  isDisabled: PropTypes.bool, // isDisabled prop 추가
+  isDisabled: PropTypes.bool,
 };
 
 ImgUpload.defaultProps = {
-  isDisabled: false, // 기본값은 false로 설정
+  isDisabled: false,
 };
 
 export default ImgUpload;
