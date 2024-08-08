@@ -1,3 +1,5 @@
+// firebase.js
+
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
@@ -19,15 +21,27 @@ const messaging = getMessaging(app);
 
 export const requestForToken = async () => {
   try {
-    const currentToken = await getToken(messaging, { vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY });
-    if (currentToken) {
-      console.log('current token for client: ', currentToken);
-      // Perform any action with the token here
+    let permission = Notification.permission;
+    while (permission !== 'granted') {
+      permission = await Notification.requestPermission();
+    }
+    
+    if (permission === 'granted') {
+      const currentToken = await getToken(messaging, { vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY });
+      if (currentToken) {
+        console.log('current token for client: ', currentToken);
+        return currentToken;
+      } else {
+        console.log('No registration token available. Request permission to generate one.');
+        return null;
+      }
     } else {
-      console.log('No registration token available. Request permission to generate one.');
+      console.log('Notification permission was not granted.');
+      return null;
     }
   } catch (err) {
     console.log('An error occurred while retrieving token. ', err);
+    return null;
   }
 };
 
