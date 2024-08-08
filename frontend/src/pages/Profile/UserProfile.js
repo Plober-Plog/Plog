@@ -6,6 +6,7 @@ import ProfileHeader from '../../components/Profile/ProfileHeader';
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
 
+
 const UserProfile = () => {
   const { searchId } = useParams();
   const authSearchId = useAuthStore((state) => state.getSearchId());
@@ -48,6 +49,8 @@ const UserProfile = () => {
     navigate(`/sns/write`)
   };
 
+  {/* {searchId === authSearchId && <button onClick={handleAddSns}>snsAdd</button>} */}
+
   return (
     <div>
       <ProfileHeader 
@@ -68,9 +71,8 @@ const UserProfile = () => {
       )}
       
       {activeTab === 'sns' && (
-        <>
-          {searchId === authSearchId && <button onClick={handleAddSns}>snsAdd</button>}
-        </>
+          <button onClick={handleAddSns}>snsAdd</button>
+          
       )}
       <SnsProfileTab 
         activeTab={activeTab}
