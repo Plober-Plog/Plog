@@ -38,13 +38,9 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepositorySupport articleRepositorySupport;
     private final ArticleImageRepository articleImageRepository;
     private final ArticleBookmarkRepositorySupport articleBookmarkRepositorySupport;
-
-    //TODO [강윤서] - 임시 이미지 url
-    private final String tempImageUrl = "https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png";
     private final ArticleLikeRepository articleLikeRepository;
     private final ImageServiceImpl imageService;
     private final ArticleCommentRepository articleCommentRepository;
-    private final ArticleBookmarkRepository articleBookmarkRepository;
     private final ArticleLikeRepositorySupport articleLikeRepositorySupport;
 
     @Override
