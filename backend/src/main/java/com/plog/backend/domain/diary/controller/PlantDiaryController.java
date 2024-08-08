@@ -32,6 +32,7 @@ public class PlantDiaryController {
     ) {
         if (date == null)
             throw new NotValidRequestException("date 값은 필수 값입니다.");
+        log.info(">>> [GET] /api/user/diary/get-weather   토큰: {}, 날짜: {}", token, date);
         PlantDiaryWeatherGetResponseDto plantDiaryWeatherGetResponseDto =  plantDiaryService.getWeatherData(token, date);
         return ResponseEntity.status(200).body(plantDiaryWeatherGetResponseDto);
     }
