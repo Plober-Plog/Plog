@@ -47,18 +47,18 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/user/**").permitAll() // JWT 없이 접근 가능
 //                        .anyRequest().authenticated() // 나머지 요청은 JWT 필요
                 )
-//                .headers(headers -> headers
-//                        .addHeaderWriter((request, response) -> {
-//                            response.addHeader("Access-Control-Allow-Origin", "*");
-//                            response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-//                            response.addHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
-//                            response.addHeader("Access-Control-Expose-Headers", "xsrf-token");
-//                            response.addHeader("Access-Control-Allow-Credentials", "true");
-//                            if (request.getMethod().equals("OPTIONS")) {
-//                                response.setStatus(HttpServletResponse.SC_OK);
-//                            }
-//                        })
-//                )
+                .headers(headers -> headers
+                        .addHeaderWriter((request, response) -> {
+                            response.addHeader("Access-Control-Allow-Origin", "*");
+                            response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                            response.addHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token, accessToken, refreshToken, userData");
+                            response.addHeader("Access-Control-Expose-Headers", "xsrf-token");
+                            response.addHeader("Access-Control-Allow-Credentials", "true");
+                            if (request.getMethod().equals("OPTIONS")) {
+                                response.setStatus(HttpServletResponse.SC_OK);
+                            }
+                        })
+                )
 
 //                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -69,9 +69,6 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 //        config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://i11b308.p.ssafy.io");
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addAllowedOrigin("*");
