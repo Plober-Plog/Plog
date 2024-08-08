@@ -1,6 +1,7 @@
 package com.plog.realtime.domain.chat.controller;
 
 import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
+import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.service.ChatRoomService;
 import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.model.dto.BaseEntity;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.function.EntityResponse;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,7 +34,13 @@ public class ChatRoomController {
         }
         return ResponseEntity.ok(chatRoomService.createChatRoom(token, createRequestDto));
     }
+
     // get -> 내가 소속되어 있는 채팅방 리스트 조회
+    @GetMapping
+    public ResponseEntity<?> getAllChatRooms(@RequestHeader("Authorization") String token) {
+        List<ChatRoom> chatRoomList = chatRoomService.getAllChatRooms(token);
+        return ResponseEntity.ok(chatRoomList);
+    }
 
     // get -> 해당 채팅방에 소속되어 있는 사람
 
