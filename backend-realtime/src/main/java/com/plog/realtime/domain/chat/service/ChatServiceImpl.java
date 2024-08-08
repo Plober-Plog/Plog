@@ -33,7 +33,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void addUser(ChatGetRequestDto chatGetRequestDto) {
-        ChatUser chatUser = chatUserRepository.findByUserIdAndChatRoomId(chatGetRequestDto.getUserId(), chatGetRequestDto.getChatRoomId())
+        ChatUser chatUser = chatUserRepository.findByUserUserIdAndChatRoomChatRoomId(chatGetRequestDto.getUserId(), chatGetRequestDto.getChatRoomId())
                 .orElseThrow(() -> new NotAuthorizedRequestException("채팅창에 입장할 권한이 없습니다."));
         redisMessagePublisher.publish(chatGetRequestDto);
         log.info(" >>> addUser 완료 : {}", chatGetRequestDto.getUserId());
@@ -60,7 +60,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<ChatGetResponseDto> getChatData(Long userId, Long chatRoomId, int page) {
-        ChatUser chatUser = chatUserRepository.findByUserIdAndChatRoomId(userId, chatRoomId)
+        ChatUser chatUser = chatUserRepository.findByUserUserIdAndChatRoomChatRoomId(userId, chatRoomId)
                 .orElseThrow(() -> new NotAuthorizedRequestException("채팅창에 입장할 권한이 없습니다."));
 
         List<Chat> chats = chatRepositorySupport.findChatsByChatRoomId(chatRoomId, page);
