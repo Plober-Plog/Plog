@@ -21,8 +21,11 @@ const messaging = getMessaging(app);
 
 export const requestForToken = async () => {
   try {
-    // 브라우저에서 알림 권한을 요청
-    const permission = await Notification.requestPermission();
+    let permission = Notification.permission;
+    while (permission !== 'granted') {
+      permission = await Notification.requestPermission();
+    }
+    
     if (permission === 'granted') {
       const currentToken = await getToken(messaging, { vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY });
       if (currentToken) {
