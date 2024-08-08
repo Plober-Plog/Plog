@@ -196,12 +196,20 @@ public class NeighborServiceImpl implements NeighborService {
     @Override
     public NeighborCheckResponseDto checkNeighbor(String token, String searchId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        User neighbor = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("NeighborService : 이웃이 없습니다."));
+        User neighbor = userRepository.findUserBySearchId(searchId)
+                .orElseThrow(() -> new NotValidRequestException("NeighborService : 이웃이 없습니다."));
 
-        return NeighborCheckResponseDto
+        Integer requestUserRel = neighborRepositorySupport.findNeighborTypeByNeighborToAndNeighborFrom(userId, neighbor.getUserId());
+        Integer profileUserRel = neighborRepositorySupport.findNeighborTypeByNeighborToAndNeighborFrom(neighbor.getUserId(), userId);
+
+        log.info(">>> checkNaighbor requestUserRel: {}", requestUserRel);
+        log.info(">>> checkNaighbor profileUserRel: {}", profileUserRel);
+
+        NeighborCheckResponseDto neighborCheckResponseDto = NeighborCheckResponseDto
                 .builder()
-                .requestUserRel(neighborRepositorySupport.findNeighborTypeByNeighborToAndNeighborFrom(userId, neighbor.getUserId()))
-                .profileUserRel(neighborRepositorySupport.findNeighborTypeByNeighborToAndNeighborFrom(neighbor.getUserId(), userId))
+                .requestUserRel(requestUserRel != null ? requestUserRel : 0)
+                .profileUserRel(profileUserRel != null ? profileUserRel : 0)
                 .build();
+        return neighborCheckResponseDto;
     }
 }
