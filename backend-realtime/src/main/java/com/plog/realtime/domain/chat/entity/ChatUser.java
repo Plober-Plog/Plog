@@ -1,5 +1,6 @@
 package com.plog.realtime.domain.chat.entity;
 
+import com.plog.realtime.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,9 +16,11 @@ public class ChatUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatUserId;
 
-    @Column
-    private Long chatRoomId;
+    @ManyToOne
+    @JoinColumn(name="chat_room_id", referencedColumnName = "chatRoomId")
+    private ChatRoom chatRoom;
 
-    @Column
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name="user_id", referencedColumnName = "userId")
+    private User user;
 }
