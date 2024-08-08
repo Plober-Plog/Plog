@@ -23,9 +23,9 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     const fetchRel = async () => {
       try {
         const response = await API.get(`/user/neighbor/${ownerId}`);
-        // setProfileUserRel(response.data.profileUserRel);
-        // setRequestUserRel(response.data.requestUserRel);
-        console.log('@@@ProfileUserRel:@@@', response.data);
+        setProfileUserRel(response.data.profileUserRel);
+        setRequestUserRel(response.data.requestUserRel);
+        // console.log('@@@ProfileUserRel:@@@', response.data);
       } catch (error) {
         console.error('@@@Rel Error:', error, '@@@');
       }
@@ -41,14 +41,34 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     return null;
   }
 
+  const getProfileUserRelText = () => {
+    if (profileUserRel === 1) return ownerId, `${ownerId}님은 당신을 이웃으로 추가하고 있습니다.`;
+    if (profileUserRel === 2) return `${ownerId}님은 당신과 서로이웃 입니다.`;
+    return '';
+  };
+
   return (
     <div>
       {authSearchId === ownerId && (
         <button>🔖</button>
       )}
-      <button style={{ margin: '10px' }}>이웃 신청</button>
-      <button style={{ margin: '10px' }}>서로이웃 신청</button>
-      <button style={{ margin: '10px' }}>이웃 끊기</button>
+      <span>
+        {getProfileUserRelText()}
+      </span>
+      <div>
+        {requestUserRel === 0 && (
+          <button style={{ margin: '10px' }}>이웃 신청</button>
+        )}
+        {requestUserRel === 1 && (
+          <>
+            <button style={{ margin: '10px' }}>서로이웃 신청</button>
+            <button style={{ margin: '10px' }}>이웃 끊기</button>
+          </>
+        )}
+        {requestUserRel === 2 && (
+          <button style={{ margin: '10px' }}>이웃 끊기</button>
+        )}
+      </div>
     </div>
   );
 };
