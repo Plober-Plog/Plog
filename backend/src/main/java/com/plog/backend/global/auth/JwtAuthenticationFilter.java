@@ -51,8 +51,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         log.info("JWT Filter 확인 : URI {}, Method {}", requestURI, requestMethod);
 
-        // OPTIONS 메소드 요청은 필터를 통과하도록 설정
-        if ("OPTIONS".equalsIgnoreCase(requestMethod)) {
+        // GET 메소드 요청은 필터를 통과하도록 설정
+        if ("GET".equalsIgnoreCase(requestMethod)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // GET 메소드 요청은 필터를 통과하도록 설정
+        if (requestMethod.equals("GET")) {
             chain.doFilter(request, response);
             return;
         }
