@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // useEffect 추가
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 import axios from 'axios';
@@ -7,15 +7,27 @@ import useAuthStore from '../../stores/member';
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
 import ATag from '../Common/ATag';
+import { requestForToken } from '../../firebase'; // FCM 관련 코드 추가
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [fcmToken, setFcmToken] = useState(''); // FCM 토큰 상태 추가
   const setToken = useAuthStore((state) => state.setToken);
   const setUserData = useAuthStore((state) => state.setUserData);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    requestForToken().then((token) => {
+      if (token) {
+        setFcmToken(token);
+      } else {
+        console.error('FCM 토큰을 받지 못했습니다.');
+      }
+    });
+  }, []);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -23,17 +35,16 @@ const LoginForm = () => {
     const userInfo = {
       email,
       password: sha256(password),
+      notificationToken: fcmToken, // FCM 토큰 추가
     };
 
     try {
-      // const response = await API.post('/user/login', userInfo);
       const response = await axios.post('https://i11b308.p.ssafy.io/api/user/login', userInfo);
       const { accessToken, refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
         setToken(accessToken, refreshToken);
         const userResponse = await API.get('/user');
-        console.log('유저정보:',userResponse.data)
         setUserData(userResponse.data);
         navigate('/');
       } else {
