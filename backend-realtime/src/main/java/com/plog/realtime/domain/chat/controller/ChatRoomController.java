@@ -64,11 +64,16 @@ public class ChatRoomController {
     public ResponseEntity<?> deleteChatRoom(
             @RequestHeader("Authorization") String token,
             @RequestParam("chatRoomId") Long chatRoomId) {
-        chatRoomService.deleteChatRoom(token, chatRoomId);
-        return ResponseEntity.ok(BaseResponseBody.of(200, "성공적으로 방이 삭제 되었습니다."));
+        return ResponseEntity.ok(chatRoomService.deleteChatRoom(token, chatRoomId));
     }
 
     // delete -> 그냥 그 채팅방 나가기
+    @DeleteMapping("/leave")
+    public ResponseEntity<?> leaveChatRoom(
+            @RequestHeader("Authorization") String token,
+            @RequestParam("chatRoomId") Long chatRoomId) {
+        return ResponseEntity.ok(chatRoomService.leaveChatRoom(token, chatRoomId));
+    }
 
     // patch -> 제목 바꾸기
 }

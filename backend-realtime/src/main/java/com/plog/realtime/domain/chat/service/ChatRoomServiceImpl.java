@@ -2,8 +2,10 @@ package com.plog.realtime.domain.chat.service;
 
 import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
 import com.plog.realtime.domain.chat.entity.ChatRoom;
+import com.plog.realtime.domain.chat.entity.ChatUser;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepositorySupport;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
+import com.plog.realtime.domain.chat.repository.ChatUserRepository;
 import com.plog.realtime.domain.user.entity.User;
 import com.plog.realtime.global.exception.EntityNotFoundException;
 import com.plog.realtime.global.exception.NotValidRequestException;
@@ -23,6 +25,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private static JwtTokenUtil jwtTokenUtil;
     private static ChatRoomRepository chatRoomRepository;
     private static ChatRoomRepositorySupport chatRoomRepositorySupport;
+    private static ChatUserRepository chatUserRepository;
 
     @Transactional
     @Override
@@ -78,6 +81,21 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         chatRoom.setDelete(true);
         chatRoomRepository.save(chatRoom);
 
-        return null;
+        return BaseResponseBody.of(200, "방을 성공적으로 삭제했습니다.");
+    }
+
+    @Transactional
+    @Override
+    public BaseResponseBody leaveChatRoom(String token, Long chatRoomId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+
+        ChatUser chatuser = chatUserRepository.findByUserIdAAndChatRoomId(userId, chatRoomId)
+                .orElseThrow(()-> {
+                    return new EntityNotFoundException("없는 방입니다.");
+                });
+
+        chatUserRepository.delete(chatuser);
+
+        return BaseResponseBody.of(200, "성공적으로 방에서 나왔습니다.");
     }
 }

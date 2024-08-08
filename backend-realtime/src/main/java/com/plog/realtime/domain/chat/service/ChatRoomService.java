@@ -16,4 +16,5 @@ public interface ChatRoomService {
     public ChatRoom getChatRoom(Long chatRoomId);
     public BaseResponseBody updateChatRoom(String token, Long chatRoomId);
     public BaseResponseBody deleteChatRoom(String token, Long chatRoomId);
+    public BaseResponseBody leaveChatRoom(String token, Long chatRoomId);
 }
