@@ -31,6 +31,17 @@ import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 
 function App() {
+
+  useEffect(() => {
+    const messaging = getMessaging(firebaseApp);
+
+    onMessageListener().then((payload) => {
+      console.log('foreground message received: ', payload);
+      const { title, body } = payload.notification;
+      new Notification(title, { body });
+    }).catch((err) => console.log('failed: ', err));
+  }, []);
+
   return (
     <div className='container'>
       <Router>
