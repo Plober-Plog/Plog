@@ -4,8 +4,8 @@ import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
-import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
+import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    public Map<String, String> userSignIn(String email, String password) {
+    public Map<String, String> userSignIn(String email, String password, String notificationToken) {
         log.info(">>> [USER SIGN IN] - 사용자 로그인 요청: 이메일 = {}", email);
 
         // 이메일로 사용자 찾기
@@ -126,6 +126,10 @@ public class UserServiceImpl implements UserService {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
+
+        user.setNotificationToken(notificationToken);
+        userRepository.save(user);
+        log.info(">>> [USER SIGN IN] - notification 토큰 DB에 업데이트 완료: {}", notificationToken);
 
         return tokens;
     }
@@ -214,6 +218,7 @@ public class UserServiceImpl implements UserService {
             user.setSource(request.getSource());
             user.setSidoCode(request.getSidoCode());
             user.setGugunCode(request.getGugunCode());
+            user.setPushNotificationEnabled(request.isPushNotificationEnabled());
             User updatedUser = userRepository.save(user);
             log.info(">>> updateUser - 사용자 업데이트됨: {}", updatedUser);
             return updatedUser;
@@ -257,7 +262,7 @@ public class UserServiceImpl implements UserService {
 
         log.info(">>> checkPassword - 비교: {}", result);
         UserCheckPasswordResponseDto responseDto = new UserCheckPasswordResponseDto();
-        if(result)
+        if (result)
             return UserCheckPasswordResponseDto.of(user.getUserId(), 200, "비밀번호가 확인 되었습니다.");
         else
             return UserCheckPasswordResponseDto.of(-1L, 401, "비밀번호가 틀립니다.");

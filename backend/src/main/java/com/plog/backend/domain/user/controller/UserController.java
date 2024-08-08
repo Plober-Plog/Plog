@@ -140,7 +140,7 @@ public class UserController {
     public ResponseEntity<?> signIn(@RequestBody UserSignInRequestDto userSignInRequestDto) {
         log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", userSignInRequestDto);
         try {
-            Map<String, String> tokens = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
+            Map<String, String> tokens = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword(), userSignInRequestDto.getNotificationToken());
             log.info(">>> [POST] /user/login - 로그인 성공, 토큰: {}", tokens);
             return ResponseEntity.status(200).body(tokens);
         } catch (Exception e) {
