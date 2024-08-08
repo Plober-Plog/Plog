@@ -5,6 +5,7 @@ import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepositorySupport;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
 import com.plog.realtime.domain.user.entity.User;
+import com.plog.realtime.global.exception.EntityNotFoundException;
 import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.model.response.BaseResponseBody;
 import com.plog.realtime.global.util.JwtTokenUtil;
@@ -64,8 +65,19 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         return null;
     }
 
+    @Transactional
     @Override
     public BaseResponseBody deleteChatRoom(String token, Long chatRoomId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndUserId(chatRoomId, userId)
+                .orElseThrow(()-> {
+                    return new EntityNotFoundException("권한이 없거나, 없는 방입니다.");
+                });
+
+        chatRoom.setDelete(true);
+        chatRoomRepository.save(chatRoom);
+
         return null;
     }
 }

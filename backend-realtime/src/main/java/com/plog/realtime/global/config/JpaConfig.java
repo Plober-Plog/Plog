@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Configuration
-@EnableJpaAuditing
 public class JpaConfig {
     @PersistenceContext
     private EntityManager entityManager;
