@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
 import SnsCardLg from './SnsCardLg';
+import qs from 'qs'; // Query string library
 
-const SnsCardLgList = ({ searchId, tagType }) => {
+const SnsCardLgList = ({ searchId, tagTypeList }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
 
   const [snslist, setSnsList] = useState([]);
@@ -14,9 +15,13 @@ const SnsCardLgList = ({ searchId, tagType }) => {
   const fetchSnsList = async (searchId, page) => {
     setLoading(true);
     try {
-      const response = await API.get(`/user/sns`, {
-        params: {searchId, page, tagType}
-      });
+      const params = { searchId, page, tagType: tagTypeList };
+      const queryString = qs.stringify(params, { arrayFormat: 'comma', skipNulls: true });
+      const url = `/user/sns?${queryString}`;
+      console.log('Request URL:', url);
+
+      const response = await API.get(url);
+      console.log('API response:', response.data); // API 응답 확인
       if (response.data.length === 0) {
         setHasMore(false);
       } else {
@@ -36,7 +41,7 @@ const SnsCardLgList = ({ searchId, tagType }) => {
 
   useEffect(() => {
     fetchSnsList(searchId, 0);
-  }, [searchId, tagType]);
+  }, [searchId, tagTypeList]);
 
   const handleScroll = () => {
     if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && hasMore && !loading) {
@@ -67,7 +72,7 @@ const SnsCardLgList = ({ searchId, tagType }) => {
       ))}
       {loading && <div>Loading...</div>}
     </div>
-  )
+  );
 }
 
 export default SnsCardLgList;
