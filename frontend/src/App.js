@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // default
 import Home from './pages/Main/Home';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
+
+// FCM
+import { getMessaging } from 'firebase/messaging';
+import { firebaseApp } from './firebase'; // firebase 초기화 파일
+import { onMessageListener } from './firebase'; // 메시지 리스너
 
 // Account
 import SignUp from './pages/Account/SignUp';
