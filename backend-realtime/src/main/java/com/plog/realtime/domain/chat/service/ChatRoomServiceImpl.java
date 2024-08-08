@@ -48,6 +48,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         chatRoomRepository.save(chatRoom);
         log.info(">>> 채팅방 생성 완료: {}", chatRoom);
 
+        ChatUser chatUser = ChatUser.builder()
+                .user(user)
+                .chatRoom(chatRoom)
+                .build();
+
+        chatUserRepository.save(chatUser);
+        log.info(">>> 채팅방의 채팅인원 등록 완료: {}", chatUser);
+
         return BaseResponseBody.of(200, "성공적으로 방이 만들어졌습니다.");
     }
 
