@@ -25,46 +25,15 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     }
   }, [authSearchId, ownerId]);
 
-  // useEffect(() => {
-  //   const fetchRel = async () => {
-  //     try {
-  //       const response = await API.get(`/user/neighbor/${ownerId}`);
-  //       setProfileUserRel(response.data.profileUserRel);
-  //       setRequestUserRel(response.data.requestUserRel);
-  //       // console.log('@@@ProfileUserRel:@@@', response.data);
-  //     } catch (error) {
-  //       console.error('@@@Rel Error:', error, '@@@');
-  //     }
-  //   };
-
-  //   if (authSearchId) {
-  //     fetchRel();
-  //   }
-  // }, [authSearchId, ownerId]);
-
   const addNeighbor = async () => {
     try {
       await API.post('/user/neighbor', { neighborSearchId: ownerId });
       await fetchRel();
-      // 성공 시 상태 업데이트
-      // setRequestUserRel(1);
       console.log('이웃 추가 성공');
     } catch (error) {
       console.error('이웃 추가 실패:', error);
     }
   }
-
-  // const removeNeighbor = async () => {
-  //   try {
-  //     await API.delete('/user/neighbor', { neighborSearchId: ownerId });
-  //     await fetchRel();
-  //     // 삭제 시 상태 업데이트
-  //     // setRequestUserRel(0);
-  //     console.log('이웃 삭제 성공');
-  //   } catch (error) {
-  //     console.error('이웃 삭제 실패:', error);
-  //   }
-  // }
 
   const removeNeighbor = async () => {
     try {
