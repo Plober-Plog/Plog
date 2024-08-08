@@ -37,8 +37,6 @@ const PlantDiaryWrite = () => {
   const [imgs, setImgs] = useState([]);
   const [plantDiaryId, setPlantDiaryId] = useState(null); //현재 날짜에 이미 작성된 일지가 있을 경우 해당 일지의 ID를 저장
   const [isEditMode, setIsEditMode] = useState(false); // 전체 수정 모드 여부
-  const [isEditPlantCheck, setIsEditPlantCheck] = useState(false); // 관리 기록이 있는지 여부를 저장하는 변수
-  const [isEditPlantDiary, setIsEditPlantDiary] = useState(false); // 일지 작성 수정 여부
   const [writerInfoData, setWriterInfoData] = useState({});
 
   // 식물 프로필을 위한 정보 기록 확인  
@@ -51,10 +49,36 @@ const PlantDiaryWrite = () => {
     }
   };
 
+  // 옵션 값 매핑 함수 추가
+  const mapWeatherStringToValue = (label) => {
+    const option = weatherOptions.find(option => option.label === label);
+    return option ? option.value : 0;
+  };
+
+  const mapHumidityStringToValue = (label) => {
+    const option = humidityOptions.find(option => option.label === label);
+    return option ? option.value : 0;
+  };
+
+  // 날씨 정보 가져오기 
+  const fetchWeatherInfo = async () => {
+    try {
+      const response = await API.get('/user/diary/get-weather', {
+        params: { date }
+      });
+      console.log(response.data);
+      setIsWeather(response.data.weather);  
+      setIsHumidity(response.data.humidity);  
+      setIsTemperature(response.data.temperature);  
+    } catch (error) {
+      console.error('날씨 정보 조회 에러:', error);
+    }
+  };
+
   // 해당 날짜에 작성된 식물 일지 기록 및 관리 기록 확인 
   const fetchDiaryAndCheck = async ( plantId, date ) => {
-    console.log(plantId.data);
-    console.log(date.data);
+    console.log(plantId);
+    console.log(date);
     try {
       const response = await API.get(`/user/plant/${plantId}`, {
         params: { date }
@@ -72,6 +96,7 @@ const PlantDiaryWrite = () => {
   const getDiaryAndPlantCheck = async () => {
     try {
       await fetchWriterInfo(plantId);
+      await fetchWeatherInfo();
       const data = await fetchDiaryAndCheck(plantId, date);
       console.log(data);
       if (data.plantDiary || data.plantCheck) {
@@ -85,14 +110,15 @@ const PlantDiaryWrite = () => {
             id: img.nimageId,
             isThumbnail: img.isThumbnail, 
            })));
-          setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
-          setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
+          setIsWeather(mapWeatherStringToValue(plantDiary.weather));  
+          setIsHumidity(mapHumidityStringToValue(plantDiary.humidity));
+          // setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
+          // setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
           setIsTemperature(plantDiary.temperature);
           setIsWatered(false);
           setIsFertilized(false);
           setIsRepotted(false);
           setIsEditMode(true);
-          setIsEditPlantDiary(true);
         } 
         if (data.plantCheck) {
           const { plantDiary } = data;
@@ -100,14 +126,15 @@ const PlantDiaryWrite = () => {
           setPlantDiaryId(null);
           setContent('');
           setImgs([]);
-          setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
-          setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
+          setIsWeather(mapWeatherStringToValue(plantDiary.weather));  
+          setIsHumidity(mapHumidityStringToValue(plantDiary.humidity));
+          // setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
+          // setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
           setIsTemperature(plantDiary.temperature);
           setIsWatered(plantCheck.isWatered);
           setIsFertilized(plantCheck.isFertilized);
           setIsRepotted(plantCheck.isRepotted);  
           setIsEditMode(true); 
-          setIsEditPlantCheck(true);    
         } 
 
         if (data.plantDiary && data.plantCheck) {
@@ -118,16 +145,16 @@ const PlantDiaryWrite = () => {
           setImgs(plantDiary.images.map(img => ({ 
             url: img.url, 
             id: img.imageId, 
-           })));
-          setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
-          setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
+          })));
+          setIsWeather(mapWeatherStringToValue(plantDiary.weather));  
+          setIsHumidity(mapHumidityStringToValue(plantDiary.humidity));
+          // setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
+          // setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
           setIsTemperature(plantDiary.temperature);
           setIsWatered(plantCheck.isWatered);
           setIsFertilized(plantCheck.isFertilized);
           setIsRepotted(plantCheck.isRepotted);   
           setIsEditMode(true); 
-          setIsEditPlantCheck(true);
-          setIsEditPlantDiary(true);
         }
       } else {
         setPlantDiaryId(null);
@@ -152,22 +179,25 @@ useEffect(() => {
 
   // 이미지 업로드
   
-// 이미지 업로드 핸들러 비활성화 조건 추가
-const handleImageUpload = (event) => {
-  if (!isEditImage) return;
-  console.log(event.target.files);
-  setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
-};
-
-// 이미지 삭제 핸들러 비활성화 조건 추가
-const handleDeleteImage = (index) => {
-  if (!isEditImage) return;
-  const newImgs = imgs.filter((_, i) => i !== index);
-  setImgs(newImgs);
-  if (index === 0 && newImgs.length > 0) {
-    newImgs[0].isThumbnail = true;
-  }
-};
+  const handleImageUpload = (event) => {
+    if (!isEditImage) return;
+    const files = Array.from(event.target.files);
+    if (imgs.length + files.length > 5) {
+      alert('이미지는 최대 5개까지 업로드할 수 있습니다.');
+      return;
+    }
+    const newImgs = files.map(file => ({ 
+      url: URL.createObjectURL(file), 
+      file 
+    }));
+    setImgs((prevImgs) => [...prevImgs, ...newImgs]);
+  };
+  
+  const handleDeleteImage = (index) => {
+    if (!isEditImage) return;
+    const newImgs = imgs.filter((_, i) => i !== index);
+    setImgs(newImgs);
+  };
 
   const toggleWatered = () => {
     const newState = !isWatered;
@@ -195,9 +225,9 @@ const handleDeleteImage = (index) => {
     const diaryData = new FormData();
     diaryData.append('plantDiaryId', plantDiaryId);
     diaryData.append('plantId', plantId);
-    diaryData.append('weather', 1);
-    diaryData.append('temperature', 1);
-    diaryData.append('humidity', 1);
+    diaryData.append('weather', weather);
+    diaryData.append('temperature',temperature);
+    diaryData.append('humidity', humidity);
     diaryData.append('content', content);
     console.log(imgs);
     diaryData.append('thumbnailIdx', thumbnailIdx);
@@ -205,7 +235,7 @@ const handleDeleteImage = (index) => {
     
     
     imgs.forEach((img) => {
-      diaryData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
+      diaryData.append('images', img.file);  // 'images' key를 사용하여 각각의 파일을 추가
     });
     
     console.log(diaryData);
@@ -340,14 +370,20 @@ const handleDeleteImage = (index) => {
         <WriterInfo data={writerInfoData} type="plant" />
       </div>
       <div className="section">
-        <h2>사진 첨부하기</h2>
-        <ImgUpload 
-          cameraIcon={cameraIcon}
-          imgs={imgs} 
-          handleImageUpload={handleImageUpload} 
-          handleDeleteImage={handleDeleteImage} 
-          isDisabled={!isEditImage}
-        />
+      {isEditImage ? (
+        <div>
+          <h2>사진 업로드 하기</h2>
+          <ImgUpload 
+            cameraIcon={cameraIcon}
+            imgs={imgs} 
+            handleImageUpload={handleImageUpload} 
+            handleDeleteImage={handleDeleteImage} 
+            isDisabled={!isEditImage}
+          />
+        </div>
+      ) : (
+        <p>사진은 수정할 수 없습니다.</p>
+      )}
       </div>
       <div className="section">
         <div className="todo-icons">
