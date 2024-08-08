@@ -8,6 +8,7 @@ import com.plog.realtime.domain.chat.repository.ChatRoomRepositorySupport;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
 import com.plog.realtime.domain.chat.repository.ChatUserRepository;
 import com.plog.realtime.domain.user.entity.User;
+import com.plog.realtime.domain.user.repository.UserRepository;
 import com.plog.realtime.global.exception.EntityNotFoundException;
 import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.model.response.BaseResponseBody;
@@ -27,6 +28,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomRepositorySupport chatRoomRepositorySupport;
     private final ChatUserRepository chatUserRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
@@ -35,8 +37,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> 토큰에서 추출된 userId: {}", userId);
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         ChatRoom chatRoom = ChatRoom.builder()
-                .userId(userId)
+                .user(user)
                 .chatRoomName(chatRoomCreateRequestDto.getChatRoomName())
                 .chatRoomType(chatRoomCreateRequestDto.getChatRoomType())
                 .build();
@@ -89,7 +94,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> 토큰에서 추출된 userId: {}", userId);
 
-        ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndUserId(chatRoomId, userId)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndUser(chatRoomId, user)
                 .orElseThrow(() -> {
                     log.error(">>> 권한이 없거나, 없는 방, chatRoomId: {}, userId: {}", chatRoomId, userId);
                     return new EntityNotFoundException("권한이 없거나, 없는 방입니다.");
@@ -109,7 +117,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> 토큰에서 추출된 userId: {}", userId);
 
-        ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndUserId(chatRoomId, userId)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndUser(chatRoomId, user)
                 .orElseThrow(() -> {
                     log.error(">>> 권한이 없거나, 없는 방, chatRoomId: {}, userId: {}", chatRoomId, userId);
                     return new EntityNotFoundException("권한이 없거나, 없는 방입니다.");
@@ -129,7 +140,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> 토큰에서 추출된 userId: {}", userId);
 
-        ChatUser chatUser = chatUserRepository.findByUserIdAndChatRoomId(userId, chatRoomId)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        ChatRoom chatRoom =chatRoomRepository.findByChatRoomId(chatRoomId);
+
+        ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(user, chatRoom)
                 .orElseThrow(() -> {
                     log.error(">>> 없는 방, chatRoomId: {}, userId: {}", chatRoomId, userId);
                     return new EntityNotFoundException("없는 방입니다.");
