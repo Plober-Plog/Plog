@@ -21,13 +21,19 @@ const messaging = getMessaging(app);
 
 export const requestForToken = async () => {
   try {
-    console.log(process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY);
-    const currentToken = await getToken(messaging, { vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY });
-    if (currentToken) {
-      console.log('current token for client: ', currentToken);
-      return currentToken;  // 토큰을 반환하도록 수정
+    // Always resolve with 'granted' for the purpose of this setup
+    const permission = 'granted';
+    if (permission === 'granted') {
+      const currentToken = await getToken(messaging, { vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY });
+      if (currentToken) {
+        console.log('current token for client: ', currentToken);
+        return currentToken;
+      } else {
+        console.log('No registration token available. Request permission to generate one.');
+        return null;
+      }
     } else {
-      console.log('No registration token available. Request permission to generate one.');
+      console.log('Notification permission was not granted.');
       return null;
     }
   } catch (err) {
