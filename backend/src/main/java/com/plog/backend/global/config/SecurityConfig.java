@@ -69,13 +69,11 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); // 쿠키 허용 설정
-        config.addAllowedOrigin("https://i11b308.p.ssafy.io");
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOriginPattern("*"); // 모든 출처 허용 (allowedOriginPatterns 사용)
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        config.addAllowedOrigin("*");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
+
 }
