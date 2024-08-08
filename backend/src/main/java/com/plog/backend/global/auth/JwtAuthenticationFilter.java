@@ -40,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         put("/api/user/login", List.of("POST")); // 로그인 요청 제외
         // 필요한 다른 URI와 메소드 추가
         put("/api/auth/refresh", List.of("POST"));
+        put("/api/user/password", List.of("POST"));
     }};
 
     @Override
