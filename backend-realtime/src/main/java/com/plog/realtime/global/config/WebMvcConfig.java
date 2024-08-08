@@ -1,6 +1,5 @@
 package com.plog.realtime.global.config;
 
-import com.plog.realtime.global.util.JwtTokenUtil;
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +17,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
+//        configuration.addAllowedOrigin("*");
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-        configuration.addExposedHeader(JwtTokenUtil.HEADER_STRING);
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -79,10 +77,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         WebMvcConfigurer.super.addCorsMappings(registry);
         registry.addMapping("/**")
-                .allowedOrigins("${server.domain.host}")
-                .allowedOrigins("*")
-                .allowedOrigins("https://i11b308.p.ssafy.io/**")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("*",
+                        "${server.domain.host}",
+                        "https://i11b308.p.ssafy.io/**",
+                        "http://localhost:3000"
+                )
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization")
                 .allowedMethods("OPTIONS","GET","POST","PUT","DELETE","PATCH");
