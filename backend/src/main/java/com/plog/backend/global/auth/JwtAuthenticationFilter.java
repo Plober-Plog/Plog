@@ -37,7 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // JWT 검증을 건너뛰어야 하는 URI와 HTTP 메소드 목록
     private static final Map<String, List<String>> EXCLUDE_URLS = new HashMap<>() {{
         put("/api/user", List.of("POST")); // 회원가입 요청 제외
+        put("/api/user/email", List.of("POST")); // 회원가입 요청 제외
+        put("/api/user/email/send", List.of("POST"));
+        put("/api/user/email/check", List.of("POST"));
         put("/api/user/login", List.of("POST")); // 로그인 요청 제외
+        put("/api/user/password", List.of("PATCH"));
         // 필요한 다른 URI와 메소드 추가
         put("/api/auth/refresh", List.of("POST"));
 //        put("/api/user/password", List.of("POST"));
@@ -52,8 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestMethod = request.getMethod();
 
         log.info("JWT Filter 확인 : URI {}, Method {}", requestURI, requestMethod);
-
-
 
         String userId = null;
         String jwtToken = null;

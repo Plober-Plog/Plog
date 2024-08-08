@@ -94,8 +94,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
 
     @Transactional
     @Override
-    public void deleteArticleComment(String token, ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto) {
-        Long commentId = articleCommentDeleteRequestDto.getCommentId();
+    public void deleteArticleComment(String token, Long commentId) {
 
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         User user = userRepository.findById(userId)

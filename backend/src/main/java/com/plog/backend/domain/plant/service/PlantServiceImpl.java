@@ -132,6 +132,7 @@ public class PlantServiceImpl implements PlantService {
                     .nickname(p.getNickname())
                     .bio(p.getBio())
                     .profile(p.getImage() != null ? p.getImage().getImageUrl() : null)
+                    .plantTypeName(p.getPlantType().getPlantName())
                     .birthDate(p.getBirthDate())
                     .notifySetting(p.getNotifySetting())
                     .isFixed(p.isFixed())

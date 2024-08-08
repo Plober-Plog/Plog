@@ -12,4 +12,5 @@ import lombok.*;
 public class UserSignInRequestDto {
     private String email;
     private String password;
+    private String notificationToken;
 }
