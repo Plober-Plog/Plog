@@ -3,8 +3,10 @@ package com.plog.realtime.domain.notification.controller;
 import com.plog.realtime.domain.notification.dto.NotificationMessageResponseDto;
 import com.plog.realtime.domain.notification.entity.NotificationType;
 import com.plog.realtime.domain.notification.service.NotificationService;
+import com.plog.realtime.global.model.response.BaseResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +20,11 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping("/send")
-    public void sendNotification(@RequestParam String sourceSearchId, @RequestParam String targetSearchId, @RequestParam NotificationType type) {
+    public ResponseEntity<BaseResponseBody> sendNotification(@RequestParam String sourceSearchId, @RequestParam String targetSearchId, @RequestParam NotificationType type) {
         log.info("sendNotification 시작 - sourceSearchId: {}, targetSearchId: {}, type: {}", sourceSearchId, targetSearchId, type);
         NotificationMessageResponseDto notification = notificationService.sendNotification(sourceSearchId, targetSearchId, type);
         log.info("sendNotification 완료 - sourceSearchId: {}, targetSearchId: {}, type: {}", sourceSearchId, targetSearchId, type);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알림 전송이 완료되었습니다."));
     }
 
     @GetMapping("/history")
@@ -41,9 +44,10 @@ public class NotificationController {
     }
 
     @PutMapping("/mark-as-read")
-    public void markAsRead(@RequestParam Long notificationId) {
+    public ResponseEntity<BaseResponseBody> markAsRead(@RequestParam Long notificationId) {
         log.info("markAsRead 시작 - notificationId: {}", notificationId);
         notificationService.markAsRead(notificationId);
         log.info("markAsRead 완료 - notificationId: {}", notificationId);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알림 확인이 완료되었습니다."));
     }
 }

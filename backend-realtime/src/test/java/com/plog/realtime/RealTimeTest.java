@@ -1,4 +1,3 @@
-
 package com.plog.realtime;
 
 import org.junit.jupiter.api.Test;

@@ -22,7 +22,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Service("ChatRoomService")
+@Service("chatRoomService")
 public class ChatRoomServiceImpl implements ChatRoomService {
     private final JwtTokenUtil jwtTokenUtil;
     private final ChatRoomRepository chatRoomRepository;
