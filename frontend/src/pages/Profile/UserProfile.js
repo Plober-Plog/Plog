@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ProfilePlantTagList from '../../components/Profile/ProfilePlantTagList';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import ProfilePlantCardList from '../../components/Article/ProfilePlantCardList';
-import ProfileSnsCardList from '../../components/Article/ProfileSnsCardList';
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
+import SnsCardMdList from '../../components/Article/SnsCardMdList';
 
 const UserProfile = () => {
   const { searchId } = useParams();
@@ -80,7 +80,7 @@ const UserProfile = () => {
       {activeTab === 'sns' && (
         <>
           <button onClick={handleAddSns}>snsAdd</button>
-          <ProfileSnsCardList 
+          <SnsCardMdList 
             searchId={searchId}
           />
         </>

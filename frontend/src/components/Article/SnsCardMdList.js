@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
-import ProfileSnsCard from './ProfileSnsCard';
+import SnsCardMd from './SnsCardMd';
 
-const ProfileSnsCardList = ({ searchId }) => {
+const SnsCardMdList = ({ searchId }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
 
   const [snslist, setSnsList] = useState([]);
@@ -53,7 +53,7 @@ const ProfileSnsCardList = ({ searchId }) => {
     <div>
       <h3>유저의 SNS 목록</h3>
       {snslist.map((sns) => (
-        <ProfileSnsCard 
+        <SnsCardMd 
           key={sns.articleId}
           articleId={sns.articleId}
           nickname={sns.nickname}
@@ -70,4 +70,4 @@ const ProfileSnsCardList = ({ searchId }) => {
   )
 }
 
-export default ProfileSnsCardList;
+export default SnsCardMdList;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 
-const ProfileSnsCard = ({ articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked}) => {
+const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -31,4 +31,4 @@ const ProfileSnsCard = ({ articleId, nickname, image, content, likeCnt, commentC
 
 }
 
-export default ProfileSnsCard;
+export default SnsCardMd;
