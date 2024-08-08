@@ -9,7 +9,7 @@ import Footer from './components/Common/Footer';
 // FCM
 import { getMessaging } from 'firebase/messaging';
 import { firebaseApp } from './firebase'; // firebase 초기화 파일
-import { onMessageListener } from './firebase'; // 메시지 리스너
+import { requestForToken, onMessageListener } from './firebase';
 
 // Account
 import SignUp from './pages/Account/SignUp';
