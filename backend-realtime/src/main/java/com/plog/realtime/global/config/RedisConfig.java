@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.plog.realtime.global.util.RedisMessagePublisher;
+import com.plog.realtime.global.util.RedisMessageSubscriber;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +20,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Configuration
 @Slf4j
@@ -72,5 +75,20 @@ public class RedisConfig {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         return container;
+    }
+
+    @Bean
+    public ChannelTopic chatroom() {
+        return new ChannelTopic("chatroom");
+    }
+
+    @Bean
+    public RedisMessageSubscriber redisMessageSubscriber(SimpMessagingTemplate messagingTemplate) {
+        return new RedisMessageSubscriber(messagingTemplate);
+    }
+
+    @Bean
+    public RedisMessagePublisher redisMessagePublisher(RedisTemplate<String, Object> redisTemplate, ChannelTopic topic) {
+        return new RedisMessagePublisher(redisTemplate, topic);
     }
 }
