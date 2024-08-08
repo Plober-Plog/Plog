@@ -21,11 +21,7 @@ const messaging = getMessaging(app);
 
 export const requestForToken = async () => {
   try {
-    let permission = Notification.permission;
-    while (permission !== 'granted') {
-      permission = await Notification.requestPermission();
-    }
-    
+    const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       const currentToken = await getToken(messaging, { vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY });
       if (currentToken) {
