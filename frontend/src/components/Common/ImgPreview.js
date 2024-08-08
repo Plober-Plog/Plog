@@ -2,12 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Btn from './Btn';
 
-const ImgPreview = ({ src, onDelete }) => {
+const ImgPreview = ({ src, onDelete, isDisabled }) => {
   return (
     <div style={{ display: 'inline-block', margin: '10px' }}>
       <img src={src} alt="preview" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-      {/* 이미지가 너무 크게 보이지 않게 스타일 잠깐 적용함 */}
-      <Btn content="X" type="button" onClick={onDelete} />
+      <div>
+        <Btn 
+          content="X" 
+          type="button" 
+          onClick={onDelete} 
+          style={{ 
+            background: isDisabled ? 'gray' : null,
+            cursor: isDisabled ? 'not-allowed' : 'pointer'
+          }}
+          disabled={isDisabled}
+        />
+      </div>
     </div>
   );
 };
@@ -15,6 +25,11 @@ const ImgPreview = ({ src, onDelete }) => {
 ImgPreview.propTypes = {
   src: PropTypes.string.isRequired,
   onDelete: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
+};
+
+ImgPreview.defaultProps = {
+  isDisabled: false,
 };
 
 export default ImgPreview;

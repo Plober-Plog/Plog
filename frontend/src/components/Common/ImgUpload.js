@@ -4,11 +4,13 @@ import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
 import ImgPreview from '../../components/Common/ImgPreview'; 
 import Btn from '../../components/Common/Btn'; 
 
-const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) => {
+const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage, isDisabled }) => {
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
-    fileInputRef.current.click();
+    if (!isDisabled) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -16,7 +18,13 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) =
       <Btn 
         content={<DiaryTodoIcon src={cameraIcon} alt="upload" />}
         onClick={handleClick}
-        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+        style={{ 
+          background: 'none', 
+          border: 'none', 
+          cursor: 'pointer',
+          filter: isDisabled ? 'grayscale(100%)' : 'none' // 비활성화 시 회색으로 변경
+        }}
+        disabled={isDisabled}
       />
       <input
         type="file"
@@ -24,15 +32,23 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) =
         style={{ display: 'none' }}
         multiple
         accept="image/*"
-        capture="environment" // environment 주면 카메라로 직접 찍기 설정 및 갤러리 접근 가능
+        capture="environment"
         onChange={(e) => {
-          handleImageUpload(e);
-          e.target.value = ''; // 사진을 삭제하고 나서도 같은 사진을 올릴수 있게 하기 위해 초기화
+          if (!isDisabled) {
+            handleImageUpload(e);
+            e.target.value = '';
+          }
         }}
+        disabled={isDisabled}
       />
       <div>
         {imgs.map((img, index) => (
-          <ImgPreview key={index} src={img} onDelete={() => handleDeleteImage(index)} />
+          <ImgPreview 
+            key={index} 
+            src={img.url} 
+            onDelete={() => handleDeleteImage(index)} 
+            isDisabled={isDisabled} // 비활성화 상태 전달
+          />
         ))}
       </div>
     </div>
@@ -40,10 +56,17 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) =
 };
 
 ImgUpload.propTypes = {
-  uploadIcon: PropTypes.string.isRequired,
-  imgs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  cameraIcon: PropTypes.string.isRequired,
+  imgs: PropTypes.arrayOf(PropTypes.shape({
+    url: PropTypes.string.isRequired,
+  })).isRequired,
   handleImageUpload: PropTypes.func.isRequired,
   handleDeleteImage: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
+};
+
+ImgUpload.defaultProps = {
+  isDisabled: false,
 };
 
 export default ImgUpload;

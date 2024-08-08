@@ -1,13 +1,13 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderBackBtn = () => {
-  let history = useHistory();
+  let navigate = useNavigate();
 
   return (
-    <button onClick={() => history.goBack()}>
-      뒤로가기
-    </button>
+    <div onClick={() => navigate(-1)}>
+      <i>뒤로가기</i>
+    </div>
   )
 }
 

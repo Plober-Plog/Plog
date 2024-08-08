@@ -1,62 +1,135 @@
 import React, { useState, useEffect } from 'react';
-import Btn from '../Common/Btn';
-import InputField from './InputField';
-import SelectField from './SelectField';
-import RadioField from './RadioField';
-import AccountBtn from './AccountBtn';
-import ModalComplete from '../../components/Account/ModalComplete';
+import { useNavigate } from "react-router-dom";
+import API from '../../apis/api';
+import useAuthStore from '../../stores/member';
 
-const ProfileUpdateForm = ({ userData }) => {
-  const [id, setId] = useState(userData.id);
-  const [email, setEmail] = useState(userData.email);
-  const [nickname, setNickname] = useState(userData.nickname || '');
-  const [birthdate, setBirthdate] = useState(userData.birthdate || '');
-  const [source, setSource] = useState(userData.source || '');
-  const [gender, setGender] = useState(userData.gender);
-  const [sido, setSido] = useState(userData.sido || '');
-  const [gugun, setGugun] = useState(userData.gugun || '');
+import Btn from '../Common/Btn';
+import InputField from '../Common/InputField';
+import RadioField from '../Common/RadioField';
+import SelectField from '../Common/SelectField';
+import ATag from '../Common/ATag';
+import ModalComplete from '../Common/ModalComplete';
+
+const ProfileUpdateForm = () => {
+  const navigate = useNavigate();
+  const { userData, setUserData } = useAuthStore();
+  console.log(userData)
+  console.log(userData.searchId)
+  
+  // 상태 초기화
+  const [searchId, setSearchId] = useState(userData?.searchId || '');
+  const [nickname, setNickname] = useState(userData?.nickname || '');
+  const [email, setEmail] = useState(userData?.email || '');
+  const [birthdate, setBirthdate] = useState(userData?.birthdate || '');
+  const [gender, setGender] = useState(userData?.gender || '');
+  const [source, setSource] = useState(userData?.source || '');
+  const [sido, setSido] = useState(userData?.sido || '');
+  const [gugun, setGugun] = useState(userData?.gugun || '');
+  const [profileInfo, setProfileInfo] = useState(userData?.profileInfo || '');
+  const [isAd, setIsAd] = useState(userData?.isAd || false);
+  const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
+  const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(true);
+  const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
+  // 폼 유효성 검사
   useEffect(() => {
-    setIsFormValid(id && nickname);
-  }, [id, nickname]);
+    setIsFormValid(
+      searchId &&
+      nickname &&
+      isSearchIdAvailable
+    );
+  }, [searchId, nickname, isSearchIdAvailable]);
 
-  const handleProfileUpdate = () => {
-    console.log('업데이트 정보 받기성공!');
-    
-    setOpenModal(true);
-  }
+  // 아이디 중복 확인
+  const handleCheckSearchId = async () => {
+    if (!/^[a-z0-9]{5,15}$/.test(searchId)) {
+      console.log('아이디 형식이 올바르지 않습니다.');
+      return;
+    }
+
+    try {
+      const response = await API.get(`/user/${searchId}`);
+      if (response.status === 200) {
+        setSearchIdCheckMsg('사용 가능한 아이디입니다.');
+        setIsSearchIdAvailable(true);
+        console.log('아이디 중복확인 성공!');
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
+        setIsSearchIdAvailable(false);
+        console.error('아이디 중복 확인: 이미 사용 중인 아이디입니다.');
+      } else {
+        setSearchIdCheckMsg('아이디 중복확인 중 오류가 발생했습니다.');
+        setIsSearchIdAvailable(false);
+        console.error('아이디 중복확인 실패: ', error);
+      }
+    }
+  };
+
+  const handleProfileUpdate = async () => {
+    const updatedUserData = {
+      nickname,
+      searchId,
+      email,
+      profileInfo,
+      gender,
+      birthdate,
+      source,
+      sido,
+      gugun,
+      isAd
+    };
+
+    try {
+      const response = await API.patch('/user', updatedUserData);
+      console.log('회원 정보 수정 성공:', response);
+      setUserData(updatedUserData);
+      setOpenModal(true);
+    } catch (error) {
+      console.error('회원 정보 수정 실패:', error);
+    }
+  };
 
   const closeModal = () => {
     setOpenModal(false);
+    navigate('/setting');
   };
 
   return (
     <div>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <h2>회원정보 수정</h2>
+      <form onSubmit={(e) => e.preventDefault()} className="form">
+        <div>
+          {/* TODO 이미지 수정 컴포넌트 추가 */}
+        </div>
         <div>
           {!isFormValid && <p>아이디를 입력해 주세요.</p>}
           <InputField
             type="text"
             placeholder="아이디"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
+            value={searchId}
+            onChange={(e) => {
+              setSearchId(e.target.value);
+              setIsSearchIdAvailable(false);
+            }}
             isRequired={true}
+            className="input"
           />
-          <AccountBtn 
-            content='중복확인'
+          <ATag 
+            content='중복확인' onClick={handleCheckSearchId}
           />
+          {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
         </div>
         <div>
           <InputField
             type="email"
             placeholder="이메일"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
             disabled={true}
+            className="input"
           />
         </div>
         <div>
@@ -64,9 +137,19 @@ const ProfileUpdateForm = ({ userData }) => {
             type="text"
             placeholder="닉네임"
             value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setNickname(value);
+              if (value.length < 3 || value.length > 10) {
+                setNicknameCheckMsg('닉네임은 3~10 글자여야 합니다.');
+              } else {
+                setNicknameCheckMsg('');
+              }
+            }}
             isRequired={false}
+            className="input"
           />
+          {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -75,11 +158,11 @@ const ProfileUpdateForm = ({ userData }) => {
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
+            className="input"
           />
         </div>
         <SelectField
           value={source}
-          onChange={(e) => setSource(e.target.value)}
           options={['가입경로', '지인추천', '인터넷 검색']}
           isRequired={false}
           disabled={true}
@@ -88,9 +171,9 @@ const ProfileUpdateForm = ({ userData }) => {
           selectedValue={gender}
           onChange={setGender}
           options={[
-            { value: 0, label: '선택하지 않음' },
-            { value: 2, label: '여자' },
-            { value: 1, label: '남자' },
+            { value: 1, label: '선택하지 않음' },
+            { value: 2, label: '남자' },
+            { value: 3, label: '여자' },
           ]}
           isRequired={false}
         />
@@ -113,9 +196,10 @@ const ProfileUpdateForm = ({ userData }) => {
           content="수정하기"
           disabled={!isFormValid}
           onClick={handleProfileUpdate}
+          className="button"
         />
       </form>
-      <ModalComplete title={'회원정보 수정 완료'} content={'회원정보 수정이 완료되었습니다'} open={openModal} onClose={closeModal}/>
+      <ModalComplete title={'회원정보 수정 완료'} content={'회원정보 수정이 완료되었습니다'} open={openModal} onClose={closeModal} />
     </div>
   );
 };
