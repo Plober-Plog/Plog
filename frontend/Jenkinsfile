@@ -34,6 +34,19 @@ pipeline {
                 }
             }
         }
+        stage('Copy .env') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'firebase-env', variable: 'ENV_FILE')]) {
+                        // .env 파일 복사
+                        sh 'cp $ENV_FILE frontend/.env'
+
+                        // 복사된 파일 내용 확인
+                        sh 'cat frontend/.env'
+                    }
+                }
+            }
+        }
         stage('Build with npm') {
             steps {
                 dir('frontend') {
