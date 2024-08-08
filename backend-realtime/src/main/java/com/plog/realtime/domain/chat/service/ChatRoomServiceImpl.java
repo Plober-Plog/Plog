@@ -89,7 +89,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public BaseResponseBody leaveChatRoom(String token, Long chatRoomId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
 
-        ChatUser chatuser = chatUserRepository.findByUserIdAAndChatRoomId(userId, chatRoomId)
+        ChatUser chatuser = chatUserRepository.findByUserIdAndChatRoomId(userId, chatRoomId)
                 .orElseThrow(()-> {
                     return new EntityNotFoundException("없는 방입니다.");
                 });
