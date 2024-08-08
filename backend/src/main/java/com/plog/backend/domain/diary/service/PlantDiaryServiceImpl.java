@@ -60,9 +60,15 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new EntityNotFoundException("일치하는 회원을 찾을 수 없습니다."));
 
-        Gugun gugun = gugunRepository.findBySidoSidoCodeAndGugunCode(
+        Optional<Gugun> gugunOptional = gugunRepository.findBySidoSidoCodeAndGugunCode(
                 user.getSidoCode(), user.getGugunCode()
-        ).orElseThrow(() -> new EntityNotFoundException("일치하는 위치 정보를 조회할 수 없습니다."));
+        );
+        if (gugunOptional.isEmpty()) {
+            log.info("회원의 시도 구군 정보를 가져올 수 없습니다.");
+            return new PlantDiaryWeatherGetResponseDto(1, 1, 0.0);
+        }
+
+        Gugun gugun = gugunOptional.get();
 
         LocalDate recordDate = LocalDate.parse(date); // 일지를 작성할 날짜
         LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
