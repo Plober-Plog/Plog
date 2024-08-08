@@ -51,6 +51,11 @@ public class ChatRoomController {
     }
 
     // get -> 해당 채팅방 자체 정보
+    @GetMapping
+    public ResponseEntity<?> getChatRoom(@RequestParam("chatRoomId") Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomService.getChatRoom(chatRoomId);
+        return ResponseEntity.ok(chatRoom);
+    }
 
     // delete -> 개설자는 채팅방 삭제 (들어와있는 사람은 접근할 수 없음)
 

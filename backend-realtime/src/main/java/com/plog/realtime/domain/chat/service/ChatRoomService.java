@@ -13,6 +13,7 @@ public interface ChatRoomService {
     public BaseResponseBody createChatRoom(String token, ChatRoomCreateRequestDto chatRoomCreateRequestDto);
     public List<ChatRoom> getAllChatRooms(String token);
     public List<User> getChatRoomUsers(Long chatRoomId);
+    public ChatRoom getChatRoom(Long chatRoomId);
     public BaseResponseBody updateChatRoom(String token, Long chatRoomId);
     public BaseResponseBody deleteChatRoom(String token, Long chatRoomId);
 }

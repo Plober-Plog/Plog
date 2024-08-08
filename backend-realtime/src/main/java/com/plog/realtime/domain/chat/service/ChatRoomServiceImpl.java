@@ -5,6 +5,7 @@ import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepositorySupport;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
 import com.plog.realtime.domain.user.entity.User;
+import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.model.response.BaseResponseBody;
 import com.plog.realtime.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
@@ -47,6 +48,15 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Override
     public List<User> getChatRoomUsers(Long chatRoomId) {
         return chatRoomRepository.findUserByChatRoomId(chatRoomId);
+    }
+
+    @Override
+    public ChatRoom getChatRoom(Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomId(chatRoomId);
+        if (chatRoom == null) {
+            throw new NotValidRequestException("채팅방이 없습니다.");
+        }
+        return chatRoom;
     }
 
     @Override
