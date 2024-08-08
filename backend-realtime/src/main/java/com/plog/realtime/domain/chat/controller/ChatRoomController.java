@@ -3,6 +3,7 @@ package com.plog.realtime.domain.chat.controller;
 import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
 import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.service.ChatRoomService;
+import com.plog.realtime.domain.user.entity.User;
 import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.model.dto.BaseEntity;
 import com.plog.realtime.global.model.response.BaseResponseBody;
@@ -43,6 +44,11 @@ public class ChatRoomController {
     }
 
     // get -> 해당 채팅방에 소속되어 있는 사람
+    @GetMapping
+    public ResponseEntity<?> getChatRoomUserList(@RequestParam("chatRoomId") Long chatRoomId) {
+        List<User> userList = chatRoomService.getChatRoomUsers(chatRoomId);
+        return null;
+    }
 
     // get -> 해당 채팅방 자체 정보
 

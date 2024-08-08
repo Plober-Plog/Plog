@@ -4,6 +4,7 @@ import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
 import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepositorySupport;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
+import com.plog.realtime.domain.user.entity.User;
 import com.plog.realtime.global.model.response.BaseResponseBody;
 import com.plog.realtime.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
@@ -40,9 +41,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public List<ChatRoom> getAllChatRooms(String token) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
 
-        List<ChatRoom> chatRoomList = chatRoomRepositorySupport.findByChatUserId(userId);
+        return chatRoomRepositorySupport.findByChatUserId(userId);
+    }
 
-        return chatRoomList;
+    @Override
+    public List<User> getChatRoomUsers(Long chatRoomId) {
+        return chatRoomRepository.findUserByChatRoomId(chatRoomId);
     }
 
     @Override
