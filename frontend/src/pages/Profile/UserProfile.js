@@ -38,7 +38,7 @@ const UserProfile = () => {
   }
 
   const handleAddPlant = () => {
-    navigate(`/plant/register`, { state: { plantId: '0' } });
+    navigate(`/plant/register`, { state: { plantId: 0 } });
   };
 
   const handleAddSns = () => {
@@ -69,7 +69,8 @@ const UserProfile = () => {
             onFilterUpdate={handleFilterUpdate}
           />
           <ProfilePlantCardList
-            plants={filteredPlants}a
+            searchId={searchId}
+            plants={filteredPlants}
           />
         </>
       )}

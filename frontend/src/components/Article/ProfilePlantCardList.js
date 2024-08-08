@@ -19,7 +19,8 @@ const ProfilePlantCardList = ({ plants, searchId }) => {
           plantTypeName={plant.plantTypeName}
           otherPlantTypeName ={plant.otherPlantTypeName}
           birthDate={plant.birthDate}
-          isClickalbe={authSearchId === searchId}
+          isClickable={authSearchId === searchId}
+          // isClickable={authSearchId === searchId ? true : false}
         />
       ))}
     </div>
