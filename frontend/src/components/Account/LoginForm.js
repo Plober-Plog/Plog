@@ -14,11 +14,9 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
-  import { requestForToken } from '../../firebase'; // FCM 관련 코드 추가
   const setToken = useAuthStore((state) => state.setToken);
   const setUserData = useAuthStore((state) => state.setUserData);
   const navigate = useNavigate();
-
 
   const handleLogin = async (event) => {
     event.preventDefault();
