@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
+import NeighborCardList from '../../components/Profile/NeighborCardList';
 
 const Neighbor = () => {
 
@@ -11,7 +12,7 @@ const Neighbor = () => {
 
   const fetchFollowList = async () => {
     try {
-      const response = await API.get(`/user/neighbor/${searchId}/to`)
+      const response = await API.get(`/user/neighbor/${searchId}/from`)
       setFollowList(response.data);
       console.log('followList', followList)
     } catch (error) {
@@ -21,9 +22,9 @@ const Neighbor = () => {
 
   const fetchFollowerList = async () => {
     try {
-      const response = await API.get(`/user/neighbor/${searchId}/from`)
+      const response = await API.get(`/user/neighbor/${searchId}/to`)
       setFollowerList(response.data);
-      console.log('followerList', followList)
+      console.log('followerList', followerList)
     } catch (error) {
       console.error("팔로워 목록 에러", error);
     }
@@ -48,20 +49,18 @@ const Neighbor = () => {
       {activeTab === 'follow' && (
         <>
           <h5>팔로우 목록</h5>
-          <ul>
-            {followList.map((user) => (
-              <li key={user.id}>
-                <img src={user.profileImage} alt={`${user.nickname} profile`} width="50" height="50" />
-                <span>{user.nickname}</span>
-              </li>
-            ))}
-          </ul>
+          <NeighborCardList 
+            users={followList}
+          />
         </>
       )}
       
       {activeTab === 'follower' && (
         <>
           <h5>팔로워 목록</h5>
+          <NeighborCardList 
+            users={followerList}
+          />
         </>
       )}
     </div>

@@ -60,7 +60,7 @@ function App() {
               {/* profile */}
               {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
               <Route path="/profile/:searchId" element={<UserProfile />} />
-              <Route path="/neighbor/:searchId" element={<Neighbor />}/>
+              <Route path="/profile/:searchId/neighbor" element={<Neighbor />}/>
               {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
               {/* sns */}
               <Route path="/sns/write" element={<SnsWrite />} />

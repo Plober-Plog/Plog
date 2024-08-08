@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
+import { useNavigate } from'react-router-dom';
 import useAuthStore from '../../stores/member';
 import API from '../../apis/api';
 
 const ProfileHeaderUserBtnList = ({ ownerId }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
-
+  const navigate = useNavigate();
   const [profileUserRel, setProfileUserRel] = useState(null);
   const [requestUserRel, setRequestUserRel] = useState(null);
 
@@ -62,12 +63,21 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     return '';
   };
 
+  const handleClickNeighborList = () => {
+    navigate(`/profile/${ownerId}/neighbor`)
+  }
+
   return (
     <div>
       {authSearchId === ownerId && (
         <>
           <button style={{ margin: '10px' }}>🔖</button>
-          <button style={{ margin: '10px' }}>이웃목록</button>
+          <button 
+            style={{ margin: '10px' }}
+            onClick={handleClickNeighborList}
+          >
+            이웃목록
+          </button>
         </>
       )}
       {authSearchId !== ownerId && (
