@@ -77,11 +77,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         WebMvcConfigurer.super.addCorsMappings(registry);
         registry.addMapping("/**")
-                .allowedOrigins("*",
-                        "${server.domain.host}",
-                        "https://i11b308.p.ssafy.io/**",
-                        "http://localhost:3000"
-                )
+                .allowedOriginPatterns("*")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization")
                 .allowedMethods("OPTIONS","GET","POST","PUT","DELETE","PATCH");
