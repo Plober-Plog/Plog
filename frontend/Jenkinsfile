@@ -34,6 +34,15 @@ pipeline {
                 }
             }
         }
+        stage('Load Environment Variables') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'firebase-env', variable: 'FIREBASE_ENV')]) {
+                        writeFile file: 'frontend/.env', text: "${FIREBASE_ENV}"
+                    }
+                }
+            }
+        }
         stage('Build with npm') {
             steps {
                 dir('frontend') {
