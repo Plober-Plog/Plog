@@ -10,7 +10,6 @@ const Setting = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showSignoutConfirm, setShowSignoutConfirm] = useState(false);
   const clearToken = useAuthStore((state) => state.clearToken);
-  const clearUserData = useAuthStore((state) => state.clearUserData);
 
   const getAccessToken = () => useAuthStore.getState().accessToken;
 
@@ -20,14 +19,13 @@ const Setting = () => {
       if (!accessToken) {
         console.log('이미 로그아웃된 상태입니다.');
         clearToken();
-        clearUserData();
         navigate('/login');
         return;
       }
 
       const response = await API.get('/user/logout');
       console.log('로그아웃 성공:', response.data);
-      clearUserData();
+
       clearToken();
       navigate('/login');
     } catch (error) {
@@ -41,7 +39,6 @@ const Setting = () => {
       if (!accessToken) {
         console.log('로그인되지 않은 상태입니다.');
         clearToken();
-        clearUserData();
         navigate('/login');
         return;
       }
