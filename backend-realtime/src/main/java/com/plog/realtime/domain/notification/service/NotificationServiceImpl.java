@@ -85,7 +85,8 @@ public class NotificationServiceImpl implements NotificationService {
 
         // FCM을 통해 메시지를 전송합니다.
         if (targetUser.isPushNotificationEnabled() && targetUser.getNotificationToken() != null) {
-            fcmService.sendNotification(targetUser.getNotificationToken(), formattedMessage);
+            String title = type.name(); // 여기에 알림 제목을 설정합니다.
+            fcmService.sendNotification(targetUser.getNotificationToken(), title, formattedMessage);
         }
 
         log.info("sendNotification 완료 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
