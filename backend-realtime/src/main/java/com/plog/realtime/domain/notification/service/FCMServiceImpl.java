@@ -11,12 +11,13 @@ public class FCMServiceImpl implements FCMService {
 
     @Override
     public void sendNotification(String token, String title, String message) {
+        Notification notification = Notification.builder()
+                .setTitle(title)
+                .setBody(message)
+                .build();
+
         Message msg = Message.builder()
-                .putData("message", message)
-                .setNotification(Notification.builder()
-                        .setTitle(title)
-                        .setBody(message)
-                        .build()) // notification 필드를 사용하여 title과 message를 설정
+                .setNotification(notification)
                 .setToken(token)
                 .build();
 
