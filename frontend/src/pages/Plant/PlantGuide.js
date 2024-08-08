@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Img from '../../components/Common/Img';
 import DiaryDetailContent from '../../components/Diary/DiaryDetailContent';
-import axios from 'axios';
+import API from '../../apis/api';
 
 const PlantGuide = () => {
+  const location = useLocation();
+  const { plantTypeId } = location.state;
+
   const [plantData, setPlantData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPlantData = async () => {
-      const URI = 'https://i11b308.p.ssafy.io//api/user/plant-type/2';
       try {
-        const response = await axios.get(URI);
+        const response = await API.get(`/user/plant-type/${plantTypeId}`);
         setPlantData(response.data);
         console.log(response.data);
         setLoading(false);
-      } catch (err) {
-        setError(err);
+      } catch (error) {
         setLoading(false);
       }
     };
 
     fetchPlantData();
-  }, []);
+  }, [plantTypeId]);
   
   if (loading) return <p>로딩중입니당..</p>;
 

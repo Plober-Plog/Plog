@@ -18,7 +18,9 @@ import PlantDiaryWrite from './pages/Diary/PlantDiaryWrite';
 import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
 import PlantDetail from './pages/Plant/PlantDetail';
 import PlantRegister from './pages/Plant/PlantRegister';
+import PlantGuide from './pages/Plant/PlantGuide';
 import ApiTest from './pages/Plant/ApiTest';
+
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
 // SNS
@@ -48,6 +50,7 @@ function App() {
               <Route path="/plant/:plantId/:date/write" element={<PlantDiaryWrite />} />
               <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
               <Route path="/plant/:plantId" element={<PlantDetail />} />
+              <Route path="/guide/:plantTypeId" element={<PlantGuide />} />
               {/* <Route path="/plant" element={<PlantDetail />} /> */}
               {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
               <Route path="/plant/register" element={<PlantRegister />} />
