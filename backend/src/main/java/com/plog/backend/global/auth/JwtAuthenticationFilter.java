@@ -51,6 +51,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         log.info("JWT Filter 확인 : URI {}, Method {}", requestURI, requestMethod);
 
+        // OPTIONS 메소드 요청은 필터를 통과하도록 설정
+        if ("OPTIONS".equalsIgnoreCase(requestMethod)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
         if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
             log.info(">>> JWT Filter 제외");
@@ -69,21 +75,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (TimeoutException e) {
                 SecurityContextHolder.clearContext();
                 log.info("JWT Filter - JWT 토큰이 만료되었습니다.");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT 토큰이 만료되었습니다.");
                 return;
             } catch (NotValidRequestException e) {
                 SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write(e.getMessage());
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
                 log.info("JWT Filter - JWT 토큰이 유효하지 않습니다.");
                 return;
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("JWT Filter - Invalid or expired JWT token");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT Filter - Invalid or expired JWT token");
                 return;
             }
         } else {
             logger.warn("JWT Token does not begin with Bearer String");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT Token does not begin with Bearer String");
+            return;
         }
 
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -96,6 +103,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
         try {
             chain.doFilter(request, response);
         } catch (Exception e) {
@@ -104,5 +112,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new ServletException("Exception in JwtAuthenticationFilter", e);
         }
     }
-
 }
