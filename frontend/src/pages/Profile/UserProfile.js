@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import SnsProfileTab from '../../components/Profile/SnSProfileTab';
 import ProfilePlantTagList from '../../components/Profile/ProfilePlantTagList';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
+import ProfilePlantCardList from '../../components/Article/ProfilePlantCardList';
+import ProfileSnsCardList from '../../components/Article/ProfileSnsCardList';
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
-
 
 const UserProfile = () => {
   const { searchId } = useParams();
   const authSearchId = useAuthStore((state) => state.getSearchId());
-  console.log('****authSearchId:****', authSearchId);
-
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState('plant');
+  const [filteredPlants, setFilteredPlants] = useState([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -25,7 +24,6 @@ const UserProfile = () => {
           console.error('Error: ', response.data.message);
           return;
         }
-        console.log('User Data:', response.data);
         setUserData(response.data);
       } catch (error) {
         console.error("***UserData Error:***", error);
@@ -40,16 +38,16 @@ const UserProfile = () => {
   }
 
   const handleAddPlant = () => {
-    navigate(`/plant/register`,
-      { state: { plantId: '0' } }
-    );
+    navigate(`/plant/register`, { state: { plantId: '0' } });
   };
 
   const handleAddSns = () => {
-    navigate(`/sns/write`)
+    navigate(`/sns/write`);
   };
 
-  {/* {searchId === authSearchId && <button onClick={handleAddSns}>snsAdd</button>} */}
+  const handleFilterUpdate = (plants) => {
+    setFilteredPlants(plants);
+  };
 
   return (
     <div>
@@ -66,20 +64,24 @@ const UserProfile = () => {
       {activeTab === 'plant' && (
         <>
           {searchId === authSearchId && <button onClick={handleAddPlant}>plantAdd</button>}
-          <ProfilePlantTagList searchId={searchId} />
+          <ProfilePlantTagList 
+            searchId={searchId}
+            onFilterUpdate={handleFilterUpdate}
+          />
+          <ProfilePlantCardList
+            plants={filteredPlants}a
+          />
         </>
       )}
       
       {activeTab === 'sns' && (
+        <>
           <button onClick={handleAddSns}>snsAdd</button>
-          
+          <ProfileSnsCardList 
+            searchId={searchId}
+          />
+        </>
       )}
-      <SnsProfileTab 
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        searchId={searchId}
-      />
-      
     </div>
   );
 };
