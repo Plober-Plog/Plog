@@ -34,11 +34,15 @@ pipeline {
                 }
             }
         }
-        stage('Load Environment Variables') {
+        stage('Copy .env') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'firebase-env', variable: 'FIREBASE_ENV')]) {
-                        writeFile file: 'frontend/.env', text: "${FIREBASE_ENV}"
+                    withCredentials([file(credentialsId: 'firebase-env', variable: 'ENV_FILE')]) {
+                        // .env 파일 복사
+                        sh 'cp $ENV_FILE frontend/.env'
+
+                        // 복사된 파일 내용 확인
+                        sh 'cat frontend/.env'
                     }
                 }
             }
