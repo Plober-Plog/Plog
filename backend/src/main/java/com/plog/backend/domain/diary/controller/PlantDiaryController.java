@@ -4,6 +4,7 @@ import com.plog.backend.domain.diary.dto.request.PlantDiaryAddRequestDto;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryImageUploadRequestDto;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryUpdateRequestDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
+import com.plog.backend.domain.diary.dto.response.PlantDiaryWeatherGetResponseDto;
 import com.plog.backend.domain.diary.service.PlantDiaryService;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
@@ -25,15 +26,16 @@ public class PlantDiaryController {
     private final PlantDiaryService plantDiaryService;
 
     @GetMapping("/get-weather")
-    public ResponseEntity<BaseResponseBody> getWeather(
+    public ResponseEntity<PlantDiaryWeatherGetResponseDto> getWeather(
             @RequestHeader("Authorization") String token,
             @RequestParam String date
     ) {
         if (date == null)
             throw new NotValidRequestException("date 값은 필수 값입니다.");
-        plantDiaryService.getWeatherData(token, date);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 등록이 완료되었습니다."));
+        PlantDiaryWeatherGetResponseDto plantDiaryWeatherGetResponseDto =  plantDiaryService.getWeatherData(token, date);
+        return ResponseEntity.status(200).body(plantDiaryWeatherGetResponseDto);
     }
+
     @PostMapping
     public ResponseEntity<BaseResponseBody> addPlantDiary(
             @RequestHeader("Authorization") String token,
