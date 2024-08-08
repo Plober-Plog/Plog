@@ -19,8 +19,6 @@ import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -50,20 +48,22 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
 
         Long articleId = articleCommentAddRequestDto.getArticleId();
 
-        ArticleComment articleComment = ArticleComment.builder()
+        ArticleComment articleComment = articleCommentRepository.save(ArticleComment.builder()
                 .article(articleRepository.getReferenceById(articleId))
                 .user(user)
                 .parentId(articleCommentAddRequestDto.getParentId())
                 .content(articleCommentAddRequestDto.getContent())
                 .state(State.PLAIN.getValue())
-                .build();
+                .build());
+
 
         // 만약 ParentId가 없다면? 본인이 Parent
-        if (articleComment.getParentId() == null)
+        if (articleComment.getParentId() == null || articleComment.getParentId() == 0)
             articleComment.setParentId(articleComment.getArticleCommentId());
 
         articleCommentRepository.save(articleComment);
-        log.info("댓글 등록이 완료되었습니다. 게시글 번호: {}, 회원 번호: {}", articleId, userId);
+
+        log.info("댓글 등록이 완료되었습니다. 게시글 번호: {}, 회원 번호: {}, 댓글 번호: {}", articleId, userId, articleComment.getArticleCommentId());
     }
 
     @Transactional
@@ -139,6 +139,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
             for (ArticleComment articleComment : parentWithChildren) {
                 commentsWithReplies.get(i).add(ArticleCommentGetResponse.builder()
                         .articleCommentId(articleComment.getArticleCommentId())
+                        .parentId(articleComment.getParentId())
                         .content(articleComment.getContent())
                         .profile(articleComment.getUser().getImage().getImageUrl())
                         .userId(articleComment.getUser().getUserId())
