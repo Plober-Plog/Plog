@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserGetResponseDto getUser(String token) {
-        log.info(">>> getUser - 토큰: {}", token);
+
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> getUser - 추출된 사용자 ID: {}", userId);
         User user = userRepository.findById(userId).orElseThrow(() -> {
