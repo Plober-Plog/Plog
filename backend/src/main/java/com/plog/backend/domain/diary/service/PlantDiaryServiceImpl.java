@@ -12,6 +12,7 @@ import com.plog.backend.domain.diary.entity.Weather;
 import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
 import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
+import com.plog.backend.domain.image.exception.ImageNotFoundException;
 import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.plant.entity.Plant;
@@ -24,16 +25,16 @@ import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 
@@ -42,7 +43,6 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 @Service("plantDiaryService")
 public class PlantDiaryServiceImpl implements PlantDiaryService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
     private final PlantDiaryRepository plantDiaryRepository;
     private final PlantRepository plantRepository;
     private final ImageServiceImpl imageService;
@@ -78,7 +78,8 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         log.info(">>> addPlantDiary - 요청 데이터: {}", plantDiaryAddRequestDto);
 
         LocalDate recordDate = plantDiaryAddRequestDto.getRecordDate();
-        if (recordDate.isAfter(LocalDate.now())) {
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if (recordDate.isAfter(currentDate)) {
             throw new NotValidRequestException("미래의 식물 일지는 작성할 수 없습니다");
         }
 
@@ -113,7 +114,8 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
         log.info(">>> updatePlantDiary - 요청 ID: {}, 업데이트 데이터: {}", plantDiaryUpdateRequestDto.getPlantDiaryId(), plantDiaryUpdateRequestDto);
 
         LocalDate recordDate = plantDiaryUpdateRequestDto.getRecordDate();
-        if (recordDate.isAfter(LocalDate.now())) {
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        if (recordDate.isAfter(currentDate)) {
             throw new NotValidRequestException("미래의 식물 일지는 작성할 수 없습니다");
         }
 
@@ -210,7 +212,7 @@ public class PlantDiaryServiceImpl implements PlantDiaryService {
     public PlantDiaryGetResponseDto getPlantDiary(Long plantDiaryId) {
         log.info(">>> getPlantDiary - 요청 ID: {}", plantDiaryId);
 
-        Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findByPlantPlantIdAndIsDeletedFalse(plantDiaryId);
+        Optional<PlantDiary> optionalPlantDiary = plantDiaryRepository.findByPlantDiaryIdAndIsDeletedFalse(plantDiaryId);
         if (optionalPlantDiary.isPresent()) {
             PlantDiary plantDiary = optionalPlantDiary.get();
             if (!plantDiary.isDeleted()) {

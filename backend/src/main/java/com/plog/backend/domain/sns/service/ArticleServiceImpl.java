@@ -126,6 +126,7 @@ public class ArticleServiceImpl implements ArticleService {
             boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(articleGetListRequestDto.getUserId(), article.getArticleId());
             articleGetSimpleResponseDtoList.add(
                     ArticleGetSimpleResponseDto.builder()
+                            .articleId(article.getArticleId())
                             .image(articleImageList.size() == 0 ? null : articleImageList.get(0)) // 첫 번째 사진의 url 전달
                             .likeCnt(likeCnt)
                             .view(article.getView())

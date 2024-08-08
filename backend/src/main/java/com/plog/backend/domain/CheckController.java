@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/forever")
 public class CheckController {
 
-    private final WeatherService weatherService;
+//    private final WeatherService weatherService;
 
     @GetMapping
     public String test() {
@@ -23,11 +23,11 @@ public class CheckController {
         return sb.toString();
     }
 
-    @GetMapping("/weather/test")
-    public String updateWeatherData() {
-        weatherService.updateWeatherData();
-        return "Weather data updated successfully.";
-    }
+//    @GetMapping("/weather/test")
+//    public String updateWeatherData() {
+//        weatherService.updateWeatherData();
+//        return "Weather data updated successfully.";
+//    }
 
 
 }

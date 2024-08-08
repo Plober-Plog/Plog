@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface PlantDiaryRepository extends JpaRepository<PlantDiary, Long> {
-    Optional<PlantDiary> findByPlantPlantIdAndIsDeletedFalse(Long plantId);
+    Optional<PlantDiary> findByPlantDiaryIdAndIsDeletedFalse(Long plantDiaryId);
     PlantDiary
     findByPlantPlantIdAndRecordDateAndIsDeletedFalse(Long plantId, LocalDate recordDate);
 

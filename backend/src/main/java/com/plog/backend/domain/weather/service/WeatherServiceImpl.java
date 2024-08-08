@@ -23,12 +23,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service("weatherService")
 @RequiredArgsConstructor
@@ -59,7 +61,7 @@ public class WeatherServiceImpl implements WeatherService {
             }
 
             if (weatherResult.getAvgTempToday() != 0) {
-                LocalDate today = LocalDate.now();
+                LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
                 String todayKey = "weather:" + today.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ":" + gugun.getGugunId();
 
                 log.info("Weather Data 키: {}", todayKey);
@@ -67,12 +69,14 @@ public class WeatherServiceImpl implements WeatherService {
                     redisTemplate.opsForHash().put(todayKey, "avgTempToday", weatherResult.getAvgTempToday());
                     redisTemplate.opsForHash().put(todayKey, "avgHumidityToday", weatherResult.getAvgHumidityToday());
                     redisTemplate.opsForHash().put(todayKey, "weatherToday", weatherResult.getWeatherToday());
+                    redisTemplate.opsForHash().put(todayKey, "humidityToday", weatherResult.getHumidityToday());
                     redisTemplate.opsForHash().put(todayKey, "avgTempTomorrow", weatherResult.getAvgTempTomorrow());
                     redisTemplate.opsForHash().put(todayKey, "avgHumidityTomorrow", weatherResult.getAvgHumidityTomorrow());
                     redisTemplate.opsForHash().put(todayKey, "weatherTomorrow", weatherResult.getWeatherTomorrow());
+                    redisTemplate.opsForHash().put(todayKey, "humidityTomorrow", weatherResult.getHumidityTomorrow());
 
                     // Set expiration for today's key to 25 hours
-                    redisTemplate.expire(todayKey, 25, TimeUnit.HOURS);
+                    redisTemplate.expire(todayKey, 50, TimeUnit.HOURS);
 //                    log.info("Set expiration for key {} to 25 hours", todayKey);
 
                     // Verify data in Redis
@@ -92,11 +96,13 @@ public class WeatherServiceImpl implements WeatherService {
                 Double avgTempYesterday;
                 Double avgHumidityYesterday;
                 Integer weatherYesterdayValue;
+                Integer humidityYesterValue;
 
                 try {
                     avgTempYesterday = (Double) redisTemplate.opsForHash().get(yesterdayKey, "avgTempToday");
                     avgHumidityYesterday = (Double) redisTemplate.opsForHash().get(yesterdayKey, "avgHumidityToday");
                     weatherYesterdayValue = (Integer) redisTemplate.opsForHash().get(yesterdayKey, "weatherToday");
+                    humidityYesterValue = (Integer) redisTemplate.opsForHash().get(yesterdayKey, "humidityToday");
 
                     // 기본값 설정 및 타입 변환
                     if (avgTempYesterday == null) {
@@ -108,7 +114,9 @@ public class WeatherServiceImpl implements WeatherService {
                     if (weatherYesterdayValue == null) {
                         weatherYesterdayValue = 1;
                     }
-
+                    if (humidityYesterValue == null) {
+                        humidityYesterValue = 1;
+                    }
                 } catch (Exception e) {
 //                    log.error("Redis에서 데이터 가져오기 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
                     throw new WeatherUpdateException("Redis에서 데이터 가져오기 중 에러 발생 - Gugun: " + gugun.getGugunId());
@@ -123,7 +131,9 @@ public class WeatherServiceImpl implements WeatherService {
                         weather.setAvgTemp(avgTempYesterday);
                         weather.setAvgHumidity(avgHumidityYesterday);
                         weather.setWeather(weatherYesterdayValue);
+                        weather.setHumidity(humidityYesterValue);
                         weather.setGugun(gugun);
+
                         weatherRepository.save(weather);
                         log.info("Saved yesterday's weather data to DB: {}", weather);
                     } else {
@@ -133,6 +143,8 @@ public class WeatherServiceImpl implements WeatherService {
                             weather.setAvgTemp(avgTempYesterday);
                             weather.setAvgHumidity(avgHumidityYesterday);
                             weather.setWeather(weatherYesterdayValue);
+                            weather.setHumidity(humidityYesterValue);
+
                             weatherRepository.save(weather);
                             log.info("Updated yesterday's weather data in DB: {}", weather);
                         }
@@ -143,7 +155,7 @@ public class WeatherServiceImpl implements WeatherService {
                     log.info("Removed yesterday's weather data from Redis for key: {}", yesterdayKey);
                 } catch (Exception e) {
 //                    log.error("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
-                    throw new WeatherUpdateException("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: " + gugun.getGugunId());
+                    log.error("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: " + gugun.getGugunId());
                 }
             }
         }
@@ -245,13 +257,15 @@ public class WeatherServiceImpl implements WeatherService {
             double avgTempToday = calculateAverage(temperatures.subList(0, 24));
             double avgHumidityToday = calculateAverage(humidities.subList(0, 24));
             int weatherTodayValue = calculateDailyWeatherValue(skyCodes.subList(0, 24), ptyCodes.subList(0, 24));
+            int humidityTodayValue = calculateDailyHumidityValue(avgHumidityToday);
 
             double avgTempTomorrow = calculateAverage(temperatures.subList(24, 48));
             double avgHumidityTomorrow = calculateAverage(humidities.subList(24, 48));
             int weatherTomorrowValue = calculateDailyWeatherValue(skyCodes.subList(24, 48), ptyCodes.subList(24, 48));
+            int humidityTomorrowValue = calculateDailyHumidityValue(avgHumidityTomorrow);
 
-            return new WeatherResponseDto(avgTempToday, avgHumidityToday, weatherTodayValue,
-                    avgTempTomorrow, avgHumidityTomorrow, weatherTomorrowValue);
+            return new WeatherResponseDto(avgTempToday, avgHumidityToday, weatherTodayValue, humidityTodayValue,
+                    avgTempTomorrow, avgHumidityTomorrow, weatherTomorrowValue, humidityTomorrowValue);
         } else {
             throw new WeatherUpdateException("Insufficient weather data received");
         }
@@ -293,6 +307,20 @@ public class WeatherServiceImpl implements WeatherService {
         }
     }
 
+    private int calculateDailyHumidityValue(double avgHumidityToday) {
+        if (avgHumidityToday < 30) {
+            return com.plog.backend.domain.diary.entity.Humidity.DRY.getValue();
+        } else if (avgHumidityToday < 50) {
+            return com.plog.backend.domain.diary.entity.Humidity.CLEAN.getValue();
+        } else if (avgHumidityToday < 70) {
+            return com.plog.backend.domain.diary.entity.Humidity.NORMAL.getValue();
+        } else if (avgHumidityToday < 90) {
+            return com.plog.backend.domain.diary.entity.Humidity.MOIST.getValue();
+        } else {
+            return com.plog.backend.domain.diary.entity.Humidity.WET.getValue();
+        }
+    }
+
     private int getWeatherValue(int sky, int pty) {
         if (pty == 1 || pty == 2 || pty == 4) {
             return com.plog.backend.domain.diary.entity.Weather.RAINY.getValue();
@@ -311,6 +339,22 @@ public class WeatherServiceImpl implements WeatherService {
     @PostConstruct
     @Override
     public void updateWeatherData() {
-        updateAllWeatherForecast();
+        if (!isExistedWeatherDataInRedis())
+            updateAllWeatherForecast();
+    }
+
+
+    private boolean isExistedWeatherDataInRedis() {
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        String todayKey = "weather:" + today.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ":1"; // 1번 구군 ID 의 key 값 확인
+        Map<Object, Object> todayData = redisTemplate.opsForHash().entries(todayKey);
+        AtomicBoolean flag = new AtomicBoolean(true);
+        todayData.forEach((key, value) -> {
+            if (!redisTemplate.opsForHash().hasKey(todayKey, key)) {
+                log.info("Redis에 값이 없음 -> Redis key: {}, field: {}, value: {}", todayKey, key, value);
+                flag.set(false);
+            }
+        });
+        return flag.get();
     }
 }
