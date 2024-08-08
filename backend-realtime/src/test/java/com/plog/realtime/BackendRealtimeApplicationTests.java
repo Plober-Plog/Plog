@@ -9,10 +9,4 @@ class BackendRealtimeApplicationTests {
     // @Test
     // void contextLoads() {
     // }
-
-    @Test
-    void simpleTest() {
-        assertTrue(true);
-    }
-
 }
