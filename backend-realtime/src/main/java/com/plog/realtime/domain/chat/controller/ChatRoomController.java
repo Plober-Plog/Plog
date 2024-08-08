@@ -1,15 +1,29 @@
 package com.plog.realtime.domain.chat.controller;
 
+import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
+import com.plog.realtime.domain.chat.service.ChatRoomService;
+import com.plog.realtime.global.model.dto.BaseEntity;
+import com.plog.realtime.global.model.response.BaseResponseBody;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.EntityResponse;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/user/chat-room")
+@RequestMapping("/user/chat/room")
 public class ChatRoomController {
-    // post -> 채팅방 개설
+    private static ChatRoomService chatRoomService;
 
+    // post -> 채팅방 개설
+    @PostMapping
+    public ResponseEntity<?> createChatRoom(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ChatRoomCreateRequestDto createRequestDto){
+        return ResponseEntity.ok(chatRoomService.createChatRoom(token, createRequestDto));
+    }
     // get -> 내가 소속되어 있는 채팅방 리스트 조회
 
     // get -> 해당 채팅방에 소속되어 있는 사람
