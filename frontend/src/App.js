@@ -7,7 +7,7 @@ import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
 
 // FCM
-import { getMessaging } from 'firebase/messaging';
+import { getMessaging, getToken } from 'firebase/messaging';
 import { firebaseApp } from './firebase'; // firebase 초기화 파일
 import { requestForToken, onMessageListener } from './firebase';
 
