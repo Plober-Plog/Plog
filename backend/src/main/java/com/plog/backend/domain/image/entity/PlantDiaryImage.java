@@ -1,5 +1,6 @@
 package com.plog.backend.domain.image.entity;
 
+import com.plog.backend.domain.diary.entity.PlantDiary;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,17 +17,18 @@ public class PlantDiaryImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long plantDiaryImageId;
 
-    @Column(nullable = false)
-    private Long plantDiaryId;
+    @ManyToOne
+    @JoinColumn(name = "plant_diary_id", nullable = false)
+    private PlantDiary plantDiary;
 
     @ManyToOne
     @JoinColumn(name = "image_id", nullable = false)
     private Image image;
 
     @Column(name = "`order`", nullable = false)
-    private int order;
+    private int order; // 1부터 시작
 
     @Column(nullable = false)
-    private boolean isThumbnail = false;
+    private boolean isThumbnail;
 
 }

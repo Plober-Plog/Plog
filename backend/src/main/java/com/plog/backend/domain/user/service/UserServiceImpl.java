@@ -4,16 +4,16 @@ import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
-import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
+import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.entity.*;
+import com.plog.backend.global.exception.DuplicateEntityException;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
-import com.plog.backend.global.auth.PloberUserDetails;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .searchId(user.getSearchId())
                 .nickname(user.getNickname())
-                .profile(user.getImageId().getImageUrl())
+                .profile(user.getImage().getImageUrl())
                 .gender(user.getGender().getValue())
                 .birthDate(user.getBirthDate())
                 .sidoCode(user.getSidoCode())
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    public Map<String, String> userSignIn(String email, String password) {
+    public Map<String, String> userSignIn(String email, String password, String notificationToken) {
         log.info(">>> [USER SIGN IN] - 사용자 로그인 요청: 이메일 = {}", email);
 
         // 이메일로 사용자 찾기
@@ -127,6 +127,10 @@ public class UserServiceImpl implements UserService {
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
 
+        user.setNotificationToken(notificationToken);
+        userRepository.save(user);
+        log.info(">>> [USER SIGN IN] - notification 토큰 DB에 업데이트 완료: {}", notificationToken);
+
         return tokens;
     }
 
@@ -149,6 +153,9 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserSignUpRequestDto userSignUpRequestDto, String imageUrl) {
         log.info(">>> createUser - 사용자 회원가입 데이터: {}, Image url {}", userSignUpRequestDto, imageUrl);
 
+        if(userRepository.findByEmail(userSignUpRequestDto.getEmail()).isPresent())
+            throw new DuplicateEntityException("중복 가입입니다.");
+
         Image image = new Image(imageUrl);
         imageRepository.save(image);
 
@@ -161,7 +168,7 @@ public class UserServiceImpl implements UserService {
                 .isAd(userSignUpRequestDto.isAd())
                 .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
-                .imageId(image)
+                .image(image)
                 .chatAuth(ChatAuth.PUBLIC.getValue())
                 .searchId(userSignUpRequestDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
@@ -211,6 +218,7 @@ public class UserServiceImpl implements UserService {
             user.setSource(request.getSource());
             user.setSidoCode(request.getSidoCode());
             user.setGugunCode(request.getGugunCode());
+            user.setPushNotificationEnabled(request.isPushNotificationEnabled());
             User updatedUser = userRepository.save(user);
             log.info(">>> updateUser - 사용자 업데이트됨: {}", updatedUser);
             return updatedUser;
@@ -254,7 +262,7 @@ public class UserServiceImpl implements UserService {
 
         log.info(">>> checkPassword - 비교: {}", result);
         UserCheckPasswordResponseDto responseDto = new UserCheckPasswordResponseDto();
-        if(result)
+        if (result)
             return UserCheckPasswordResponseDto.of(user.getUserId(), 200, "비밀번호가 확인 되었습니다.");
         else
             return UserCheckPasswordResponseDto.of(-1L, 401, "비밀번호가 틀립니다.");
@@ -293,7 +301,7 @@ public class UserServiceImpl implements UserService {
                 .profile_info(user.getProfileInfo())
                 .total_exp(user.getTotalExp())
                 .nickname(user.getNickname())
-                .profile(user.getImageId().getImageUrl())
+                .profile(user.getImage().getImageUrl())
                 .build();
 
         log.info(">>> getMyProfile - 프로필 정보: {}", responseDto);
@@ -313,7 +321,7 @@ public class UserServiceImpl implements UserService {
                 .profile_info(user.getProfileInfo())
                 .total_exp(user.getTotalExp())
                 .nickname(user.getNickname())
-                .profile(user.getImageId().getImageUrl())
+                .profile(user.getImage().getImageUrl())
                 .build();
 
         log.info(">>> getProfile - 프로필 정보: {}", responseDto);

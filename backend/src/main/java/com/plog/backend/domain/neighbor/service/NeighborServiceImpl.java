@@ -1,11 +1,13 @@
 package com.plog.backend.domain.neighbor.service;
 
 import com.plog.backend.domain.neighbor.dto.request.NeighborMutualAddRequestDto;
+import com.plog.backend.domain.neighbor.dto.response.NeighborCheckResponseDto;
 import com.plog.backend.domain.neighbor.dto.response.NeighborFromResponseDto;
 import com.plog.backend.domain.neighbor.dto.response.NeighborToResponseDto;
 import com.plog.backend.domain.neighbor.entity.Neighbor;
 import com.plog.backend.domain.neighbor.entity.NeighborType;
 import com.plog.backend.domain.neighbor.repository.NeighborRepository;
+import com.plog.backend.domain.neighbor.repository.NeighborRepositorySupport;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.NotValidRequestException;
@@ -25,11 +27,12 @@ public class NeighborServiceImpl implements NeighborService {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
     private final NeighborRepository neighborRepository;
+    private final NeighborRepositorySupport neighborRepositorySupport;
 
     private NeighborToResponseDto mapToDto(Neighbor neighbor) {
         return NeighborToResponseDto.builder()
                 .searchId(neighbor.getNeighborFrom().getSearchId())
-                .profile(neighbor.getNeighborFrom().getImageId().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
+                .profile(neighbor.getNeighborFrom().getImage().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
                 .nickname(neighbor.getNeighborFrom().getNickname())
                 .neighborType(neighbor.getNeighborType().getValue())
                 .build();
@@ -38,7 +41,7 @@ public class NeighborServiceImpl implements NeighborService {
     private NeighborFromResponseDto mapFromDto(Neighbor neighbor) {
         return NeighborFromResponseDto.builder()
                 .searchId(neighbor.getNeighborTo().getSearchId())
-                .profile(neighbor.getNeighborTo().getImageId().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
+                .profile(neighbor.getNeighborTo().getImage().getImageUrl()) // User 엔티티에 image 필드가 있다고 가정
                 .nickname(neighbor.getNeighborTo().getNickname())
                 .neighborType(neighbor.getNeighborType().getValue())
                 .build();
@@ -164,7 +167,7 @@ public class NeighborServiceImpl implements NeighborService {
 
     @Override
     public List<NeighborFromResponseDto> getNeighborFrom(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("User not found"));
         return neighborRepository.findByNeighborFrom(user).stream()
                 .map(this::mapFromDto)
                 .collect(Collectors.toList());
@@ -172,13 +175,13 @@ public class NeighborServiceImpl implements NeighborService {
 
     @Override
     public int getNeighborFromCount(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("User not found"));
         return neighborRepository.countByNeighborFrom(user);
     }
 
     @Override
     public List<NeighborToResponseDto> getMutualNeighborFrom(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("User not found"));
         return neighborRepository.findByNeighborToAndNeighborType(user, NeighborType.MUTUAL_NEIGHBOR.getValue()).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -186,7 +189,27 @@ public class NeighborServiceImpl implements NeighborService {
 
     @Override
     public int getMutualNeighborFromCount(String searchId) {
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> new NotValidRequestException("User not found"));
         return neighborRepository.findByNeighborToAndNeighborType(user, NeighborType.MUTUAL_NEIGHBOR.getValue()).size();
+    }
+
+    @Override
+    public NeighborCheckResponseDto checkNeighbor(String token, String searchId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        User neighbor = userRepository.findUserBySearchId(searchId)
+                .orElseThrow(() -> new NotValidRequestException("NeighborService : 이웃이 없습니다."));
+
+        Integer requestUserRel = neighborRepositorySupport.findNeighborTypeByNeighborToAndNeighborFrom(userId, neighbor.getUserId());
+        Integer profileUserRel = neighborRepositorySupport.findNeighborTypeByNeighborToAndNeighborFrom(neighbor.getUserId(), userId);
+
+        log.info(">>> checkNaighbor requestUserRel: {}", requestUserRel);
+        log.info(">>> checkNaighbor profileUserRel: {}", profileUserRel);
+
+        NeighborCheckResponseDto neighborCheckResponseDto = NeighborCheckResponseDto
+                .builder()
+                .requestUserRel(requestUserRel != null ? requestUserRel : 0)
+                .profileUserRel(profileUserRel != null ? profileUserRel : 0)
+                .build();
+        return neighborCheckResponseDto;
     }
 }

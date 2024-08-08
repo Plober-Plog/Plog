@@ -1,6 +1,7 @@
 package com.plog.backend.domain.user.entity;
 
 import com.plog.backend.domain.image.entity.Image;
+import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-@ToString(exclude = {"password","provider","providerId","image"})
+@ToString(exclude = {"password", "provider", "providerId", "image"})
 @Builder
 public class User extends BaseEntity {
     @Id
@@ -24,8 +25,8 @@ public class User extends BaseEntity {
     private Long userId;
 
     @OneToOne
-    @JoinColumn(name="image_id", referencedColumnName = "imageId")
-    private Image imageId;
+    @JoinColumn(name = "image_id", referencedColumnName = "imageId")
+    private Image image;
 
     @Column(nullable = false)
     private String email;
@@ -42,7 +43,6 @@ public class User extends BaseEntity {
     @Column
     private LocalDate birthDate;
 
-//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private int gender;
     public Gender getGender() {return Gender.gender(gender);};
@@ -51,19 +51,16 @@ public class User extends BaseEntity {
     @Column
     private String source;
 
-//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private int state;
     public State getState() {return State.state(state);};
     public void setState(State state) {this.state = state.getValue();}
 
-//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private int role;
     public Role getRole() {return Role.role(role);};
     public void setRole(Role role) {this.role = role.getValue();}
 
-//    @Enumerated(EnumType.STRING)
     @Column
     private int provider;
     public Provider getProvider() {return Provider.provider(provider);};
@@ -76,7 +73,6 @@ public class User extends BaseEntity {
     @ColumnDefault("0")
     private int totalExp;
 
-//    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private int chatAuth;
     public ChatAuth getChatAuth() {return ChatAuth.chatAuth(chatAuth);};
@@ -91,4 +87,11 @@ public class User extends BaseEntity {
 
     private int sidoCode;
     private int gugunCode;
+
+    @Column
+    private String notificationToken; // FCM 토큰 필드 추가
+
+    @Column(nullable = false)
+    @ColumnDefault("true")
+    private boolean isPushNotificationEnabled; // 푸시 알림 수신 여부 필드 추가
 }

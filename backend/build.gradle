@@ -74,6 +74,13 @@ dependencies {
     implementation 'com.amazonaws:aws-java-sdk-s3:1.11.1000'
     implementation 'software.amazon.awssdk:s3:2.20.80'
     implementation 'software.amazon.awssdk:auth:2.20.80'
+
+    // JSON library
+    implementation 'org.json:json:20210307'
+
+    // scheduler
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework:spring-aspects'
 }
 
 tasks.named('test') {

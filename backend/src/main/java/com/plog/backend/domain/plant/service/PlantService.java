@@ -26,20 +26,6 @@ public interface PlantService {
 
     void updateFixStatePlant(String token, Long plantId);
 
-    void addPlantCheck (String token, PlantCheckAddRequestDto plantCheckAddRequestDto);
-
-    void updatePlantCheck(String token, PlantCheckUpdateRequestDto plantCheckUpdateRequestDto);
-
-    PlantCheckGetResponseDto getPlantCheck(Long plantId, String checkDate);
-
-    void deletePlantCheck(String token, Long plantId, String checkDate);
-
-    List<PlantCheckGetResponseDto> getPlantCheckByYearAndMonth(PlantGetByYearAndMonthRequestDto plantGetByYearAndMonthRequestDto);
-
-    PlantTypeGetResponseDto getPlantType(Long plantTypeId);
-
-    PlantTypeIdsGetListByUserResponseDto getPlantTypeIdsByUserSearchId(String searchId);
-
     //TODO [강윤서]
     // - waterDate, fertilizeDate, repotDate 계산하는 로직
 }

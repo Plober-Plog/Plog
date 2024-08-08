@@ -40,6 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         put("/api/user/login", List.of("POST")); // 로그인 요청 제외
         put("/api/user/password", List.of("PATCH"));
         // 필요한 다른 URI와 메소드 추가
+        put("/api/auth/refresh", List.of("POST"));
+//        put("/api/user/password", List.of("POST"));
     }};
 
     @Override
@@ -52,11 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         log.info("JWT Filter 확인 : URI {}, Method {}", requestURI, requestMethod);
 
-        // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
-        if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
-            chain.doFilter(request, response); // 필터 체인 계속 진행
-            return;
-        }
+
 
         String userId = null;
         String jwtToken = null;
@@ -68,22 +66,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.info("jwtToken 속 정보 확인 : {}", userId);
             } catch (TimeoutException e) {
                 SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
-                response.getWriter().write(e.getMessage());
+                log.info("JWT Filter - JWT 토큰이 만료되었습니다.");
                 return;
             } catch (NotValidRequestException e) {
                 SecurityContextHolder.clearContext();
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().write(e.getMessage());
+                log.info("JWT Filter - JWT 토큰이 유효하지 않습니다.");
                 return;
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid or expired JWT token");
+                response.getWriter().write("JWT Filter - Invalid or expired JWT token");
                 return;
             }
         } else {
-            logger.warn("JWT Token does not begin with Bearer String");
+
+            if(requestMethod.equals("GET") || requestMethod.equals("OPTIONS")) {
+                log.info(">>> JWT Filter 제외 - GET 혹은 OPTIONS 제외");
+                chain.doFilter(request, response);
+                return;
+            }
+
+            // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
+            if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
+                log.info(">>> JWT Filter - 제외 목록에서 제외");
+                chain.doFilter(request, response); // 필터 체인 계속 진행
+                return;
+            }
+            
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("JWT Token is missing or does not begin with Bearer String");
+            return;
         }
 
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -97,6 +111,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         try {
+            log.info("JWT Filter End");
             chain.doFilter(request, response);
         } catch (Exception e) {
             log.error("Exception occurred in JwtAuthenticationFilter", e);

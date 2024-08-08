@@ -1,0 +1,20 @@
+package com.plog.realtime.global.config;
+
+import com.plog.realtime.domain.notification.service.NotificationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+
+@RequiredArgsConstructor
+@Configuration
+@EnableScheduling
+public class SchedulerConfig {
+
+    private final NotificationService notificationService;
+
+    @Scheduled(cron = "0 0 8 * * *")  // 매일 오전 8시에 실행
+    public void schedulePlantNotifications() {
+        notificationService.checkPlantNotifications();
+    }
+}

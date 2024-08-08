@@ -18,8 +18,14 @@ public class PlantGetResponseDto {
     @Schema(description = "기본 식물 종류 ID (2부터 유효한 값)", example = "1")
     private Long plantTypeId;
 
+    @Schema(description = "기본 식물 종류 이름", example = "몬스테라")
+    private String plantTypeName;
+
     @Schema(description = "기타 식물 종류 ID (2부터 유효한 값)", example = "2")
     private Long otherPlantId;
+
+    @Schema(description = "기타 식물 종류 이름", example = "수박")
+    private String otherPlantTypeName;
 
     @Schema(description = "식물 별명", example = "초록이")
     private String nickname;
@@ -37,7 +43,7 @@ public class PlantGetResponseDto {
     private LocalDate deadDate;
 
     @Schema(description = "알림 여부", example = "true")
-    private boolean hasNotified;
+    private int notifySetting;
 
     @Schema(description = "고정 여부", example = "true")
     boolean isFixed;

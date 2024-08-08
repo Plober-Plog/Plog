@@ -52,8 +52,8 @@ public class Plant extends BaseEntity {
     private LocalDate deadDate;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
-    private boolean hasNotified;
+    @ColumnDefault("7")
+    private int notifySetting;
 
     @Column(nullable = false)
     @ColumnDefault("false")

@@ -7,14 +7,19 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
+import com.plog.backend.domain.image.dto.ArticleImageGetResponseDto;
 import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
+import com.plog.backend.domain.image.entity.ArticleImage;
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
 import com.plog.backend.domain.image.exception.ImageNotFoundException;
 import com.plog.backend.domain.image.exception.InvalidImageFileException;
 import com.plog.backend.domain.image.exception.S3FileUploadException;
+import com.plog.backend.domain.image.repository.ArticleImageRepository;
 import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
+import com.plog.backend.domain.sns.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,9 +40,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
+    private final AmazonS3 amazonS3;
     private final ImageRepository imageRepository;
     private final PlantDiaryImageRepository plantDiaryImageRepository;
-    private final AmazonS3 amazonS3;
+    private final PlantDiaryRepository plantDiaryRepository;
+    private final ArticleImageRepository articleImageRepository;
+    private final ArticleRepository articleRepository;
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -121,7 +129,7 @@ public class ImageServiceImpl implements ImageService {
                     Image img = optionalImage.get();
 
                     PlantDiaryImage plantDiaryImage = new PlantDiaryImage();
-                    plantDiaryImage.setPlantDiaryId(plantDiaryId);
+                    plantDiaryImage.setPlantDiary(plantDiaryRepository.getReferenceById(plantDiaryId));
                     plantDiaryImage.setImage(img);
                     if (order - 1 == thumbnailIdx)
                         plantDiaryImage.setThumbnail(true);
@@ -172,7 +180,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String loadImage(Long imageId) {
-        log.info(">>> loadImage - 이미지 로드 시작, ID: {}", imageId);
+//        log.info(">>> loadImage - 이미지 로드 시작, ID: {}", imageId);
         Optional<Image> optionalImage = imageRepository.findByImageIdAndIsDeletedFalse(imageId);
         if (optionalImage.isPresent()) {
             log.info(">>> loadImage - 이미지 로드 성공, ID: {}", imageId);
@@ -184,7 +192,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<PlantDiaryImageGetResponseDto> loadImagesByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadImagesByPlantDiaryId - 플랜트 다이어리 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
-        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
+        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
         if (plantDiaryImages.isEmpty()) {
             return new ArrayList<>();
         }
@@ -194,12 +202,11 @@ public class ImageServiceImpl implements ImageService {
             plantDiaryImageGetResponseDtoList.add(
                     PlantDiaryImageGetResponseDto.builder()
                             .plantDiaryImageId(plantDiaryImage.getPlantDiaryImageId())
-                            .plantDiaryId(plantDiaryImage.getPlantDiaryId())
+                            .plantDiaryId(plantDiaryImage.getPlantDiary().getPlantDiaryId())
                             .image(plantDiaryImage.getImage())
                             .order(plantDiaryImage.getOrder())
                             .isThumbnail(plantDiaryImage.isThumbnail())
                             .build());
-
         }
 
         log.info(">>> loadImagesByPlantDiaryId - 플랜트 다이어리 이미지 로드 성공, PlantDiaryId: {}", plantDiaryId);
@@ -209,7 +216,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<String> loadImageUrlsByPlantDiaryId(Long plantDiaryId) {
         log.info(">>> loadImageUrlsByPlantDiaryId - 플랜트 다이어리 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
-        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
+        List<PlantDiaryImage> plantDiaryImages = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(plantDiaryId);
         if (plantDiaryImages.isEmpty()) {
             return new ArrayList<>();
         }
@@ -222,12 +229,84 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String loadThumbnailImageByPlantDiaryId(Long plantDiaryId) {
-        log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
-        Optional<PlantDiaryImage> thumbnailImage = plantDiaryImageRepository.findByPlantDiaryIdAndIsThumbnailTrue(plantDiaryId);
+//        log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 시작, PlantDiaryId: {}", plantDiaryId);
+        Optional<PlantDiaryImage> thumbnailImage = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndIsThumbnailTrue(plantDiaryId);
         if (thumbnailImage.isEmpty()) {
             return null;
         }
         log.info(">>> loadThumbnailImageByPlantDiaryId - 플랜트 다이어리 썸네일 이미지 로드 성공, PlantDiaryId: {}", plantDiaryId);
         return thumbnailImage.get().getImage().getImageUrl();
+    }
+
+    @Override
+    @Transactional
+    public String[] ArticleUploadImages(MultipartFile[] images, Long articleId) {
+        log.info(">>> ArticleUploadImages - 게시글 이미지 업로드 시작, articleId: {}", articleId);
+        String[] urls = uploadImages(images);
+        int order = 1;
+        List<ArticleImage> articleImageList = new ArrayList<>();
+
+        try {
+
+            for (String url : urls) {
+                Optional<Image> optionalImage = imageRepository.findByImageUrl(url);
+                if (optionalImage.isPresent()) {
+                    Image img = optionalImage.get();
+
+                    ArticleImage articleImage = new ArticleImage();
+                    articleImage.setArticle(articleRepository.getReferenceById(articleId));
+                    articleImage.setImage(img);
+                    articleImage.setOrder(order++);
+                    articleImageList.add(articleImage);
+                }
+            }
+            articleImageRepository.saveAll(articleImageList); // 한 번에 저장
+            log.info(">>> ArticleUploadImages - 게시글 이미지 업로드 및 DB 저장 완료");
+        } catch (Exception e) {
+            // 업로드된 S3 파일 삭제
+            for (String url : urls) {
+                String fileName = url.substring(url.lastIndexOf("/") + 1);
+                amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+            }
+            throw new S3FileUploadException("게시글 이미지 업로드 중 오류 발생");
+        }
+        return urls;
+    }
+
+    @Override
+    public List<ArticleImageGetResponseDto> loadImagesByArticleId(Long articleId) {
+        log.info(">>> loadImagesByArticleId - 게시글 이미지 로드 시작, articleId: {}", articleId);
+        List<ArticleImage> articleImageList = articleImageRepository.findByArticleArticleIdAndImageIsDeletedFalseOrderByOrderAsc(articleId);
+        if (articleImageList.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<ArticleImageGetResponseDto> articleImageGetResponseDtoList = new ArrayList<>();
+        for (ArticleImage articleImage : articleImageList) {
+            articleImageGetResponseDtoList.add(
+                    ArticleImageGetResponseDto.builder()
+                            .articleImageId(articleImage.getArticleImageId())
+                            .articleId(articleImage.getArticle().getArticleId())
+                            .image(articleImage.getImage())
+                            .order(articleImage.getOrder())
+                            .build());
+        }
+
+        log.info(">>> loadImagesByArticleId - 게시글 이미지 로드 성공, articleId: {}", articleId);
+        return articleImageGetResponseDtoList;
+    }
+
+    @Override
+    public List<String> loadImagUrlsByArticleId(Long articleId) {
+        log.info(">>> loadImagUrlsByArticleId - 게시글 이미지 로드 시작, articleId: {}", articleId);
+        List<ArticleImage> articleImageList = articleImageRepository.findByArticleArticleIdAndImageIsDeletedFalseOrderByOrderAsc(articleId);
+        if (articleImageList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<String> imageUrls = new ArrayList<>();
+        for (ArticleImage articleImage : articleImageList) {
+            imageUrls.add(articleImage.getImage().getImageUrl());
+        }
+        return imageUrls;
     }
 }

@@ -22,5 +22,5 @@ public class PlantDiaryImageGetResponseDto {
 
     private int order;
 
-    private boolean isThumbnail = false;
+    private boolean isThumbnail;
 }
