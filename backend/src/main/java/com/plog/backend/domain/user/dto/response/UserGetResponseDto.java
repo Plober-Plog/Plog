@@ -20,5 +20,4 @@ public class UserGetResponseDto {
     private int gugunCode;
     private String profileInfo;
     private boolean isAd;
-    private boolean isPushNotificationEnabled;
 }
