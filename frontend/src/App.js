@@ -24,6 +24,8 @@ import ApiTest from './pages/Plant/ApiTest';
 
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
+import Neighbor from './pages/Profile/Neighbor';
+
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
@@ -58,6 +60,7 @@ function App() {
               {/* profile */}
               {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
               <Route path="/profile/:searchId" element={<UserProfile />} />
+              <Route path="/neighbor/:searchId" element={<Neighbor />}/>
               {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
               {/* sns */}
               <Route path="/sns/write" element={<SnsWrite />} />
