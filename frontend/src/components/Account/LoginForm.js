@@ -14,23 +14,19 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
-  const [fcmToken, setFcmToken] = useState(''); // FCM 토큰 상태 추가
+  import { requestForToken } from '../../firebase'; // FCM 관련 코드 추가
   const setToken = useAuthStore((state) => state.setToken);
   const setUserData = useAuthStore((state) => state.setUserData);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    requestForToken().then((token) => {
-      if (token) {
-        setFcmToken(token);
-      } else {
-        console.error('FCM 토큰을 받지 못했습니다.');
-      }
-    });
-  }, []);
 
   const handleLogin = async (event) => {
     event.preventDefault();
+
+    // FCM 토큰 요청
+    const fcmToken = await requestForToken();
+
+    console.log(fcmToken);
 
     const userInfo = {
       email,
