@@ -42,14 +42,16 @@ pipeline {
                 }
             }
         }
-        stage('Copy application.properties') {
+        stage('Copy Configuration Files') {
             steps {
                 script {
-                    // Jenkins Credentials에서 secret file 가져오기
+                    // Jenkins Credentials에서 secret files 가져오기
                     def backendRealtimeProperties = credentials('application-backend-realtime-properties')
+                    def certificationJson = credentials('certification-json')
                     
                     // 파일 복사
                     sh 'echo "$backendRealtimeProperties" > ${WORKSPACE}/backend-realtime/src/main/resources/application.properties'
+                    sh 'echo "$certificationJson" > ${WORKSPACE}/backend-realtime/src/main/resources/certification.json'
                 }
             }
         }
