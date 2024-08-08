@@ -38,7 +38,7 @@ function App() {
         <main className='content'>
 
             <Routes>
-              {/* <Route path="/" element={<Home />}/> */}
+              <Route path="/" element={<Home />}/>
               {/* Account */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
