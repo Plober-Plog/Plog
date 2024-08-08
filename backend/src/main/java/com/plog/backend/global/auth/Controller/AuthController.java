@@ -26,7 +26,8 @@ public class AuthController {
             Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
             String newAccessToken = jwtTokenProvider.generateAccessToken(authentication);
             log.info("refresh token - 새로운 토큰 발급 : {}", newAccessToken);
-            return ResponseEntity.ok().header("Authorization", "Bearer " + newAccessToken).body("토큰이 발급되었습니다.");
+            newAccessToken = "Bearer " + newAccessToken;
+            return ResponseEntity.ok().header("Authorization", newAccessToken).body("토큰이 발급되었습니다. : "+ newAccessToken);
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("refresh 토큰이 만료되었습니다.");
         }
