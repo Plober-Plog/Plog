@@ -11,8 +11,6 @@ import com.plog.realtime.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,8 +25,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final ChannelTopic topic;
+    private final FCMService fcmService;
 
     @Override
     public List<NotificationMessageResponseDto> getNotifications(String searchId) {
@@ -86,8 +83,11 @@ public class NotificationServiceImpl implements NotificationService {
 
         NotificationMessageResponseDto notificationMessageResponseDto = NotificationMessageResponseDto.toNotificationDTO(notification);
 
-        // Redis를 통해 메시지를 전송합니다.
-        redisTemplate.convertAndSend(topic.getTopic(), notificationMessageResponseDto);
+        // FCM을 통해 메시지를 전송합니다.
+        if (targetUser.isPushNotificationEnabled() && targetUser.getNotificationToken() != null) {
+            fcmService.sendNotification(targetUser.getNotificationToken(), formattedMessage);
+        }
+
         log.info("sendNotification 완료 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
 
         return notificationMessageResponseDto;
@@ -186,35 +186,5 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setIsRead(true);
         notificationRepository.save(notification);
         log.info("markAsRead 완료 - notificationId: {}", notificationId);
-    }
-
-    @Override
-    public List<NotificationMessageResponseDto> getUnsentNotifications(String searchId) {
-        log.info("getUnsentNotifications 시작 - searchId: {}", searchId);
-        User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> {
-            log.error("getUnsentNotifications 실패 - User not found, searchId: {}", searchId);
-            return new RuntimeException("User not found");
-        });
-        List<Notification> notifications = notificationRepository.findByUserAndIsSentFalseOrderByCreatedAtDesc(user);
-        List<NotificationMessageResponseDto> notificationMessageResponseDtos = new ArrayList<>();
-        for (Notification notification : notifications) {
-            notificationMessageResponseDtos.add(NotificationMessageResponseDto.toNotificationDTO(notification));
-            notification.setIsSent(true);
-            notificationRepository.save(notification);
-        }
-        log.info("getUnsentNotifications 완료 - searchId: {}", searchId);
-        return notificationMessageResponseDtos;
-    }
-
-    @Override
-    public void markAsSent(Long notificationId) {
-        log.info("markAsSent 시작 - notificationId: {}", notificationId);
-        Notification notification = notificationRepository.findById(notificationId).orElseThrow(() -> {
-            log.error("markAsSent 실패 - Notification not found, notificationId: {}", notificationId);
-            return new RuntimeException("Notification not found");
-        });
-        notification.setIsSent(true);
-        notificationRepository.save(notification);
-        log.info("markAsSent 완료 - notificationId: {}", notificationId);
     }
 }

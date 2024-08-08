@@ -77,10 +77,11 @@ public class UserServiceImpl implements UserService {
                 .gugunCode(user.getGugunCode())
                 .profileInfo(user.getProfileInfo())
                 .isAd(user.isAd())
+                .isPushNotificationEnabled(user.isPushNotificationEnabled())
                 .build();
     }
 
-    public Map<String, String> userSignIn(String email, String password) {
+    public Map<String, String> userSignIn(String email, String password, String notificationToken) {
         log.info(">>> [USER SIGN IN] - 사용자 로그인 요청: 이메일 = {}", email);
 
         // 이메일로 사용자 찾기
@@ -121,6 +122,10 @@ public class UserServiceImpl implements UserService {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
+
+        user.setNotificationToken(notificationToken);
+        userRepository.save(user);
+        log.info(">>> [USER SIGN IN] - notification 토큰 DB에 업데이트 완료: {}", notificationToken);
 
         return tokens;
     }
@@ -208,6 +213,7 @@ public class UserServiceImpl implements UserService {
             user.setSource(request.getSource());
             user.setSidoCode(request.getSidoCode());
             user.setGugunCode(request.getGugunCode());
+            user.setPushNotificationEnabled(request.isPushNotificationEnabled());
             User updatedUser = userRepository.save(user);
             log.info(">>> updateUser - 사용자 업데이트됨: {}", updatedUser);
             return updatedUser;

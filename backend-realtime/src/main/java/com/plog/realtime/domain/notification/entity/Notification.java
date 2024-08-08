@@ -31,9 +31,6 @@ public class Notification extends BaseEntity {
     @Column
     private Boolean isRead = false;
 
-    @Column
-    private Boolean isSent = false;
-
     @Column(length = 255)
     private String content;
 

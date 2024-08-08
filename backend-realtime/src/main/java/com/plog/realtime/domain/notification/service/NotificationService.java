@@ -15,8 +15,4 @@ public interface NotificationService {
     List<NotificationMessageResponseDto> getUnreadNotifications(String searchId);
 
     void markAsRead(Long notificationId);
-
-    List<NotificationMessageResponseDto> getUnsentNotifications(String searchId);
-
-    void markAsSent(Long notificationId);
 }

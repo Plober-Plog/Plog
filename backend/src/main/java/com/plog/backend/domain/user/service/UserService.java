@@ -15,7 +15,7 @@ import java.util.Map;
 public interface UserService {
     User getUserBySearchId(String searchId);
     UserGetResponseDto getUser(String token);
-    Map<String, String> userSignIn(String email, String password);
+    Map<String, String> userSignIn(String email, String password, String notificationToken);
     void userSignOut(String token);
     User createUser(UserSignUpRequestDto userSignUpRequestDto);
     Boolean checkUserSearchId(String searchId);
