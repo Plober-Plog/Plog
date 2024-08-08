@@ -47,7 +47,7 @@ public class ChatRoomController {
     @GetMapping
     public ResponseEntity<?> getChatRoomUserList(@RequestParam("chatRoomId") Long chatRoomId) {
         List<User> userList = chatRoomService.getChatRoomUsers(chatRoomId);
-        return null;
+        return ResponseEntity.ok(userList);
     }
 
     // get -> 해당 채팅방 자체 정보
