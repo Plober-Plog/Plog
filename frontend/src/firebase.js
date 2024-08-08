@@ -47,3 +47,5 @@ export const onMessageListener = () =>
       resolve(payload);
     });
   });
+
+export { app as firebaseApp }; // firebaseApp을 export
