@@ -93,7 +93,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 chain.doFilter(request, response); // 필터 체인 계속 진행
                 return;
             }
-            
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("JWT Token is missing or does not begin with Bearer String");
             return;
