@@ -77,6 +77,7 @@ const PlantDiaryDetail = () => {
           isFertilized,
           isRepotted,
           imgs: images.map(img => img.url),
+          isEditImage: false,
         },
         plantData: {
           plantId, 
@@ -97,14 +98,22 @@ const PlantDiaryDetail = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await API.delete(`/user/diary/${plantDiaryId}`);
+      const diaryResponse = await API.delete(`/user/diary/${plantDiaryId}`);
 
-      if (response.status !== 200) {
+      if (diaryResponse.status !== 200) {
         throw new Error('일지 삭제에 실패했습니다.');
+      }
+      
+      const checkResponse = await API.delete(`/user/plant/${plantId}/check`, {
+        params: { checkDate: date }
+      });
+  
+      if (checkResponse.status !== 200) {
+        throw new Error('식물 관리 기록 삭제에 실패했습니다.');
       }
 
       alert('일지가 삭제되었습니다.');
-      navigate(`plant/${plantId}`); 
+      navigate(`/plant/${plantId}`);
     } catch (error) {
       console.error('Error:', error);
       alert('일지 삭제 중 오류가 발생했습니다.');
