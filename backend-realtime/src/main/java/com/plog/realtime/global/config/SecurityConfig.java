@@ -1,37 +1,27 @@
-package com.plog.backend.global.config;
+package com.plog.realtime.global.config;
 
-import com.plog.backend.global.auth.JwtAuthenticationFilter;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(withDefaults())
+                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/api/user").permitAll() // 회원가입은 JWT 없이 접근 가능
@@ -47,20 +37,6 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/user/**").permitAll() // JWT 없이 접근 가능
 //                        .anyRequest().authenticated() // 나머지 요청은 JWT 필요
                 )
-                .headers(headers -> headers
-                        .addHeaderWriter((request, response) -> {
-                            response.addHeader("Access-Control-Allow-Origin", "*");
-                            response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-                            response.addHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token, accessToken, refreshToken, userData");
-                            response.addHeader("Access-Control-Expose-Headers", "xsrf-token");
-                            response.addHeader("Access-Control-Allow-Credentials", "true");
-                            if (request.getMethod().equals("OPTIONS")) {
-                                response.setStatus(HttpServletResponse.SC_OK);
-                            }
-                        })
-                )
-
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -69,6 +45,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 //        config.setAllowCredentials(true);
+        config.addAllowedOrigin("https://i11b308.p.ssafy.io");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addAllowedOrigin("*");
