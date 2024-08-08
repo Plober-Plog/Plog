@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
+import { useNavigate } from'react-router-dom';
 import useAuthStore from '../../stores/member';
 import API from '../../apis/api';
 
 const ProfileHeaderUserBtnList = ({ ownerId }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
-
+  const navigate = useNavigate();
   const [profileUserRel, setProfileUserRel] = useState(null);
   const [requestUserRel, setRequestUserRel] = useState(null);
 
@@ -62,31 +63,44 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     return '';
   };
 
+  const handleClickNeighborList = () => {
+    navigate(`/profile/${ownerId}/neighbor`)
+  }
+
   return (
     <div>
       {authSearchId === ownerId && (
         <>
           <button style={{ margin: '10px' }}>🔖</button>
-          <button style={{ margin: '10px' }}>이웃목록</button>
+          <button 
+            style={{ margin: '10px' }}
+            onClick={handleClickNeighborList}
+          >
+            이웃목록
+          </button>
         </>
       )}
-      <span>
-        {getRequestUserRelText()}
-      </span>
-      <div>
-        {profileUserRel === 0 && (
-          <button style={{ margin: '10px' }} onClick={addNeighbor}>이웃 추가</button>
-        )}
-        {profileUserRel === 1 && (
-          <>
-            <button style={{ margin: '10px' }}>서로이웃 신청</button>
-            <button style={{ margin: '10px' }} onClick={removeNeighbor}>이웃 취소</button>
-          </>
-        )}
-        {profileUserRel === 2 && (
-          <button style={{ margin: '10px' }}>서로이웃 끊기</button>
-        )}
-      </div>
+      {authSearchId !== ownerId && (
+        <>
+          <span>
+            {getRequestUserRelText()}
+          </span>
+          <div>
+            {profileUserRel === 0 && (
+              <button style={{ margin: '10px' }} onClick={addNeighbor}>이웃 추가</button>
+            )}
+            {profileUserRel === 1 && (
+              <>
+                <button style={{ margin: '10px' }}>서로이웃 신청</button>
+                <button style={{ margin: '10px' }} onClick={removeNeighbor}>이웃 취소</button>
+              </>
+            )}
+            {profileUserRel === 2 && (
+              <button style={{ margin: '10px' }}>서로이웃 끊기</button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

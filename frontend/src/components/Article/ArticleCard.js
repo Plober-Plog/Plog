@@ -9,16 +9,16 @@ import defaultImg from '../../assets/icon/default.png';
   (식물 SNS 추천, 인기 SNS 추천 알고리즘에 쓰입니다.)
   (BE에서 큐레이팅 알고리즘을 고려해 만들어 주어야 합니다.)
 */
-const ArticleCard = ({ plantId, id, log, thumbnail, type }) => {
+const ArticleCard = ({ ownerId, id, log, thumbnail, type }) => {
 
   const navigate = useNavigate();
 
   const handleClick = () => {
     if (type === 'plant') {
-      navigate(`/plant/${plantId}/${log}`, {
+      navigate(`/plant/${ownerId}/${log}`, {
         state: {
           date: log,
-          plantId: plantId
+          plantId: ownerId
         }
       });
 

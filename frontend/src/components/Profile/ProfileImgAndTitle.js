@@ -4,6 +4,7 @@ import '../../pages/Plant/PlantDetail.css';
 import defaultImg from '../../assets/icon/default.png';
 
 const ProfileImgAndTitle = ({ imgSrc, title, nickname }) => {
+  console.log('ProfileImgAndTitle:', { imgSrc, title, nickname });
   return (
     <div>
       <div>
