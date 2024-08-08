@@ -124,15 +124,15 @@ const PlantDiaryDetail = () => {
 
   return (
     <div className="plant-diary-container">
-      <div className="section">
+      <div className="plant-diary-section">
         <h2>{date}</h2>
         <DiaryTodoIcon src={pencilIcon} onClick={handleEdit} />
         <Btn content="X" onClick={() => navigate(`/plant/${plantId}`)} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
       </div>
-      <div className="section">
+      <div className="plant-diary-section">
         <ImageSlider imgs={images.map(img => img)} />
       </div>
-      <div className="section">
+      <div className="plant-diary-section">
         {(!isWatered && !isFertilized && !isRepotted) ? (
           <div>식물관리내역이 없습니다.</div>
         ) : (
@@ -155,8 +155,8 @@ const PlantDiaryDetail = () => {
           </div>
         )}
       </div>
-      <div className="section">
-        <div className="todo-icons">
+      <div className="plant-diary-section">
+        <div className="plant-diary-todo-icons">
           <DiaryTodoIcon src={weatherIcon} />
           <DiaryTodoIcon src={humidityIcon} />
           <DiaryTodoIcon src={temperatureIcon} />
@@ -168,7 +168,7 @@ const PlantDiaryDetail = () => {
           content={weatherContent}
         />
       </div>
-      <div className="section">
+      <div className="plant-diary-section">
         <DiaryDetailContent detailContent={content} />
       </div>
       <div>
