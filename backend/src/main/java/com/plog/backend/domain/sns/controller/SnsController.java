@@ -154,9 +154,9 @@ public class SnsController {
     @Operation(summary = "댓글 삭제", description = "기존 댓글을 삭제합니다.")
     public ResponseEntity<BaseResponseBody> deleteComment(
             @RequestHeader("Authorization") String token,
-            @RequestBody ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto) {
-        log.info(">>> [DELETE] /user/sns/comment - 댓글 삭제 요청 데이터: {}", articleCommentDeleteRequestDto);
-        articleCommentService.deleteArticleComment(token, articleCommentDeleteRequestDto);
+            @RequestParam(value = "commentId") String commentId) {
+        log.info(">>> [DELETE] /user/sns/comment - 댓글 삭제 요청 데이터: {}", commentId);
+        articleCommentService.deleteArticleComment(token, Long.parseLong(commentId));
         log.info(">>> [DELETE] /user/sns/comment - 댓글 삭제 완료");
         return ResponseEntity
                 .status(HttpStatus.OK)
