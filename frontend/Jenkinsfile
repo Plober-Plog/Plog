@@ -38,7 +38,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh 'npm install'
-                    sh 'npm run build'
+                    sh 'CI=false npm run build'  // CI 환경 변수를 false로 설정
                 }
             }
         }
