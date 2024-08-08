@@ -68,8 +68,9 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); // 쿠키 허용 설정
-        config.addAllowedOriginPattern("*"); // 모든 출처 허용 (allowedOriginPatterns 사용)
+//        config.setAllowCredentials(true); // 쿠키 허용 설정
+//        config.addAllowedOriginPattern("*"); // 모든 출처 허용 (allowedOriginPatterns 사용)
+        config.addAllowedOrigin("*"); // 모든 출처 허용 (allowedOriginPatterns 사용)
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
