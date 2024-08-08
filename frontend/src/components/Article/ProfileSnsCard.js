@@ -9,7 +9,7 @@ const ProfileSnsCard = ({ articleId, nickname, image, content, likeCnt, commentC
     navigate(`/sns/${articleId}`);
   }
 
-  const cutContent = content.length > 30? content.slice(0, 30) + "..." : content;
+  const cutContent = content && content.length > 30? content.slice(0, 30) + "..." : content;
 
   return (
     <div onClick={handleClick}>
