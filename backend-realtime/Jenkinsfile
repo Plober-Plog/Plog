@@ -46,16 +46,16 @@ pipeline {
             steps {
                 script {
                     // Jenkins Credentials에서 secret files 가져오기
-                    def backendRealtimeProperties = credentials('application-backend-realtime-properties')
-                    def certificationJson = credentials('certification-json')
-                    
-                    // 파일 복사
-                    sh 'echo "$backendRealtimeProperties" > ${WORKSPACE}/backend-realtime/src/main/resources/application.properties'
-                    sh 'echo "$certificationJson" > ${WORKSPACE}/backend-realtime/src/main/resources/certification.json'
+                    withCredentials([file(credentialsId: 'application-backend-realtime-properties', variable: 'BACKEND_PROPERTIES'),
+                                     file(credentialsId: 'certification-json', variable: 'CERT_JSON')]) {
+                        // 파일 복사
+                        sh 'cp $BACKEND_PROPERTIES ${WORKSPACE}/backend-realtime/src/main/resources/application.properties'
+                        sh 'cp $CERT_JSON ${WORKSPACE}/backend-realtime/src/main/resources/certification.json'
 
-                    // 복사된 파일 내용 확인
-                    sh 'cat ${WORKSPACE}/backend-realtime/src/main/resources/application.properties'
-                    sh 'cat ${WORKSPACE}/backend-realtime/src/main/resources/certification.json'
+                        // 복사된 파일 내용 확인
+                        sh 'cat ${WORKSPACE}/backend-realtime/src/main/resources/application.properties'
+                        sh 'cat ${WORKSPACE}/backend-realtime/src/main/resources/certification.json'
+                    }
                 }
             }
         }
