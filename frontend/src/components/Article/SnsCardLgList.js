@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
-import SnsCardMd from './SnsCardMd';
+import SnsCardLg from './SnsCardLg';
 
-const SnsCardMdList = ({ searchId }) => {
+const SnsCardLgList = ({ searchId, tagType }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
 
   const [snslist, setSnsList] = useState([]);
@@ -15,7 +15,7 @@ const SnsCardMdList = ({ searchId }) => {
     setLoading(true);
     try {
       const response = await API.get(`/user/sns`, {
-        params: {searchId, page}
+        params: {searchId, page, tagType}
       });
       if (response.data.length === 0) {
         setHasMore(false);
@@ -36,7 +36,7 @@ const SnsCardMdList = ({ searchId }) => {
 
   useEffect(() => {
     fetchSnsList(searchId, 0);
-  }, [searchId]);
+  }, [searchId, tagType]);
 
   const handleScroll = () => {
     if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && hasMore && !loading) {
@@ -51,9 +51,9 @@ const SnsCardMdList = ({ searchId }) => {
 
   return (
     <div>
-      <h3>SNS MD CardList목록</h3>
+      <h3>SNS LG CardList목록</h3>
       {snslist.map((sns) => (
-        <SnsCardMd 
+        <SnsCardLg 
           key={sns.articleId}
           articleId={sns.articleId}
           nickname={sns.nickname}
@@ -70,4 +70,4 @@ const SnsCardMdList = ({ searchId }) => {
   )
 }
 
-export default SnsCardMdList;
+export default SnsCardLgList;
