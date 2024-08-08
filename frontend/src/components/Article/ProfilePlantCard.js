@@ -2,12 +2,14 @@ import React from "react";
 import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 
-const ProfilePlantCard = ({ plantId, profile, nickname, plantTypeId, birthDate, plantTypeName }) => {
+const ProfilePlantCard = ({ plantId, profile, nickname, plantTypeId, birthDate, plantTypeName, isClickable }) => {
   
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/plant/${plantId}`);
+    if (isClickable) {
+      navigate(`/plant/${plantId}`);
+    }
   }
   
   return (
