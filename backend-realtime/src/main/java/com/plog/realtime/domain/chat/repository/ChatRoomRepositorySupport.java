@@ -10,9 +10,9 @@ import java.util.List;
 
 @Repository
 public class ChatRoomRepositorySupport extends QuerydslRepositorySupport {
-    private JPAQueryFactory queryFactory = null;
+    private JPAQueryFactory queryFactory;
 
-    public ChatRoomRepositorySupport(JPAQueryFactory jpaQueryFactory) {
+    public ChatRoomRepositorySupport(JPAQueryFactory queryFactory) {
         super(ChatRoomRepository.class);
         this.queryFactory = queryFactory;
     }
@@ -20,6 +20,7 @@ public class ChatRoomRepositorySupport extends QuerydslRepositorySupport {
     public List<ChatRoom> findByChatUserId(Long chatUserId) {
         QChatRoom qChatRoom = QChatRoom.chatRoom;
         return queryFactory.selectFrom(qChatRoom)
+                .where(qChatRoom.chatRoomId.eq(chatUserId))
                 .where(qChatRoom.isDeleted.eq(false))
                 .fetch();
     }
