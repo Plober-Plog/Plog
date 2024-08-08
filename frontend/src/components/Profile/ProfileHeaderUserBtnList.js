@@ -70,23 +70,27 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
           <button style={{ margin: '10px' }}>이웃목록</button>
         </>
       )}
-      <span>
-        {getRequestUserRelText()}
-      </span>
-      <div>
-        {profileUserRel === 0 && (
-          <button style={{ margin: '10px' }} onClick={addNeighbor}>이웃 추가</button>
-        )}
-        {profileUserRel === 1 && (
-          <>
-            <button style={{ margin: '10px' }}>서로이웃 신청</button>
-            <button style={{ margin: '10px' }} onClick={removeNeighbor}>이웃 취소</button>
-          </>
-        )}
-        {profileUserRel === 2 && (
-          <button style={{ margin: '10px' }}>서로이웃 끊기</button>
-        )}
-      </div>
+      {authSearchId !== ownerId && (
+        <>
+          <span>
+            {getRequestUserRelText()}
+          </span>
+          <div>
+            {profileUserRel === 0 && (
+              <button style={{ margin: '10px' }} onClick={addNeighbor}>이웃 추가</button>
+            )}
+            {profileUserRel === 1 && (
+              <>
+                <button style={{ margin: '10px' }}>서로이웃 신청</button>
+                <button style={{ margin: '10px' }} onClick={removeNeighbor}>이웃 취소</button>
+              </>
+            )}
+            {profileUserRel === 2 && (
+              <button style={{ margin: '10px' }}>서로이웃 끊기</button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
