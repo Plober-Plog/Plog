@@ -26,7 +26,7 @@ messaging.onBackgroundMessage(function(payload) {
     }
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  // self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 // messaging.onBackgroundMessage();
