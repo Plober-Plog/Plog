@@ -1,10 +1,16 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 // default
 import Home from './pages/Main/Home';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
+import FooterCmt from './components/Common/FooterCmt'; // FooterCmt 가져오기
+
+// FCM
+import { getMessaging, getToken } from 'firebase/messaging';
+import { requestForToken, onForegroundMessage } from './firebase';
 
 // Account
 import SignUp from './pages/Account/SignUp';
@@ -23,6 +29,8 @@ import PlantGuide from './pages/Plant/PlantGuide';
 import PlantReport from './pages/Plant/PlantReport';
 import ApiTest from './pages/Plant/ApiTest';
 
+
+
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
 import Neighbor from './pages/Profile/Neighbor';
@@ -30,8 +38,26 @@ import Neighbor from './pages/Profile/Neighbor';
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
+import SnsList from './pages/Sns/SnsList';
+
+// 로그인 후에만 FCM 토큰을 요청하고 저장했다면, 여기는 onForegroundMessage만 설정
+if (Notification.permission === 'granted') {
+  onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
+}
 
 function App() {
+  // useEffect(() => {
+  //   const initFCM = async () => {
+  //     const token = await requestForToken();
+  //     if (token) {
+  //       document.cookie = `fcmToken=${token}; path=/; SameSite=Lax`;
+  //     }
+  //     onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
+  //   };
+
+  //   initFCM();
+  // }, []);
+
   return (
     <div className='container'>
       <Router>
@@ -41,7 +67,6 @@ function App() {
         <main className='content'>
 
             <Routes>
-              <Route path="/" element={<Home />}/>
               {/* Account */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
@@ -56,25 +81,32 @@ function App() {
               <Route path="/plant/:plantId" element={<PlantDetail />} />
               <Route path="/plant/:plantId/report" element={<PlantReport />} />
               <Route path="/guide/:plantTypeId" element={<PlantGuide />} />
-              {/* <Route path="/plant" element={<PlantDetail />} /> */}
-              {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
               <Route path="/plant/register" element={<PlantRegister />} />
               {/* profile */}
-              {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
               <Route path="/profile/:searchId" element={<UserProfile />} />
               <Route path="/profile/:searchId/neighbor" element={<Neighbor />}/>
-              {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
               {/* sns */}
+              <Route path="/sns" element={<SnsList />} />
               <Route path="/sns/write" element={<SnsWrite />} />
               <Route path="/sns/:articleId" element={<SnsDetail />} />
             </Routes>
         </main>
-        <footer className='full-width'>
-          <Footer />
-        </footer>
+        <FooterWithCondition />
       </Router>
     </div>
   );
-};
+}
+
+// sns 들어가면 댓글작성 footer 출력
+const FooterWithCondition = () => {
+  const location = useLocation();
+  const isSnsDetailPage = location.pathname.startsWith('/sns/');
+
+  return (
+    <footer className='full-width'>
+      {isSnsDetailPage ? null : <Footer />}
+    </footer>
+  );
+}
 
 export default App;

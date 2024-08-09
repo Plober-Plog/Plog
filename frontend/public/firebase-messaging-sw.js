@@ -8,6 +8,8 @@ const firebaseConfig = {
   appId: '1:921732690597:web:3fda0b21340a730fcfd34c',
 };
 
+console.log('Firebase Config:', firebaseConfig);
+
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
@@ -29,5 +31,7 @@ messaging.onBackgroundMessage(function(payload) {
     notificationOptions.body = payload.data.body || notificationOptions.body;
   }
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  // self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+// messaging.onBackgroundMessage();

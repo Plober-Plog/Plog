@@ -3,10 +3,13 @@ import PropTypes from 'prop-types';
 import API from "../../apis/api";
 import FooterCmt from '../Common/FooterCmt';
 import CommentItem from './CommentItem';
+import useAuthStore from '../../stores/member';
 
-const Comment = ({ articleId, userInfo }) => {
+const Comment = ({ articleId }) => {
   const [commentList, setCommentList] = useState([]);
   const [selectedParentId, setSelectedParentId] = useState(0);
+  const [isFooterCmtActive, setIsFooterCmtActive] = useState(false);
+  const { userData } = useAuthStore();
 
   // 댓글 불러오기
   useEffect(() => {
@@ -25,20 +28,26 @@ const Comment = ({ articleId, userInfo }) => {
 
   const handleReply = (parentId) => {
     setSelectedParentId(parentId);
+    setIsFooterCmtActive(true);
   };
 
   return (
     <div>
+      <hr />
+      <h3>댓글</h3>
       <div>
-        {commentList.map((comments) => (
-          <CommentItem key={comments.articleCommentId} comments={comments} handleReply={handleReply} />
+        {commentList.map((comment) => (
+          <CommentItem key={comment.articleCommentId} comments={comment} handleReply={handleReply} />
         ))}
       </div>
       <FooterCmt
         articleId={articleId}
         selectedParentId={selectedParentId}
-        profile={userInfo.profile}
+        setSelectedParentId={setSelectedParentId}
+        profile={userData.profile}
         setCommentList={setCommentList}
+        isActive={isFooterCmtActive}
+        setIsActive={setIsFooterCmtActive}
       />
     </div>
   );
@@ -46,9 +55,6 @@ const Comment = ({ articleId, userInfo }) => {
 
 Comment.propTypes = {
   articleId: PropTypes.number.isRequired,
-  userInfo: PropTypes.shape({
-    profile: PropTypes.string,
-  }).isRequired,
 };
 
 export default Comment;

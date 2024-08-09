@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import API from "../../apis/api";
 import send from "../../assets/icon/footer/send.svg";
 import './Footer.css';
 
-const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId }) => {
+const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSelectedParentId, isActive, setIsActive }) => {
   const [content, setContent] = useState('');
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isActive) {
+      inputRef.current.focus();
+    }
+  }, [isActive]);
 
   useEffect(() => {
     setContent('');
@@ -12,6 +19,11 @@ const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId }) => 
 
   const handleCmtWrite = async (e) => {
     e.preventDefault();
+
+    if (!content.trim()) {
+      alert("댓글 내용을 입력해주세요.");
+      return;
+    }
 
     const commentData = {
       articleId,
@@ -27,13 +39,15 @@ const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId }) => 
       // 댓글 작성 후 댓글 목록 갱신
       const updatedComments = await API.get(`/user/sns/${articleId}/comment`);
       setCommentList(updatedComments.data);
+      setIsActive(false);  // 댓글 작성 후 FooterCmt 비활성화
+      setSelectedParentId(0);  // 작성 후 root 댓글 작성으로 초기화
     } catch (error) {
       console.error('댓글 작성 실패:', error.response || error);
     }
   };
 
   return (
-    <div className="footer-container">
+    <div className={`footer-container ${isActive ? 'active' : ''}`}>
       <div>
         {profile && <img src={profile} alt="profile" />}
       </div>
@@ -44,6 +58,7 @@ const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId }) => 
             placeholder="댓글을 입력해주세요"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            ref={inputRef}
           />
         </div>
         <div>
