@@ -8,7 +8,6 @@
 
 .plant-report-title {
   margin-bottom: 20px;
-
 }
 
 .plant-report-slider {
@@ -18,10 +17,22 @@
 
 .plant-report-name {
   margin-bottom: 20px;
-
 }
 
 .plant-report-details {
   margin-bottom: 20px;
+}
 
+.plant-report-details {
+  background-color: #f9f9f9; 
+  padding: 20px; 
+  border-radius: 10px; 
+  border: 1px solid #ddd; 
+  color: #333; 
+  margin-top: 20px; 
+  text-align: center;
+}
+
+.plant-report-button {
+  margin-bottom: 20px;
 }
