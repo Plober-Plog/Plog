@@ -27,6 +27,8 @@ import UserProfile from './pages/Profile/UserProfile';
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
+import ChatRoom from './pages/Chat/ChatRoom';
+import ChatRooms from './pages/Chat/ChatRoomList';
 
 function App() {
   return (
@@ -62,6 +64,9 @@ function App() {
               {/* sns */}
               <Route path="/sns/write" element={<SnsWrite />} />
               <Route path="/sns/:articleId" element={<SnsDetail />} />
+              {/* chat */}
+              <Route path="/chat" element={<ChatRooms />} />
+              <Route path="/chat/:chatRoomId" element={<ChatRoom />} />
             </Routes>
         </main>
         <footer className='full-width'>
