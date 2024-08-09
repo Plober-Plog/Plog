@@ -118,13 +118,14 @@ public class ArticleServiceImpl implements ArticleService {
         String keyword = articleGetListRequestDto.getKeyword();
         long userId = articleGetListRequestDto.getUserId(); // 사용자 ID
         int neighborType = articleGetListRequestDto.getNeighborType() == 0 ? 0 : articleGetListRequestDto.getNeighborType(); // 이웃 타입
+        int orderType = articleGetListRequestDto.getOrderType(); // 정렬 타입 / 0:최신순 / 1:좋아요순
 
-        log.info(">>> getArticleList - page: {}, searchId: {}, tagTypeList: {}, keyword: {}, userId: {}, neighborType: {}",
-                page, searchId, tagTypeList, keyword, userId, neighborType);
+        log.info(">>> getArticleList - page: {}, searchId: {}, tagTypeList: {}, keyword: {}, userId: {}, neighborType: {}, orderType: {}",
+                page, searchId, tagTypeList, keyword, userId, neighborType, orderType);
 
 
 
-        List<Article> articleList = articleRepositorySupport.loadArticleList(page, searchId, tagTypeList, keyword, userId, neighborType);
+        List<Article> articleList = articleRepositorySupport.loadArticleList(page, searchId, tagTypeList, keyword, userId, neighborType, orderType);
 
         log.info(">>> getArticleList - Retrieved {} articles from the repository", articleList.size());
 
