@@ -104,6 +104,10 @@ public class ReportServiceImpl implements ReportService {
         log.info(">>> 영양분 주기 결과: " + fertilizeResult);
         log.info(">>> 분갈이 주기 결과: " + repoResult);
 
+        water = water == Integer.MAX_VALUE?0:water;
+        fertilize = fertilize == Integer.MAX_VALUE?0:fertilize;
+        repot = repot == Integer.MAX_VALUE?0:repot;
+
         ReportResultResponseDto responseDto = ReportResultResponseDto.builder()
                 .plantName(plant.getNickname())
                 .firstDayImageUrl(firstDayImageUrl)
