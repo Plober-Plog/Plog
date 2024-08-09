@@ -24,7 +24,7 @@ const Header = () => {
         </button>
       ) : (
         <button className="header-button" onClick={() => navigate('/login')}>
-          <span className="header-icon-small">Login</span> {/* 로그인 텍스트 표시 */}
+          <span className="header-icon-small">Login</span>
         </button>
       )}
       <div className="header-spacing"></div>

@@ -18,13 +18,12 @@ const SnsWrite = () => {
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
   const [tagTypeList, setTagTypeList] = useState([]); // 선택된 태그 리스트 상태
   const tags = [
-    { id: 1, label: '일지' },
-    { id: 2, label: '분석 레포트' },
-    { id: 3, label: '질문' },
-    { id: 4, label: '일기' },
-    { id: 5, label: '식물' },
-    { id: 6, label: '정보' },
-    { id: 7, label: '룸꾸미기' }
+    { tagTypeId: 1, tagName: '일지' },
+    { tagTypeId: 2, tagName: '분석 레포트' },
+    { tagTypeId: 3, tagName: '질문' },
+    { tagTypeId: 4, tagName: '일기' },
+    { tagTypeId: 5, tagName: '식물' },
+    { tagTypeId: 6, tagName: '정보' },
   ];
 
   
