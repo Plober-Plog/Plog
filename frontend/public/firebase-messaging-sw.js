@@ -48,7 +48,7 @@ self.addEventListener('notificationclick', function(event) {
         console.log('Checking client URL:', client.url);
         
         // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭을 찾습니다.
-        if (client.url.includes('https://i11b308.ip.ssafy.io/')) {
+        if (client.url.includes('i11b308.ip.ssafy.io')) {
           matchedClient = client;
           break;
         }
