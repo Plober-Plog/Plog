@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
 
-        log.info("JWT Filter 확인 : URI {}, Method {}", requestURI, requestMethod);
+        log.info("JWT Filter 확인 : URI {}, Method {}, 전체 URL {}", requestURI, requestMethod, request.getRequestURL());
 
         String userId = null;
         String jwtToken = null;
