@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.util.AntPathMatcher;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -34,17 +37,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final PloberUserDetailService userDetailsService;
 
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
     // JWT 검증을 건너뛰어야 하는 URI와 HTTP 메소드 목록
-    private static final Map<String, List<String>> EXCLUDE_URLS = new HashMap<>() {{
-        put("/api/user", List.of("POST")); // 회원가입 요청 제외
-        put("/api/user/email", List.of("POST")); // 회원가입 요청 제외
-        put("/api/user/email/send", List.of("POST"));
-        put("/api/user/email/check", List.of("POST"));
-        put("/api/user/login", List.of("POST")); // 로그인 요청 제외
-        put("/api/user/password", List.of("PATCH"));
-        // 필요한 다른 URI와 메소드 추가
-        put("/api/auth/refresh", List.of("POST"));
-//        put("/api/user/password", List.of("POST"));
+    private static final Map<String, Set<String>> EXCLUDE_URLS = new HashMap<>() {{
+        put("/api/user", new HashSet<>(List.of("POST"))); // 회원가입 요청 제외
+        put("/api/user/email", new HashSet<>(List.of("POST"))); // 이메일 관련 요청 제외
+        put("/api/user/email/send", new HashSet<>(List.of("POST")));
+        put("/api/user/email/check", new HashSet<>(List.of("POST")));
+        put("/api/user/login", new HashSet<>(List.of("POST"))); // 로그인 요청 제외
+        put("/api/user/password", new HashSet<>(List.of("PATCH", "POST"))); // PATCH와 POST 제외
+        put("/api/user/sns/**", new HashSet<>(List.of("POST"))); // SNS 관련 요청 제외
+        put("/api/auth/refresh", new HashSet<>(List.of("POST"))); // 토큰 갱신 제외
     }};
 
     @Override
@@ -90,7 +94,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
-            if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
+            boolean isExcluded = EXCLUDE_URLS.entrySet().stream()
+                    .anyMatch(entry -> pathMatcher.match(entry.getKey(), requestURI) && entry.getValue().contains(requestMethod));
+
+            if (isExcluded) {
                 log.info(">>> JWT Filter - 제외 목록에서 제외");
                 chain.doFilter(request, response); // 필터 체인 계속 진행
                 return;
@@ -120,5 +127,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new ServletException("Exception in JwtAuthenticationFilter", e);
         }
     }
-
 }
