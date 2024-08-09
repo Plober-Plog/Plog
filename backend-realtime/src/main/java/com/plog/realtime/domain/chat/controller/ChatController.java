@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user/chat")
+@RequestMapping("/chat")
 public class ChatController {
 
     private final ChatService chatService;
@@ -55,7 +55,7 @@ public class ChatController {
         chatGetRequestDto.setUserId(userId);
         chatGetRequestDto.setChatRoomId(Long.parseLong(chatRoomId));
         log.info(" >>> addUser: " + chatGetRequestDto);
-        chatService.addUser(chatGetRequestDto);
+        chatService.addUser(chatGetRequestDto, headerAccessor.getSessionId());
     }
 
     @MessageMapping("/chat.leaveUser/{chatRoomId}")
@@ -72,10 +72,10 @@ public class ChatController {
         chatGetRequestDto.setUserId(userId);
         chatGetRequestDto.setChatRoomId(Long.parseLong(chatRoomId));
         log.info(" >>> leaveUser: " + chatGetRequestDto);
-        chatService.leaveUser(chatGetRequestDto);
+        chatService.leaveUser(chatGetRequestDto, headerAccessor.getSessionId());
     }
 
-    @GetMapping("/{chatRoomId}")
+    @GetMapping("/get-data/{chatRoomId}")
     public ResponseEntity<List<ChatGetResponseDto>> getChatData(
             @RequestHeader("Authorization") String token,
             @PathVariable("chatRoomId") Long chatRoomId,

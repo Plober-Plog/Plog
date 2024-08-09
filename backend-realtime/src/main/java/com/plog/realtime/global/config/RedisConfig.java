@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.plog.realtime.global.util.RedisMessagePublisher;
-import com.plog.realtime.global.util.RedisMessageSubscriber;
+import com.plog.realtime.domain.chat.listener.ChatListener;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,9 +17,9 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Configuration
 @Slf4j
@@ -70,7 +69,7 @@ public class RedisConfig {
         return new ChannelTopic("notification");
     }
 
-    @Bean
+        @Bean
     public RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
@@ -78,17 +77,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public ChannelTopic chatroom() {
-        return new ChannelTopic("chatroom");
+    public MessageListenerAdapter listenerAdapter(ChatListener chatListener) {
+        return new MessageListenerAdapter(chatListener, "onMessage");
     }
 
-    @Bean
-    public RedisMessageSubscriber redisMessageSubscriber(SimpMessagingTemplate messagingTemplate) {
-        return new RedisMessageSubscriber(messagingTemplate);
-    }
-
-    @Bean
-    public RedisMessagePublisher redisMessagePublisher(RedisTemplate<String, Object> redisTemplate, ChannelTopic topic) {
-        return new RedisMessagePublisher(redisTemplate, topic);
-    }
 }
