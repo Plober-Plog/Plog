@@ -22,31 +22,37 @@ messaging.onBackgroundMessage(function(payload) {
     body: payload.notification?.body || 'Default Body',
     icon: payload.data?.icon || '/firebase-logo.png',  // payload에서 아이콘을 받아오거나 기본 아이콘 설정
     data: {
-      click_action: payload.data?.click_action || '', // 클릭 시 이동할 URL 설정
+      click_action: payload.data?.click_action || '/', // 클릭 시 이동할 URL 설정
     }
   };
 
-  // self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
-
-// messaging.onBackgroundMessage();
 
 self.addEventListener('notificationclick', function(event) {
   const click_action = event.notification.data.click_action;
   event.notification.close(); // 알림을 닫음
 
+  console.log('Notification Clicked:', click_action);
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-      // 열려있는 브라우저 창이 있는지 확인
+      console.log('Matching clients:', windowClients);
+      
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
+        console.log('Checking client:', client.url);
+        
         // 현재 창이 이미 열려 있는지 확인
         if (client.url === click_action && 'focus' in client) {
+          console.log('Focusing existing window:', client.url);
           return client.focus();
         }
       }
+
       // 창이 열려 있지 않다면 새 창을 염
       if (clients.openWindow) {
+        console.log('Opening new window:', click_action);
         return clients.openWindow(click_action);
       }
     })
