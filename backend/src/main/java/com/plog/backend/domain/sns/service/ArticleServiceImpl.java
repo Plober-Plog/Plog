@@ -116,18 +116,32 @@ public class ArticleServiceImpl implements ArticleService {
         String searchId = articleGetListRequestDto.getSearchId();
         List<Integer> tagTypeList = articleGetListRequestDto.getTagType();
         String keyword = articleGetListRequestDto.getKeyword();
+        long userId = articleGetListRequestDto.getUserId(); // 사용자 ID
+        int neighborType = articleGetListRequestDto.getNeighborType() == 0 ? 0 : articleGetListRequestDto.getNeighborType(); // 이웃 타입
 
-        List<Article> articleList = articleRepositorySupport.loadArticleList(page, searchId, tagTypeList, keyword);
+        log.info(">>> getArticleList - page: {}, searchId: {}, tagTypeList: {}, keyword: {}, userId: {}, neighborType: {}",
+                page, searchId, tagTypeList, keyword, userId, neighborType);
+
+
+
+        List<Article> articleList = articleRepositorySupport.loadArticleList(page, searchId, tagTypeList, keyword, userId, neighborType);
+
+        log.info(">>> getArticleList - Retrieved {} articles from the repository", articleList.size());
+
         List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = new ArrayList<>();
         for (Article article : articleList) {
             List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
             int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
             int commentCnt = articleCommentRepository.countByArticleArticleId(article.getArticleId());
             boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(articleGetListRequestDto.getUserId(), article.getArticleId());
+
+            log.info(">>> getArticleList - Processing articleId: {}, likeCnt: {}, commentCnt: {}, isBookmarked: {}",
+                    article.getArticleId(), likeCnt, commentCnt, isBookmarked);
+
             articleGetSimpleResponseDtoList.add(
                     ArticleGetSimpleResponseDto.builder()
                             .articleId(article.getArticleId())
-                            .image(articleImageList.size() == 0 ? null : articleImageList.get(0)) // 첫 번째 사진의 url 전달
+                            .image(articleImageList.isEmpty() ? null : articleImageList.get(0)) // 첫 번째 사진의 url 전달
                             .likeCnt(likeCnt)
                             .view(article.getView())
                             .nickname(article.getUser().getNickname())
@@ -137,8 +151,12 @@ public class ArticleServiceImpl implements ArticleService {
                             .build()
             );
         }
+
+        log.info(">>> getArticleList - Finished processing articles, total processed: {}", articleGetSimpleResponseDtoList.size());
+
         return articleGetSimpleResponseDtoList;
     }
+
 
     @Transactional
     @Override
