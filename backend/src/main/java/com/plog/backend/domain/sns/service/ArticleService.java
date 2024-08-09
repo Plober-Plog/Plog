@@ -4,6 +4,7 @@ import com.plog.backend.domain.plant.dto.request.PlantGetRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.sns.dto.request.ArticleAddRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleGetListRequestDto;
+import com.plog.backend.domain.sns.dto.request.ArticleGetTop5ListRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleUpdateRequestDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
@@ -22,6 +23,8 @@ public interface ArticleService {
     ArticleGetResponseDto getArticle(Long userId, Long articleId);
 
     List<ArticleGetSimpleResponseDto> getArticleList(ArticleGetListRequestDto articleGetListRequestDto);
+
+    List<ArticleGetSimpleResponseDto> getArticleTop5List(ArticleGetTop5ListRequestDto articleGetTop5ListRequestDto);
 
     void updateArticle(String token, ArticleUpdateRequestDto articleUpdateRequestDto);
 
