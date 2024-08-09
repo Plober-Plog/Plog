@@ -76,7 +76,7 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
                 new EntityNotFoundException("deleteArticleBookmark - 없는 게시글 입니다.")
         );
 
-        ArticleBookmark articleBookmark = articleBookmarkRepository.findById(articleId).orElseThrow(() -> new EntityNotFoundException("deleteArticleBookmark - 없는 북마크입니다.")
+        ArticleBookmark articleBookmark = articleBookmarkRepository.findByUserUserIdAndArticleArticleId(userId, articleId).orElseThrow(() -> new EntityNotFoundException("deleteArticleBookmark - 없는 북마크입니다.")
         );
 
         articleBookmarkRepository.delete(articleBookmark);
