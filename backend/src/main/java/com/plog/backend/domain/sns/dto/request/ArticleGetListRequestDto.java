@@ -18,4 +18,5 @@ public class ArticleGetListRequestDto {
     List<Integer> tagType;
     String keyword;
     int neighborType;
+    int orderType;
 }
