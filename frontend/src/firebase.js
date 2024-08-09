@@ -46,6 +46,12 @@ export const onForegroundMessage = () => {
     console.log("Received foreground message: ", payload); // 메시지 수신 여부 확인
     if (payload) {
       const { title, body } = payload.notification || payload.data;
+
+            // 콘솔에 제목과 본문을 출력
+      console.log("Notification title:", title);
+      console.log("Notification body:", body);
+
+      // 알림 생성
       new Notification(title, { body });
     } else {
       console.log("No message received.");
