@@ -93,4 +93,37 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
             return null; // 잘못된 neighborType인 경우 모든 게시글 조회
         }
     }
+
+    public List<Article> loadArticleTop5List(List<Integer> tagTypeList, int orderType) {
+        QArticle article = QArticle.article;
+        QArticleTag articleTag = QArticleTag.articleTag;
+        QNeighbor neighbor = QNeighbor.neighbor;
+
+        List<Article> articleList = queryFactory.selectFrom(article)
+                .leftJoin(articleTag).on(article.articleId.eq(articleTag.article.articleId))
+                .leftJoin(neighbor).on(neighbor.neighborTo.userId.eq(article.user.userId)
+                        .or(neighbor.neighborFrom.userId.eq(article.user.userId)))
+                .where(
+                        inTagTypeList(tagTypeList),
+                        article.state.eq(1) // PLAIN
+                )
+                .fetch();
+
+        List<Article> filteredArticleList = articleList.stream()
+                .sorted((a1, a2) -> {
+                    if (orderType == 1) {
+                        // 좋아요 순서로 정렬
+                        return Integer.compare(
+                                articleLikeRepositorySupport.countLikesByArticleId(a2.getArticleId()),
+                                articleLikeRepositorySupport.countLikesByArticleId(a1.getArticleId()));
+                    } else {
+                        // 최신순으로 정렬 (예: 생성 날짜 기준)
+                        return a2.getCreatedAt().compareTo(a1.getCreatedAt());
+                    }
+                })
+                .limit(5)
+                .collect(Collectors.toList());
+
+        return filteredArticleList;
+    }
 }
