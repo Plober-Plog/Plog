@@ -12,7 +12,7 @@ import cameraIcon from '../../assets/icon/camera.png';
 
 const SnsWrite = () => {
   const location = useLocation();
-  const { articleId } = location.state()
+  const { articleId } = location.state;
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
