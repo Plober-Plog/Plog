@@ -80,7 +80,6 @@ const PlantDetail = () => {
         articles={articles}
         type="plant"
       />
-      <ReportBanner />
       <Btn content ="분석보고서" onClick={handleReportClick}/>
       <Btn content ="가이드" onClick={handleGuideClick}/>
     </div>
