@@ -29,6 +29,10 @@ messaging.onBackgroundMessage(function(payload) {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
+messaging.onBackgroundMessage();
+
+
+
 self.addEventListener('notificationclick', function(event) {
   const click_action = event.notification.data.click_action;
   event.notification.close(); // 알림을 닫음
