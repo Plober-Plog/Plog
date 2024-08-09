@@ -5,6 +5,7 @@ import com.plog.backend.domain.image.repository.ArticleImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.sns.dto.request.ArticleAddRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleGetListRequestDto;
+import com.plog.backend.domain.sns.dto.request.ArticleGetTop5ListRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleUpdateRequestDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
@@ -154,6 +155,49 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         log.info(">>> getArticleList - Finished processing articles, total processed: {}", articleGetSimpleResponseDtoList.size());
+
+        return articleGetSimpleResponseDtoList;
+    }
+
+    @Override
+    public List<ArticleGetSimpleResponseDto> getArticleTop5List(ArticleGetTop5ListRequestDto articleGetTop5ListRequestDto) {
+        List<Integer> tagTypeList = articleGetTop5ListRequestDto.getTagType();
+        int orderType = articleGetTop5ListRequestDto.getOrderType(); // 정렬 타입 / 0:최신순 / 1:좋아요순
+
+        log.info(">>> getArticleList - tagTypeList: {}, orderType: {}",
+                tagTypeList, orderType);
+
+
+
+        List<Article> articleList = articleRepositorySupport.loadArticleTop5List(tagTypeList, orderType);
+
+        log.info(">>> getArticleTop5List - Retrieved {} articles from the repository", articleList.size());
+
+        List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = new ArrayList<>();
+        for (Article article : articleList) {
+            List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
+            int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
+            int commentCnt = articleCommentRepository.countByArticleArticleId(article.getArticleId());
+            boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(articleGetTop5ListRequestDto.getUserId(), article.getArticleId());
+
+            log.info(">>> getArticleTop5List - Processing articleId: {}, likeCnt: {}, commentCnt: {}, isBookmarked: {}",
+                    article.getArticleId(), likeCnt, commentCnt, isBookmarked);
+
+            articleGetSimpleResponseDtoList.add(
+                    ArticleGetSimpleResponseDto.builder()
+                            .articleId(article.getArticleId())
+                            .image(articleImageList.isEmpty() ? null : articleImageList.get(0)) // 첫 번째 사진의 url 전달
+                            .likeCnt(likeCnt)
+                            .view(article.getView())
+                            .nickname(article.getUser().getNickname())
+                            .commentCnt(commentCnt)
+                            .isBookmarked(isBookmarked)
+                            .content(article.getContent())
+                            .build()
+            );
+        }
+
+        log.info(">>> getArticleTop5List - Finished processing articles, total processed: {}", articleGetSimpleResponseDtoList.size());
 
         return articleGetSimpleResponseDtoList;
     }

@@ -135,6 +135,30 @@ public class SnsController {
         return ResponseEntity.status(200).body(articleGetSimpleResponseDtoList);
     }
 
+    @GetMapping("/top5")
+    @Operation(summary = "게시글 목록 조회 Top5", description = "Top5 게시글 목록을 조회합니다.")
+    public ResponseEntity<List<ArticleGetSimpleResponseDto>> getArticleTop5List(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @Parameter(description = "게시글 태그 필터링", example = "[1, 2]")
+            @RequestParam(value = "tagType", required = false) List<Integer> tagType,
+            @Parameter(description = "정렬 방식(0: 최신순, 1: 좋아요순)", example = "1")
+            @RequestParam(value = "orderType", required = false, defaultValue = "0") int orderType
+    ) {
+        Long userId = 0L;
+        if (token != null)
+            userId = JwtTokenUtil.jwtTokenUtil.getUserIdFromToken(token);
+
+        log.info(">>> [GET] /user/sns?tagType={}&orderType={} | 현재 로그인한 회원의 id: {}", tagType, orderType,userId);
+
+        ArticleGetTop5ListRequestDto articleGetTop5ListRequestDto = ArticleGetTop5ListRequestDto.builder()
+                .userId(userId)
+                .tagType(tagType)
+                .orderType(orderType)
+                .build();
+        List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = articleService.getArticleTop5List(articleGetTop5ListRequestDto);
+        return ResponseEntity.status(200).body(articleGetSimpleResponseDtoList);
+    }
+
     // ============================= 댓글 =============================
     @PostMapping("/comment")
     @Operation(summary = "댓글 등록", description = "새로운 댓글을 등록합니다.")
