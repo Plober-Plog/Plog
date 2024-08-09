@@ -49,6 +49,14 @@ const PlantDetail = () => {
     return <div>Loading</div>
   };
 
+  const handleReportClick = () => {
+    if (plantId) {
+      navigate(`/plant/${plantId}/report`, { state: { plantId } });
+    } else {
+      console.error('plantId 를 확인할 수 없습니다');
+    }
+  };
+
   const handleGuideClick = () => {
     if (plantTypeId) {
       navigate(`/guide/${plantTypeId}`, { state: { plantTypeId } });
@@ -72,8 +80,7 @@ const PlantDetail = () => {
         articles={articles}
         type="plant"
       />
-      <ReportBanner />
-      <Btn content ="성장과정 보기"/>
+      <Btn content ="분석보고서" onClick={handleReportClick}/>
       <Btn content ="가이드" onClick={handleGuideClick}/>
     </div>
   )

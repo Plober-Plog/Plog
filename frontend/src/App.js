@@ -26,6 +26,10 @@ import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
 import PlantDetail from './pages/Plant/PlantDetail';
 import PlantRegister from './pages/Plant/PlantRegister';
 import PlantGuide from './pages/Plant/PlantGuide';
+import PlantReport from './pages/Plant/PlantReport';
+import ApiTest from './pages/Plant/ApiTest';
+
+
 
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
@@ -64,6 +68,7 @@ function App() {
 
             <Routes>
               {/* Account */}
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/profileupdate" element={<ProfileUpdate />} />
@@ -75,6 +80,7 @@ function App() {
               <Route path="/plant/:plantId/:date/write" element={<PlantDiaryWrite />} />
               <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
               <Route path="/plant/:plantId" element={<PlantDetail />} />
+              <Route path="/plant/:plantId/report" element={<PlantReport />} />
               <Route path="/guide/:plantTypeId" element={<PlantGuide />} />
               <Route path="/plant/register" element={<PlantRegister />} />
               {/* profile */}

@@ -9,7 +9,7 @@ const Login = () => {
 
   return (
     <div className="account-container">
-      <h1 className="title">로그인</h1>
+      <h1 className="account-title">로그인</h1>
       <LoginForm />
       <ATag 
         content={'회원가입 하기'}

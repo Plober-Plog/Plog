@@ -1,0 +1,43 @@
+.header-container {
+  display: flex;
+  width: 100%;
+  height: 60px;
+  align-items: center;
+  justify-content: space-between; 
+  padding: 0 20px; 
+  background-color: #fff;
+  border-bottom: 1px solid #e7e7e7;
+  position: sticky; 
+  top: 0; 
+}
+
+.header-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.header-icon-small {
+  width: 24px; 
+  height: 24px;
+}
+
+.header-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1; 
+}
+
+.header-spacing {
+  height: 70px;
+}

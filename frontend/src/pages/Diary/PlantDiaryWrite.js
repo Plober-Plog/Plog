@@ -100,62 +100,22 @@ const PlantDiaryWrite = () => {
       const data = await fetchDiaryAndCheck(plantId, date);
       console.log(data);
       if (data.plantDiary || data.plantCheck) {
+        const { plantDiary } = data;
+        const { plantCheck } = data;
         setIsEditMode(true);
-        if (data.plantDiary) {
-          const { plantDiary } = data;
-          setPlantDiaryId(plantDiary.plantDiaryId);
-          setContent(plantDiary.content);
-          setImgs(plantDiary.images.map(img => ({ 
-            url: img.url, 
-            id: img.nimageId,
-            isThumbnail: img.isThumbnail, 
-           })));
-          setIsWeather(mapWeatherStringToValue(plantDiary.weather));  
-          setIsHumidity(mapHumidityStringToValue(plantDiary.humidity));
-          // setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
-          // setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
-          setIsTemperature(plantDiary.temperature);
-          setIsWatered(false);
-          setIsFertilized(false);
-          setIsRepotted(false);
-          setIsEditMode(true);
-        } 
-        if (data.plantCheck) {
-          const { plantDiary } = data;
-          const { plantCheck } = data;
-          setPlantDiaryId(null);
-          setContent('');
-          setImgs([]);
-          setIsWeather(mapWeatherStringToValue(plantDiary.weather));  
-          setIsHumidity(mapHumidityStringToValue(plantDiary.humidity));
-          // setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
-          // setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
-          setIsTemperature(plantDiary.temperature);
-          setIsWatered(plantCheck.isWatered);
-          setIsFertilized(plantCheck.isFertilized);
-          setIsRepotted(plantCheck.isRepotted);  
-          setIsEditMode(true); 
-        } 
-
-        if (data.plantDiary && data.plantCheck) {
-          const { plantDiary } = data;
-          const { plantCheck } = data;
-          setPlantDiaryId(plantDiary.plantDiaryId);
-          setContent(plantDiary.content);
-          setImgs(plantDiary.images.map(img => ({ 
-            url: img.url, 
-            id: img.imageId, 
-          })));
-          setIsWeather(mapWeatherStringToValue(plantDiary.weather));  
-          setIsHumidity(mapHumidityStringToValue(plantDiary.humidity));
-          // setIsWeather(weatherOptions.find(option => option.label === plantDiary.weather).value);
-          // setIsHumidity(humidityOptions.find(option => option.label === plantDiary.humidity).value);
-          setIsTemperature(plantDiary.temperature);
-          setIsWatered(plantCheck.isWatered);
-          setIsFertilized(plantCheck.isFertilized);
-          setIsRepotted(plantCheck.isRepotted);   
-          setIsEditMode(true); 
-        }
+        setPlantDiaryId(plantDiary.plantDiaryId);
+        setContent(plantDiary.content);
+        setImgs(plantDiary.images.map(img => ({ 
+          url: img.url, 
+          id: img.imageId, 
+        })));
+        setIsWeather(mapWeatherStringToValue(plantDiary.weather));  
+        setIsHumidity(mapHumidityStringToValue(plantDiary.humidity));
+        setIsTemperature(plantDiary.temperature);
+        setIsWatered(plantCheck.isWatered);
+        setIsFertilized(plantCheck.isFertilized);
+        setIsRepotted(plantCheck.isRepotted);   
+        setIsEditMode(true); 
       } else {
         setPlantDiaryId(null);
         setContent('');
@@ -362,71 +322,76 @@ useEffect(() => {
   ];
 
   return (
-    <div className="plant-diary-container">
-      <div className="plant-diary-section">
-        <DateDisplay date={date} setDate={handleDateChange} />
-      </div>
-      <div className="plant-diary-section">
+    <div className="plant-diary-write-container">
+      <DateDisplay date={date} setDate={handleDateChange} />
+      <div className="plant-diary-write-section">
         <WriterInfo data={writerInfoData} type="plant" />
       </div>
-      <div className="plant-diary-section">
-      {isEditImage ? (
-        <div>
-          <h2>사진 업로드 하기</h2>
-          <ImgUpload 
-            cameraIcon={cameraIcon}
-            imgs={imgs} 
-            handleImageUpload={handleImageUpload} 
-            handleDeleteImage={handleDeleteImage} 
-            isDisabled={!isEditImage}
-          />
-        </div>
-      ) : (
-        <p>사진은 수정할 수 없습니다.</p>
-      )}
+      <div className="plant-diary-write-section">
+        {isEditImage ? (
+          <div>
+            <h2>사진 첨부하기</h2>
+            <ImgUpload 
+              cameraIcon={cameraIcon}
+              imgs={imgs} 
+              handleImageUpload={handleImageUpload} 
+              handleDeleteImage={handleDeleteImage} 
+              isDisabled={!isEditImage}
+            />
+          </div>
+        ) : (
+          <p>사진은 수정할 수 없습니다.</p>
+        )}
       </div>
-      <div className="plant-diary-section">
-        <div className="plant-diary-todo-icons">
+      <div className="plant-diary-write-icons plant-diary-write-section">
+        <div className="plant-diary-write-icon">
           <DiaryTodoIcon src={weatherIcon} />
-          <DiaryTodoIcon src={humidityIcon} />
-          <DiaryTodoIcon src={temperatureIcon} />
-        </div>
-        <SelectField
+          <SelectField
             value={weather}
             onChange={(e) => setIsWeather(Number(e.target.value))}
             options={weatherOptions}
-            className="drop-box"
           />
-        <SelectField
+        </div>
+        <div className="plant-diary-write-icon">
+          <DiaryTodoIcon src={humidityIcon} />
+          <SelectField
             value={humidity}
             onChange={(e) => setIsHumidity(Number(e.target.value))}
             options={humidityOptions}
-            className="drop-box"
           />
-        <InputField 
-          type="number"
-          value={temperature}
-          onChange={(e) => setIsTemperature(Number(e.target.value))}
+        </div>
+        <div className="plant-diary-write-icon">
+          <DiaryTodoIcon src={temperatureIcon} />
+          <InputField 
+            type="number"
+            value={temperature}
+            onChange={(e) => setIsTemperature(Number(e.target.value))}
           />
+        </div>
       </div>
-      <div className="plant-diary-section">
+      <div className="plant-diary-write-section plant-diary-write-icons">
         <h2>오늘 한 일</h2>
-        <div className="plant-diary-todo-icons">
+        <div className="plant-diary-write-icon">
           <DiaryTodoIcon src={waterIcon} active={isWatered} onClick={toggleWatered} />
+        </div>
+        <div className="plant-diary-write-icon">
           <DiaryTodoIcon src={fertilizedIcon} active={isFertilized} onClick={toggleFertilized} />
+        </div>
+        <div className="plant-diary-write-icon">
           <DiaryTodoIcon src={repottedIcon} active={isRepotted} onClick={toggleRepotted} />
         </div>
       </div>
-      <div className="plant-diary-section">
+      <div className="plant-diary-write-section">
         <h2>일지 작성</h2>
         <TextareaField 
+          // className="plant-diary-write-textarea" 
           placeholder='일지를 입력하세요.'
           value={content} 
           onChange={(e) => setContent(e.target.value)}   
         />
       </div>
       <div>
-        <Btn content={isEditMode ? "수정하기" : "작성하기"} onClick={handleSave} />
+        <Btn content={isEditMode ? "수정하기" : "작성하기"} onClick={handleSave} className="plant-diary-write-button" />
       </div>
     </div>
   );

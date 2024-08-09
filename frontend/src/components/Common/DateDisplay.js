@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import './DateDisplay.css';
 
 const DateDisplay = ({ date, setDate }) => {
   const handleDateChange = (event) => {
@@ -7,8 +8,8 @@ const DateDisplay = ({ date, setDate }) => {
   };
 
   return (
-    <div>
-      <input type="date" value={date} onChange={handleDateChange} />
+    <div className="date-display-container">
+      <input type="date" value={date} onChange={handleDateChange} className="date-display-input" />
     </div>
   );
 };

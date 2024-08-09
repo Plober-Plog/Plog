@@ -51,7 +51,7 @@ const LoginForm = () => {
 
   return (
     <div>
-      <form onSubmit={handleLogin} className="form">
+      <form onSubmit={handleLogin} className="account-form">
         <div>
           <InputField
             type="email"
@@ -59,7 +59,7 @@ const LoginForm = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
-            className="input"
+            className="account-input"
           />
         </div>
         <div>
@@ -69,7 +69,7 @@ const LoginForm = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true}
-            className="input"
+            className="account-input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
@@ -81,7 +81,7 @@ const LoginForm = () => {
           content="로그인"
           disabled={!email || !password}
           onClick={handleLogin}
-          className="button"
+          className="account-button"
         />
       </form>
     </div>
