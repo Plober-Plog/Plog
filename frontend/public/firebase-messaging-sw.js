@@ -44,7 +44,7 @@ self.addEventListener('notificationclick', function(event) {
         console.log('Checking client URL:', client.url);
 
         // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭을 찾습니다.
-        if (client.url.startsWith('https://i11b308.ip.ssafy.io')) {
+        if (client.url.startsWith('/')) {
             console.log('**** include client URL:', client.url);
             matchedClient = client;
             break;
@@ -61,7 +61,7 @@ self.addEventListener('notificationclick', function(event) {
       } else {
         // 해당 탭이 없으면 새로운 탭을 엽니다.
         console.log('No matching client found. Opening new window:', click_action);
-        return clients.openWindow(click_action);
+        return self.clients.openWindow("/");
       }
     })
   );
