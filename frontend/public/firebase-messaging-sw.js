@@ -29,7 +29,7 @@ messaging.onBackgroundMessage(function(payload) {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-messaging.onBackgroundMessage();
+// messaging.onBackgroundMessage();
 
 
 
