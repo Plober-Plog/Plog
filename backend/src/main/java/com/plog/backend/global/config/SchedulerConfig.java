@@ -18,7 +18,7 @@ public class SchedulerConfig {
 
     private final WeatherService weatherService;
 
-    @Scheduled(cron = "0 30 22 * * ?")
+    @Scheduled(cron = "0 38 13 * * ?")
     @Retryable(value = Exception.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 60000))
     public void scheduleWeatherDataUpdate() {
         try {
