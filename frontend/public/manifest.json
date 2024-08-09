@@ -18,8 +18,8 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "https://i11b308.p.ssafy.io/",
-  "scope": "https://i11b308.p.ssafy.io/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"
