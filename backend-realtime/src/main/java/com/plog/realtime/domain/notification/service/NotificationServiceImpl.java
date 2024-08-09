@@ -45,7 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public NotificationMessageResponseDto sendNotification(String requireSource, String targetSearchId, NotificationType type) {
+    public NotificationMessageResponseDto sendNotification(String requireSource, String targetSearchId, String clickUrl, NotificationType type) {
         log.info("sendNotification 시작 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
         User targetUser = userRepository.findUserBySearchId(targetSearchId).orElseThrow(() -> {
             log.error("sendNotification 실패 - User not found, targetSearchId: {}", targetSearchId);
@@ -86,7 +86,7 @@ public class NotificationServiceImpl implements NotificationService {
         // FCM을 통해 메시지를 전송합니다.
         if (targetUser.isPushNotificationEnabled() && targetUser.getNotificationToken() != null) {
             String title = type.name(); // 여기에 알림 제목을 설정합니다.
-            fcmService.sendNotification(targetUser.getNotificationToken(), title, formattedMessage);
+            fcmService.sendNotification(targetUser.getNotificationToken(), title, clickUrl, formattedMessage);
         }
 
         log.info("sendNotification 완료 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
@@ -125,8 +125,10 @@ public class NotificationServiceImpl implements NotificationService {
         LocalDate startWaterDate = waterDate.minusDays(waterMid - waterInterval);
         LocalDate endWaterDate = waterDate.plusDays(waterMid + waterInterval);
 
+        String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
+
         if (!today.isBefore(startWaterDate) && !today.isAfter(endWaterDate)) {
-            sendNotification(plant.getNickname(), user.getSearchId(), NotificationType.WATER_REMINDER);
+            sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.WATER_REMINDER);
         }
         log.info("checkWaterNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
     }
@@ -139,9 +141,14 @@ public class NotificationServiceImpl implements NotificationService {
         LocalDate startFertilizeDate = fertilizeDate.minusDays(fertilizeMid - fertilizeInterval);
         LocalDate endFertilizeDate = fertilizeDate.plusDays(fertilizeMid + fertilizeInterval);
 
+        String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
+
         if (!today.isBefore(startFertilizeDate) && !today.isAfter(endFertilizeDate)) {
-            sendNotification(plant.getNickname(), user.getSearchId(), NotificationType.FERTILIZE_REMINDER);
+            sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.FERTILIZE_REMINDER);
         }
+
+
+
         log.info("checkFertilizeNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
     }
 
@@ -153,8 +160,10 @@ public class NotificationServiceImpl implements NotificationService {
         LocalDate startRepotDate = repotDate.minusDays(repotMid - repotInterval);
         LocalDate endRepotDate = repotDate.plusDays(repotMid + repotInterval);
 
+        String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
+
         if (!today.isBefore(startRepotDate) && !today.isAfter(endRepotDate)) {
-            sendNotification(plant.getNickname(), user.getSearchId(), NotificationType.REPOT_REMINDER);
+            sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.REPOT_REMINDER);
         }
         log.info("checkRepotNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
     }
