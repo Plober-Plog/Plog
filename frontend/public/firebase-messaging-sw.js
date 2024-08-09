@@ -36,21 +36,21 @@ self.addEventListener('notificationclick', function(event) {
   console.log('Notification Clicked:', click_action);
 
   event.waitUntil(
-    clients.matchAll({ type: 'all', includeUncontrolled: true }).then(windowClients => { // type: 'all'로 변경
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => { // type: 'all'로 변경
       let matchedClient = null;
 
-      for (let i = 0; i < windowClients.length; i++) {
-        const client = windowClients[i];
-        console.log('Checking client URL:', client.url);
+      // for (let i = 0; i < windowClients.length; i++) {
+      //   const client = windowClients[i];
+      //   console.log('Checking client URL:', client.url);
 
-        // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭이나 앱을 찾습니다.
-        if (client.url.includes('https://i11b308.p.ssafy.io')) {
-            console.log('**** include client URL:', client.url);
-            matchedClient = client;  // 클라이언트 객체를 저장합니다.
-            break;
-        }
+      //   // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭이나 앱을 찾습니다.
+      //   if (client.url.startswith('https://i11b308.p.ssafy.io/')) {
+      //       console.log('**** include client URL:', client.url);
+      //       matchedClient = client;  // 클라이언트 객체를 저장합니다.
+      //       break;
+      //   }
 
-      }
+      // }
 
       if (matchedClient) {
         // 해당 탭이나 앱이 있으면 포커스하고 해당 URL로 리다이렉트
