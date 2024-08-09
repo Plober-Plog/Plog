@@ -41,11 +41,11 @@ export const requestForToken = async () => {
   }
 };
 
-export const onMessageListener = () =>
-  new Promise((resolve) => {
-    onMessage(messaging, (payload) => {
-      resolve(payload);
-    });
+// FCM foreground message listener
+export const onForegroundMessage = () => {
+  onMessage(messaging, (payload) => {
+    console.log("Received foreground message: ", payload);
+    const { title, body } = payload.notification || payload.data;
+    new Notification(title, { body });
   });
-
-export { app as firebaseApp }; // firebaseApp을 export
+};

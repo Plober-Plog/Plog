@@ -8,8 +8,7 @@ import Footer from './components/Common/Footer';
 
 // FCM
 import { getMessaging, getToken } from 'firebase/messaging';
-import { firebaseApp } from './firebase'; // firebase 초기화 파일
-import { requestForToken, onMessageListener } from './firebase';
+import { requestForToken, onForegroundMessage } from './firebase';
 
 // Account
 import SignUp from './pages/Account/SignUp';
@@ -35,23 +34,34 @@ import Neighbor from './pages/Profile/Neighbor';
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 
-if (Notification.permission !== 'granted') {
-  requestForToken();
-} else {
-  getToken(getMessaging(firebaseApp), {
-    vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY
-  }).then((currentToken) => {
-    if (currentToken) {
-      document.cookie = `fcmToken=${currentToken}; path=/; SameSite=Lax`;
-    }
-  });
-  onMessageListener().then((payload) => {
-    const { title, body } = payload.notification || payload.data;
-    new Notification(title, { body });
-  }).catch((err) => console.log('failed: ', err));
-}
+// if (Notification.permission !== 'granted') {
+//   requestForToken();
+// } else {
+//   getToken(getMessaging(firebaseApp), {
+//     vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY
+//   }).then((currentToken) => {
+//     if (currentToken) {
+//       document.cookie = `fcmToken=${currentToken}; path=/; SameSite=Lax`;
+//     }
+//   });
+//   onMessageListener().then((payload) => {
+//     const { title, body } = payload.notification || payload.data;
+//     new Notification(title, { body });
+//   }).catch((err) => console.log('failed: ', err));
+// }
 
 function App() {
+  useEffect(() => {
+    const initFCM = async () => {
+      const token = await requestForToken();
+      if (token) {
+        document.cookie = `fcmToken=${token}; path=/; SameSite=Lax`;
+      }
+      onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
+    };
+
+    initFCM();
+  }, []);
 
   return (
     <div className='container'>
