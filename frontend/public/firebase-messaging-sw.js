@@ -11,6 +11,8 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
+console.log('Firebase Config:', firebaseConfig);
+
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
