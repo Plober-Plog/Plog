@@ -24,7 +24,6 @@ import PlantDiaryDetail from './pages/Diary/PlantDiaryDetail';
 import PlantDetail from './pages/Plant/PlantDetail';
 import PlantRegister from './pages/Plant/PlantRegister';
 import PlantGuide from './pages/Plant/PlantGuide';
-import ApiTest from './pages/Plant/ApiTest';
 
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
@@ -33,6 +32,7 @@ import Neighbor from './pages/Profile/Neighbor';
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
+import SnsList from './pages/Sns/SnsList';
 
 // if (Notification.permission !== 'granted') {
 //   requestForToken();
@@ -72,7 +72,6 @@ function App() {
         <main className='content'>
 
             <Routes>
-              <Route path="/" element={<Home />}/>
               {/* Account */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
@@ -86,15 +85,12 @@ function App() {
               <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
               <Route path="/plant/:plantId" element={<PlantDetail />} />
               <Route path="/guide/:plantTypeId" element={<PlantGuide />} />
-              {/* <Route path="/plant" element={<PlantDetail />} /> */}
-              {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
               <Route path="/plant/register" element={<PlantRegister />} />
               {/* profile */}
-              {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
               <Route path="/profile/:searchId" element={<UserProfile />} />
               <Route path="/profile/:searchId/neighbor" element={<Neighbor />}/>
-              {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
               {/* sns */}
+              <Route path="/sns" element={<SnsList />} />
               <Route path="/sns/write" element={<SnsWrite />} />
               <Route path="/sns/:articleId" element={<SnsDetail />} />
             </Routes>
