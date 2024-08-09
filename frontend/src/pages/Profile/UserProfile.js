@@ -6,6 +6,7 @@ import ProfilePlantCardList from '../../components/Article/ProfilePlantCardList'
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
 import SnsCardMdList from '../../components/Article/SnsCardMdList';
+import AddBtn from '../../components/Common/AddBtn';
 
 const UserProfile = () => {
   const { searchId } = useParams();
@@ -37,13 +38,13 @@ const UserProfile = () => {
     return <div>Loading...</div>;
   }
 
-  const handleAddPlant = () => {
-    navigate(`/plant/register`, { state: { plantId: 0 } });
-  };
+  // const handleAddPlant = () => {
+  //   navigate(`/plant/register`, { state: { plantId: 0 } });
+  // };
 
-  const handleAddSns = () => {
-    navigate(`/sns/write`);
-  };
+  // const handleAddSns = () => {
+  //   navigate(`/sns/write`, { state: { articleId: 0 } });
+  // };
 
   const handleFilterUpdate = (plants) => {
     setFilteredPlants(plants);
@@ -65,7 +66,11 @@ const UserProfile = () => {
 
       {activeTab === 'plant' && (
         <>
-          {searchId === authSearchId && <button onClick={handleAddPlant}>plantAdd</button>}
+          {searchId === authSearchId && (
+            <AddBtn 
+              type='plant'
+            />
+          )}
           <ProfilePlantTagList 
             searchId={searchId}
             onFilterUpdate={handleFilterUpdate}
@@ -79,7 +84,9 @@ const UserProfile = () => {
       
       {activeTab === 'sns' && (
         <>
-          <button onClick={handleAddSns}>snsAdd</button>
+          <AddBtn 
+            type='sns'
+          />
           <SnsCardMdList 
             searchId={searchId}
           />
