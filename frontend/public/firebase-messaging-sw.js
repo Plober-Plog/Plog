@@ -17,21 +17,17 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-  let notificationTitle = payload.notification?.title || 'Default Title';
+  let notificationTitle = payload.data.title || 'Default Title';
   let notificationOptions = {
-    body: payload.notification?.body || 'Default Body',
-    icon: payload.data?.icon || '/firebase-logo.png',  // payload에서 아이콘을 받아오거나 기본 아이콘 설정
+    body: payload.data.message || 'Default Body',
+    icon: payload.data.icon || '/firebase-logo.png',
     data: {
-      click_action: payload.data?.click_action || '/', // 클릭 시 이동할 URL 설정
+      click_action: payload.data.click_action || '/',
     }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
-
-// messaging.onBackgroundMessage();
-
-
 
 self.addEventListener('notificationclick', function(event) {
   const click_action = event.notification.data.click_action;
@@ -41,22 +37,30 @@ self.addEventListener('notificationclick', function(event) {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-      console.log('Matching clients:', windowClients);
-      
+      let matchedClient = null;
+
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
-        console.log('Checking client:', client.url);
-        
-        // 현재 창이 이미 열려 있는지 확인
-        if (client.url === click_action && 'focus' in client) {
-          console.log('Focusing existing window:', client.url);
-          return client.focus();
+        console.log('Checking client URL:', client.url);
+
+        // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭을 찾습니다.
+        if (client.url.startsWith('https://i11b308.ip.ssafy.io')) {
+            console.log('**** include client URL:', client.url);
+            matchedClient = client;
+            break;
         }
+
       }
 
-      // 창이 열려 있지 않다면 새 창을 염
-      if (clients.openWindow) {
-        console.log('Opening new window:', click_action);
+      if (matchedClient) {
+        // 해당 탭이 있으면 포커스하고 해당 URL로 리다이렉트
+        console.log('Focusing and navigating to:', click_action);
+        return matchedClient.focus().then(client => {
+          return client.navigate(click_action);
+        });
+      } else {
+        // 해당 탭이 없으면 새로운 탭을 엽니다.
+        console.log('No matching client found. Opening new window:', click_action);
         return clients.openWindow(click_action);
       }
     })
