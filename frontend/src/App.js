@@ -34,16 +34,8 @@ import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 import SnsList from './pages/Sns/SnsList';
 
-if (Notification.permission !== 'granted') {
-  requestForToken();
-} else {
-  getToken(getMessaging(firebaseApp), {
-    vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY
-  }).then((currentToken) => {
-    if (currentToken) {
-      document.cookie = `fcmToken=${currentToken}; path=/; SameSite=Lax`;
-    }
-  });
+// 로그인 후에만 FCM 토큰을 요청하고 저장했다면, 여기는 onForegroundMessage만 설정
+if (Notification.permission === 'granted') {
   onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
 }
 
