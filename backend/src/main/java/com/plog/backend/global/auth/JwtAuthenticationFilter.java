@@ -48,12 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         put("/api/user/password", new HashSet<>(List.of("PATCH", "POST"))); // PATCH와 POST 제외
         put("/api/user/sns/**", new HashSet<>(List.of("POST"))); // SNS 관련 요청 제외
         put("/api/auth/refresh", new HashSet<>(List.of("POST"))); // 토큰 갱신 제외
+        put("/api/user/report", new HashSet<>(List.of("POST"))); //
     }};
-
-    public boolean shouldExclude(String uri, String method) {
-        return EXCLUDE_URLS.entrySet().stream()
-                .anyMatch(entry -> pathMatcher.match(entry.getKey(), uri) && entry.getValue().contains(method));
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)

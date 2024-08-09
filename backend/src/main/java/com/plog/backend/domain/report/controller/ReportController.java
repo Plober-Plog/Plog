@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReportController {
     private final ReportService reportService;
 
-    @PostMapping("/{plantId}")
+    @GetMapping("/{plantId}")
     @Operation(summary = "Create Report", description = "식물 일지 ID를 기반으로 보고서를 생성합니다.")
     public ResponseEntity<?> createReport(
             @PathVariable("plantId") Long plantId) {

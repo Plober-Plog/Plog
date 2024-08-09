@@ -82,12 +82,19 @@ public class ReportServiceImpl implements ReportService {
         }
         log.info(">>> Water: " + water + ", Fertilize: " + fertilize + ", Repot: " + repot);
 
+        // 만약 한번도 안했다면?
+        water = water != 0 ? water : Integer.MAX_VALUE;
+        fertilize = fertilize != 0 ? fertilize : Integer.MAX_VALUE;
+        repot = repot != 0 ? repot : Integer.MAX_VALUE;
+
         // 두 개의 값을 뺄 때, 0에 가까우면 좋음. feat. 윤서 알고리즘 아이디어에 착안했습니다.
         // abs(guide - data)로 큰 값일수록 안 좋음. rating을 1~4(최고, 성장중, 아쉽다, 살려줘)
         int waterRating = Math.abs(guideWater - water);
         int fertilizeRating = Math.abs(guideFertilize - fertilize);
         int repoRating = Math.abs(guideRepot - repot);
         log.info(">>> Water Rating: " + waterRating + ", Fertilize Rating: " + fertilizeRating + ", Repo Rating: " + repoRating);
+
+
 
         ReportResult waterResult = ReportResult.getReportResult(waterRating);
         ReportResult fertilizeResult = ReportResult.getReportResult(fertilizeRating);
@@ -101,9 +108,9 @@ public class ReportServiceImpl implements ReportService {
                 .plantName(plant.getNickname())
                 .firstDayImageUrl(firstDayImageUrl)
                 .recentImageUrl(recentImageUrl)
-                .waterResult(waterResult.getValue())
-                .fertilizeResult(fertilizeResult.getValue())
-                .repoResult(repoResult.getValue())
+                .waterResult(resultToString(waterResult.getValue()))
+                .fertilizeResult(resultToString(fertilizeResult.getValue()))
+                .repoResult(resultToString(repoResult.getValue()))
                 .waterData(water)
                 .fertilizeData(fertilize)
                 .repotData(repot)
@@ -112,5 +119,18 @@ public class ReportServiceImpl implements ReportService {
         log.info(">>> createReport - ReportResultResponseDto: " + responseDto);
 
         return responseDto;
+    }
+
+    public String resultToString(int i) {
+        switch (i) {
+            case 1:
+                return "최고에요!";
+            case 2:
+                return "잘 성장중이에요!";
+            case 3:
+                return "많은 관심이 필요해요!";
+            default:
+                return "사..살려줘..";
+        }
     }
 }
