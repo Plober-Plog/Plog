@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SnsCardLgList from '../../components/Article/SnsCardLgList';
 import Tags from '../../components/Sns/Tags';
 import Tab from '../../components/Sns/Tab';
+import AddBtn from '../../components/Common/AddBtn';
 
 const SnsList = () => {
   const [tagTypeList, setTagTypeList] = useState([]);
@@ -34,6 +35,9 @@ const SnsList = () => {
         selectedTags={tagTypeList}
         onTagSelect={handleTagSelect}
         tags={tags}
+      />
+      <AddBtn 
+        type='sns'
       />
       <SnsCardLgList 
         tagTypeList={tagTypeList}
