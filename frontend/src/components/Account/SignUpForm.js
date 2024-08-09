@@ -236,9 +236,9 @@ const closeModal = () => {
 
   return (
     <div>
-      <form onSubmit={(e) => e.preventDefault()} className="form">
+      <form onSubmit={(e) => e.preventDefault()} className="account-form">
         <div>
-          {!isFormValid && <p className="error">필수 항목을 모두 입력해 주세요.</p>}
+          {!isFormValid && <p className="account-error">필수 항목을 모두 입력해 주세요.</p>}
           <InputField
             type="text"
             placeholder="아이디"
@@ -253,10 +253,10 @@ const closeModal = () => {
               }
             }}
             isRequired={true}
-            className="input"
+            className="account-input"
           />
           <ATag content="중복확인" onClick={handleCheckSearchId}/>
-          {searchIdCheckMsg && <p className="error">{searchIdCheckMsg}</p>}
+          {searchIdCheckMsg && <p className="account-error">{searchIdCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -274,14 +274,14 @@ const closeModal = () => {
             }}
             isRequired={true}
             disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
-            className="input"
+            className="account-input"
           />
           {!isEmailVerified && (
             <ATag
               content="인증번호 전송" onClick={handleCheckEmail}
             />
           )}
-          {emailCheckMsg && <p className="error">{emailCheckMsg}</p>}
+          {emailCheckMsg && <p className="account-error">{emailCheckMsg}</p>}
         </div>
         {isEmailVerificationSent && (
           <div>
@@ -292,11 +292,11 @@ const closeModal = () => {
               onChange={(e) => setEmailVerificationInput(e.target.value)}
               isRequired={true}
               disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
-              className="input"
+              className="account-input"
             />
             <p>{formatTime(timer)}</p>
             <ATag content="인증 확인" onClick={handleVerifyEmailCode} />
-            {emailVerificationMsg && <p className="error">{emailVerificationMsg}</p>}
+            {emailVerificationMsg && <p className="account-error">{emailVerificationMsg}</p>}
           </div>
         )}
         <div>
@@ -314,13 +314,13 @@ const closeModal = () => {
               }
             }}
             isRequired={true}
-            className="input"
+            className="account-input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordCheckMsg && <p className="error">{passwordCheckMsg}</p>}
+          {passwordCheckMsg && <p className="account-error">{passwordCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -337,13 +337,13 @@ const closeModal = () => {
               }
             }}
             isRequired={true}
-            className="input"
+            className="account-input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordConfirmCheckMsg && <p className="error">{passwordConfirmCheckMsg}</p>}
+          {passwordConfirmCheckMsg && <p className="account-error">{passwordConfirmCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -360,9 +360,9 @@ const closeModal = () => {
               }
             }}
             isRequired={false}
-            className="input"
+            className="account-input"
           />
-          {nicknameCheckMsg && <p className="error">{nicknameCheckMsg}</p>}
+          {nicknameCheckMsg && <p className="account-error">{nicknameCheckMsg}</p>}
           <ATag content="추천받기" />
         </div>
         <div>
@@ -372,7 +372,7 @@ const closeModal = () => {
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
-            className="input"
+            className="account-input"
           />
         </div>
         <SelectField
@@ -380,7 +380,7 @@ const closeModal = () => {
           onChange={(e) => setSource(e.target.value)}
           options={['가입경로', '지인추천', '인터넷 검색']}
           isRequired={false}
-          className="drop-box"
+          className="account-drop-box"
         />
         <RadioField
           selectedValue={gender}
@@ -399,14 +399,14 @@ const closeModal = () => {
             onChange={(e) => setSido(e.target.value)}
             options={['시/도']}
             isRequired={false}
-            className="drop-box"
+            className="account-drop-box"
           />
           <SelectField
             value={gugun}
             onChange={(e) => setGugun(e.target.value)}
             options={['구/군']}
             isRequired={false}
-            className="drop-box"
+            className="account-drop-box"
           />
         </div>
         <div>
@@ -430,7 +430,7 @@ const closeModal = () => {
           content="회원가입"
           disabled={!isFormValid}
           onClick={handleSignUp}
-          className="button"
+          className="account-button"
         />
       </form>
       <ModalComplete title={'회원가입 완료'} content={'회원가입이 완료되었습니다'} open={openModal} onClose={closeModal} />
