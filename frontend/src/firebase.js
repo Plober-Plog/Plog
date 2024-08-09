@@ -44,8 +44,12 @@ export const requestForToken = async () => {
 // FCM foreground message listener
 export const onForegroundMessage = () => {
   onMessage(messaging, (payload) => {
-    console.log("Received foreground message: ", payload);
-    const { title, body } = payload.notification || payload.data;
-    new Notification(title, { body });
+    console.log("Received foreground message: ", payload); // 메시지 수신 여부 확인
+    if (payload) {
+      const { title, body } = payload.notification || payload.data;
+      new Notification(title, { body });
+    } else {
+      console.log("No message received.");
+    }
   });
 };
