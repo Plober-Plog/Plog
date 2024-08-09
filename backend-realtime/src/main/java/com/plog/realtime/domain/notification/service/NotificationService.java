@@ -8,7 +8,7 @@ import java.util.List;
 public interface NotificationService {
     List<NotificationMessageResponseDto> getNotifications(String searchId);
 
-    NotificationMessageResponseDto sendNotification(String sourceSearchId, String targetSearchId, NotificationType type);
+    NotificationMessageResponseDto sendNotification(String sourceSearchId, String targetSearchId, String clickUrl, NotificationType type);
 
     void checkPlantNotifications();
 

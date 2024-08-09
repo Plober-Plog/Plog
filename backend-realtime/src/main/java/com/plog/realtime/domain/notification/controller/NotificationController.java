@@ -20,9 +20,12 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping("/send")
-    public ResponseEntity<BaseResponseBody> sendNotification(@RequestParam String sourceSearchId, @RequestParam String targetSearchId, @RequestParam NotificationType type) {
+    public ResponseEntity<BaseResponseBody> sendNotification(@RequestParam String sourceSearchId,
+                                                             @RequestParam String targetSearchId,
+                                                             @RequestParam String clickUrl,
+                                                             @RequestParam NotificationType type) {
         log.info("sendNotification 시작 - sourceSearchId: {}, targetSearchId: {}, type: {}", sourceSearchId, targetSearchId, type);
-        NotificationMessageResponseDto notification = notificationService.sendNotification(sourceSearchId, targetSearchId, type);
+        NotificationMessageResponseDto notification = notificationService.sendNotification(sourceSearchId, targetSearchId, clickUrl, type);
         log.info("sendNotification 완료 - sourceSearchId: {}, targetSearchId: {}, type: {}", sourceSearchId, targetSearchId, type);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알림 전송이 완료되었습니다."));
     }
