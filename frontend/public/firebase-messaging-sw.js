@@ -30,3 +30,25 @@ messaging.onBackgroundMessage(function(payload) {
 });
 
 // messaging.onBackgroundMessage();
+
+self.addEventListener('notificationclick', function(event) {
+  const click_action = event.notification.data.click_action;
+  event.notification.close(); // 알림을 닫음
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      // 열려있는 브라우저 창이 있는지 확인
+      for (let i = 0; i < windowClients.length; i++) {
+        const client = windowClients[i];
+        // 현재 창이 이미 열려 있는지 확인
+        if (client.url === click_action && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // 창이 열려 있지 않다면 새 창을 염
+      if (clients.openWindow) {
+        return clients.openWindow(click_action);
+      }
+    })
+  );
+});
