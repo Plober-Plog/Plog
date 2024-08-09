@@ -1,0 +1,10 @@
+.date-display-container {
+  display: flex;
+  align-items: center;
+}
+
+.date-display-input {
+  font-weight: bold;
+  font-size: 1.2em;
+  padding: 5px;
+}
