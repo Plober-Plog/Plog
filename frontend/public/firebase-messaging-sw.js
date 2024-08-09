@@ -41,24 +41,31 @@ self.addEventListener('notificationclick', function(event) {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-      console.log('Matching clients:', windowClients);
-      
+      let matchedClient = null;
+
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
-        console.log('Checking client:', client.url);
+        console.log('Checking client URL:', client.url);
         
-        // 현재 창이 이미 열려 있는지 확인
-        if (client.url === click_action && 'focus' in client) {
-          console.log('Focusing existing window:', client.url);
-          return client.focus();
+        // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭을 찾습니다.
+        if (client.url.includes('https://i11b308.ip.ssafy.io/')) {
+          matchedClient = client;
+          break;
         }
       }
 
-      // 창이 열려 있지 않다면 새 창을 염
-      if (clients.openWindow) {
-        console.log('Opening new window:', click_action);
+      if (matchedClient) {
+        // 해당 탭이 있으면 포커스하고 해당 URL로 리다이렉트
+        console.log('Focusing and navigating to:', click_action);
+        return matchedClient.focus().then(() => {
+          matchedClient.navigate(click_action);
+        });
+      } else {
+        // 해당 탭이 없으면 새로운 탭을 엽니다.
+        console.log('No matching client found. Opening new window:', click_action);
         return clients.openWindow(click_action);
       }
     })
   );
 });
+
