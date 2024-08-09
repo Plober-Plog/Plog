@@ -36,31 +36,34 @@ self.addEventListener('notificationclick', function(event) {
   console.log('Notification Clicked:', click_action);
 
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+    clients.matchAll({ type: 'all', includeUncontrolled: true }).then(windowClients => { // type: 'all'로 변경
       let matchedClient = null;
 
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
         console.log('Checking client URL:', client.url);
 
-        // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭을 찾습니다.
-        if (client.url.includes('/')) {
+        // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭이나 앱을 찾습니다.
+        if (client.url.includes('https://i11b308.ip.ssafy.io')) {
             console.log('**** include client URL:', client.url);
-            matchedClient = click_action;
+            matchedClient = client;  // 클라이언트 객체를 저장합니다.
             break;
         }
 
       }
 
       if (matchedClient) {
-        // 해당 탭이 있으면 포커스하고 해당 URL로 리다이렉트
+        // 해당 탭이나 앱이 있으면 포커스하고 해당 URL로 리다이렉트
         console.log('Focusing and navigating to:', click_action);
-        return matchedClient.focus();
+        return matchedClient.focus().then(() => {
+          return matchedClient.navigate(click_action);
+        });
       } else {
-        // 해당 탭이 없으면 새로운 탭을 엽니다.
+        // 해당 탭이나 앱이 없으면 새로운 창이나 앱을 엽니다.
         console.log('No matching client found. Opening new window:', click_action);
-        return self.clients.openWindow("/");
+        return self.clients.openWindow(click_action);
       }
     })
   );
 });
+
