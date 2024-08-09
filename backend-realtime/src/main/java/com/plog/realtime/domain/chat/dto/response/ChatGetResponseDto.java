@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 public class ChatGetResponseDto {
     Long userId;
+    Long chatRoomId;
     String nickname;
     String profile;
     String message;

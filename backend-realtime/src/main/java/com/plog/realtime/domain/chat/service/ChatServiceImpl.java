@@ -4,16 +4,18 @@ import com.plog.realtime.domain.chat.dto.request.ChatGetRequestDto;
 import com.plog.realtime.domain.chat.dto.response.ChatGetResponseDto;
 import com.plog.realtime.domain.chat.entity.Chat;
 import com.plog.realtime.domain.chat.entity.ChatUser;
+import com.plog.realtime.domain.chat.listener.ChatListener;
 import com.plog.realtime.domain.chat.repository.ChatRepository;
 import com.plog.realtime.domain.chat.repository.ChatRepositorySupport;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
 import com.plog.realtime.domain.chat.repository.ChatUserRepository;
 import com.plog.realtime.domain.user.repository.UserRepository;
 import com.plog.realtime.global.exception.NotAuthorizedRequestException;
-import com.plog.realtime.global.util.RedisMessagePublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,8 +24,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service("chatService")
 public class ChatServiceImpl implements ChatService {
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final ChatListener chatListener;
 
-    private final RedisMessagePublisher redisMessagePublisher;
     private final ChatUserRepository chatUserRepository;
     private final ChatRepository chatRepository;
     private final ChatRepositorySupport chatRepositorySupport;
@@ -32,10 +35,14 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Override
-    public void addUser(ChatGetRequestDto chatGetRequestDto) {
+    public void addUser(ChatGetRequestDto chatGetRequestDto, String sessionId) {
         ChatUser chatUser = chatUserRepository.findByUserUserIdAndChatRoomChatRoomId(chatGetRequestDto.getUserId(), chatGetRequestDto.getChatRoomId())
                 .orElseThrow(() -> new NotAuthorizedRequestException("채팅창에 입장할 권한이 없습니다."));
-        redisMessagePublisher.publish(chatGetRequestDto);
+        Long userId = chatGetRequestDto.getUserId();
+        String topicName = "chatroom-" + chatGetRequestDto.getChatRoomId();
+        chatListener.subscribeToChatRoom(userId, topicName, sessionId);
+        log.info(" >>> channel 구독 완료 : {}", topicName);
+        redisTemplate.convertAndSend(topicName, chatGetRequestDto);
         log.info(" >>> addUser 완료 : {}", chatGetRequestDto.getUserId());
     }
 
@@ -49,13 +56,16 @@ public class ChatServiceImpl implements ChatService {
                         .build()
         );
         log.info(" >>> sendMessage 완료 - DB에 저장: {}", chatGetRequestDto.getUserId());
-        redisMessagePublisher.publish(chatGetRequestDto);
+        String topicName = "chatroom-" + chatGetRequestDto.getChatRoomId();
+        redisTemplate.convertAndSend(topicName, chatGetRequestDto);
     }
 
     @Override
-    public void leaveUser(ChatGetRequestDto chatGetRequestDto) {
+    public void leaveUser(ChatGetRequestDto chatGetRequestDto, String sessionId) {
+        String topicName = "chatroom-" + chatGetRequestDto.getChatRoomId();
+        redisTemplate.convertAndSend(topicName, chatGetRequestDto);
+        chatListener.unsubscribeFromChatRoom(chatGetRequestDto.getUserId(), topicName, sessionId);
         log.info(" >>> leaveUser 완료: {}", chatGetRequestDto.getUserId());
-        redisMessagePublisher.publish(chatGetRequestDto);
     }
 
     @Override
@@ -67,6 +77,7 @@ public class ChatServiceImpl implements ChatService {
         log.info(" >>> getChatData 완료: chatRoomId - {}, page - {}", chatRoomId, page);
         return chats.stream().map(chat -> new ChatGetResponseDto(
                 chat.getUser().getUserId(),
+                chat.getChatRoom().getChatRoomId(),
                 chat.getUser().getNickname(),
                 chat.getUser().getImage().getImageUrl(),
                 chat.getMessage(),

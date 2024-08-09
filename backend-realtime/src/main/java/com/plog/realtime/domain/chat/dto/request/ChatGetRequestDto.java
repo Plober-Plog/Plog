@@ -14,5 +14,5 @@ public class ChatGetRequestDto {
     private Long userId;
     private Long chatRoomId;
     private String message;
-    private ChatType chatType;
+    private String chatType;
 }
