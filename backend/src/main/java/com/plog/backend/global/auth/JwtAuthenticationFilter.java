@@ -17,13 +17,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import org.springframework.util.AntPathMatcher;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,10 +34,9 @@ import java.util.Set;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final JwtTokenUtil jwtTokenUtil;
     private final PloberUserDetailService userDetailsService;
-
-    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     // JWT 검증을 건너뛰어야 하는 URI와 HTTP 메소드 목록
     private static final Map<String, Set<String>> EXCLUDE_URLS = new HashMap<>() {{
@@ -50,6 +49,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         put("/api/user/sns/**", new HashSet<>(List.of("POST"))); // SNS 관련 요청 제외
         put("/api/auth/refresh", new HashSet<>(List.of("POST"))); // 토큰 갱신 제외
     }};
+
+    public boolean shouldExclude(String uri, String method) {
+        return EXCLUDE_URLS.entrySet().stream()
+                .anyMatch(entry -> pathMatcher.match(entry.getKey(), uri) && entry.getValue().contains(method));
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
