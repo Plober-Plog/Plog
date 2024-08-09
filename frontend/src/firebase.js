@@ -4,14 +4,13 @@ import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+  apiKey: 'AIzaSyDzG0hZNZ_wERw95V7_EgbyLciEXjPD2Wc',
+  projectId: 'plog-5ac65',
+  messagingSenderId: '921732690597',
+  appId: '1:921732690597:web:3fda0b21340a730fcfd34c',
 };
+
+console.log('Firebase Config:', firebaseConfig);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -44,8 +43,12 @@ export const requestForToken = async () => {
 // FCM foreground message listener
 export const onForegroundMessage = () => {
   onMessage(messaging, (payload) => {
-    console.log("Received foreground message: ", payload);
-    const { title, body } = payload.notification || payload.data;
-    new Notification(title, { body });
+    console.log("Received foreground message: ", payload); // 메시지 수신 여부 확인
+    if (payload) {
+      const { title, body } = payload.notification || payload.data;
+      new Notification(title, { body });
+    } else {
+      console.log("No message received.");
+    }
   });
 };

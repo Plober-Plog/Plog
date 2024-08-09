@@ -7,6 +7,9 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
+# .env 파일 복사
+COPY .env .env
+
 # 소스 코드 복사 및 빌드
 COPY . .
 RUN npm run build

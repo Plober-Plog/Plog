@@ -30,7 +30,7 @@ const ProfileHeader = ({ data = {}, type }) => {
   return (
     <div>
       <ProfileImgAndTitle 
-        imgSrc={profileData.imgSrc}
+        imgSrc={profileData.profile}
         title={profileData.title}
         nickname={profileData.nickname}
       />

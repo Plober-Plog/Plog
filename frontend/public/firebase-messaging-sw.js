@@ -8,28 +8,30 @@ const firebaseConfig = {
   appId: '1:921732690597:web:3fda0b21340a730fcfd34c',
 };
 
+console.log('Firebase Config:', firebaseConfig);
+
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
-// messaging.onBackgroundMessage(function(payload) {
-//   console.log('[firebase-messaging-sw.js] Received background message ', payload);
+messaging.onBackgroundMessage(function(payload) {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-//   let notificationTitle = 'Default Title';
-//   let notificationOptions = {
-//     body: 'Default Body',
-//     icon: '/firebase-logo.png'
-//   };
+  let notificationTitle = 'Default Title';
+  let notificationOptions = {
+    body: 'Default Body',
+    icon: '/firebase-logo.png'
+  };
 
-//   if (payload.notification) {
-//     notificationTitle = payload.notification.title;
-//     notificationOptions.body = payload.notification.body;
-//   } else if (payload.data) {
-//     notificationTitle = payload.data.title || notificationTitle;
-//     notificationOptions.body = payload.data.body || notificationOptions.body;
-//   }
+  if (payload.notification) {
+    notificationTitle = payload.notification.title;
+    notificationOptions.body = payload.notification.body;
+  } else if (payload.data) {
+    notificationTitle = payload.data.title || notificationTitle;
+    notificationOptions.body = payload.data.body || notificationOptions.body;
+  }
 
-//   self.registration.showNotification(notificationTitle, notificationOptions);
-// });
+  // self.registration.showNotification(notificationTitle, notificationOptions);
+});
 
-messaging.onBackgroundMessage();
+// messaging.onBackgroundMessage();

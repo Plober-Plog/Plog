@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 
-const ProfileSnsCard = ({ articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked}) => {
+const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/sns/${articleId}`);
   }
 
-  const cutContent = content && content.length > 30? content.slice(0, 30) + "..." : content;
+  const cutContent = content && content.length > 50? content.slice(0, 50) + "..." : content;
 
   return (
     <div onClick={handleClick}>
@@ -17,6 +17,9 @@ const ProfileSnsCard = ({ articleId, nickname, image, content, likeCnt, commentC
         src={image || defaultImg}
         alt="thumbnail"
       />
+      <div>
+        <span>닉네임: {nickname}</span>
+      </div>
       <p>{cutContent}</p>
       <p>좋아요 수:{likeCnt}</p>
       <p>댓글 수:{commentCnt}</p>
@@ -24,11 +27,11 @@ const ProfileSnsCard = ({ articleId, nickname, image, content, likeCnt, commentC
         {isLiked ? '❤️' : '🖤'}
       </i>
       <i title="북마크">
-      {isBookmarked ? '🔖' : ''}
+      {isBookmarked ? '🔖' : '📕'}
       </i>
     </div>
   )
 
 }
 
-export default ProfileSnsCard;
+export default SnsCardMd;
