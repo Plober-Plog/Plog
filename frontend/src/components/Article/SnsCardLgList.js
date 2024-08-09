@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
 import SnsCardLg from './SnsCardLg';
-import qs from 'qs'; // Query string library
+import qs from 'qs';
 
-const SnsCardLgList = ({ searchId, tagTypeList }) => {
+const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
 
   const [snslist, setSnsList] = useState([]);
@@ -15,13 +15,18 @@ const SnsCardLgList = ({ searchId, tagTypeList }) => {
   const fetchSnsList = async (searchId, page) => {
     setLoading(true);
     try {
-      const params = { searchId, page, tagType: tagTypeList };
+      const params = {
+        searchId,
+        page,
+        tagType: tagTypeList,
+        neighborType: selectedVisibility
+      };
       const queryString = qs.stringify(params, { arrayFormat: 'comma', skipNulls: true });
       const url = `/user/sns?${queryString}`;
       console.log('Request URL:', url);
 
       const response = await API.get(url);
-      console.log('API response:', response.data); // API 응답 확인
+      console.log('API response:', response.data);
       if (response.data.length === 0) {
         setHasMore(false);
       } else {
@@ -41,7 +46,7 @@ const SnsCardLgList = ({ searchId, tagTypeList }) => {
 
   useEffect(() => {
     fetchSnsList(searchId, 0);
-  }, [searchId, tagTypeList]);
+  }, [searchId, tagTypeList, selectedVisibility]);
 
   const handleScroll = () => {
     if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && hasMore && !loading) {

@@ -17,19 +17,14 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-  let notificationTitle = 'Default Title';
+  let notificationTitle = payload.notification?.title || 'Default Title';
   let notificationOptions = {
-    body: 'Default Body',
-    icon: '/firebase-logo.png'
+    body: payload.notification?.body || 'Default Body',
+    icon: payload.data?.icon || '/firebase-logo.png',  // payload에서 아이콘을 받아오거나 기본 아이콘 설정
+    data: {
+      click_action: payload.data?.click_action || '', // 클릭 시 이동할 URL 설정
+    }
   };
-
-  if (payload.notification) {
-    notificationTitle = payload.notification.title;
-    notificationOptions.body = payload.notification.body;
-  } else if (payload.data) {
-    notificationTitle = payload.data.title || notificationTitle;
-    notificationOptions.body = payload.data.body || notificationOptions.body;
-  }
 
   // self.registration.showNotification(notificationTitle, notificationOptions);
 });
