@@ -9,7 +9,7 @@ const SignUp = () => {
 
   return (
     <div className="account-container">
-      <h1 className="title">회원가입</h1>
+      <h1 className="account-title">회원가입</h1>
       <ATag
         content='로그인'
         onClick={() => navigate('/login')}

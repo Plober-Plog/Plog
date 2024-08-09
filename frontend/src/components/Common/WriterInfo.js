@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import '../../pages/Diary/PlantDiaryWrite.css';
+import './WriterInfo.css';
 
 const WriterInfo = ({ data = {}, type }) => {
   const defaultImg = '../../assets/icon/default.png';
@@ -17,23 +17,23 @@ const WriterInfo = ({ data = {}, type }) => {
   } else {
     console.error(`Unexpected type: ${type}`)
   }
-  
 
   return (
-    <div>
-      <div>
-        <img src={writerInfoData.imgSrc} alt='profile img' className="profile-pic" />
-      </div>
-      <div>
-        {writerInfoData.nickname}
-      </div>
-      <div>
-        {writerInfoData.info}
+    <div className="writerInfo-container">
+      <img src={writerInfoData.imgSrc} alt='profile img' className="writerInfo-profile-pic" />
+      <div className="writerInfo-text">
+        <div className="writerInfo-nickname">
+          {writerInfoData.nickname}
+        </div>
+        <div className="writerInfo-info">
+          {writerInfoData.info}
+        </div>
       </div>
     </div>
-  )};
+  );
+};
 
-  WriterInfo.propTypes = {
+WriterInfo.propTypes = {
   data: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
 };

@@ -1,0 +1,27 @@
+.plant-report-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.plant-report-title {
+  margin-bottom: 20px;
+
+}
+
+.plant-report-slider {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.plant-report-name {
+  margin-bottom: 20px;
+
+}
+
+.plant-report-details {
+  margin-bottom: 20px;
+
+}

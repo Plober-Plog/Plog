@@ -100,8 +100,8 @@ const PasswordFind = () => {
 
   return (
     <div className="account-container">
-      <h1 className="title">비밀번호 찾기</h1>
-      <form onSubmit={e => e.preventDefault()} className="form">
+      <h1 className="account-title">비밀번호 찾기</h1>
+      <form onSubmit={e => e.preventDefault()} className="account-form">
         <div>
           <InputField
             type="email"
@@ -118,7 +118,7 @@ const PasswordFind = () => {
             }}
             isRequired={true}
             disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
-            className="input"
+            className="account-input"
           />
           <ATag
             content="인증하기" onClick={handleEmailVerification}
@@ -134,18 +134,18 @@ const PasswordFind = () => {
               onChange={(e) => setEmailVerificationInput(e.target.value)}
               isRequired={true}
               disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
-              className="input"
+              className="account-input"
             />
             <p>{formatTime(timer)}</p>
             <ATag content="인증 확인" onClick={handleCodeVerification} />
-            {emailVerificationMsg && <p className="error">{emailVerificationMsg}</p>}
+            {emailVerificationMsg && <p className="account-error">{emailVerificationMsg}</p>}
           </div>
         )}
           <Btn
             content="비밀번호 찾기"
             disabled={!isEmailVerified}
             onClick={() => navigate('/password/update', { state: { userId } })}
-            className="button"
+            className="account-button"
           />
       </form>
     </div>

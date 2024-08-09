@@ -81,8 +81,8 @@ const PasswordUpdate = () => {
 
   return (
     <div className="account-container">
-      <h2 className="title">비밀번호 변경</h2>
-      <form onSubmit={e => e.preventDefault()} className="form">
+      <h2 className="account-title">비밀번호 변경</h2>
+      <form onSubmit={e => e.preventDefault()} className="account-form">
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
@@ -90,13 +90,13 @@ const PasswordUpdate = () => {
             value={password} 
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true} 
-            className="input"
+            className="account-input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordError && <p className="error">{passwordError}</p>}
+          {passwordError && <p className="account-error">{passwordError}</p>}
         </div>
         <div>
           <InputField
@@ -105,19 +105,19 @@ const PasswordUpdate = () => {
             value={passwordConfirm} 
             onChange={(e) => setPasswordConfirm(e.target.value)}
             isRequired={true} 
-            className="input"
+            className="account-input"
           />
           <ATag
             onClick={() => setShowPassword(!showPassword)}
             content={showPassword ? '숨기기' : '보기'}
           />
-          {passwordConfirmError && <p className="error">{passwordConfirmError}</p>}
+          {passwordConfirmError && <p className="account-error">{passwordConfirmError}</p>}
         </div>
         <Btn
           content="비밀번호 변경"
           disabled={!isFormValid}
           onClick={handlePasswordUpdate}
-          className="button"
+          className="account-button"
         />
       </form>
       <ModalComplete

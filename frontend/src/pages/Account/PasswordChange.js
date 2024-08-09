@@ -41,22 +41,22 @@ const PasswordChange = () => {
 
   return (
     <div className="account-container">
-      <h2 className="title">비밀번호 변경</h2>
-      <form onSubmit={handlePasswordChange} className="form">
+      <h2 className="account-title">비밀번호 변경</h2>
+      <form onSubmit={handlePasswordChange} className="account-form">
         <InputField
           type={showPassword ? "text" : "password"}
           placeholder="현재 비밀번호"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
           required
-          className="input"
+          className="account-input"
         />
         <ATag
           onClick={() => setShowPassword(!showPassword)}
           content={showPassword ? '숨기기' : '보기'}
         />
-        {passwordConfirmMsg && <p className="error">{passwordConfirmMsg}</p>}
-        <Btn content="비밀번호 확인" type="submit" className="button"/>
+        {passwordConfirmMsg && <p className="account-error">{passwordConfirmMsg}</p>}
+        <Btn content="비밀번호 확인" type="submit" className="account-button"/>
       </form>
     </div>
   );
