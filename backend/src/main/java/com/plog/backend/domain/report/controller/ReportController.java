@@ -23,11 +23,9 @@ public class ReportController {
     @PostMapping("/{plantId}")
     @Operation(summary = "Create Report", description = "식물 일지 ID를 기반으로 보고서를 생성합니다.")
     public ResponseEntity<?> createReport(
-            @PathVariable("plantId") Long plantId,
-
-            @RequestBody ReportCreateRequestDto reportCreateRequestDto) {
+            @PathVariable("plantId") Long plantId) {
         log.info(">>> [POST] 분석 리포트 생성 plantId: {}", plantId);
-        ReportResultResponseDto responseDto = reportService.createReport(plantId, reportCreateRequestDto);
+        ReportResultResponseDto responseDto = reportService.createReport(plantId);
         log.info(">>> [POST] 분석 리포트 전송 : {}", responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

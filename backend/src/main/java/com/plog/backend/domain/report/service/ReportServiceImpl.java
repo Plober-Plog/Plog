@@ -29,23 +29,28 @@ public class ReportServiceImpl implements ReportService {
     private final PlantCheckRepository plantCheckRepository;
 
     @Override
-    public ReportResultResponseDto createReport(Long plantId, ReportCreateRequestDto reportCreateRequestDto) {
-        LocalDate startDate = reportCreateRequestDto.getStartDate();
-        LocalDate endDate = reportCreateRequestDto.getEndDate();
+    public ReportResultResponseDto createReport(Long plantId) {
+//    public ReportResultResponseDto createReport(Long plantId, ReportCreateRequestDto reportCreateRequestDto) {
+//        LocalDate startDate = reportCreateRequestDto.getStartDate();
+//        LocalDate endDate = reportCreateRequestDto.getEndDate();
 
         // 식물 일지 아이디 기준으로 특정 기간의 데이터를 가져옴
-        List<PlantDiary> plantDiary = plantDiaryRepository.findPlantDiariesByPlantPlantIdAndRecordDateBetween(plantId, startDate, endDate);
+//        List<PlantDiary> plantDiaries = plantDiaryRepository.findPlantDiariesByPlantPlantIdAndRecordDateBetween(plantId, startDate, endDate);
+        List<PlantDiary> plantDiaries = plantDiaryRepository.findPlantDiariesByPlantPlantId(plantId);
 
-        if (plantDiary.size() == 0) {
+        if (plantDiaries.isEmpty()) {
             throw new EntityNotFoundException(">>> 없는 식물 일지 입니다.");
         }
 
-        Plant plant = plantDiary.get(0).getPlant();
+        Plant plant = plantDiaries.get(0).getPlant();
         PlantType plantType = plant.getPlantType();
         log.info(">>> Plant: " + plant + ", PlantType: " + plantType);
 
+        LocalDate startDate = LocalDate.from(plantDiaries.get(0).getCreatedAt());
+        LocalDate endDate = LocalDate.from(plantDiaries.get(plantDiaries.size() - 1).getCreatedAt());
+
         String firstDayImageUrl = plant.getImage().getImageUrl();
-        String recentImageUrl = plantDiary.get(plantDiary.size() - 1).getPlant().getImage().getImageUrl(); // 제일 최근 사진
+        String recentImageUrl = plantDiaries.get(plantDiaries.size() - 1).getPlant().getImage().getImageUrl(); // 제일 최근 사진
         log.info("첫 번째 날 이미지 URL: " + firstDayImageUrl);
         log.info("최근 이미지 URL: " + recentImageUrl);
 
