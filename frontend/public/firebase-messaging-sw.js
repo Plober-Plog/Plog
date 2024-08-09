@@ -17,16 +17,16 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-  let notificationTitle = payload.notification?.title || 'Default Title';
+  let notificationTitle = payload.data.title || 'Default Title';
   let notificationOptions = {
-    body: payload.notification?.body || 'Default Body',
-    icon: payload.data?.icon || '/firebase-logo.png',  // payload에서 아이콘을 받아오거나 기본 아이콘 설정
+    body: payload.data.body || 'Default Body',
+    icon: payload.data.icon || '/firebase-logo.png',
     data: {
-      click_action: payload.data?.click_action || '/', // 클릭 시 이동할 URL 설정
+      click_action: payload.data.click_action || '/',
     }
   };
 
-  // self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 // messaging.onBackgroundMessage();
