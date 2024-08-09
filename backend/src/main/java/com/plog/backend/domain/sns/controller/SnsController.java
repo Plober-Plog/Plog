@@ -103,22 +103,31 @@ public class SnsController {
     @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 조회합니다.")
     public ResponseEntity<List<ArticleGetSimpleResponseDto>> getArticleList(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @Parameter(description = "작성자 ID", example = "testid")
+            @Parameter(description = "작성자 ID", example = "1")
             @RequestParam(value = "searchId", required = false) String searchId,
             @Parameter(description = "페이지 번호", example = "0")
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @Parameter(description = "게시글 태그 필터링", example = "[1, 2]")
             @RequestParam(value = "tagType", required = false) List<Integer> tagType,
             @Parameter(description = "검색할 내용", example = "식물")
-            @RequestParam(value = "keyword", required = false) String keyword
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @Parameter(description = "검색할 범위(0: public, 1: 이웃, 2: 서로이웃)", example = "1")
+            @RequestParam(value = "neighborType", required = false, defaultValue = "0") int neighborType
     ) {
         Long userId = 0L;
         if (token != null)
             userId = JwtTokenUtil.jwtTokenUtil.getUserIdFromToken(token);
 
-        log.info(">>> [GET] /user/sns?page={}&searchId={}&tagType={}&keyword={} | 현재 로그인한 회원의 id: {}", page, searchId, tagType, keyword, userId);
+        log.info(">>> [GET] /user/sns?page={}&searchId={}&tagType={}&keyword={}&neighbor={} | 현재 로그인한 회원의 id: {}", page, searchId, tagType, keyword, neighborType, userId);
 
-        ArticleGetListRequestDto articleGetListRequestDto = new ArticleGetListRequestDto(userId, searchId, page, tagType, keyword);
+        ArticleGetListRequestDto articleGetListRequestDto = ArticleGetListRequestDto.builder()
+                .userId(userId)
+                .searchId(searchId)
+                .tagType(tagType)
+                .keyword(keyword)
+                .neighborType(neighborType)
+                .page(page)
+                .build();
         List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = articleService.getArticleList(articleGetListRequestDto);
         return ResponseEntity.status(200).body(articleGetSimpleResponseDtoList);
     }
