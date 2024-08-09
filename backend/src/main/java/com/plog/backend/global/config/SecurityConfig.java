@@ -48,6 +48,9 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/user/**").permitAll() // JWT 없이 접근 가능
 //                        .anyRequest().authenticated() // 나머지 요청은 JWT 필요
                 )
+                .requiresChannel(channel -> channel
+                        .anyRequest().requiresSecure() // 모든 요청에 HTTPS를 요구
+                )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 정책 설정
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) ->
