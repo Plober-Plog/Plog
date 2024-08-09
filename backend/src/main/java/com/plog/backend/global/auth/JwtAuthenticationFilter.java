@@ -48,7 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         put("/api/user/password", new HashSet<>(List.of("PATCH", "POST"))); // PATCH와 POST 제외
         put("/api/user/sns/**", new HashSet<>(List.of("POST"))); // SNS 관련 요청 제외
         put("/api/auth/refresh", new HashSet<>(List.of("POST"))); // 토큰 갱신 제외
-        put("/api/user/report", new HashSet<>(List.of("POST"))); //
+        put("/api/user/report", new HashSet<>(List.of("POST"))); // 분석 리포트 제외
+        put("/api/auth/logout", new HashSet<>(List.of("POST"))); // 로그아웃 제외
     }};
 
     @Override
