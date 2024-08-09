@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import API from "../../apis/api";
 
 import WriterInfo from "../../components/Common/WriterInfo";
@@ -11,8 +11,8 @@ import BtnList from "../../components/Sns/BtnList";
 
 const SnsDetail = () => {
   const location = useLocation();
-  // const { articleId } = location.state;
-  const articleId = 50;
+  const navigate = useNavigate()
+  const { articleId } = location.state;
   const [article, setArticle] = useState({});
   const [writerInfo, setWriterInfo] = useState({})
 

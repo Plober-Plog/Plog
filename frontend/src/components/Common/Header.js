@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from "react-router-dom";
 import plogLogo from "../../assets/icon/header/ploglogo.png";
 import hamBurger from "../../assets/icon/header/hamburger.png";
 import back from "../../assets/icon/header/back.png";
 import './Header.css';
+import useAuthStore from '../../stores/member';
 
 const Header = () => {
   const navigate = useNavigate();
+  const { isLogin } = useAuthStore();
 
   return (
     <div className="header-container">
@@ -16,9 +18,15 @@ const Header = () => {
       <div className="header-logo" onClick={() => navigate('/')}>
         <img src={plogLogo} alt="Logo" className="header-icon" />
       </div>
-      <button className="header-button" onClick={() => navigate('/setting')}>
-        <img src={hamBurger} alt="Menu" className="header-icon-small" />
-      </button>
+      {isLogin ? (
+        <button className="header-button" onClick={() => navigate('/setting')}>
+          <img src={hamBurger} alt="Menu" className="header-icon-small" />
+        </button>
+      ) : (
+        <button className="header-button" onClick={() => navigate('/login')}>
+          <span className="header-icon-small">Login</span> {/* 로그인 텍스트 표시 */}
+        </button>
+      )}
       <div className="header-spacing"></div>
     </div>
   );
