@@ -1,11 +1,16 @@
-import React from 'react';
+
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 // default
 import Home from './pages/Main/Home';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
 import FooterCmt from './components/Common/FooterCmt'; // FooterCmt 가져오기
+
+// FCM
+import { getMessaging, getToken } from 'firebase/messaging';
+import { requestForToken, onForegroundMessage } from './firebase';
 
 // Account
 import SignUp from './pages/Account/SignUp';
@@ -25,11 +30,41 @@ import ApiTest from './pages/Plant/ApiTest';
 
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
+import Neighbor from './pages/Profile/Neighbor';
+
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 
+// if (Notification.permission !== 'granted') {
+//   requestForToken();
+// } else {
+//   getToken(getMessaging(firebaseApp), {
+//     vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY
+//   }).then((currentToken) => {
+//     if (currentToken) {
+//       document.cookie = `fcmToken=${currentToken}; path=/; SameSite=Lax`;
+//     }
+//   });
+//   onMessageListener().then((payload) => {
+//     const { title, body } = payload.notification || payload.data;
+//     new Notification(title, { body });
+//   }).catch((err) => console.log('failed: ', err));
+// }
+
 function App() {
+  useEffect(() => {
+    const initFCM = async () => {
+      const token = await requestForToken();
+      if (token) {
+        document.cookie = `fcmToken=${token}; path=/; SameSite=Lax`;
+      }
+      onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
+    };
+
+    initFCM();
+  }, []);
+
   return (
     <div className='container'>
       <Router>

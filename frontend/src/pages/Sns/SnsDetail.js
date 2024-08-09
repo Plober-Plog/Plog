@@ -12,7 +12,7 @@ import BtnList from "../../components/Sns/BtnList";
 const SnsDetail = () => {
   const location = useLocation();
   // const { articleId } = location.state;
-  const articleId = 49;
+  const articleId = 50;
   const [article, setArticle] = useState({});
   const [writerInfo, setWriterInfo] = useState({})
 

@@ -1,30 +1,35 @@
-// firebase-messaging-sw.js
-importScripts('https://www.gstatic.com/firebasejs/9.1.2/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.1.2/firebase-messaging-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js');
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+  apiKey: 'AIzaSyDzG0hZNZ_wERw95V7_EgbyLciEXjPD2Wc',
+  projectId: 'plog-5ac65',
+  messagingSenderId: '921732690597',
+  appId: '1:921732690597:web:3fda0b21340a730fcfd34c',
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  // Customize notification here
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/firebase-logo.png'
-  };
+// messaging.onBackgroundMessage(function(payload) {
+//   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
-});
+//   let notificationTitle = 'Default Title';
+//   let notificationOptions = {
+//     body: 'Default Body',
+//     icon: '/firebase-logo.png'
+//   };
+
+//   if (payload.notification) {
+//     notificationTitle = payload.notification.title;
+//     notificationOptions.body = payload.notification.body;
+//   } else if (payload.data) {
+//     notificationTitle = payload.data.title || notificationTitle;
+//     notificationOptions.body = payload.data.body || notificationOptions.body;
+//   }
+
+//   self.registration.showNotification(notificationTitle, notificationOptions);
+// });
+
+messaging.onBackgroundMessage();

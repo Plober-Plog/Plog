@@ -20,6 +20,8 @@ const CustomCalendar = ({ plantId }) => {
         params: { year, month },
       });
 
+      console.log('@@@checkRecords:@@##@', checkRecords);
+      console.log('@@@diaryRecords:@@##@', diaryRecords);
       return { checkData: checkResponse.data, diaryData: diaryResponse.data };
     } catch (error) {
       console.error('Error fetching month data:', error.response.data);
@@ -51,6 +53,7 @@ const CustomCalendar = ({ plantId }) => {
 
   useEffect(() => {
     fetchRecords(value);
+    
   }, [value, plantId]);
 
   const formatDate = (date) => {
@@ -90,10 +93,10 @@ const CustomCalendar = ({ plantId }) => {
 
     return (
       <div className="color-box">
-        <div className={`indicator ${checkRecord?.watered ? 'watered' : ''}`}></div>
-        <div className={`indicator ${checkRecord?.fertilized ? 'fertilized' : ''}`}></div>
-        <div className={`indicator ${checkRecord?.repotted ? 'repotted' : ''}`}></div>
-        <div className={`indicator ${diaryRecord ? 'diary' : ''}`}></div>
+        {checkRecord?.isWatered && <div className="indicator watered"></div>}
+        {checkRecord?.isFertilized && <div className="indicator fertilized"></div>}
+        {checkRecord?.isRepotted && <div className="indicator repotted"></div>}
+        {diaryRecord && <div className="indicator diary"></div>}
       </div>
     );
   };

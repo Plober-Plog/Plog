@@ -12,12 +12,15 @@ import chatDefault from "../../assets/icon/footer/chat-default.svg";
 import alarmSelect from "../../assets/icon/footer/alarm-select.svg";
 import alarmDefault from "../../assets/icon/footer/alarm-default.svg";
 import alarmNewDefault from "../../assets/icon/footer/alarm-new-default.svg";
+import useAuthStore from '../../stores/member';
+
 import "./Footer.css";
 
 const Footer = () => {
   const { activeButton, setActiveButton } = useButtonStore(); 
   const navigate = useNavigate();
   const location = useLocation();
+  const authSearchId = useAuthStore((state) => state.getSearchId());
 
   // 활성 버튼 바뀔 때마다 해당 icon 활성화
   useEffect(() => {
@@ -53,7 +56,7 @@ const Footer = () => {
         navigate("/sns");
         break;
       case "profile":
-        navigate("/profile");
+        navigate(`/profile/${authSearchId}`);
         break;
       case "home":
         navigate("/");
