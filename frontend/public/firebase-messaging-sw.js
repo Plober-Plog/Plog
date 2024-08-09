@@ -19,7 +19,7 @@ messaging.onBackgroundMessage(function(payload) {
 
   let notificationTitle = payload.data.title || 'Default Title';
   let notificationOptions = {
-    body: payload.data.body || 'Default Body',
+    body: payload.data.message || 'Default Body',
     icon: payload.data.icon || '/firebase-logo.png',
     data: {
       click_action: payload.data.click_action || '/',
