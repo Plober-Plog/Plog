@@ -29,10 +29,6 @@ messaging.onBackgroundMessage(function(payload) {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// messaging.onBackgroundMessage();
-
-
-
 self.addEventListener('notificationclick', function(event) {
   const click_action = event.notification.data.click_action;
   event.notification.close(); // 알림을 닫음
@@ -46,9 +42,10 @@ self.addEventListener('notificationclick', function(event) {
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
         console.log('Checking client URL:', client.url);
-        
+
         // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭을 찾습니다.
         if (client.url.includes('i11b308.ip.ssafy.io')) {
+          console.log('**** include client URL:', client.url)
           matchedClient = client;
           break;
         }
@@ -57,8 +54,8 @@ self.addEventListener('notificationclick', function(event) {
       if (matchedClient) {
         // 해당 탭이 있으면 포커스하고 해당 URL로 리다이렉트
         console.log('Focusing and navigating to:', click_action);
-        return matchedClient.focus().then(() => {
-          matchedClient.navigate(click_action);
+        return matchedClient.focus().then(client => {
+          return client.navigate(click_action);
         });
       } else {
         // 해당 탭이 없으면 새로운 탭을 엽니다.
@@ -68,4 +65,3 @@ self.addEventListener('notificationclick', function(event) {
     })
   );
 });
-
