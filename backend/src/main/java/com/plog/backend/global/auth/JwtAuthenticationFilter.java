@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final JwtTokenUtil jwtTokenUtil;
     private final PloberUserDetailService userDetailsService;
 
@@ -41,11 +43,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         put("/api/user/email/send", List.of("POST"));
         put("/api/user/email/check", List.of("POST"));
         put("/api/user/login", List.of("POST")); // 로그인 요청 제외
-        put("/api/user/password", List.of("PATCH"));
+        put("/api/user/password", List.of("PATCH")); // 비밀번호 변경 제외
+        put("/api/user/report/**", List.of("POST")); // 분석 리포트 제외
         // 필요한 다른 URI와 메소드 추가
         put("/api/auth/refresh", List.of("POST"));
-//        put("/api/user/password", List.of("POST"));
     }};
+
+    public boolean shouldExclude(String uri, String method) {
+        return EXCLUDE_URLS.entrySet().stream()
+                .anyMatch(entry -> pathMatcher.match(entry.getKey(), uri) && entry.getValue().contains(method));
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -89,8 +96,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // 요청 URI와 메소드가 제외 목록에 포함되어 있는지 확인
-            if (EXCLUDE_URLS.containsKey(requestURI) && EXCLUDE_URLS.get(requestURI).contains(requestMethod)) {
+
+            if (shouldExclude(requestURI, requestMethod)) {
+                // JWT 검증 건너뛰기
                 log.info(">>> JWT Filter - 제외 목록에서 제외");
                 chain.doFilter(request, response); // 필터 체인 계속 진행
                 return;
