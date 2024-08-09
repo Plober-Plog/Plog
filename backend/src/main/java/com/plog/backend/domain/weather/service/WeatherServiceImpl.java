@@ -151,7 +151,7 @@ public class WeatherServiceImpl implements WeatherService {
                     }
 
                     // Remove yesterday's data from Redis
-                    redisTemplate.delete(yesterdayKey);
+//                    redisTemplate.delete(yesterdayKey);
                     log.info("Removed yesterday's weather data from Redis for key: {}", yesterdayKey);
                 } catch (Exception e) {
 //                    log.error("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
