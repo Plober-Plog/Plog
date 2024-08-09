@@ -28,7 +28,6 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) =
         style={{ display: 'none' }}
         multiple
         accept="image/*"
-        capture="environment"
         onChange={(e) => {
             handleImageUpload(e);
             e.target.value = '';

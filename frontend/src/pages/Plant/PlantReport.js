@@ -16,9 +16,9 @@ const PlantReport = () => {
     const fetchPlantReportData = async () => {
       try {
         const response = await API.post(`/user/report/${plantId}`, {
-          startDate: "2024-08-06",
-          endDate: "2024-08-08"
+          plantId: plantId,
         });
+
         console.log(response.data);
         setPlantData(response.data);
         setLoading(false);

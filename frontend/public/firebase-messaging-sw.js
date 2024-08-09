@@ -17,16 +17,55 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-  let notificationTitle = payload.notification?.title || 'Default Title';
+  let notificationTitle = payload.data.title || 'Default Title';
   let notificationOptions = {
-    body: payload.notification?.body || 'Default Body',
-    icon: payload.data?.icon || '/firebase-logo.png',  // payload에서 아이콘을 받아오거나 기본 아이콘 설정
+    body: payload.data.message || 'Default Body',
+    icon: payload.data.icon || '/firebase-logo.png',
     data: {
-      click_action: payload.data?.click_action || '', // 클릭 시 이동할 URL 설정
+      click_action: payload.data.click_action || '/',
     }
   };
 
-  // self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 // messaging.onBackgroundMessage();
+
+
+
+self.addEventListener('notificationclick', function(event) {
+  const click_action = event.notification.data.click_action;
+  event.notification.close(); // 알림을 닫음
+
+  console.log('Notification Clicked:', click_action);
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      let matchedClient = null;
+
+      for (let i = 0; i < windowClients.length; i++) {
+        const client = windowClients[i];
+        console.log('Checking client URL:', client.url);
+        
+        // 'https://i11b308.ip.ssafy.io/'를 포함하는 탭을 찾습니다.
+        if (client.url.includes('https://i11b308.ip.ssafy.io/')) {
+          matchedClient = client;
+          break;
+        }
+      }
+
+      if (matchedClient) {
+        // 해당 탭이 있으면 포커스하고 해당 URL로 리다이렉트
+        console.log('Focusing and navigating to:', click_action);
+        return matchedClient.focus().then(() => {
+          matchedClient.navigate(click_action);
+        });
+      } else {
+        // 해당 탭이 없으면 새로운 탭을 엽니다.
+        console.log('No matching client found. Opening new window:', click_action);
+        return clients.openWindow(click_action);
+      }
+    })
+  );
+});
+

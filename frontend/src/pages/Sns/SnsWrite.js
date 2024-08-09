@@ -77,6 +77,8 @@ const SnsWrite = () => {
   // 게시물 작성
   const handleSave = async () => {
 
+    // TODO 게시물 작성 수정
+
     // FormData 생성
     const snsData = new FormData();
     snsData.append('content', content);

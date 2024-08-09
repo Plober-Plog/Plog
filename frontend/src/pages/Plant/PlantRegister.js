@@ -116,8 +116,7 @@ const PlantRegister = () => {
       }
 
       console.log(plantId === 0 ? '식물 등록 성공:' : '식물 수정 성공:', response.data);
-      // navigate(`/plant/${plantId}`);
-      // TODO 작성시 식물 plantId 넘겨주기 변경
+      navigate(`/plant/${plantId}`);
     } catch (err) {
       console.error('식물 등록/수정 실패 : ', err);
     }
