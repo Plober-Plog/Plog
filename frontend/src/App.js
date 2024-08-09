@@ -1,10 +1,12 @@
+
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // default
 import Home from './pages/Main/Home';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
+import FooterCmt from './components/Common/FooterCmt'; // FooterCmt 가져오기
 
 // FCM
 import { getMessaging, getToken } from 'firebase/messaging';
@@ -84,12 +86,22 @@ function App() {
               <Route path="/sns/:articleId" element={<SnsDetail />} />
             </Routes>
         </main>
-        <footer className='full-width'>
-          <Footer />
-        </footer>
+        <FooterWithCondition />
       </Router>
     </div>
   );
-};
+}
+
+// sns 들어가면 댓글작성 footer 출력
+const FooterWithCondition = () => {
+  const location = useLocation();
+  const isSnsDetailPage = location.pathname.startsWith('/sns/');
+
+  return (
+    <footer className='full-width'>
+      {isSnsDetailPage ? null : <Footer />}
+    </footer>
+  );
+}
 
 export default App;

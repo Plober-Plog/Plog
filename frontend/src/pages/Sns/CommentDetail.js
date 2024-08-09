@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
+import Comment from "../../components/Sns/Comment";
+
 
 const CommentDetail = () => {
+  const location = useLocation();
+    const { articleId } = location.state;
+
   return (
     <div>
-      <h4>Comment Details</h4>
-      <p>Author: John Doe</p>
-      <p>Content: This is a sample comment.</p>
+      <Comment articleId={articleId}/>
     </div>
   );
 }
