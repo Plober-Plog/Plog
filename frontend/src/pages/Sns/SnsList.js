@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import SnsCardLgList from '../../components/Article/SnsCardLgList';
 import Tags from '../../components/Sns/Tags';
+import Tab from '../../components/Sns/Tab';
 
 const SnsList = () => {
   const [tagTypeList, setTagTypeList] = useState([]);
+  const [selectedVisibility, setSelectedVisibility] = useState(0);
   const tags = [
     { tagTypeId: 1, tagName: '일지' },
     { tagTypeId: 2, tagName: '분석 레포트' },
@@ -11,7 +13,7 @@ const SnsList = () => {
     { tagTypeId: 4, tagName: '일기' },
     { tagTypeId: 5, tagName: '식물' },
     { tagTypeId: 6, tagName: '정보' },
-    { tagTypeId: 7, tagName: '룸꾸미기' }
+    // { tagTypeId: 7, tagName: '룸꾸미기' }
   ];
 
   const handleTagSelect = (id) => {
@@ -24,7 +26,10 @@ const SnsList = () => {
 
   return (
     <div>
-      Sns List Page 입니당
+      <Tab
+        selectedVisibility={selectedVisibility}
+        setSelectedVisibility={setSelectedVisibility}
+      />
       <Tags 
         selectedTags={tagTypeList}
         onTagSelect={handleTagSelect}
@@ -32,6 +37,7 @@ const SnsList = () => {
       />
       <SnsCardLgList 
         tagTypeList={tagTypeList}
+        selectedVisibility={selectedVisibility}
       />
     </div>
   );
