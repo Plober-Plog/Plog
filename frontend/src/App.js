@@ -1,10 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 // default
 import Home from './pages/Main/Home';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
+import FooterCmt from './components/Common/FooterCmt'; // FooterCmt 가져오기
 
 // Account
 import SignUp from './pages/Account/SignUp';
@@ -36,40 +37,49 @@ function App() {
           <Header />
         </header>
         <main className='content'>
-
-            <Routes>
-              {/* <Route path="/" element={<Home />}/> */}
-              {/* Account */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/profileupdate" element={<ProfileUpdate />} />
-              <Route path="/password/change" element={<PasswordChange />} />
-              <Route path="/password/find" element={<PasswordFind />} />
-              <Route path="/password/update" element={<PasswordUpdate />} />
-              <Route path="/setting" element={<Setting />} />
-              {/* plant */}
-              <Route path="/plant/:plantId/:date/write" element={<PlantDiaryWrite />} />
-              <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
-              <Route path="/plant/:plantId" element={<PlantDetail />} />
-              <Route path="/guide/:plantTypeId" element={<PlantGuide />} />
-              {/* <Route path="/plant" element={<PlantDetail />} /> */}
-              {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
-              <Route path="/plant/register" element={<PlantRegister />} />
-              {/* profile */}
-              {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
-              <Route path="/profile/:searchId" element={<UserProfile />} />
-              {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
-              {/* sns */}
-              <Route path="/sns/write" element={<SnsWrite />} />
-              <Route path="/sns/:articleId" element={<SnsDetail />} />
-            </Routes>
+          <Routes>
+            {/* <Route path="/" element={<Home />}/> */}
+            {/* Account */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profileupdate" element={<ProfileUpdate />} />
+            <Route path="/password/change" element={<PasswordChange />} />
+            <Route path="/password/find" element={<PasswordFind />} />
+            <Route path="/password/update" element={<PasswordUpdate />} />
+            <Route path="/setting" element={<Setting />} />
+            {/* plant */}
+            <Route path="/plant/:plantId/:date/write" element={<PlantDiaryWrite />} />
+            <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
+            <Route path="/plant/:plantId" element={<PlantDetail />} />
+            <Route path="/guide/:plantTypeId" element={<PlantGuide />} />
+            {/* <Route path="/plant" element={<PlantDetail />} /> */}
+            {/* <Route path="/plant/register/:plantId" element={<PlantDetail />} /> */}
+            <Route path="/plant/register" element={<PlantRegister />} />
+            {/* profile */}
+            {/* <Route path="/profile/:searchId" element={<UserProfile />}/> */}
+            <Route path="/profile/:searchId" element={<UserProfile />} />
+            {/* <Route path="/profile/test/:searchId" element={<ProfilePage />} /> */}
+            {/* sns */}
+            <Route path="/sns/write" element={<SnsWrite />} />
+            <Route path="/sns/:articleId" element={<SnsDetail />} />
+          </Routes>
         </main>
-        <footer className='full-width'>
-          <Footer />
-        </footer>
+        <FooterWithCondition />
       </Router>
     </div>
   );
-};
+}
+
+// sns 들어가면 댓글작성 footer 출력
+const FooterWithCondition = () => {
+  const location = useLocation();
+  const isSnsDetailPage = location.pathname.startsWith('/sns/');
+
+  return (
+    <footer className='full-width'>
+      {isSnsDetailPage ? null : <Footer />}
+    </footer>
+  );
+}
 
 export default App;

@@ -6,13 +6,15 @@ import WriterInfo from "../../components/Common/WriterInfo";
 import Comment from '../../components/Sns/Comment';
 import Tags from "../../components/Sns/Tags";
 import ImgSlider from "../../components/Common/ImgSlider";
+import BtnList from "../../components/Sns/BtnList";
+
 
 const SnsDetail = () => {
   const location = useLocation();
   // const { articleId } = location.state;
   const articleId = 49;
   const [article, setArticle] = useState({});
-  const [userInfo, setUserInfo] = useState({});
+  const [writerInfo, setWriterInfo] = useState({})
 
   console.log(article.tagTypeList)
 
@@ -28,7 +30,7 @@ const SnsDetail = () => {
         try {
           const userResponse = await API.get(`/user/profile/${response.data.searchId}`);
           console.log('유저 정보:', userResponse.data);
-          setUserInfo(userResponse.data);
+          setWriterInfo(userResponse.data);
         } catch (err) {
           console.error('유저 정보 불러오기 실패 : ', err);
         }
@@ -39,18 +41,18 @@ const SnsDetail = () => {
     fetchArticle();
   }, []);
 
-  if (!article || !userInfo.profile) {
+  if (!article || !writerInfo.profile) {
     return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <WriterInfo data={userInfo} type="user" />
+      <WriterInfo data={writerInfo} type="user" />
       <ImgSlider imgs={article.images} />
       <Tags selectedTags={article.tagTypeList} tags={article.tagTypeList} />
       <p>{article.content}</p>
-      <button>버튼</button>
-      <Comment articleId={articleId} userInfo={userInfo} />
+      <BtnList likeCnt={article.likeCnt} isLiked={article.isLiked} isBookmarked={article.isBookmarked} articleId={articleId} />
+      <Comment articleId={articleId}/>
     </div>
   );
 }

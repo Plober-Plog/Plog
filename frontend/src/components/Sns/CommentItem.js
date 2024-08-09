@@ -6,8 +6,9 @@ const CommentItem = ({ comments, handleReply }) => {
 
   const handleCmtDelete = async (commentId) => {
     try {
-      console.log('commentId:', commentId);
-      const response = await API.delete(`/user/sns/comment`, { commentId});
+      const response = await API.delete(`/user/sns/comment`, {
+        params: { commentId }
+      });
       console.log('댓글 삭제 성공:', response.data);
     } catch (error) {
       console.error('댓글 삭제 실패:', error.response);
@@ -16,32 +17,31 @@ const CommentItem = ({ comments, handleReply }) => {
 
   return (
     <div>
-      {comments.map((comment, index) => {
-        if (index === 0) {
-          return (
-            <div key={comment.commentId}>
+      {comments.map((comment, index) => (
+        <div 
+          key={comment.commentId} 
+          style={{ 
+            opacity: comment.state === 1 ? 1 : 0.5, 
+            marginLeft: index !== 0 ? '20px' : '0' 
+          }}
+        >
+          {comment.state === 1 ? (
+            <>
               <img src={comment.profile} alt="profile" />
               <h4>{comment.nickname}</h4>
               <p>{comment.content}</p>
               <p>{comment.createDate}</p>
-              <button onClick={() => handleReply(comment.articleCommentId)}>답글작성</button>
-              <button onClick={() => handleCmtDelete(comment.commentId)}>댓글 삭제</button>
-              <hr />
-            </div>
-          );
-        } else {
-          return (
-            <div key={comment.commentId} style={{ marginLeft: '20px' }}>
-              <img src={comment.profile} alt="profile" />
-              <h4>{comment.nickname}</h4>
-              <p>{comment.content}</p>
-              <p>{comment.createDate}</p>
-              <button onClick={() => handleCmtDelete(comment.commentId)}>댓글 삭제</button>
-              <hr />
-            </div>
-          );
-        }
-      })}
+              {index === 0 && (
+                <button onClick={() => handleReply(comment.articleCommentId)}>답글작성</button>
+              )}
+              <button onClick={() => handleCmtDelete(comment.articleCommentId)}>댓글 삭제</button>
+            </>
+          ) : (
+            <p>삭제된 댓글입니다</p>
+          )}
+          <hr />
+        </div>
+      ))}
     </div>
   );
 };
@@ -55,6 +55,7 @@ CommentItem.propTypes = {
       nickname: PropTypes.string,
       createDate: PropTypes.string,
       content: PropTypes.string,
+      state: PropTypes.number.isRequired,
     })
   ).isRequired,
   handleReply: PropTypes.func.isRequired,

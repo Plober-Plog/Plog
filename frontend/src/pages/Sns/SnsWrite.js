@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import API from '../../apis/api';
 
 import ImgUpload from '../../components/Common/ImgUpload';
@@ -11,6 +11,8 @@ import Tags from '../../components/Sns/Tags';
 import cameraIcon from '../../assets/icon/camera.png';
 
 const SnsWrite = () => {
+  const location = useLocation();
+  const { articleId } = location.state()
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
@@ -51,6 +53,28 @@ const SnsWrite = () => {
   };
 
 
+  // 수정일 경우 게시물 가져오기
+  useEffect(() => {
+    if (articleId !== 0) {
+      const fetchSns = async () => {
+        try {
+          const response = await API.get(`/user/sns/${articleId}`);
+          console.log('게시물 :', response.data);
+
+          // 게시물 정보 input에 로딩
+          setContent(response.data.content);
+          setSelectedVisibility(response.data.visibility);
+          setTagTypeList(response.data.tagTypeList.map(tag => tag.id));
+          setImgs(response.data.images);
+        } catch (err) {
+          console.error('게시물 불러오기 실패 : ', err);
+        }
+      };
+      fetchSns();
+    }
+  }, [articleId]);
+
+
   // 게시물 작성
   const handleSave = async () => {
 
@@ -71,14 +95,28 @@ const SnsWrite = () => {
   
     // FormData 확인
     console.log(Array.from(snsData.entries()));
+
+    let response;
+      if (articleId === 0) {
+        // 게시물 작성 요청
+        const response = await API.post('/user/sns', snsData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log('게시물 정보:', snsData);
+      } else {
+        // 식물 수정
+        const response = await API.patch(`/user/sns/${articleId}`, snsData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log('게시물 정보:', snsData);
+      }
   
     try {
-      // 게시물 작성 요청
-      const response = await API.post('/user/sns', snsData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+
   
       // 응답 처리
       console.log(response.data);
