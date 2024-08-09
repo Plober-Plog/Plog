@@ -363,13 +363,13 @@ useEffect(() => {
 
   return (
     <div className="plant-diary-container">
-      <div className="section">
+      <div className="plant-diary-section">
         <DateDisplay date={date} setDate={handleDateChange} />
       </div>
-      <div className="section">
+      <div className="plant-diary-section">
         <WriterInfo data={writerInfoData} type="plant" />
       </div>
-      <div className="section">
+      <div className="plant-diary-section">
       {isEditImage ? (
         <div>
           <h2>사진 업로드 하기</h2>
@@ -385,8 +385,8 @@ useEffect(() => {
         <p>사진은 수정할 수 없습니다.</p>
       )}
       </div>
-      <div className="section">
-        <div className="todo-icons">
+      <div className="plant-diary-section">
+        <div className="plant-diary-todo-icons">
           <DiaryTodoIcon src={weatherIcon} />
           <DiaryTodoIcon src={humidityIcon} />
           <DiaryTodoIcon src={temperatureIcon} />
@@ -409,15 +409,15 @@ useEffect(() => {
           onChange={(e) => setIsTemperature(Number(e.target.value))}
           />
       </div>
-      <div className="section">
+      <div className="plant-diary-section">
         <h2>오늘 한 일</h2>
-        <div className="todo-icons">
+        <div className="plant-diary-todo-icons">
           <DiaryTodoIcon src={waterIcon} active={isWatered} onClick={toggleWatered} />
           <DiaryTodoIcon src={fertilizedIcon} active={isFertilized} onClick={toggleFertilized} />
           <DiaryTodoIcon src={repottedIcon} active={isRepotted} onClick={toggleRepotted} />
         </div>
       </div>
-      <div className="section">
+      <div className="plant-diary-section">
         <h2>일지 작성</h2>
         <TextareaField 
           placeholder='일지를 입력하세요.'

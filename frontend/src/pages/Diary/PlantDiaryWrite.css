@@ -7,7 +7,7 @@
   min-height: 100vh;
 }
 
-.section {
+.plant-diary-section {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -17,34 +17,8 @@
   max-width: 500px;
 }
 
-.todo-icons {
+.plant-diary-todo-icons {
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
-}
-
-.profile-pic {
-  width: 100px; 
-  height: 100px; 
-  border-radius: 50%; 
-  object-fit: cover;
-}
-
-h2 {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-button {
-  padding: 10px 10px;
-  background-color: #87B989;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #87B989;
 }
