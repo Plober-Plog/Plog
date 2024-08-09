@@ -34,34 +34,31 @@ import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 import SnsList from './pages/Sns/SnsList';
 
-// if (Notification.permission !== 'granted') {
-//   requestForToken();
-// } else {
-//   getToken(getMessaging(firebaseApp), {
-//     vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY
-//   }).then((currentToken) => {
-//     if (currentToken) {
-//       document.cookie = `fcmToken=${currentToken}; path=/; SameSite=Lax`;
-//     }
-//   });
-//   onMessageListener().then((payload) => {
-//     const { title, body } = payload.notification || payload.data;
-//     new Notification(title, { body });
-//   }).catch((err) => console.log('failed: ', err));
-// }
+if (Notification.permission !== 'granted') {
+  requestForToken();
+} else {
+  getToken(getMessaging(firebaseApp), {
+    vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY
+  }).then((currentToken) => {
+    if (currentToken) {
+      document.cookie = `fcmToken=${currentToken}; path=/; SameSite=Lax`;
+    }
+  });
+  onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
+}
 
 function App() {
-  useEffect(() => {
-    const initFCM = async () => {
-      const token = await requestForToken();
-      if (token) {
-        document.cookie = `fcmToken=${token}; path=/; SameSite=Lax`;
-      }
-      onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
-    };
+  // useEffect(() => {
+  //   const initFCM = async () => {
+  //     const token = await requestForToken();
+  //     if (token) {
+  //       document.cookie = `fcmToken=${token}; path=/; SameSite=Lax`;
+  //     }
+  //     onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
+  //   };
 
-    initFCM();
-  }, []);
+  //   initFCM();
+  // }, []);
 
   return (
     <div className='container'>
