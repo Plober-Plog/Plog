@@ -15,13 +15,15 @@ public class FCMServiceImpl implements FCMService {
 
         String iconUrl = "https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png";
 
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(message)
-                .build();
+        // Notification notification = Notification.builder()
+        //         .setTitle(title)
+        //         .setBody(message)
+        //         .build();
 
         Message msg = Message.builder()
-                .setNotification(notification)
+                // .setNotification(notification)
+                .putData("title", title)
+                .putData("message", message)
                 .putData("click_action", clickUrl) // 데이터 페이로드에 클릭 액션 추가
                 .putData("icon", iconUrl) // 데이터 페이로드에 아이콘 추가
                 .setToken(token)
