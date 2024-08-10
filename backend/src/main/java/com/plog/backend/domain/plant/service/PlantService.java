@@ -10,7 +10,7 @@ import java.util.List;
 public interface PlantService {
     void addPlant(String token, PlantAddRequestDto plantAddRequest);
 
-    PlantGetResponseDto getPlant(Long plantId);
+    PlantGetResponseDto getPlant(String token, Long plantId);
 
     List<PlantGetResponseDto> getPlantList(PlantGetRequestDto plantGetRequestDto);
 

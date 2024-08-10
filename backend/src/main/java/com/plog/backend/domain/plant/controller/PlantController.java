@@ -55,9 +55,10 @@ public class PlantController {
     @GetMapping("/{plantId}/info")
     @Operation(summary = "식물 정보 조회", description = "식물 ID로 식물의 상세 정보를 조회합니다.")
     public ResponseEntity<PlantGetResponseDto> getPlant(
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [GET] /user/plant/{}/info - 요청 ID: {}", plantId, plantId);
-        PlantGetResponseDto plantGetResponseDto = plantService.getPlant(plantId);
+        PlantGetResponseDto plantGetResponseDto = plantService.getPlant(token, plantId);
         return ResponseEntity.status(200).body(plantGetResponseDto);
     }
 
