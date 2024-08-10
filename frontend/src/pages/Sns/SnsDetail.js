@@ -9,7 +9,7 @@ import ImgSlider from "../../components/Common/ImgSlider";
 import BtnList from "../../components/Sns/BtnList";
 import Btn from "../../components/Common/Btn";
 
-import useAuthStore from "../../stores/member";  // 현재 로그인한 사용자의 정보를 가져오기 위해 추가
+import useAuthStore from "../../stores/member";
 
 const SnsDetail = () => {
   const location = useLocation();
@@ -18,7 +18,7 @@ const SnsDetail = () => {
   const [article, setArticle] = useState({});
   const [writerInfo, setWriterInfo] = useState({});
 
-  const { userData } = useAuthStore();  // 현재 로그인한 사용자의 정보를 가져옴
+  const { userData } = useAuthStore();
 
   // 게시물 불러오기
   useEffect(() => {

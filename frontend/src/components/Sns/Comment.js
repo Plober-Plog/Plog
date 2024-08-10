@@ -14,24 +14,48 @@ const Comment = ({ articleId }) => {
   const [cmtCnt, setCmtCnt] = useState(0);
   const [selectedParentId, setSelectedParentId] = useState(0);
   const [isFooterCmtActive, setIsFooterCmtActive] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMoreComments, setHasMoreComments] = useState(true); // 추가 상태
+
   const { userData } = useAuthStore();
 
   // 댓글 불러오기
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await API.get(`/user/sns/${articleId}/comment`);
-        setCommentList(response.data);
-        setCmtCnt(response.data.length);  // 댓글 수 업데이트
-        console.log(response.data.length, '댓글 불러오기 성공!:', response.data);
+        const response = await API.get(`/user/sns/${articleId}/comment`, {
+          params: { page },
+        });
+        if (response.data.length === 0) {
+          setHasMoreComments(false);
+        } else {
+          setCommentList(prevComments => [...prevComments, ...response.data]);
+          setCmtCnt(prevCount => prevCount + response.data.length);
+        }
+        console.log('댓글 불러오기 성공:', response.data);
       } catch (err) {
         console.error('댓글 불러오기 실패 : ', err);
       }
     };
 
-    fetchComments();
+    if (hasMoreComments) {
+      fetchComments();
+    }
+  }, [articleId, page]);
 
-  }, [articleId]);
+  // 스크롤 이벤트 핸들러
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop + 50 >= document.documentElement.offsetHeight && hasMoreComments) {
+        setPage(prevPage => prevPage + 1);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [hasMoreComments]);
 
   const handleReply = (parentId) => {
     setSelectedParentId(parentId);
@@ -44,7 +68,7 @@ const Comment = ({ articleId }) => {
       <h3>댓글</h3>
       <div>
         {commentList.map((comment) => (
-          <CommentItem key={comment.articleCommentId} comments={comment} handleReply={handleReply} />
+          <CommentItem key={comment.articleCommentId} comment={comment} handleReply={handleReply} />
         ))}
       </div>
       {location.pathname === `/sns/${articleId}` && (
