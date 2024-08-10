@@ -56,14 +56,17 @@ public class SnsController {
         log.info(">>> [POST] /user/sns - 요청 데이터: {} 이미지 여부: {}",
                 articleAddRequestDto, images == null ? "X" : "O");
         Long articleId = articleService.addArticle(token, articleAddRequestDto);
-        if (images != null && images.length > 0) {
-            articleService.uploadArticleImages(images, articleId);
-        }
 
         if(articleAddRequestDto.getTagTypeList().isEmpty()) {
             articleAddRequestDto.setTagTypeList(new ArrayList<>());
             articleAddRequestDto.getTagTypeList().add(0L);
         }
+
+        if (images != null && images.length > 0) {
+            articleService.uploadArticleImages(images, articleId);
+        }
+
+
 
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "게시글 등록이 완료되었습니다."));
