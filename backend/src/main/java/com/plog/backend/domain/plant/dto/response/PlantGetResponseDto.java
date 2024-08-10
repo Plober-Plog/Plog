@@ -1,5 +1,6 @@
 package com.plog.backend.domain.plant.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -43,11 +44,13 @@ public class PlantGetResponseDto {
     private LocalDate deadDate;
 
     @Schema(description = "알림 여부", example = "true")
-    private int notifySetting;
+    private boolean hasNotification;
 
     @Schema(description = "고정 여부", example = "true")
-    boolean isFixed;
+    @JsonProperty("isFixed")
+    private boolean isFixed;
 
     @Schema(description = "삭제 여부", example = "false")
-    boolean isDeleted;
+    @JsonProperty("isDeleted")
+    private boolean isDeleted;
 }

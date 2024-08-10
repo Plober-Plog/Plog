@@ -55,9 +55,10 @@ public class PlantController {
     @GetMapping("/{plantId}/info")
     @Operation(summary = "식물 정보 조회", description = "식물 ID로 식물의 상세 정보를 조회합니다.")
     public ResponseEntity<PlantGetResponseDto> getPlant(
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [GET] /user/plant/{}/info - 요청 ID: {}", plantId, plantId);
-        PlantGetResponseDto plantGetResponseDto = plantService.getPlant(plantId);
+        PlantGetResponseDto plantGetResponseDto = plantService.getPlant(token, plantId);
         return ResponseEntity.status(200).body(plantGetResponseDto);
     }
 
@@ -154,6 +155,17 @@ public class PlantController {
         plantService.updateFixStatePlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물의 고정 여부 수정이 완료되었습니다."));
     }
+
+    @PatchMapping("/{plantId}/notification")
+    @Operation(summary = "식물 알림 수신 상태 수정", description = "식물 ID로 식물의 알림 수신 여부를 수정합니다.")
+    public ResponseEntity<BaseResponseBody> updateNotificationPlant(
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
+        log.info(">>> [PATCH] /user/plant/{}/notification - 알림 수신 여부 변경할 Id: {}", plantId, plantId);
+        plantService.updateNotificationPlant(token, plantId);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물의 알림 수신 여부 수정이 완료되었습니다."));
+    }
+
 
     // =============== 관리 ===============
 

@@ -121,27 +121,28 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public PlantGetResponseDto getPlant(Long plantId) {
-        Optional<Plant> plant = plantRepository.findById(plantId);
-        if (plant.isPresent()) {
-            Plant p = plant.get();
-            log.info(">>> getPlant - 식물 조회 완료: {}", plantId);
-            return PlantGetResponseDto.builder()
-                    .plantId(p.getPlantId())
-                    .plantTypeId(p.getPlantType().getPlantTypeId())
-                    .nickname(p.getNickname())
-                    .bio(p.getBio())
-                    .profile(p.getImage() != null ? p.getImage().getImageUrl() : null)
-                    .plantTypeName(p.getPlantType().getPlantName())
-                    .birthDate(p.getBirthDate())
-                    .notifySetting(p.getNotifySetting())
-                    .isFixed(p.isFixed())
-                    .deadDate(p.getDeadDate())
-                    .isDeleted(p.isDeleted())
-                    .build();
-        } else {
-            throw new EntityNotFoundException();
-        }
+    public PlantGetResponseDto getPlant(String token, Long plantId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        Plant plant = plantRepository.findById(plantId).orElseThrow(
+                () -> new EntityNotFoundException("일치하는 식물을 조회할 수 업습니다.")
+        );
+        if (userId != plant.getUser().getUserId())
+            throw new NotAuthorizedRequestException();
+
+        log.info(">>> getPlant - 식물 조회 완료: {}", plantId);
+        return PlantGetResponseDto.builder()
+                .plantId(plant.getPlantId())
+                .plantTypeId(plant.getPlantType().getPlantTypeId())
+                .nickname(plant.getNickname())
+                .bio(plant.getBio())
+                .profile(plant.getImage() != null ? plant.getImage().getImageUrl() : null)
+                .plantTypeName(plant.getPlantType().getPlantName())
+                .birthDate(plant.getBirthDate())
+                .hasNotification(plant.getNotifySetting() == 7 ? true : false)
+                .isFixed(plant.isFixed())
+                .deadDate(plant.getDeadDate())
+                .isDeleted(plant.isDeleted())
+                .build();
     }
 
     @Override
@@ -165,11 +166,9 @@ public class PlantServiceImpl implements PlantService {
             for (Long plantTypeId : plantGetRequestDto.getPlantTypeId()) {
                 plantGetResponseDtoList.addAll(plantRepositorySupport.findByUserSearchIdAndPlantTypeId(searchId, plantTypeId, plantGetRequestDto.getPage()));
             }
-            log.info(plantGetResponseDtoList.toString() + " "  + plantGetResponseDtoList.size());
             for (Long otherPlantTypeId : plantGetRequestDto.getOtherPlantTypeId()) {
                 plantGetResponseDtoList.addAll(plantRepositorySupport.findByUserSearchIdAndOtherPlantTypeId(searchId, otherPlantTypeId, plantGetRequestDto.getPage()));
             }
-            log.info(plantGetResponseDtoList.toString() + " " + plantGetResponseDtoList.size());
             return plantGetResponseDtoList;
         } else {
             throw new EntityNotFoundException("일치하는 회원이 없습니다.");
@@ -303,4 +302,20 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
+    @Transactional
+    @Override
+    public void updateNotificationPlant(String token, Long plantId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        Plant plant = plantRepository.findById(plantId).orElseThrow(
+                () -> new EntityNotFoundException("일치하는 식물이 없습니다.")
+        );
+        if (userId != plant.getUser().getUserId())
+            throw new NotAuthorizedRequestException();
+        if (plant.getNotifySetting() == 7)
+            plant.setNotifySetting(0);
+        else
+            plant.setNotifySetting(7);
+        plantRepository.save(plant);
+        log.info(">>> updateNotificationPlant - 식물 알림 수신 여부 수정 완료, ID: {}", plantId);
+    }
 }

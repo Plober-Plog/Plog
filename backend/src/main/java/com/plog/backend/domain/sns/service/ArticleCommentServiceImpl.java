@@ -1,7 +1,6 @@
 package com.plog.backend.domain.sns.service;
 
 import com.plog.backend.domain.sns.dto.request.ArticleCommentAddRequestDto;
-import com.plog.backend.domain.sns.dto.request.ArticleCommentDeleteRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleCommentUpdateRequestDto;
 import com.plog.backend.domain.sns.dto.response.ArticleCommentGetResponse;
 import com.plog.backend.domain.sns.entity.Article;
@@ -19,8 +18,11 @@ import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service("articleCommentService")
 public class ArticleCommentServiceImpl implements ArticleCommentService {
+
+    @Value("${server.url}")
+    private String serverUrl;
 
     public final ArticleRepository articleRepository;
     public final ArticleCommentRepository articleCommentRepository;
@@ -47,6 +52,9 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
                 );
 
         Long articleId = articleCommentAddRequestDto.getArticleId();
+        Article article = articleRepository.findById(articleId).orElseThrow(
+                () -> new EntityNotFoundException("일치하는 게시글을 찾을 수 없습니다.")
+        );
 
         ArticleComment articleComment = articleCommentRepository.save(ArticleComment.builder()
                 .article(articleRepository.getReferenceById(articleId))
@@ -64,6 +72,28 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         articleCommentRepository.save(articleComment);
 
         log.info("댓글 등록이 완료되었습니다. 게시글 번호: {}, 회원 번호: {}, 댓글 번호: {}", articleId, userId, articleComment.getArticleCommentId());
+
+        // 게시글 등록자에게 댓글 알림 보내기
+        String sourceSearchId = user.getSearchId();
+        String targetSearchId = article.getUser().getSearchId();
+        String articleUrl = String.format("%s/sns/%d", serverUrl, articleId);
+        if (!sourceSearchId.equals(targetSearchId)) {
+            String type = "FRIEND_REQUEST";
+            String urlString = String.format("%s/realtime/notification/send?sourceSearchId=%s&targetSearchId=%s&clickUrl=%s&type=%s",
+                    serverUrl, sourceSearchId, targetSearchId, articleUrl, type);
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-type", "application/json");
+
+                int responseCode = conn.getResponseCode();
+                log.info("알림 전송 HTTP 응답 코드: " + responseCode);
+                conn.disconnect();
+            } catch (Exception e) {
+                log.error("알림 전송 중 오류 발생", e);
+            }
+        }
     }
 
     @Transactional

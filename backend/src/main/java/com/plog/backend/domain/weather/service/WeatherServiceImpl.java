@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service("weatherService")
 @RequiredArgsConstructor
@@ -346,15 +347,27 @@ public class WeatherServiceImpl implements WeatherService {
 
     private boolean isExistedWeatherDataInRedis() {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
-        String todayKey = "weather:" + today.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ":1"; // 1번 구군 ID 의 key 값 확인
-        Map<Object, Object> todayData = redisTemplate.opsForHash().entries(todayKey);
-        AtomicBoolean flag = new AtomicBoolean(true);
-        todayData.forEach((key, value) -> {
-            if (!redisTemplate.opsForHash().hasKey(todayKey, key)) {
-                log.info("Redis에 값이 없음 -> Redis key: {}, field: {}, value: {}", todayKey, key, value);
-                flag.set(false);
+
+        List<Gugun> guguns = gugunRepository.findAll();
+        AtomicBoolean flag = new AtomicBoolean(false);
+        AtomicInteger cnt = new AtomicInteger();
+        // 구군별 오늘 데이터 있는지 확인
+        for (Gugun gugun : guguns) {
+            String todayKey = "weather:" + today.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ":" + gugun.getGugunId();
+            Map<Object, Object> todayData = redisTemplate.opsForHash().entries(todayKey);
+            AtomicBoolean isExisted = new AtomicBoolean(true);
+            todayData.forEach((key, value) -> {
+                if (!redisTemplate.opsForHash().hasKey(todayKey, key)) {
+                    isExisted.set(false);
+                    log.info("Redis에 값이 없음 -> Redis key: {}, field: {}, value: {}", todayKey, key, value);
+                }
+            });
+            if (isExisted.get()) {
+                cnt.incrementAndGet();
             }
-        });
+        }
+        log.info("=== redis 에 저장된 오늘 날씨 정보 개수: " + cnt.toString() + " === " + guguns.size());
+        if (cnt.intValue() == guguns.size()) flag.set(true);
         return flag.get();
     }
 }
