@@ -56,17 +56,21 @@ const SnsWrite = () => {
 
   // 수정일 경우 게시물 가져오기
   useEffect(() => {
-    console.log(articleId)
-
+    console.log(articleId);
+  
     if (articleId !== 0) {
       const fetchSns = async () => {
         try {
           const response = await API.get(`/user/sns/${articleId}`);
           console.log('게시물 :', response.data);
-
+  
           // 게시물 정보 input에 로딩
           setContent(response.data.content);
-          setSelectedVisibility(response.data.visibility);
+          if (response.data.visibility === "PUBLIC") {
+            setSelectedVisibility(1);
+          } else if (response.data.visibility === "NEIGHBOR") {
+            setSelectedVisibility(2);
+          }
           setTagTypeList(response.data.tagTypeList.map(tag => tag.tagTypeId));
           setImgs(response.data.images);
         } catch (err) {
@@ -83,22 +87,20 @@ const SnsWrite = () => {
     const snsData = new FormData();
     snsData.append('content', content);
     snsData.append('visibility', selectedVisibility);
-
-    if (articleId !== 0) {
-      snsData.append('articleId', articleId);
-    }
-    
-    if (articleId === 0) {
-      // 이미지 넣기
-      imgs.forEach((img, index) => {
-        snsData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
-      });
-    }
-
+    imgs.forEach((img, index) => {
+      snsData.append('images', img.file);  // 'images' key를 사용하여 각각의 파일을 추가
+    });
     // 태그 넣기
     tagTypeList.forEach((tagType, index) => {
       snsData.append(`tagTypeList[${index}]`, tagType);  // 'tagTypeList' key를 사용하여 각각의 태그를 추가
     });
+    
+    const snsPatchData = {
+      articleId,
+      content,
+      visibility: selectedVisibility,
+      tagTypeList,
+    }
 
     // FormData 확인
     console.log(Array.from(snsData.entries()));
@@ -116,16 +118,16 @@ const SnsWrite = () => {
         console.log('게시물 작성:', response.data);
       } else if (articleId !== 0) {
         // 게시물 수정 요청
-        response = await API.patch(`/user/sns/${articleId}`, snsData, {
+        response = await API.patch(`/user/sns/${articleId}`, snsPatchData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
           },
         });
         console.log('게시물 수정:', response.data);
       }
 
       // 성공적으로 처리된 응답 후 페이지 이동
-      navigate(`user/sns`);
+      navigate(`/sns`);
     } catch (error) {
       console.error('저장 중 오류 발생:', error);
     }
