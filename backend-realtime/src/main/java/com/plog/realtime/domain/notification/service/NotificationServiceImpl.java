@@ -1,9 +1,11 @@
 package com.plog.realtime.domain.notification.service;
 
+import com.plog.realtime.domain.notification.dto.NotificationHistoryResponseDto;
 import com.plog.realtime.domain.notification.dto.NotificationMessageResponseDto;
 import com.plog.realtime.domain.notification.entity.Notification;
 import com.plog.realtime.domain.notification.entity.NotificationType;
 import com.plog.realtime.domain.notification.repository.NotificationRepository;
+import com.plog.realtime.domain.notification.repository.NotificationRepositorySupport;
 import com.plog.realtime.domain.plant.entity.Plant;
 import com.plog.realtime.domain.plant.repository.PlantRepository;
 import com.plog.realtime.domain.user.entity.User;
@@ -11,6 +13,7 @@ import com.plog.realtime.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -26,21 +29,20 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
     private final FCMService fcmService;
+    private final NotificationRepositorySupport notificationRepositorySupport;
 
     @Override
-    public List<NotificationMessageResponseDto> getNotifications(String searchId) {
+    public List<NotificationHistoryResponseDto> getNotifications(String searchId, int page) {
         log.info("getNotifications 시작 - searchId: {}", searchId);
         User user = userRepository.findUserBySearchId(searchId).orElseThrow(() -> {
             log.error("getNotifications 실패 - User not found, searchId: {}", searchId);
             return new RuntimeException("User not found");
         });
-        List<NotificationMessageResponseDto> notificationMessageResponseDtos = new ArrayList<>();
-        List<Notification> notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
-        for (Notification notification : notifications) {
-            notificationMessageResponseDtos.add(NotificationMessageResponseDto.toNotificationDTO(notification));
-        }
+
+        // 페이지네이션을 적용하여 조회
+        List<NotificationHistoryResponseDto> notifications = notificationRepositorySupport.findByUserSearchId(searchId, page);
         log.info("getNotifications 완료 - searchId: {}", searchId);
-        return notificationMessageResponseDtos;
+        return notifications;
     }
 
     @Override
@@ -78,7 +80,8 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setUser(targetUser);
         notification.setContent(formattedMessage);
         notification.setType(type.getValue());
-        notificationRepository.save(notification);
+        notification.setClickUrl(clickUrl);
+        notification = notificationRepository.save(notification);
         log.info("알림 저장 완료 - notificationId: {}", notification.getNotificationId());
 
         NotificationMessageResponseDto notificationMessageResponseDto = NotificationMessageResponseDto.toNotificationDTO(notification);
@@ -86,7 +89,7 @@ public class NotificationServiceImpl implements NotificationService {
         // FCM을 통해 메시지를 전송합니다.
         if (targetUser.isPushNotificationEnabled() && targetUser.getNotificationToken() != null) {
             String title = type.name(); // 여기에 알림 제목을 설정합니다.
-            fcmService.sendNotification(targetUser.getNotificationToken(), title, clickUrl, formattedMessage);
+            fcmService.sendNotification(targetUser.getNotificationToken(), title, clickUrl, formattedMessage, notification.getNotificationId());
         }
 
         log.info("sendNotification 완료 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
