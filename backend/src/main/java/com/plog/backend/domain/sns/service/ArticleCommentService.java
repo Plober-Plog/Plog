@@ -12,5 +12,5 @@ public interface ArticleCommentService {
     void addArticleComment(String token, ArticleCommentAddRequestDto articleCommentAddRequestDto);
     void updateArticleComment(String token, ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto);
     void deleteArticleComment(String token, Long commentId);
-    List<List<ArticleCommentGetResponse>> getArticleComments(Long articleId);
+    List<ArticleCommentGetResponse> getArticleComments(Long articleId, int page);
 }

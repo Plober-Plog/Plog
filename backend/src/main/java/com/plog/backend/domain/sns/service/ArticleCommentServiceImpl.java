@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,39 +147,30 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public List<List<ArticleCommentGetResponse>> getArticleComments(Long articleId) {
+    public List<ArticleCommentGetResponse> getArticleComments(Long articleId, int page) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> {
             return new EntityNotFoundException("getArticleComments - 없는 게시글 입니다.");
         });
 
-        // 부모 댓글들을 먼저 조회
-        List<ArticleComment> parentComments = articleCommentRepositorySupport.findParentCommentsByArticleId(article);
+        // 루트 댓글들을 최신순으로 조회
+        List<ArticleComment> comments = articleCommentRepositorySupport.findCommentsByArticleId(article, page);
 
-        // 댓글 그룹 개수만큼 리스트 할당
-        List<List<ArticleCommentGetResponse>> commentsWithReplies = new ArrayList<>(parentComments.size());
-
-        // 각 부모 댓글에 대한 자식 댓글들을 조회하여 리스트에 추가
-        for (int i = 0; i < parentComments.size(); i++) {
-            commentsWithReplies.add(new ArrayList<>());
-            List<ArticleComment> childComments = articleCommentRepositorySupport.findChildCommentsByParentId(parentComments.get(i).getArticleCommentId());
-            List<ArticleComment> parentWithChildren = new ArrayList<>();
-            parentWithChildren.addAll(childComments); // 해당 댓글 그룹에 댓글들 추가 (index:0 -> root)
-            for (ArticleComment articleComment : parentWithChildren) {
-                commentsWithReplies.get(i).add(ArticleCommentGetResponse.builder()
-                        .articleCommentId(articleComment.getArticleCommentId())
-                        .parentId(articleComment.getParentId())
-                        .content(articleComment.getContent())
-                        .profile(articleComment.getUser().getImage().getImageUrl())
-                        .userId(articleComment.getUser().getUserId())
-                        .state(articleComment.getState().getValue())
-                        .nickname(articleComment.getUser().getNickname())
-                        .createDate(LocalDate.from(articleComment.getCreatedAt()))
-                        .updateDate(LocalDate.from(articleComment.getUpdatedAt()))
-                        .build()
-                );
-            }
+        List<ArticleCommentGetResponse> articleCommentGetResponseList = new ArrayList<>();
+        for (ArticleComment comment : comments) {
+            articleCommentGetResponseList.add(ArticleCommentGetResponse.builder()
+                    .articleCommentId(comment.getArticleCommentId())
+                    .userId(comment.getUser().getUserId())
+                    .parentId(comment.getParentId())
+                    .content(comment.getContent())
+                    .profile(comment.getUser().getImage().getImageUrl())
+                    .state(comment.getState().getValue())
+                    .nickname(comment.getUser().getNickname())
+                    .createDate(comment.getCreatedAt())
+                    .updateDate(comment.getUpdatedAt())
+                    .build()
+            );
         }
-        log.info("댓글 조회이 완료되었습니다. 댓글 그룹 개수: {}", parentComments.size());
-        return commentsWithReplies;
+        log.info("댓글 조회 완료: 총 댓글 수: {}", comments.size());
+        return articleCommentGetResponseList;
     }
 }
