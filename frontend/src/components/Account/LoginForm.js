@@ -18,6 +18,8 @@ const LoginForm = () => {
   const setUserData = useAuthStore((state) => state.setUserData);
   const navigate = useNavigate();
 
+  // TODO 유저 데이터 로컬에 저장
+
   const handleLogin = async (event) => {
     event.preventDefault();
 
