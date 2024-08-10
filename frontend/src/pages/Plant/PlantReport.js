@@ -52,12 +52,29 @@ const PlantReport = () => {
 
   const handleCapture = async () => {
     if (reportRef.current) {
-      const canvas = await html2canvas(reportRef.current);
-      const imgData = canvas.toDataURL('image/png');
-      navigate('/sns/write', { state: { imgData, articleId : 0 } });
+      try {
+        const canvas = await html2canvas(reportRef.current);
+        const reportImgData = canvas.toDataURL('image/png');
+  
+        // base64 문자열을 Blob으로 변환
+        const byteString = atob(reportImgData.split(',')[1]);
+        const mimeString = reportImgData.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        const file = new File([blob], 'report.png', { type: mimeString });
+  
+        // 파일 객체를 배열로 감싸서 `navigate`로 전달
+        navigate('/sns/write', { state: { reportImgData: [{ url: URL.createObjectURL(file), file }], articleId: 0 } });
+      } catch (error) {
+        console.error('이미지 캡처 중 오류 발생:', error);
+      }
     }
   };
-
+  
 
   return (
     <div className="plant-report-container" ref={reportRef}>

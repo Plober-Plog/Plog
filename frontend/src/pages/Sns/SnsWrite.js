@@ -7,17 +7,20 @@ import Btn from '../../components/Common/Btn';
 import Tab from '../../components/Sns/Tab';
 import TextareaField from '../../components/Common/TextareaField';
 import Tags from '../../components/Sns/Tags';
+import ModalComplete from '../../components/Common/ModalComplete';
 
 import cameraIcon from '../../assets/icon/camera.png';
 
 const SnsWrite = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { articleId } = location.state;  // articleId가 없을 때 0으로 초기화
+  const { articleId, reportImgData, diaryImgData } = location.state;  // articleId가 없을 때 0으로 초기화
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
   const [tagTypeList, setTagTypeList] = useState([]); // 선택된 태그 리스트 상태
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  
   const tags = [
     { tagTypeId: 1, tagName: '일지' },
     { tagTypeId: 2, tagName: '분석 레포트' },
@@ -56,6 +59,17 @@ const SnsWrite = () => {
 
   // 수정일 경우 게시물 가져오기
   useEffect(() => {
+    if (reportImgData || diaryImgData) {
+      setImgs(reportImgData || diaryImgData);
+    }
+
+    if (reportImgData) {
+      setTagTypeList(prev => [...prev, 2]); 
+    }
+    if (diaryImgData) {
+      setTagTypeList(prev => [...prev, 1]);
+    }
+
     console.log(articleId);
   
     if (articleId !== 0) {
@@ -79,10 +93,16 @@ const SnsWrite = () => {
       };
       fetchSns();
     }
-  }, [articleId]);
+  }, [articleId, reportImgData, diaryImgData]);
 
   // 게시물 작성 또는 수정
   const handleSave = async () => {
+    // 태그가 선택되지 않은 경우 모달을 표시
+    if (tagTypeList.length === 0) {
+      setIsModalOpen(true);
+      return;
+    }
+
     // FormData 생성
     const snsData = new FormData();
     snsData.append('content', content);
@@ -166,6 +186,12 @@ const SnsWrite = () => {
       <div>
         <Btn content={articleId === 0 ? "작성하기" : "수정하기"} onClick={handleSave} />
       </div>
+      <ModalComplete 
+        open={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title="태그 선택 필요" 
+        content="태그를 선택해주세요." 
+      />
     </div>
   );
 };
