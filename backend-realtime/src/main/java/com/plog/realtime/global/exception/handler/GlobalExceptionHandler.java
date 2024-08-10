@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponseDto> handleUnknownException(
             Exception ex, HttpServletRequest request) {
         log.error("Exception realtime 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
-       ex.printStackTrace();
+//        ex.printStackTrace();
         ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
