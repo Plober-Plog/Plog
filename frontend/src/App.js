@@ -4,11 +4,11 @@ import React, { useEffect } from 'react';
 
 // private
 import PrivateRoute from './components/Account/PrivateRoute';
+import PublicRoute from './components/Account/PublicRoute';
 // default
 import Home from './pages/Main/Home';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
-import FooterCmt from './components/Common/FooterCmt';
 // FCM
 import { getMessaging, getToken } from 'firebase/messaging';
 import { requestForToken, onForegroundMessage } from './firebase';
@@ -64,11 +64,11 @@ function App() {
           <Routes>
             {/* Account */}
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
             <Route path="/profileupdate" element={<PrivateRoute><ProfileUpdate /></PrivateRoute>} />
             <Route path="/password/change" element={<PrivateRoute><PasswordChange /></PrivateRoute>} />
-            <Route path="/password/find" element={<PasswordFind />} />
+            <Route path="/password/find" element={<PublicRoute><PasswordFind /></PublicRoute>} />
             <Route path="/password/update" element={<PasswordUpdate />} />
             <Route path="/setting" element={<PrivateRoute><Setting /></PrivateRoute>} />
             {/* plant */}
