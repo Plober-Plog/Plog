@@ -12,7 +12,11 @@ const Home = () => {
   useEffect(() => {
     const fetchSnsArticles = async () => {
       try {
-        const response = await API.get(`/user/sns/top5`);
+        const response = await API.get(`/user/sns/top5`, {
+          params: {
+            orderType: 1
+          }
+        });
         console.log("SNS Articles:", response.data);
         setSnsArticles(response.data);
       } catch (error) {
@@ -25,7 +29,7 @@ const Home = () => {
 
   return (
     <div>
-      <h2>식물 SNS 발견하기</h2>
+      <h2>일지 SNS 발견하기</h2>
       <ArticleCardList articles={diaryArticles} />
       <Img src={bannerImg} alt="Banner Image" style={{ width: '100%', height: 'auto' }} />
       <h2>인기 SNS 발견하기</h2>
