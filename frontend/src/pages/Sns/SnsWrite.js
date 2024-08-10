@@ -47,6 +47,8 @@ const SnsWrite = () => {
 
   // 수정일 경우 게시물 가져오기
   useEffect(() => {
+    console.log(articleId)
+
     if (articleId !== 0) {
       const fetchSns = async () => {
         try {
@@ -56,7 +58,7 @@ const SnsWrite = () => {
           // 게시물 정보 input에 로딩
           setContent(response.data.content);
           setSelectedVisibility(response.data.visibility);
-          setTagTypeList(response.data.tagTypeList.map(tag => tag.id));
+          setTagTypeList(response.data.tagTypeList.map(tag => tag.tagTypeId));
           setImgs(response.data.images);
         } catch (err) {
           console.error('게시물 불러오기 실패 : ', err);
@@ -73,10 +75,16 @@ const SnsWrite = () => {
     snsData.append('content', content);
     snsData.append('visibility', selectedVisibility);
 
-    // 이미지 넣기
-    imgs.forEach((img, index) => {
-      snsData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
-    });
+    if (articleId !== 0) {
+      snsData.append('articleId', articleId);
+    }
+    
+    if (articleId === 0) {
+      // 이미지 넣기
+      imgs.forEach((img, index) => {
+        snsData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
+      });
+    }
 
     // 태그 넣기
     tagTypeList.forEach((tagType, index) => {
@@ -89,6 +97,7 @@ const SnsWrite = () => {
     try {
       let response;
       if (articleId === 0) {
+        console.log(articleId)
         // 게시물 작성 요청
         response = await API.post('/user/sns', snsData, {
           headers: {
@@ -96,7 +105,7 @@ const SnsWrite = () => {
           },
         });
         console.log('게시물 작성:', response.data);
-      } else {
+      } else if (articleId !== 0) {
         // 게시물 수정 요청
         response = await API.patch(`/user/sns/${articleId}`, snsData, {
           headers: {
@@ -107,7 +116,7 @@ const SnsWrite = () => {
       }
 
       // 성공적으로 처리된 응답 후 페이지 이동
-      navigate(`/sns/${response.data.id}`);
+      navigate(`user/sns`);
     } catch (error) {
       console.error('저장 중 오류 발생:', error);
     }
