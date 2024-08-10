@@ -1,11 +1,12 @@
 package com.plog.backend.domain.sns.service;
 
+import com.plog.backend.domain.image.service.ImageService;
 import com.plog.backend.domain.sns.dto.response.ArticleBookmarkGetResponseDto;
+import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.entity.Article;
 import com.plog.backend.domain.sns.entity.ArticleBookmark;
-import com.plog.backend.domain.sns.repository.ArticleBookmarkRepository;
-import com.plog.backend.domain.sns.repository.ArticleBookmarkRepositorySupport;
-import com.plog.backend.domain.sns.repository.ArticleRepository;
+import com.plog.backend.domain.sns.entity.TagType;
+import com.plog.backend.domain.sns.repository.*;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +32,10 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
     private final ArticleBookmarkRepositorySupport articleBookmarkRepositorySupport;
+    private final ImageService imageService;
+    private final ArticleTagRepositorySupport articleTagRepositorySupport;
+    private final ArticleLikeRepository articleLikeRepository;
+    private final ArticleLikeRepositorySupport articleLikeRepositorySupport;
 
     @Transactional
     @Override
@@ -84,7 +90,7 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
     }
 
     @Override
-    public ArticleBookmarkGetResponseDto getBookmarks(String token) {
+    public List<ArticleGetResponseDto> getBookmarks(String token, int page) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> [getBookmarks] - 사용자 ID: {}", userId);
 
@@ -93,19 +99,28 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
                         new NotValidRequestException("deleteArticleBookmark - 없는 사용자 입니다.")
                 );
 
-        List<ArticleBookmark> articleBookmarks = articleBookmarkRepositorySupport.findByUser(user);
+        List<Article> articleList = articleBookmarkRepositorySupport.loadBookmarkedArticleList(userId, page);
+        List<ArticleGetResponseDto> articleGetResponseDtoList = new ArrayList<>();
 
-        List<ArticleBookmarkGetResponseDto.BookmarkDto> bookmarkDtos = articleBookmarks.stream()
-                .map(bookmark -> ArticleBookmarkGetResponseDto.BookmarkDto.builder()
-                        .bookmarkId(bookmark.getArticleBookmarkId())
-                        .articleId(bookmark.getArticle().getArticleId())
-                        .articleContent(bookmark.getArticle().getContent())
-                        .build())
-                .collect(Collectors.toList());
-
+        for (Article article : articleList) {
+            List<TagType> tagTypeList = articleTagRepositorySupport.findTagTypeByArticleId(article.getArticleId());
+            List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
+            int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
+            boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, article.getArticleId());
+            articleGetResponseDtoList.add(ArticleGetResponseDto.builder()
+                    .searchId(article.getUser().getSearchId())
+                    .articleId(article.getArticleId())
+                    .content(article.getContent())
+                    .view(article.getView())
+                    .tagTypeList(tagTypeList)
+                    .visibility(article.getVisibility())
+                    .images(articleImageList)
+                    .likeCnt(likeCnt)
+                    .isLiked(isLiked)
+                    .isBookmarked(true)
+                    .build());
+        }
         log.info(">>> [getBookmarks] - 북마크 목록 조회 완료, 사용자 ID: {}", userId);
-        return ArticleBookmarkGetResponseDto.builder()
-                .bookmarks(bookmarkDtos)
-                .build();
+        return articleGetResponseDtoList;
     }
 }
