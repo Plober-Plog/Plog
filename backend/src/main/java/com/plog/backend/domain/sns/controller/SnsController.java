@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -58,6 +59,13 @@ public class SnsController {
         if (images != null && images.length > 0) {
             articleService.uploadArticleImages(images, articleId);
         }
+
+        if(articleAddRequestDto.getTagTypeList().isEmpty()) {
+            articleAddRequestDto.setTagTypeList(new ArrayList<>());
+            articleAddRequestDto.getTagTypeList().add(0L);
+        }
+
+
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "게시글 등록이 완료되었습니다."));
     }
 
