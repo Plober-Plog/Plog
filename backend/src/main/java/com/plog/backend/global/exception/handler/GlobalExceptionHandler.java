@@ -91,4 +91,18 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    // 토큰이 없을시 401에러
+    @ExceptionHandler(NoTokenRequestException.class)
+    public ResponseEntity<ExceptionResponseDto> handleNoTokenRequestException(
+            Exception ex, HttpServletRequest request) {
+        log.error("NoTokenRequestException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        ExceptionResponseDto response = ExceptionResponseDto.of(
+                request.getMethod(),
+                request.getRequestURI(),
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

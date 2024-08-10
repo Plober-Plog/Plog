@@ -9,6 +9,7 @@ import com.plog.backend.domain.plant.dto.response.PlantGetRecordsResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantGetResponseDto;
 import com.plog.backend.domain.plant.service.PlantCheckService;
 import com.plog.backend.domain.plant.service.PlantService;
+import com.plog.backend.global.exception.NoTokenRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +43,8 @@ public class PlantController {
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
             @Parameter(description = "식물 추가 요청 데이터", required = true) @ModelAttribute PlantAddRequestDto plantAddRequestDto) {
         log.info(">>> [POST] /user/plant - 요청 데이터: {}", plantAddRequestDto);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if (plantAddRequestDto.getNickname() == null || plantAddRequestDto.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
         }
@@ -58,6 +61,8 @@ public class PlantController {
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [GET] /user/plant/{}/info - 요청 ID: {}", plantId, plantId);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         PlantGetResponseDto plantGetResponseDto = plantService.getPlant(token, plantId);
         return ResponseEntity.status(200).body(plantGetResponseDto);
     }
@@ -121,6 +126,8 @@ public class PlantController {
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
             @Parameter(description = "식물 수정 요청 데이터", required = true) @ModelAttribute PlantUpdateRequestDto plantUpdateRequestDto) {
         log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequestDto);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantUpdateRequestDto.setPlantId(plantId);
         plantService.updatePlant(token, plantUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 수정이 완료되었습니다."));
@@ -132,6 +139,8 @@ public class PlantController {
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [DELETE] /user/plant/{} - 삭제 ID: {}", plantId, plantId);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantService.deletePlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 삭제가 완료되었습니다."));
     }
@@ -142,6 +151,8 @@ public class PlantController {
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [PATCH] /user/plant/{}/farewell - 이별 ID: {}", plantId, plantId);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantService.farewellPlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물과 이별이 완료되었습니다."));
     }
@@ -152,6 +163,8 @@ public class PlantController {
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [PATCH] /user/plant/{}/fix - 고정할 Id: {}", plantId, plantId);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantService.updateFixStatePlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물의 고정 여부 수정이 완료되었습니다."));
     }
@@ -162,6 +175,8 @@ public class PlantController {
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [PATCH] /user/plant/{}/notification - 알림 수신 여부 변경할 Id: {}", plantId, plantId);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantService.updateNotificationPlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물의 알림 수신 여부 수정이 완료되었습니다."));
     }
@@ -176,6 +191,8 @@ public class PlantController {
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
             @Parameter(description = "관리 여부 추가 요청 데이터", required = true) @RequestBody PlantCheckAddRequestDto plantCheckAddRequestDto) {
         log.info(">>> [POST] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckAddRequestDto);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantCheckAddRequestDto.setPlantId(plantId);
         plantCheckService.addPlantCheck(token, plantCheckAddRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 기록이 완료되었습니다."));
@@ -188,6 +205,8 @@ public class PlantController {
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
             @Parameter(description = "관리 여부 수정 요청 데이터", required = true) @RequestBody PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
         log.info(">>> [PATCH] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckUpdateRequestDto);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantCheckUpdateRequestDto.setPlantId(plantId);
         plantCheckService.updatePlantCheck(token, plantCheckUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 수정이 완료되었습니다."));
@@ -220,6 +239,8 @@ public class PlantController {
                                                              @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
                                                              @Parameter(description = "관리 여부 기록 날짜", required = true) @RequestParam("checkDate") String checkDate) {
         log.info(">>> [DELETE] /user/plant/{}/check - 요청 데이터: {}", plantId, checkDate);
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantCheckService.deletePlantCheck(token, plantId, checkDate);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 삭제가 완료되었습니다."));
     }

@@ -9,6 +9,7 @@ import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.service.UserServiceImpl;
+import com.plog.backend.global.exception.NoTokenRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
@@ -85,6 +86,8 @@ public class UserController {
     public ResponseEntity<BaseResponseBody> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
         log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", userUpdateRequestDto);
 
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if(userUpdateRequestDto.getNickname() == null || userUpdateRequestDto.getNickname().trim().isEmpty()) {
             log.error(">>> [PATCH] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
@@ -152,6 +155,8 @@ public class UserController {
     @Operation(summary = "로그아웃", description = "로그아웃을 처리하고 Redis에서 토큰을 삭제합니다.")
     @GetMapping("/logout")
     public ResponseEntity<BaseResponseBody> logout(@RequestHeader("Authorization") String token) {
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [GET] /user/logout - 로그아웃 요청: {}", token);
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
@@ -165,6 +170,8 @@ public class UserController {
     @Operation(summary = "회원 정보 조회", description = "회원 정보를 조회합니다.")
     @GetMapping
     public ResponseEntity<UserGetResponseDto> getUser(@RequestHeader("Authorization") String token) {
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [GET] /user - 회원 정보 조회 요청: {}", token);
         UserGetResponseDto userGetResponseDto = userService.getUser(token);
         log.info(">>> [GET] /user - 회원 정보 조회 완료: {}", userGetResponseDto);
@@ -174,6 +181,8 @@ public class UserController {
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 처리합니다.")
     @DeleteMapping
     public ResponseEntity<BaseResponseBody> deleteUser(@RequestHeader("Authorization") String token) {
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [DELETE] /user - 회원 탈퇴 요청: {}", token);
 
         userService.deleteUser(token);
@@ -185,6 +194,8 @@ public class UserController {
     @Operation(summary = "현재 비밀번호 확인", description = "현재 비밀번호를 확인합니다.")
     @PostMapping("/password")
     public ResponseEntity<UserCheckPasswordResponseDto> checkPassword(@RequestHeader("Authorization") String token, @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [POST] /user/password - 현재 비밀번호 확인 요청 : {}", token);
         UserCheckPasswordResponseDto userCheckPasswordResponseDto = userService.checkPassword(token, userPasswordCheckRequestDto);
         log.info(">>> [POST] /user/password - 비밀번호 확인 결과: {}", userCheckPasswordResponseDto);
@@ -211,6 +222,8 @@ public class UserController {
     @Operation(summary = "내 프로필 조회", description = "내 프로필을 조회합니다.")
     @GetMapping("/my-profile")
     public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestHeader("Authorization") String token) {
+        if(token.isEmpty() || token.isBlank())
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         UserProfileResponseDto responseDto = userService.getMyProfile(token);
         log.info(">>> 내 프로필 조회 반환값 : {}",responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
