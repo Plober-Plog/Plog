@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import API from "../../apis/api";
 import FooterCmt from '../Common/FooterCmt';
+import Btn from '../Common/Btn';
 import CommentItem from './CommentItem';
 import useAuthStore from '../../stores/member';
 
 const Comment = ({ articleId }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [commentList, setCommentList] = useState([]);
+  const [cmtCnt, setCmtCnt] = useState(0);
   const [selectedParentId, setSelectedParentId] = useState(0);
   const [isFooterCmtActive, setIsFooterCmtActive] = useState(false);
   const { userData } = useAuthStore();
@@ -17,6 +22,7 @@ const Comment = ({ articleId }) => {
       try {
         const response = await API.get(`/user/sns/${articleId}/comment`);
         setCommentList(response.data);
+        setCmtCnt(response.data.length);  // 댓글 수 업데이트
         console.log(response.data.length, '댓글 불러오기 성공!:', response.data);
       } catch (err) {
         console.error('댓글 불러오기 실패 : ', err);
@@ -24,6 +30,7 @@ const Comment = ({ articleId }) => {
     };
 
     fetchComments();
+
   }, [articleId]);
 
   const handleReply = (parentId) => {
@@ -40,6 +47,13 @@ const Comment = ({ articleId }) => {
           <CommentItem key={comment.articleCommentId} comments={comment} handleReply={handleReply} />
         ))}
       </div>
+      {location.pathname === `/sns/${articleId}` && (
+        <Btn 
+          content='댓글 자세히 보기'
+          onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId } })}
+          cmtCnt={cmtCnt}
+        />
+      )}
       <FooterCmt
         articleId={articleId}
         selectedParentId={selectedParentId}

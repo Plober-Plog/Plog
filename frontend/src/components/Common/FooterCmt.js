@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import API from "../../apis/api";
 import send from "../../assets/icon/footer/send.svg";
 import './Footer.css';
 
 const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSelectedParentId, isActive, setIsActive }) => {
+  const navigate = useNavigate()
   const [content, setContent] = useState('');
   const inputRef = useRef(null);
 
@@ -41,6 +43,7 @@ const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSe
       setCommentList(updatedComments.data);
       setIsActive(false);  // 댓글 작성 후 FooterCmt 비활성화
       setSelectedParentId(0);  // 작성 후 root 댓글 작성으로 초기화
+      navigate(`/sns/${articleId}/comment`, {state: { articleId }});
     } catch (error) {
       console.error('댓글 작성 실패:', error.response || error);
     }

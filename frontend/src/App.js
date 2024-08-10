@@ -35,6 +35,7 @@ import Neighbor from './pages/Profile/Neighbor';
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 import SnsList from './pages/Sns/SnsList';
+import CommentDetail from './pages/Sns/CommentDetail';
 
 // 로그인 후에만 FCM 토큰을 요청하고 저장했다면, 여기는 onForegroundMessage만 설정
 if (Notification.permission === 'granted') {
@@ -85,6 +86,7 @@ function App() {
             <Route path="/sns" element={<SnsList />} />
             <Route path="/sns/write" element={<PrivateRoute><SnsWrite /></PrivateRoute>} />
             <Route path="/sns/:articleId" element={<SnsDetail />} />
+            <Route path="/sns/:articleId/comment" element={<CommentDetail />} />
           </Routes>
         </main>
         <FooterWithCondition />

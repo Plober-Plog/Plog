@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
+import useAuthStore from '../../stores/member';
 
 import defaultImage from '../../assets/icon/default.png';
 import InputField from '../../components/Common/InputField';
@@ -13,6 +14,14 @@ const PlantRegister = () => {
   const navigate = useNavigate();
   const { plantId } = location.state;
 
+  const [searchId, setSearchId] = useState(null);
+
+  useEffect(() => {
+    const fetchSearchId = useAuthStore.getState().getSearchId;
+    const searchId = fetchSearchId();
+    setSearchId(searchId);
+  }, []);
+
   // 식물 정보
   const [plantTypeId, setPlantTypeId] = useState(2);
   const [otherPlantName, setOtherPlantName] = useState('');
@@ -20,7 +29,6 @@ const PlantRegister = () => {
   const [bio, setBio] = useState('');
   const [nickname, setNickname] = useState('');
   const [birthDate, setBirthDate] = useState('');
-
 
   // 사진 업로드
   const fileInputRef = useRef(null);
@@ -38,14 +46,12 @@ const PlantRegister = () => {
     }
   };
 
-
   // 사진 삭제
   const handleImageRemove = () => {
     setProfile(defaultImage);
     setUploadedFile(null);
     fileInputRef.current.value = null; // input 필드를 초기화하여 동일 파일 업로드 가능하게 함
   };
-
 
   // 수정일 경우 식물 정보 가져오기
   useEffect(() => {
@@ -70,14 +76,13 @@ const PlantRegister = () => {
     }
   }, [plantId]);
 
-
   // 식물 등록
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const formData = new FormData();
-      console.log(otherPlantName)
+      console.log(otherPlantName);
 
       formData.append('plantTypeId', plantTypeId);
       if (plantTypeId === 1) {
@@ -116,12 +121,11 @@ const PlantRegister = () => {
       }
 
       console.log(plantId === 0 ? '식물 등록 성공:' : '식물 수정 성공:', response.data);
-      navigate(`/plant/${plantId}`);
+      navigate(`/profile/${searchId}`);
     } catch (err) {
       console.error('식물 등록/수정 실패 : ', err);
     }
   };
-
 
   // 임시 식물 종 옵션
   const plantTypeOptions = [
@@ -134,7 +138,6 @@ const PlantRegister = () => {
     { value: 7, label: '참치' },
     { value: 8, label: '구아바' },
   ];
-
 
   return (
     <div>
