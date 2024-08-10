@@ -23,7 +23,11 @@ const ArticleCard = ({ ownerId, id, log, thumbnail, type }) => {
       });
 
     } else if (type === 'sns') {
-      navigate(`/sns/${id}`);
+      navigate(`/sns/${id}`, {
+        state: {
+          articleId: id,
+        }
+      });
     } else {
       console.log(`type error${type}`);
     }
