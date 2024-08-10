@@ -21,8 +21,8 @@ const SignUpForm = () => {
   const [birthdate, setBirthdate] = useState('');
   const [source, setSource] = useState('');
   const [gender, setGender] = useState(1);
-  const [sido, setSido] = useState('');
-  const [gugun, setGugun] = useState('');
+  const [sidoCode, setSidoCode] = useState(0);
+  const [gugunCode, setGugunCode] = useState(0);
   // 회원 동의
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeAdvertisement, setAgreeAdvertisement] = useState(false);
@@ -41,8 +41,38 @@ const SignUpForm = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
   const [timer, setTimer] = useState(0);
+  const [sidoOptions, setSidoOptions] = useState([]);
+  const [gugunOptions, setGugunOptions] = useState([]);
 
   const URI = 'https://i11b308.p.ssafy.io/api';
+
+  // 시도 옵션 가져오기
+  useEffect(() => {
+    const getSidoOptions = async () => {
+      try {
+        const response = await axios.get(`${URI}/area/sido`)
+        setSidoOptions(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getSidoOptions();
+
+  }, []);
+
+  // 구군 옵션 가져오기
+  useEffect(() => {
+    const getGugunOptions = async (sidoCode) => {
+      try {
+        const response = await axios.get(`${URI}/area/gugun/${sidoCode}`)
+        setGugunOptions(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getGugunOptions(sidoCode);
+
+  }, [])
 
 
   // 유효성 검사
@@ -191,8 +221,8 @@ const handleSignUp = async () => {
     gender,
     birthDate: birthdate,
     source,
-    sidoCode: sido,
-    gugunCode: gugun,
+    sidoCode,
+    gugunCode,
     profileInfo: "",
     isAd: agreeAdvertisement
   };
@@ -394,20 +424,30 @@ const closeModal = () => {
         />
         <div>
           <label>지역</label>
-          <SelectField
-            value={sido}
-            onChange={(e) => setSido(e.target.value)}
-            options={['시/도']}
-            isRequired={false}
+          <select
+            value={sidoCode}
+            onChange={(e) => setSidoCode(e.target.value)}
+            required={false}
             className="account-drop-box"
-          />
-          <SelectField
-            value={gugun}
-            onChange={(e) => setGugun(e.target.value)}
-            options={['구/군']}
-            isRequired={false}
+          >
+            {sidoOptions.map(sidoOption => (
+              <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
+            ))}
+          </select>
+          <select
+            value={gugunCode}
+            onChange={(e) => setGugunCode(e.target.value)}
+            required={false}
             className="account-drop-box"
-          />
+          >
+            {gugunOptions
+              .filter(gugunOption => gugunOption.sidoCode === sidoCode) // sidoCode가 일치하는 항목만 필터링
+              .map(filteredGugunOption => (
+                <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
+                  {filteredGugunOption.gugunName}
+                </option>
+              ))}
+          </select>
         </div>
         <div>
           <input

@@ -2,16 +2,16 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React, { useEffect } from 'react';
 
+// private
+import PrivateRoute from './components/Account/PrivateRoute';
+import PublicRoute from './components/Account/PublicRoute';
 // default
 import Home from './pages/Main/Home';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
-import FooterCmt from './components/Common/FooterCmt'; // FooterCmt 가져오기
-
 // FCM
 import { getMessaging, getToken } from 'firebase/messaging';
 import { requestForToken, onForegroundMessage } from './firebase';
-
 // Account
 import SignUp from './pages/Account/SignUp';
 import Login from './pages/Account/Login';
@@ -28,13 +28,9 @@ import PlantRegister from './pages/Plant/PlantRegister';
 import PlantGuide from './pages/Plant/PlantGuide';
 import PlantReport from './pages/Plant/PlantReport';
 import ApiTest from './pages/Plant/ApiTest';
-
-
-
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
 import Neighbor from './pages/Profile/Neighbor';
-
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
@@ -65,32 +61,31 @@ function App() {
           <Header />
         </header>
         <main className='content'>
-
-            <Routes>
-              {/* Account */}
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/profileupdate" element={<ProfileUpdate />} />
-              <Route path="/password/change" element={<PasswordChange />} />
-              <Route path="/password/find" element={<PasswordFind />} />
-              <Route path="/password/update" element={<PasswordUpdate />} />
-              <Route path="/setting" element={<Setting />} />
-              {/* plant */}
-              <Route path="/plant/:plantId/:date/write" element={<PlantDiaryWrite />} />
-              <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
-              <Route path="/plant/:plantId" element={<PlantDetail />} />
-              <Route path="/plant/:plantId/report" element={<PlantReport />} />
-              <Route path="/guide/:plantTypeId" element={<PlantGuide />} />
-              <Route path="/plant/register" element={<PlantRegister />} />
-              {/* profile */}
-              <Route path="/profile/:searchId" element={<UserProfile />} />
-              <Route path="/profile/:searchId/neighbor" element={<Neighbor />}/>
-              {/* sns */}
-              <Route path="/sns" element={<SnsList />} />
-              <Route path="/sns/write" element={<SnsWrite />} />
-              <Route path="/sns/:articleId" element={<SnsDetail />} />
-            </Routes>
+          <Routes>
+            {/* Account */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
+            <Route path="/profileupdate" element={<PrivateRoute><ProfileUpdate /></PrivateRoute>} />
+            <Route path="/password/change" element={<PrivateRoute><PasswordChange /></PrivateRoute>} />
+            <Route path="/password/find" element={<PublicRoute><PasswordFind /></PublicRoute>} />
+            <Route path="/password/update" element={<PasswordUpdate />} />
+            <Route path="/setting" element={<PrivateRoute><Setting /></PrivateRoute>} />
+            {/* plant */}
+            <Route path="/plant/:plantId/:date/write" element={<PrivateRoute><PlantDiaryWrite /></PrivateRoute>} />
+            <Route path="/plant/:platId/:date" element={<PlantDiaryDetail />} />
+            <Route path="/plant/:plantId" element={<PlantDetail />} />
+            <Route path="/plant/:plantId/report" element={<PrivateRoute><PlantReport /></PrivateRoute>} />
+            <Route path="/guide/:plantTypeId" element={<PlantGuide />} />
+            <Route path="/plant/register" element={<PrivateRoute><PlantRegister /></PrivateRoute>} />
+            {/* profile */}
+            <Route path="/profile/:searchId" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+            <Route path="/profile/:searchId/neighbor" element={<PrivateRoute><Neighbor /></PrivateRoute>}/>
+            {/* sns */}
+            <Route path="/sns" element={<SnsList />} />
+            <Route path="/sns/write" element={<PrivateRoute><SnsWrite /></PrivateRoute>} />
+            <Route path="/sns/:articleId" element={<SnsDetail />} />
+          </Routes>
         </main>
         <FooterWithCondition />
       </Router>

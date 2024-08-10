@@ -11,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     const fetchSnsArticles = async () => {
       try {
-        const response = await API.get(`/user/sns/`);
+        const response = await API.get(`/user/sns`);
         console.log("SNS Articles:", response.data);
         setArticles(response.data);
       } catch (error) {

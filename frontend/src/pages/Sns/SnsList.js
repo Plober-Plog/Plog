@@ -14,7 +14,6 @@ const SnsList = () => {
     { tagTypeId: 4, tagName: '일기' },
     { tagTypeId: 5, tagName: '식물' },
     { tagTypeId: 6, tagName: '정보' },
-    // { tagTypeId: 7, tagName: '룸꾸미기' }
   ];
 
   const handleTagSelect = (id) => {
