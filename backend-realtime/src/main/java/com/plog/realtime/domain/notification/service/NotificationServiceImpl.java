@@ -48,7 +48,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public NotificationMessageResponseDto sendNotification(String requireSource, String targetSearchId, String clickUrl, NotificationType type) {
-        log.info("sendNotification 시작 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
+        log.info("sendNotification 시작 - requireSource: {}, targetSearchId: {}, clickUrl: {}, type: {}", requireSource, targetSearchId, clickUrl, type);
         User targetUser = userRepository.findUserBySearchId(targetSearchId).orElseThrow(() -> {
             log.error("sendNotification 실패 - User not found, targetSearchId: {}", targetSearchId);
             return new RuntimeException("User not found");
@@ -65,14 +65,17 @@ public class NotificationServiceImpl implements NotificationService {
                 log.error("sendNotification 실패 - Source user not found, requireSource: {}", requireSource);
                 return new RuntimeException("Source user not found");
             });
+            log.info("sourceUser 정보: {}", sourceUser);
             formattedMessage = String.format(messageTemplate, requireSource, targetSearchId);
         } else if (type.requiresPlant()) {
             Plant plant = plantRepository.findById((long) Integer.parseInt(requireSource)).orElseThrow(() -> {
                 log.error("sendNotification 실패 - Plant not found, requireSource: {}", requireSource);
                 return new RuntimeException("Plant not found");
             });
+            log.info("plant 정보: {}", plant);
             formattedMessage = String.format(messageTemplate, targetSearchId, plant.getNickname());
         } else {
+            log.info("일반 데이터 넘기는 정보");
             formattedMessage = String.format(messageTemplate, targetSearchId);
         }
 
