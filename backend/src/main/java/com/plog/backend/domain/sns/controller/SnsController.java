@@ -50,13 +50,13 @@ public class SnsController {
     @PostMapping
     @Operation(summary = "게시글 추가", description = "새로운 게시글을 등록합니다.")
     public ResponseEntity<BaseResponseBody> addArticle(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "게시글 추가 요청 데이터", required = true) @ModelAttribute ArticleAddRequestDto articleAddRequestDto,
             @Parameter(description = "이미지 파일 목록") @RequestPart(value = "images", required = false) MultipartFile[] images
     ) {
         log.info(">>> [POST] /user/sns - 요청 데이터: {} 이미지 여부: {}",
                 articleAddRequestDto, images == null ? "X" : "O");
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         Long articleId = articleService.addArticle(token, articleAddRequestDto);
 
@@ -72,12 +72,12 @@ public class SnsController {
     @PatchMapping("/{articleId}")
     @Operation(summary = "게시글 수정", description = "게시글 ID로 게시글을 수정합니다.")
     public ResponseEntity<BaseResponseBody> updateArticle(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId,
             @Parameter(description = "게시글 수정 요청 데이터", required = true) @RequestBody ArticleUpdateRequestDto articleUpdateRequestDto
     ) {
         log.info(">>> [PATCH] /user/sns/{} - 수정 ID: {}", articleId, articleId);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         articleUpdateRequestDto.setArticleId(articleId);
 
@@ -88,11 +88,11 @@ public class SnsController {
     @DeleteMapping("/{articleId}")
     @Operation(summary = "게시글 삭제", description = "게시글 ID로 게시글을 삭제합니다.")
     public ResponseEntity<BaseResponseBody> deleteArticle(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId
     ) {
         log.info(">>> [DELETE] /user/sns/{} - 삭제 ID: {}", articleId, articleId);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         articleService.deleteArticle(token, articleId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "게시글 삭제가 완료되었습니다."));
@@ -176,9 +176,9 @@ public class SnsController {
     @PostMapping("/comment")
     @Operation(summary = "댓글 등록", description = "새로운 댓글을 등록합니다.")
     public ResponseEntity<BaseResponseBody> addComment(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody ArticleCommentAddRequestDto articleCommentAddRequestDto) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [POST] /user/sns/comment - 댓글 생성 요청 데이터: {}", articleCommentAddRequestDto);
         articleCommentService.addArticleComment(token, articleCommentAddRequestDto);
@@ -191,9 +191,9 @@ public class SnsController {
     @PatchMapping("/comment")
     @Operation(summary = "댓글 수정", description = "기존 댓글을 수정합니다.")
     public ResponseEntity<BaseResponseBody> updateComment(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [PATCH] /user/sns/comment - 댓글 수정 요청 데이터: {}", articleCommentUpdateRequestDto);
         articleCommentService.updateArticleComment(token, articleCommentUpdateRequestDto);
@@ -206,9 +206,9 @@ public class SnsController {
     @DeleteMapping("/comment")
     @Operation(summary = "댓글 삭제", description = "기존 댓글을 삭제합니다.")
     public ResponseEntity<BaseResponseBody> deleteComment(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestParam(value = "commentId") String commentId) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [DELETE] /user/sns/comment - 댓글 삭제 요청 데이터: {}", commentId);
         articleCommentService.deleteArticleComment(token, Long.parseLong(commentId));
@@ -233,10 +233,10 @@ public class SnsController {
     @PostMapping("/like/{articleId}")
     @Operation(summary = "게시글 좋아요 추가", description = "게시글에 좋아요를 추가합니다.")
     public ResponseEntity<BaseResponseBody> addLikeToArticle(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId
     ) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         articleLikeService.addLikeToArticle(token, articleId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "좋아요 등록이 완료되었습니다."));
@@ -245,10 +245,10 @@ public class SnsController {
     @DeleteMapping("/like/{articleId}")
     @Operation(summary = "게시글 좋아요 삭제", description = "게시글에 좋아요를 삭제합니다.")
     public ResponseEntity<BaseResponseBody> removeLikeFromArticle(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId
     ) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         articleLikeService.removeLikeFromArticle(token, articleId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "좋아요 해제가 완료되었습니다."));
@@ -258,9 +258,9 @@ public class SnsController {
     @PostMapping("/bookmark/{articleId}")
     @Operation(summary = "북마크 추가", description = "특정 게시글을 북마크에 추가합니다.")
     public ResponseEntity<BaseResponseBody> addBookmark(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable("articleId") Long articleId) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [POST] /user/sns/bookmark/{} - 북마크 추가 요청", articleId);
         articleBookmarkService.addBookmark(token, articleId);
@@ -271,9 +271,9 @@ public class SnsController {
     @DeleteMapping("/bookmark/{articleId}")
     @Operation(summary = "북마크 삭제", description = "특정 게시글을 북마크에서 삭제합니다.")
     public ResponseEntity<BaseResponseBody> deleteBookmark(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable("articleId") Long articleId) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [DELETE] /user/sns/bookmark/{} - 북마크 삭제 요청", articleId);
         articleBookmarkService.deleteBookmark(token, articleId);
@@ -284,8 +284,8 @@ public class SnsController {
     @GetMapping("/bookmark")
     @Operation(summary = "북마크 목록 조회", description = "사용자의 모든 북마크를 조회합니다.")
     public ResponseEntity<ArticleBookmarkGetResponseDto> getBookmark(
-            @RequestHeader("Authorization") String token) {
-        if(token.isEmpty() || token.isBlank())
+            @RequestHeader(value = "Authorization", required = false) String token) {
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [GET] /user/sns/bookmark - 북마크 목록 조회 요청");
         ArticleBookmarkGetResponseDto response = articleBookmarkService.getBookmarks(token);

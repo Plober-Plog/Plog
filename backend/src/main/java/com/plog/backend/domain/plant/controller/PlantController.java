@@ -40,10 +40,10 @@ public class PlantController {
     @PostMapping
     @Operation(summary = "식물 추가", description = "새로운 식물을 등록합니다.")
     public ResponseEntity<BaseResponseBody> addPlant(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 추가 요청 데이터", required = true) @ModelAttribute PlantAddRequestDto plantAddRequestDto) {
         log.info(">>> [POST] /user/plant - 요청 데이터: {}", plantAddRequestDto);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if (plantAddRequestDto.getNickname() == null || plantAddRequestDto.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
@@ -58,10 +58,10 @@ public class PlantController {
     @GetMapping("/{plantId}/info")
     @Operation(summary = "식물 정보 조회", description = "식물 ID로 식물의 상세 정보를 조회합니다.")
     public ResponseEntity<PlantGetResponseDto> getPlant(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [GET] /user/plant/{}/info - 요청 ID: {}", plantId, plantId);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         PlantGetResponseDto plantGetResponseDto = plantService.getPlant(token, plantId);
         return ResponseEntity.status(200).body(plantGetResponseDto);
@@ -122,11 +122,11 @@ public class PlantController {
     @PatchMapping("/{plantId}")
     @Operation(summary = "식물 정보 수정", description = "식물 ID로 식물 정보를 수정합니다.")
     public ResponseEntity<BaseResponseBody> updatePlant(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
             @Parameter(description = "식물 수정 요청 데이터", required = true) @ModelAttribute PlantUpdateRequestDto plantUpdateRequestDto) {
         log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequestDto);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantUpdateRequestDto.setPlantId(plantId);
         plantService.updatePlant(token, plantUpdateRequestDto);
@@ -136,10 +136,10 @@ public class PlantController {
     @DeleteMapping("/{plantId}")
     @Operation(summary = "식물 삭제", description = "식물 ID로 식물을 삭제합니다.")
     public ResponseEntity<BaseResponseBody> deletePlant(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [DELETE] /user/plant/{} - 삭제 ID: {}", plantId, plantId);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantService.deletePlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 삭제가 완료되었습니다."));
@@ -148,10 +148,10 @@ public class PlantController {
     @PatchMapping("/{plantId}/farewell")
     @Operation(summary = "식물과 이별", description = "식물 ID로 식물과 이별합니다.")
     public ResponseEntity<BaseResponseBody> farewellPlant(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [PATCH] /user/plant/{}/farewell - 이별 ID: {}", plantId, plantId);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantService.farewellPlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물과 이별이 완료되었습니다."));
@@ -160,10 +160,10 @@ public class PlantController {
     @PatchMapping("/{plantId}/fix")
     @Operation(summary = "식물 고정 상태 수정", description = "식물 ID로 식물의 고정 여부를 수정합니다.")
     public ResponseEntity<BaseResponseBody> updateFixStatePlant(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [PATCH] /user/plant/{}/fix - 고정할 Id: {}", plantId, plantId);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantService.updateFixStatePlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물의 고정 여부 수정이 완료되었습니다."));
@@ -172,10 +172,10 @@ public class PlantController {
     @PatchMapping("/{plantId}/notification")
     @Operation(summary = "식물 알림 수신 상태 수정", description = "식물 ID로 식물의 알림 수신 여부를 수정합니다.")
     public ResponseEntity<BaseResponseBody> updateNotificationPlant(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId) {
         log.info(">>> [PATCH] /user/plant/{}/notification - 알림 수신 여부 변경할 Id: {}", plantId, plantId);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantService.updateNotificationPlant(token, plantId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물의 알림 수신 여부 수정이 완료되었습니다."));
@@ -187,11 +187,11 @@ public class PlantController {
     @PostMapping("/{plantId}/check")
     @Operation(summary = "식물 관리 기록 추가", description = "식물 ID로 식물 관리 여부를 기록합니다.")
     public ResponseEntity<BaseResponseBody> addPlantCheck(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
             @Parameter(description = "관리 여부 추가 요청 데이터", required = true) @RequestBody PlantCheckAddRequestDto plantCheckAddRequestDto) {
         log.info(">>> [POST] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckAddRequestDto);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantCheckAddRequestDto.setPlantId(plantId);
         plantCheckService.addPlantCheck(token, plantCheckAddRequestDto);
@@ -201,11 +201,11 @@ public class PlantController {
     @PatchMapping("/{plantId}/check")
     @Operation(summary = "식물 관리 기록 수정", description = "식물 ID로 식물 관리 여부를 수정합니다.")
     public ResponseEntity<BaseResponseBody> updatePlantCheck(
-            @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
             @Parameter(description = "관리 여부 수정 요청 데이터", required = true) @RequestBody PlantCheckUpdateRequestDto plantCheckUpdateRequestDto) {
         log.info(">>> [PATCH] /user/plant/{}/check - 요청 데이터: {}", plantId, plantCheckUpdateRequestDto);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantCheckUpdateRequestDto.setPlantId(plantId);
         plantCheckService.updatePlantCheck(token, plantCheckUpdateRequestDto);
@@ -235,11 +235,11 @@ public class PlantController {
 
     @DeleteMapping("/{plantId}/check")
     @Operation(summary = "식물 관리 기록 삭제", description = "식물 ID와 날짜로 식물의 관리 여부 기록을 삭제합니다.")
-    public ResponseEntity<BaseResponseBody> deletePlantCheck(@Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
+    public ResponseEntity<BaseResponseBody> deletePlantCheck(@Parameter(description = "인증 토큰", required = true) @RequestHeader(value = "Authorization", required = false) String token,
                                                              @Parameter(description = "식물 ID", required = true) @PathVariable Long plantId,
                                                              @Parameter(description = "관리 여부 기록 날짜", required = true) @RequestParam("checkDate") String checkDate) {
         log.info(">>> [DELETE] /user/plant/{}/check - 요청 데이터: {}", plantId, checkDate);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantCheckService.deletePlantCheck(token, plantId, checkDate);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "관리 여부 삭제가 완료되었습니다."));

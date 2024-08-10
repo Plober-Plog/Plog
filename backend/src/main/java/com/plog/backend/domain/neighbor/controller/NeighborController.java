@@ -31,8 +31,8 @@ public class NeighborController {
     // 이웃 추가
     @Operation(summary = "이웃 추가", description = "이웃을 추가합니다.")
     @PostMapping
-    public ResponseEntity<?> createNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
-        if(token.isEmpty() || token.isBlank())
+    public ResponseEntity<?> createNeighbor(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         neighborService.addNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "이웃이 추가 되었습니다."));
@@ -41,8 +41,8 @@ public class NeighborController {
     // 이웃 삭제
     @Operation(summary = "이웃 삭제", description = "이웃을 삭제합니다.")
     @DeleteMapping
-    public ResponseEntity<?> deleteNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
-        if(token.isEmpty() || token.isBlank())
+    public ResponseEntity<?> deleteNeighbor(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody NeighborAddRequestDto neighborAddRequestDto) {
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         neighborService.deleteNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "이웃이 삭제 되었습니다."));
@@ -51,8 +51,8 @@ public class NeighborController {
     // 서로 이웃 추가
     @Operation(summary = "서로 이웃 추가", description = "이웃을 추가합니다.")
     @PostMapping("/mutual/access")
-    public ResponseEntity<?> createMutualNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborMutualAddRequestDto neighborAddRequestDto) {
-        if(token.isEmpty() || token.isBlank())
+    public ResponseEntity<?> createMutualNeighbor(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody NeighborMutualAddRequestDto neighborAddRequestDto) {
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         neighborService.addMutualNeighbor(token, neighborAddRequestDto.getNeighborSearchId());
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponseBody.of(200, "서로 이웃이 추가 되었습니다."));
@@ -61,8 +61,8 @@ public class NeighborController {
     // 서로 이웃 삭제
     @Operation(summary = "서로 이웃 삭제", description = "이웃을 삭제합니다.")
     @DeleteMapping("/mutual")
-    public ResponseEntity<?> deleteMutualNeighbor(@RequestHeader("Authorization") String token, @RequestBody NeighborMutualAddRequestDto neighborMutualAddRequestDto) {
-        if(token.isEmpty() || token.isBlank())
+    public ResponseEntity<?> deleteMutualNeighbor(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody NeighborMutualAddRequestDto neighborMutualAddRequestDto) {
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if(neighborMutualAddRequestDto.getIsDelete() == null)
             throw new NotValidRequestException("삭제 후 이웃 관계를 설정이 필요합니다.");
@@ -116,9 +116,9 @@ public class NeighborController {
     @Operation(summary = "이웃 관계 비교", description = "현재 회원(토큰 기준)을과 비교할 회원(searchId)의 이웃 관계")
     @GetMapping("/{searchId}")
     public ResponseEntity<NeighborCheckResponseDto> checkNeighbor(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable("searchId") String searchId) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         return ResponseEntity.ok(neighborService.checkNeighbor(token, searchId));
     }

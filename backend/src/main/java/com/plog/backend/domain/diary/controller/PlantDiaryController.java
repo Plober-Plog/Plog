@@ -28,11 +28,11 @@ public class PlantDiaryController {
 
     @GetMapping("/get-weather")
     public ResponseEntity<PlantDiaryWeatherGetResponseDto> getWeather(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestParam String date
     ) {
 
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if (date == null)
             throw new NotValidRequestException("date 값은 필수 값입니다.");
@@ -43,10 +43,10 @@ public class PlantDiaryController {
 
     @PostMapping
     public ResponseEntity<BaseResponseBody> addPlantDiary(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @ModelAttribute PlantDiaryAddRequestDto plantDiaryAddRequestDto,
             @RequestPart(value = "images", required = false) MultipartFile[] images) {
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if (plantDiaryAddRequestDto.getPlantId() == null)
             throw new NotValidRequestException("plantId 는 필수값입니다.");
@@ -64,11 +64,11 @@ public class PlantDiaryController {
 
     @PatchMapping("/{plantDiaryId}")
     public ResponseEntity<BaseResponseBody> updatePlantDiary(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable Long plantDiaryId,
             @RequestBody PlantDiaryUpdateRequestDto plantDiaryUpdateRequestDto) {
         log.info(">>> [PATCH] /user/diary/{} - 요청 데이터: {}", plantDiaryId, plantDiaryUpdateRequestDto);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if (plantDiaryUpdateRequestDto.getRecordDate() == null)
             throw new NotValidRequestException("일지 기록 일자는 필수 값입니다.");
@@ -81,10 +81,10 @@ public class PlantDiaryController {
 
     @DeleteMapping("/{plantDiaryId}")
     public ResponseEntity<BaseResponseBody> deletePlantDiary(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable Long plantDiaryId) {
         log.info(">>> [DELETE] /user/diary/{} - 삭제 ID: {}", plantDiaryId, plantDiaryId);
-        if(token.isEmpty() || token.isBlank())
+        if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         plantDiaryService.deletePlantDiary(token, plantDiaryId);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 일지 삭제가 완료되었습니다."));
