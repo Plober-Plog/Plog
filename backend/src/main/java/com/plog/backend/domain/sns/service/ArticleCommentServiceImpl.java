@@ -161,6 +161,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
                     .articleCommentId(comment.getArticleCommentId())
                     .userId(comment.getUser().getUserId())
                     .parentId(comment.getParentId())
+                    .searchId(comment.getUser().getSearchId())
                     .content(comment.getContent())
                     .profile(comment.getUser().getImage().getImageUrl())
                     .state(comment.getState().getValue())
