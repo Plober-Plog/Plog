@@ -61,7 +61,7 @@ public class SnsController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "게시글 등록이 완료되었습니다."));
     }
 
-    @PatchMapping("{articleId}")
+    @PatchMapping("/{articleId}")
     @Operation(summary = "게시글 수정", description = "게시글 ID로 게시글을 수정합니다.")
     public ResponseEntity<BaseResponseBody> updateArticle(
             @Parameter(description = "인증 토큰", required = true) @RequestHeader("Authorization") String token,
