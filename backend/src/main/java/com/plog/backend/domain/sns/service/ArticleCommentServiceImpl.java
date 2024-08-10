@@ -78,7 +78,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         String targetSearchId = article.getUser().getSearchId();
         String articleUrl = String.format("%s/sns/%d", serverUrl, articleId);
         if (!sourceSearchId.equals(targetSearchId)) {
-            String type = "FRIEND_REQUEST";
+            String type = "COMMENT";
             String urlString = String.format("%s/realtime/notification/send?sourceSearchId=%s&targetSearchId=%s&clickUrl=%s&type=%s",
                     serverUrl, sourceSearchId, targetSearchId, articleUrl, type);
             try {
