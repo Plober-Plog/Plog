@@ -134,7 +134,7 @@ public class PlantServiceImpl implements PlantService {
                     .profile(p.getImage() != null ? p.getImage().getImageUrl() : null)
                     .plantTypeName(p.getPlantType().getPlantName())
                     .birthDate(p.getBirthDate())
-                    .notifySetting(p.getNotifySetting())
+                    .hasNotification(p.getNotifySetting() == 7 ? true : false)
                     .isFixed(p.isFixed())
                     .deadDate(p.getDeadDate())
                     .isDeleted(p.isDeleted())
@@ -165,7 +165,7 @@ public class PlantServiceImpl implements PlantService {
             for (Long plantTypeId : plantGetRequestDto.getPlantTypeId()) {
                 plantGetResponseDtoList.addAll(plantRepositorySupport.findByUserSearchIdAndPlantTypeId(searchId, plantTypeId, plantGetRequestDto.getPage()));
             }
-            log.info(plantGetResponseDtoList.toString() + " "  + plantGetResponseDtoList.size());
+            log.info(plantGetResponseDtoList.toString() + " " + plantGetResponseDtoList.size());
             for (Long otherPlantTypeId : plantGetRequestDto.getOtherPlantTypeId()) {
                 plantGetResponseDtoList.addAll(plantRepositorySupport.findByUserSearchIdAndOtherPlantTypeId(searchId, otherPlantTypeId, plantGetRequestDto.getPage()));
             }
@@ -303,4 +303,20 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
+    @Transactional
+    @Override
+    public void updateNotificationPlant(String token, Long plantId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        Plant plant = plantRepository.findById(plantId).orElseThrow(
+                () -> new EntityNotFoundException("일치하는 식물이 없습니다.")
+        );
+        if (userId != plant.getUser().getUserId())
+            throw new NotAuthorizedRequestException();
+        if (plant.getNotifySetting() == 7)
+            plant.setNotifySetting(0);
+        else
+            plant.setNotifySetting(7);
+        plantRepository.save(plant);
+        log.info(">>> updateNotificationPlant - 식물 알림 수신 여부 수정 완료, ID: {}", plantId);
+    }
 }
