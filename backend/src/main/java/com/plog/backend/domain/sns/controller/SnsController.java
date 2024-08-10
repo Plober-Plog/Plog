@@ -66,9 +66,6 @@ public class SnsController {
             articleService.uploadArticleImages(images, articleId);
         }
 
-
-
-
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "게시글 등록이 완료되었습니다."));
     }
 
@@ -81,6 +78,12 @@ public class SnsController {
     ) {
         log.info(">>> [PATCH] /user/sns/{} - 수정 ID: {}", articleId, articleId);
         articleUpdateRequestDto.setArticleId(articleId);
+
+        if(articleUpdateRequestDto.getTagTypeList().isEmpty()) {
+            articleUpdateRequestDto.setTagTypeList(new ArrayList<>());
+            articleUpdateRequestDto.getTagTypeList().add(0L);
+        }
+
         articleService.updateArticle(token, articleUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "게시글 수정이 완료되었습니다."));
     }
