@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
+import useAuthStore from '../../stores/member';
 import PropTypes from 'prop-types';
 
-const CommentItem = ({ comments, handleReply }) => {
+const CommentItem = ({ comment, handleReply }) => {
+  const [searchId, setSearchId] = useState(null);
+  const navigate = useNavigate();
+  const { userData } = useAuthStore();
 
+
+  // 댓글 삭제
   const handleCmtDelete = async (commentId) => {
     try {
       const response = await API.delete(`/user/sns/comment`, {
@@ -15,49 +22,43 @@ const CommentItem = ({ comments, handleReply }) => {
     }
   };
 
+  // 자식 댓글이면 들여쓰기
+  const divStyle = comment.parentId !== comment.articleCommentId
+    ? { marginLeft: '20px' }
+    : {};
+
   return (
-    <div>
-      {comments.map((comment, index) => (
-        <div 
-          key={comment.commentId} 
-          style={{ 
-            opacity: comment.state === 1 ? 1 : 0.5, 
-            marginLeft: index !== 0 ? '20px' : '0' 
-          }}
-        >
-          {comment.state === 1 ? (
-            <>
-              <img src={comment.profile} alt="profile" />
-              <h4>{comment.nickname}</h4>
-              <p>{comment.content}</p>
-              <p>{comment.createDate}</p>
-              {index === 0 && (
-                <button onClick={() => handleReply(comment.articleCommentId)}>답글작성</button>
-              )}
-              <button onClick={() => handleCmtDelete(comment.articleCommentId)}>댓글 삭제</button>
-            </>
-          ) : (
-            <p>삭제된 댓글입니다</p>
+    <div style={divStyle}>
+      {comment.state === 1 ? (
+        <>
+          <img src={comment.profile} alt="profile" onClick={() => navigate(`/profile/${comment.searchId}`)} />
+          <h4>{comment.nickname}</h4>
+          <p>{comment.content}</p>
+          <p>{comment.createDate}</p>
+          {comment.parentId === comment.articleCommentId && (
+            <button onClick={() => handleReply(comment.articleCommentId)}>답글작성</button>
           )}
-          <hr />
-        </div>
-      ))}
+          {comment.searchId === userData.searchId && (
+            <button onClick={() => handleCmtDelete(comment.articleCommentId)}>댓글 삭제</button>
+          )}
+        </>
+      ) : (
+        <p>삭제된 댓글입니다</p>
+      )}
     </div>
   );
 };
 
 CommentItem.propTypes = {
-  comments: PropTypes.arrayOf(
-    PropTypes.shape({
-      commentId: PropTypes.number.isRequired,
-      articleCommentId: PropTypes.number.isRequired,
-      profile: PropTypes.string,
-      nickname: PropTypes.string,
-      createDate: PropTypes.string,
-      content: PropTypes.string,
-      state: PropTypes.number.isRequired,
-    })
-  ).isRequired,
+  comment: PropTypes.shape({
+    commentId: PropTypes.number.isRequired,
+    articleCommentId: PropTypes.number.isRequired,
+    profile: PropTypes.string,
+    nickname: PropTypes.string,
+    createDate: PropTypes.string,
+    content: PropTypes.string,
+    state: PropTypes.number.isRequired,
+  }).isRequired,
   handleReply: PropTypes.func.isRequired,
 };
 

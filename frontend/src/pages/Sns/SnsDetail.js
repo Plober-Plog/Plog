@@ -9,7 +9,7 @@ import ImgSlider from "../../components/Common/ImgSlider";
 import BtnList from "../../components/Sns/BtnList";
 import Btn from "../../components/Common/Btn";
 
-import useAuthStore from "../../stores/member";  // 현재 로그인한 사용자의 정보를 가져오기 위해 추가
+import useAuthStore from "../../stores/member";
 
 const SnsDetail = () => {
   const location = useLocation();
@@ -18,7 +18,7 @@ const SnsDetail = () => {
   const [article, setArticle] = useState({});
   const [writerInfo, setWriterInfo] = useState({});
 
-  const { userData } = useAuthStore();  // 현재 로그인한 사용자의 정보를 가져옴
+  const { userData } = useAuthStore();
 
   // 게시물 불러오기
   useEffect(() => {
@@ -48,6 +48,7 @@ const SnsDetail = () => {
   }
 
   // 현재 사용자가 게시물 작성자인지 확인
+  // TODO userId로 확인
   const isAuthor = userData && userData.searchId === article.searchId;
 
   // 게시물 삭제하기
@@ -63,7 +64,7 @@ const SnsDetail = () => {
 
   return (
     <div>
-      <WriterInfo data={writerInfo} type="user" />
+      <WriterInfo data={writerInfo} type="user" onClick={() => navigate(`/profile/${writerInfo.searchId}`)}/>
       {isAuthor && (
         <>
           <Btn content='수정하기' onClick={() => navigate('/sns/write', { state: { articleId } })} />
@@ -73,7 +74,7 @@ const SnsDetail = () => {
       <ImgSlider imgs={article.images} />
       <Tags selectedTags={article.tagTypeList} tags={article.tagTypeList} />
       <p>{article.content}</p>
-      <BtnList likeCnt={article.likeCnt} isLiked={article.isLiked} isBookmarked={article.isBookmarked} articleId={articleId} />
+      <BtnList likeCnt={article.likeCnt} isLiked={article.isLiked} commentCnt={article.commentCnt} isBookmarked={article.isBookmarked} articleId={articleId} />
       <Comment articleId={articleId}/>
     </div>
   );

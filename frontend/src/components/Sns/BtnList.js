@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../../apis/api";
 
 import bookMarkSelect from "../../assets/icon/bookmark-select.svg";
@@ -7,7 +8,8 @@ import likeSelect from "../../assets/icon/like-select.svg";
 import likeDefault from "../../assets/icon/like-default.svg";
 import comment from "../../assets/icon/comment.svg";
 
-const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, cmtCnt, isBookmarked: initialIsBookmarked, articleId }) => {
+const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt, isBookmarked: initialIsBookmarked, articleId }) => {
+  const navigate = useNavigate();
   const [likeCnt, setLikeCnt] = useState(initialLikeCnt);
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
@@ -49,8 +51,13 @@ const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, cmtCnt, isB
         <span>{likeCnt}</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <img src={comment} alt="comment" style={imgStyle} />
-        <span>{cmtCnt}</span>
+        <img 
+          src={comment} 
+          alt="comment" 
+          style={imgStyle} 
+          onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId }})} // navigate를 함수로 감싸기
+        />
+        <span>{commentCnt}</span>
       </div>
       <div>
         <button onClick={handleBookmark} style={{ background: 'none', border: 'none', padding: 0 }}>
