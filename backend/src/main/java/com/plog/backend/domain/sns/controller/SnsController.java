@@ -2,7 +2,6 @@ package com.plog.backend.domain.sns.controller;
 
 
 import com.plog.backend.domain.sns.dto.request.*;
-import com.plog.backend.domain.sns.dto.response.ArticleBookmarkGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleCommentGetResponse;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
@@ -65,6 +64,12 @@ public class SnsController {
         if (images != null && images.length > 0) {
             articleService.uploadArticleImages(images, articleId);
         }
+
+        if(articleAddRequestDto.getTagTypeList().isEmpty()) {
+            articleAddRequestDto.setTagTypeList(new ArrayList<>());
+            articleAddRequestDto.getTagTypeList().add(0L);
+        }
+
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "게시글 등록이 완료되었습니다."));
     }
@@ -133,7 +138,7 @@ public class SnsController {
         if (token != null)
             userId = JwtTokenUtil.jwtTokenUtil.getUserIdFromToken(token);
 
-        log.info(">>> [GET] /user/sns?page={}&searchId={}&tagType={}&keyword={}&neighbor={}&orderType={} | 현재 로그인한 회원의 id: {}", page, searchId, tagType, keyword, neighborType, orderType,userId);
+        log.info(">>> [GET] /user/sns?page={}&searchId={}&tagType={}&keyword={}&neighbor={}&orderType={} | 현재 로그인한 회원의 id: {}", page, searchId, tagType, keyword, neighborType, orderType, userId);
 
         ArticleGetListRequestDto articleGetListRequestDto = ArticleGetListRequestDto.builder()
                 .userId(userId)
@@ -220,10 +225,13 @@ public class SnsController {
 
     @GetMapping("/{articleId}/comment")
     @Operation(summary = "댓글 목록 조회", description = "특정 게시글의 모든 댓글을 조회합니다.")
-    public ResponseEntity<List<List<ArticleCommentGetResponse>>> getComments(
-            @PathVariable("articleId") Long articleId) {
+    public ResponseEntity<List<ArticleCommentGetResponse>> getComments(
+            @PathVariable("articleId") Long articleId,
+            @Parameter(description = "페이지 번호", example = "0")
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page
+    ) {
         log.info(">>> [GET] /user/sns/{}/comment - 댓글 목록 조회 요청", articleId);
-        List<List<ArticleCommentGetResponse>> comments = articleCommentService.getArticleComments(articleId);
+        List<ArticleCommentGetResponse> comments = articleCommentService.getArticleComments(articleId, page);
         log.info(">>> [GET] /user/sns/{}/comment - 댓글 목록 조회 완료", articleId);
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
@@ -283,12 +291,14 @@ public class SnsController {
 
     @GetMapping("/bookmark")
     @Operation(summary = "북마크 목록 조회", description = "사용자의 모든 북마크를 조회합니다.")
-    public ResponseEntity<ArticleBookmarkGetResponseDto> getBookmark(
-            @RequestHeader(value = "Authorization", required = false) String token) {
+    public ResponseEntity<List<ArticleGetResponseDto>> getBookmark(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @Parameter(description = "페이지 번호", example = "0")
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page) {
         if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [GET] /user/sns/bookmark - 북마크 목록 조회 요청");
-        ArticleBookmarkGetResponseDto response = articleBookmarkService.getBookmarks(token);
+        List<ArticleGetResponseDto> response = articleBookmarkService.getBookmarks(token, page);
         log.info(">>> [GET] /user/sns/bookmark - 북마크 목록 조회 완료");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
