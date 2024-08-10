@@ -15,8 +15,11 @@ import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,10 @@ import java.util.stream.Collectors;
 @Service("neighborService")
 @RequiredArgsConstructor
 public class NeighborServiceImpl implements NeighborService {
+
+    @Value("${server.url}")
+    private String serverUrl;
+
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
     private final NeighborRepository neighborRepository;
@@ -68,6 +75,28 @@ public class NeighborServiceImpl implements NeighborService {
 
         neighborRepository.save(neighbor);
         log.info(">> 이웃 추가 성공: userId={}, neighborId={}", userId, neighborSearchId);
+
+        // 이웃 신청 알림 보내기
+        String sourceSearchId = user.getSearchId();
+        String targetSearchId = neighborUser.getSearchId();
+        String articleUrl = String.format("%s/profile/%d", serverUrl, sourceSearchId);
+        if (!sourceSearchId.equals(targetSearchId)) {
+            String type = "NEIGHBOR_REQUEST";
+            String urlString = String.format("%s/realtime/notification/send?sourceSearchId=%s&targetSearchId=%s&clickUrl=%s&type=%s",
+                    serverUrl, sourceSearchId, targetSearchId, articleUrl, type);
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-type", "application/json");
+
+                int responseCode = conn.getResponseCode();
+                log.info("알림 전송 HTTP 응답 코드: " + responseCode);
+                conn.disconnect();
+            } catch (Exception e) {
+                log.error("알림 전송 중 오류 발생", e);
+            }
+        }
     }
 
     @Override
@@ -116,6 +145,28 @@ public class NeighborServiceImpl implements NeighborService {
         neighborRepository.save(neighborTo);
 
         log.info(">>> 서로 이웃 추가 성공: userId={}, neighborId={}", userId, neighborSearchId);
+
+        // 서로 이웃 신청 알림 보내기
+        String sourceSearchId = user.getSearchId();
+        String targetSearchId = neighborUser.getSearchId();
+        String articleUrl = String.format("%s/profile/%d", serverUrl, sourceSearchId);
+        if (!sourceSearchId.equals(targetSearchId)) {
+            String type = "M_NEIGHBOR_REQUEST";
+            String urlString = String.format("%s/realtime/notification/send?sourceSearchId=%s&targetSearchId=%s&clickUrl=%s&type=%s",
+                    serverUrl, sourceSearchId, targetSearchId, articleUrl, type);
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-type", "application/json");
+
+                int responseCode = conn.getResponseCode();
+                log.info("알림 전송 HTTP 응답 코드: " + responseCode);
+                conn.disconnect();
+            } catch (Exception e) {
+                log.error("알림 전송 중 오류 발생", e);
+            }
+        }
     }
 
     @Transactional
