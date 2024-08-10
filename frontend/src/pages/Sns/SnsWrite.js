@@ -42,16 +42,23 @@ const SnsWrite = () => {
 
   // 이미지 업로드
   const handleImageUpload = (event) => {
-    console.log(event.target.files);
-    setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
+    const files = Array.from(event.target.files);
+    if (imgs.length + files.length > 5) {
+      alert('이미지는 최대 5개까지 업로드할 수 있습니다.');
+      return;
+    }
+    const newImgs = files.map(file => ({ 
+      url: URL.createObjectURL(file), 
+      file 
+    }));
+    setImgs((prevImgs) => [...prevImgs, ...newImgs]);
   };
-
-
-  // 이미지 삭제
+  
+  // 이미지 삭제 
   const handleDeleteImage = (index) => {
-    setImgs(prevImgs => prevImgs.filter((_, i) => i !== index));
+    const newImgs = imgs.filter((_, i) => i !== index);
+    setImgs(newImgs);
   };
-
 
   // 수정일 경우 게시물 가져오기
   useEffect(() => {
@@ -138,12 +145,16 @@ const SnsWrite = () => {
         <Tags selectedTags={tagTypeList} onTagSelect={handleTagSelect} tags={tags} />
       </div>
       <div>
-        <ImgUpload 
-          cameraIcon={cameraIcon} 
-          imgs={imgs} 
-          handleImageUpload={handleImageUpload} 
-          handleDeleteImage={handleDeleteImage} 
-        />
+        {articleId === 0 ? (
+          <ImgUpload 
+            cameraIcon={cameraIcon} 
+            imgs={imgs} 
+            handleImageUpload={handleImageUpload} 
+            handleDeleteImage={handleDeleteImage} 
+          />
+        ) : (
+          <p>사진은 수정할 수 없습니다.</p>
+        )}
       </div>
       <div>
         <TextareaField

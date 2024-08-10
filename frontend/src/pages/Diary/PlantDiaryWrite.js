@@ -25,7 +25,6 @@ const PlantDiaryWrite = () => {
   const navigate = useNavigate();
   const { plantId, date: selectedDate, diaryData } = location.state || {};
 
-  const [isEditImage, setIsEditImage] = useState(diaryData?.isEditImage ?? true); // 이미지 편집 비활성화 설정
   const [content, setContent] = useState('');
   const [date, setDate] = useState(selectedDate); 
   const [isWatered, setIsWatered] = useState(false);
@@ -138,9 +137,7 @@ useEffect(() => {
 }, [plantDiaryId]);
 
   // 이미지 업로드
-  
   const handleImageUpload = (event) => {
-    if (!isEditImage) return;
     const files = Array.from(event.target.files);
     if (imgs.length + files.length > 5) {
       alert('이미지는 최대 5개까지 업로드할 수 있습니다.');
@@ -153,8 +150,8 @@ useEffect(() => {
     setImgs((prevImgs) => [...prevImgs, ...newImgs]);
   };
   
+  // 이미지 삭제 
   const handleDeleteImage = (index) => {
-    if (!isEditImage) return;
     const newImgs = imgs.filter((_, i) => i !== index);
     setImgs(newImgs);
   };
@@ -328,15 +325,13 @@ useEffect(() => {
         <WriterInfo data={writerInfoData} type="plant" />
       </div>
       <div className="plant-diary-write-section">
-        {isEditImage ? (
+        {!isEditMode ? (
           <div>
-            <h2>사진 첨부하기</h2>
             <ImgUpload 
               cameraIcon={cameraIcon}
               imgs={imgs} 
               handleImageUpload={handleImageUpload} 
               handleDeleteImage={handleDeleteImage} 
-              isDisabled={!isEditImage}
             />
           </div>
         ) : (
