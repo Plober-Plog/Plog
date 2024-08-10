@@ -26,18 +26,36 @@ const ArticleCardList = ({ ownerId, articles = [], type }) => {
       (식물 SNS 추천, 인기 SNS 추천 알고리즘에 쓰입니다.)
       (BE에서 큐레이팅 알고리즘을 고려해 만들어 주어야 합니다.)
   */
+
   return (
     <div>
-      {articles.map(article => (
-        <ArticleCard 
-          key={article.plantDiaryId}
-          ownerId={ownerId}
-          id={article.plantDiaryId}
-          log={article.recordDate}
-          thumbnail={article.thumbnail}
-          type={type}
-        />
-      ))}
+      {articles.map(article => {
+        if (type === 'plant') {
+          return (
+            <ArticleCard 
+              key={article.plantDiaryId}
+              ownerId={ownerId}
+              id={article.plantDiaryId}
+              log={article.recordDate}
+              thumbnail={article.thumbnail}
+              type={type}
+            />
+          );
+        } else if (type === 'sns') {
+          return (
+            <ArticleCard 
+              key={article.articleId}  
+              ownerId={ownerId}
+              id={article.articleId}    
+              log={article.nickname}     
+              thumbnail={article.image} 
+              type={type}
+            />
+          );
+        } else {
+          return <p>잘못된 타입: {type}</p>;
+        }
+      })}
     </div>
   )
 }

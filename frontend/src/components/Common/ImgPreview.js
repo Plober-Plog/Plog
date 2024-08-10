@@ -11,7 +11,7 @@ const ImgPreview = ({ src, onDelete }) => {
         <Btn 
           content="X" 
           type="button" 
-          onClick={onDelete} 
+          onClick={onDelete}
 
         />
       </div>

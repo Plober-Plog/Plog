@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon';
@@ -6,6 +6,7 @@ import ImageSlider from '../../components/Common/ImgSlider';
 import DiaryWeather from '../../components/Diary/DiaryWeather';
 import DiaryDetailContent from '../../components/Diary/DiaryDetailContent';
 import Btn from '../../components/Common/Btn';
+import html2canvas from 'html2canvas';
 
 import pencilIcon from '../../assets/icon/pencil.png'; 
 import waterIcon from '../../assets/icon/water.png'; 
@@ -19,6 +20,7 @@ import './PlantDiaryWrite.css';
 const PlantDiaryDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const reportRef = useRef(null);
 
   const { plantId, date } = location.state;
   const [plantCheck, setPlantCheck] = useState(null);
@@ -122,8 +124,16 @@ const PlantDiaryDetail = () => {
 
   const weatherContent = `날씨는 ${weather}이고 온도는 ${temperature}'C 이며 습도는 ${humidity}입니다.`;
 
+  const handleCapture = async () => {
+    if (reportRef.current) {
+      const canvas = await html2canvas(reportRef.current);
+      const imgData = canvas.toDataURL('image/png');
+      navigate('/sns/write', { state: { imgData, articleId : 0 } });
+    }
+  };
+
   return (
-    <div className="plant-diary-container">
+    <div className="plant-diary-container" ref={reportRef}>
       <div className="plant-diary-section">
         <h2>{date}</h2>
         <DiaryTodoIcon src={pencilIcon} onClick={handleEdit} />
@@ -173,7 +183,7 @@ const PlantDiaryDetail = () => {
       </div>
       <div>
         <Btn content="삭제하기" onClick={handleDelete} /> 
-        <Btn content="SNS 업로드" onClick={handleSNSUpload} /> 
+        <Btn content="SNS 업로드" onClick={handleCapture} /> 
       </div>
     </div>
   );

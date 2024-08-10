@@ -20,7 +20,9 @@ const WriterInfo = ({ data = {}, type }) => {
 
   return (
     <div className="writerInfo-container">
-      <img src={writerInfoData.imgSrc} alt='profile img' className="writerInfo-profile-pic" />
+      <div>
+        <img src={writerInfoData.imgSrc} alt='profile img' className="writerInfo-profile-pic" />
+      </div>
       <div className="writerInfo-text">
         <div className="writerInfo-nickname">
           {writerInfoData.nickname}
