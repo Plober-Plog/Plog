@@ -1,12 +1,13 @@
 package com.plog.realtime.domain.notification.service;
 
+import com.plog.realtime.domain.notification.dto.NotificationHistoryResponseDto;
 import com.plog.realtime.domain.notification.dto.NotificationMessageResponseDto;
 import com.plog.realtime.domain.notification.entity.NotificationType;
 
 import java.util.List;
 
 public interface NotificationService {
-    List<NotificationMessageResponseDto> getNotifications(String searchId);
+    List<NotificationHistoryResponseDto> getNotifications(String searchId, int page);
 
     NotificationMessageResponseDto sendNotification(String sourceSearchId, String targetSearchId, String clickUrl, NotificationType type);
 

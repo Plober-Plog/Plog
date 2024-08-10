@@ -34,4 +34,7 @@ public class Notification extends BaseEntity {
     @Column(length = 255)
     private String content;
 
+    @Column(length = 255)
+    private String clickUrl;
+
 }
