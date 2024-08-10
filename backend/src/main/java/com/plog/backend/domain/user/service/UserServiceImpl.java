@@ -146,6 +146,13 @@ public class UserServiceImpl implements UserService {
 
         SecurityContextHolder.clearContext();
 
+        // FCM 토큰 null로 변경
+        User user = userRepository.findUserBySearchId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setNotificationToken(null); // FCM 토큰을 null로 변경
+        userRepository.save(user); // 변경된 내용을 DB에 저장
+
         log.info(">>> [USER SIGN OUT] - SecurityContextHolder 초기화 완료");
     }
 
