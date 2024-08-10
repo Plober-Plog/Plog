@@ -1,7 +1,6 @@
 package com.plog.backend.domain.sns.service;
 
 import com.plog.backend.domain.sns.dto.request.ArticleCommentAddRequestDto;
-import com.plog.backend.domain.sns.dto.request.ArticleCommentDeleteRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleCommentUpdateRequestDto;
 import com.plog.backend.domain.sns.dto.response.ArticleCommentGetResponse;
 import com.plog.backend.domain.sns.entity.Article;
@@ -18,8 +17,6 @@ import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.util.JwtTokenUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,8 +32,8 @@ import java.util.List;
 @Service("articleCommentService")
 public class ArticleCommentServiceImpl implements ArticleCommentService {
 
-    @Value("${notification.url}")
-    private String notificationUrl;
+    @Value("${server.url}")
+    private String serverUrl;
 
     public final ArticleRepository articleRepository;
     public final ArticleCommentRepository articleCommentRepository;
@@ -79,10 +76,11 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         // 게시글 등록자에게 댓글 알림 보내기
         String sourceSearchId = user.getSearchId();
         String targetSearchId = article.getUser().getSearchId();
+        String articleUrl = String.format("%s/sns/%d", serverUrl, articleId);
         if (!sourceSearchId.equals(targetSearchId)) {
             String type = "FRIEND_REQUEST";
-            String urlString = String.format("%s/send?sourceSearchId=%s&targetSearchId=%s&type=%s",
-                    notificationUrl, sourceSearchId, targetSearchId, type);
+            String urlString = String.format("%s/realtime/notification/send?sourceSearchId=%s&targetSearchId=%s&clickUrl=%s&type=%s",
+                    serverUrl, sourceSearchId, targetSearchId, articleUrl, type);
             try {
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
