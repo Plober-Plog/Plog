@@ -12,7 +12,8 @@ import cameraIcon from '../../assets/icon/camera.png';
 
 const SnsWrite = () => {
   const location = useLocation();
-  const { articleId } = location.state;
+  const navigate = useNavigate();
+  const { articleId } = location.state;  // articleId가 없을 때 0으로 초기화
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
@@ -26,18 +27,12 @@ const SnsWrite = () => {
     { tagTypeId: 6, tagName: '정보' },
   ];
 
-  
   // 태그 선택
   const handleTagSelect = (id) => {
     setTagTypeList(prevTags =>
       prevTags.includes(id) ? prevTags.filter(tag => tag !== id) : [...prevTags, id]
     );
   };
-  // 태그 변경 확인
-  useEffect(() => {
-    console.log(tagTypeList);
-  }, [tagTypeList]);
-
 
   // 이미지 업로드
   const handleImageUpload = (event) => {
@@ -45,12 +40,10 @@ const SnsWrite = () => {
     setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
   };
 
-
   // 이미지 삭제
   const handleDeleteImage = (index) => {
     setImgs(prevImgs => prevImgs.filter((_, i) => i !== index));
   };
-
 
   // 수정일 경우 게시물 가져오기
   useEffect(() => {
@@ -73,59 +66,52 @@ const SnsWrite = () => {
     }
   }, [articleId]);
 
-
-  // 게시물 작성
+  // 게시물 작성 또는 수정
   const handleSave = async () => {
-
-    // TODO 게시물 작성 수정
-
     // FormData 생성
     const snsData = new FormData();
     snsData.append('content', content);
     snsData.append('visibility', selectedVisibility);
-    
+
     // 이미지 넣기
     imgs.forEach((img, index) => {
       snsData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
     });
-    
+
     // 태그 넣기
     tagTypeList.forEach((tagType, index) => {
       snsData.append(`tagTypeList[${index}]`, tagType);  // 'tagTypeList' key를 사용하여 각각의 태그를 추가
     });
-  
+
     // FormData 확인
     console.log(Array.from(snsData.entries()));
 
-    let response;
+    try {
+      let response;
       if (articleId === 0) {
         // 게시물 작성 요청
-        const response = await API.post('/user/sns', snsData, {
+        response = await API.post('/user/sns', snsData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log('게시물 정보:', snsData);
+        console.log('게시물 작성:', response.data);
       } else {
-        // 식물 수정
-        const response = await API.patch(`/user/sns/${articleId}`, snsData, {
+        // 게시물 수정 요청
+        response = await API.patch(`/user/sns/${articleId}`, snsData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log('게시물 정보:', snsData);
+        console.log('게시물 수정:', response.data);
       }
-  
-    try {
 
-  
-      // 응답 처리
-      console.log(response.data);
+      // 성공적으로 처리된 응답 후 페이지 이동
+      navigate(`/sns/${response.data.id}`);
     } catch (error) {
-      console.error(error);
+      console.error('저장 중 오류 발생:', error);
     }
   };
-  
 
   return (
     <div>
@@ -154,7 +140,7 @@ const SnsWrite = () => {
         />
       </div>
       <div>
-        <Btn content="작성하기" onClick={handleSave} />
+        <Btn content={articleId === 0 ? "작성하기" : "수정하기"} onClick={handleSave} />
       </div>
     </div>
   );

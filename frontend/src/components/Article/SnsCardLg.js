@@ -6,7 +6,7 @@ const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, i
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/sns/${articleId}`);
+    navigate(`/sns/${articleId}`, {state: { articleId }});
   }
 
   const cutContent = content && content.length > 50? content.slice(0, 50) + "..." : content;

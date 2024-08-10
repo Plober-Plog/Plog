@@ -7,11 +7,11 @@ const AddBtn = ({ type }) => {
   const handleClick = () => {
     if (type === 'plant') {
       navigate('/plant/register', {
-        state: {"plantId": 0}
+        state: {plantId: 0}
       });
     } else if (type === 'sns') {
       navigate('/sns/write', {
-        state: {"articleId": 0}
+        state: {articleId: 0}
       });
     }
   }
