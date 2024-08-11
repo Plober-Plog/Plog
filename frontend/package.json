@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "aws-sdk": "^2.1665.0",
     "axios": "^1.7.2",
+    "date-fns": "^3.6.0",
     "dom-to-image": "^2.6.0",
     "firebase": "^10.12.5",
     "html-to-image": "^1.11.11",
