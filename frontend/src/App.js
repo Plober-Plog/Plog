@@ -36,6 +36,8 @@ import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 import SnsList from './pages/Sns/SnsList';
 import CommentDetail from './pages/Sns/CommentDetail';
+// Alarm
+import Alarm from './pages/Alarm/Alarm';
 
 
 
@@ -98,6 +100,8 @@ function App() {
             <Route path="/sns/write" element={<PrivateRoute><SnsWrite /></PrivateRoute>} />
             <Route path="/sns/:articleId" element={<SnsDetail />} />
             <Route path="/sns/:articleId/comment" element={<CommentDetail />} />
+            {/* alarm */}
+            <Route path="/alarm" element={<PrivateRoute><Alarm /></PrivateRoute>} />
           </Routes>
         </main>
         <FooterWithCondition />

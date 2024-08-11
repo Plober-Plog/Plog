@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import API from '../../apis/api';
+import axios from 'axios';
 import useAuthStore from '../../stores/member';
 
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
+import TextareaField from '../../components/Common/TextareaField';
 import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
 import ATag from '../Common/ATag';
 import ModalComplete from '../Common/ModalComplete';
+import defaultImage from '../../assets/icon/default.png';
 
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
   const { userData, setUserData } = useAuthStore();
   console.log(userData)
   console.log(userData.searchId)
+  const URI = 'https://i11b308.p.ssafy.io/api';
   
   // 상태 초기화
   const [searchId, setSearchId] = useState(userData?.searchId || '');
@@ -23,15 +27,70 @@ const ProfileUpdateForm = () => {
   const [birthdate, setBirthdate] = useState(userData?.birthdate || '');
   const [gender, setGender] = useState(userData?.gender || '');
   const [source, setSource] = useState(userData?.source || '');
-  const [sido, setSido] = useState(userData?.sido || '');
-  const [gugun, setGugun] = useState(userData?.gugun || '');
+  const [sidoCode, setSidoCode] = useState(0);
+  const [gugunCode, setGugunCode] = useState(0);
+  const [sidoOptions, setSidoOptions] = useState([]);
+  const [gugunOptions, setGugunOptions] = useState([]);
   const [profileInfo, setProfileInfo] = useState(userData?.profileInfo || '');
   const [isAd, setIsAd] = useState(userData?.isAd || false);
+  // 사진 업로드
+  const fileInputRef = useRef(null);
+  const [profile, setProfile] = useState(userData?.profile);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  // 유효성 검사
   const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
   const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(true);
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+
+  // 사진 업로드
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setUploadedFile(file); // 업로드된 파일 저장
+    }
+  };
+
+  // 시도 옵션 가져오기
+  useEffect(() => {
+    const getSidoOptions = async () => {
+      try {
+        const response = await axios.get(`${URI}/area/sido`)
+        setSidoOptions(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getSidoOptions();
+
+  }, []);
+
+  // 구군 옵션 가져오기
+  useEffect(() => {
+    const getGugunOptions = async (sidoCode) => {
+      try {
+        const response = await axios.get(`${URI}/area/gugun/${sidoCode}`)
+        setGugunOptions(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getGugunOptions(sidoCode);
+
+  }, [])
+
+  // 사진 삭제
+  const handleImageRemove = () => {
+    setProfile(defaultImage);
+    setUploadedFile(null);
+    fileInputRef.current.value = null; // input 필드를 초기화하여 동일 파일 업로드 가능하게 함
+  };
 
   // 폼 유효성 검사
   useEffect(() => {
@@ -78,8 +137,8 @@ const ProfileUpdateForm = () => {
       gender,
       birthdate,
       source,
-      sido,
-      gugun,
+      sidoCode,
+      gugunCode,
       isAd
     };
 
@@ -101,6 +160,26 @@ const ProfileUpdateForm = () => {
   return (
     <div>
       <form onSubmit={(e) => e.preventDefault()} className="form">
+        <div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
+          <img
+            src={profile}
+            alt="Plant profile"
+            onClick={() => fileInputRef.current.click()}
+            style={{ cursor: 'pointer', width: '100px', height: '100px' }}
+          />
+          {profile !== defaultImage && (
+            <button type="button" onClick={handleImageRemove}>
+              이미지 삭제
+            </button>
+          )}
+        </div>
         <div>
           {/* TODO 이미지 수정 컴포넌트 추가 */}
         </div>
@@ -152,6 +231,14 @@ const ProfileUpdateForm = () => {
           {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
         </div>
         <div>
+          <TextareaField
+              placeholder="자기소개를 입력해주세요."
+              value={profileInfo}
+              onChange={(e) => setProfileInfo(e.target.value)}
+              className="textarea"
+            />
+          </div>
+        <div>
           <InputField
             type="date"
             placeholder="생일"
@@ -179,18 +266,30 @@ const ProfileUpdateForm = () => {
         />
         <div>
           <label>지역</label>
-          <SelectField
-            value={sido}
-            onChange={(e) => setSido(e.target.value)}
-            options={['시/도']}
-            isRequired={false}
-          />
-          <SelectField
-            value={gugun}
-            onChange={(e) => setGugun(e.target.value)}
-            options={['구/군']}
-            isRequired={false}
-          />
+          <select
+            value={sidoCode}
+            onChange={(e) => setSidoCode(e.target.value)}
+            required={false}
+            className="account-drop-box"
+          >
+            {sidoOptions.map(sidoOption => (
+              <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
+            ))}
+          </select>
+          <select
+            value={gugunCode}
+            onChange={(e) => setGugunCode(e.target.value)}
+            required={false}
+            className="account-drop-box"
+          >
+            {gugunOptions
+              .filter(gugunOption => gugunOption.sidoCode === sidoCode) // sidoCode가 일치하는 항목만 필터링
+              .map(filteredGugunOption => (
+                <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
+                  {filteredGugunOption.gugunName}
+                </option>
+              ))}
+          </select>
         </div>
         <Btn
           content="수정하기"
