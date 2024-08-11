@@ -84,11 +84,9 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
         if (neighborType == 0) {
             return null; // 이웃 관계 없이 모든 게시글 조회
         } else if (neighborType == 1) {
-            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1, 2))
-                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(1, 2)));
+            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1, 2));
         } else if (neighborType == 2) {
-            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.eq(2))
-                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.eq(2)));
+            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.eq(2));
         } else {
             return null; // 잘못된 neighborType인 경우 모든 게시글 조회
         }

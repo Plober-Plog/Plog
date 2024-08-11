@@ -24,7 +24,7 @@ public class ArticleBookmarkRepositorySupport extends QuerydslRepositorySupport 
         return queryFactory
                 .selectFrom(qArticleBookmark)
                 .where(qArticleBookmark.user.eq(user))
-                .orderBy(qArticleBookmark.createdAt.desc()) //TODO [장현준] - 최신순 부터?
+                .orderBy(qArticleBookmark.createdAt.desc())
                 .offset(page * size)
                 .limit(size)
                 .fetch();

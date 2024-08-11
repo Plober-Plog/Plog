@@ -107,7 +107,7 @@ public class SnsController {
     @Operation(summary = "게시글 조회", description = "게시글 ID로 게시글을 조회합니다.")
     public ResponseEntity<ArticleGetResponseDto> getArticle(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @Parameter(description = "게시글 ID", required = true) @PathVariable Long articleId
+            @Parameter(description = "게시글 ID", required = true) @PathVariable("articleId") Long articleId
     ) {
         Long userId = 0L;
         if (token != null)
