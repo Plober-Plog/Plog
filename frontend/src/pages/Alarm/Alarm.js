@@ -16,7 +16,7 @@ const Alarm = () => {
         const response = await axios.get('https://i11b308.p.ssafy.io/realtime/notification/history', {
           params: { searchId, page },
         });
-        
+        console.log(response.data)
         if (response.data.length === 0) {
           setHasMoreAlarms(false);
         } else {

@@ -37,6 +37,7 @@ const SnsDetail = () => {
           nickname: response.data.nickname,
         }
         setWriterInfo(writerInfo);
+        console.log('작성자 정보:', writerInfo);
       } catch (err) {
         console.error('@@@게시물 불러오기 실패 : ', err);
       }
