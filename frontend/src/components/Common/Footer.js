@@ -25,25 +25,20 @@ const Footer = () => {
   // 활성 버튼 바뀔 때마다 해당 icon 활성화
   useEffect(() => {
     const path = location.pathname;
-    switch (path) {
-      case "/sns":
-        setActiveButton("sns");
-        break;
-      case "/profile":
-        setActiveButton("profile");
-        break;
-      case "/":
-        setActiveButton("home");
-        break;
-      case "/chat":
-        setActiveButton("chat");
-        break;
-      case "/alarm":
-        setActiveButton("alarm");
-        break;
-      default:
-        setActiveButton("home");
-        break;
+    if (path.startsWith("/sns")) {
+      setActiveButton("sns");
+    } else if (path.startsWith("/profile")) {
+      setActiveButton("profile");
+    } else if (path.startsWith("/plant")) {
+      setActiveButton("profile");
+    } else if (path === "/") {
+      setActiveButton("home");
+    } else if (path.startsWith("/chat")) {
+      setActiveButton("chat");
+    } else if (path.startsWith("/alarm")) {
+      setActiveButton("alarm");
+    } else {
+      setActiveButton("home");
     }
   }, [location.pathname, setActiveButton]);
 

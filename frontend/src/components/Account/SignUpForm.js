@@ -73,7 +73,7 @@ const SignUpForm = () => {
     };
     getGugunOptions(sidoCode);
 
-  }, [])
+  }, [sidoCode])
 
 
   // 유효성 검사
