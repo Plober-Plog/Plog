@@ -1,9 +1,9 @@
 .article-card-list {
     display: flex;
     overflow-x: scroll; /* 가로 스크롤 */
-    padding: 10px 0;
     gap: 10px;
-    height: 170px;
+    height: 160px;
+    padding-top: 20px;
   }
   
   .article-card-list::-webkit-scrollbar {
@@ -15,6 +15,6 @@
     max-width: 30%;
     box-sizing: border-box;
     border-radius: 10px;
-    height: 170px;
+    height: 140px;
     overflow: hidden; /* 자식 요소가 부모 요소 넘으면 가림 */
   }
