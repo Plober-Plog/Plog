@@ -34,20 +34,19 @@ import Neighbor from './pages/Profile/Neighbor';
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
-<<<<<<< HEAD
 import SnsList from './pages/Sns/SnsList';
 import CommentDetail from './pages/Sns/CommentDetail';
-
+// Chat
+import ChatRoom from './pages/Chat/ChatRoom';
+import ChatRooms from './pages/Chat/ChatRoomList';
 
 
 // 로그인 후에만 FCM 토큰을 요청하고 저장했다면, 여기는 onForegroundMessage만 설정
 if (Notification.permission === 'granted') {
   onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
 }
-=======
-import ChatRoom from './pages/Chat/ChatRoom';
-import ChatRooms from './pages/Chat/ChatRoomList';
->>>>>>> 0ebe558b7c8f579450dc1137108f5953cc36de62
+
+
 
 function App() {
 
