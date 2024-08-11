@@ -28,7 +28,7 @@ const ProfileHeader = ({ data = {}, type }) => {
   console.log('ProfileHeader Processed Data:', profileData);
 
   return (
-    <div className='grid grid-cols-12 gap-4 mt-5 mb-8'>
+    <div className='grid grid-cols-12 gap-4 mt-5 mb-4'>
       <div className='col-span-4'>
         <ProfileImgAndTitle 
           imgSrc={profileData.profile}

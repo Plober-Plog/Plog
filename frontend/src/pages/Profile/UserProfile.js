@@ -7,6 +7,8 @@ import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
 import SnsCardMdList from '../../components/Article/SnsCardMdList';
 import AddBtn from '../../components/Common/AddBtn';
+import './UserProfile.css';
+import UserProfileTab from '../../components/Profile/UserProfileTab'
 
 const UserProfile = () => {
   const { searchId } = useParams();
@@ -49,10 +51,9 @@ const UserProfile = () => {
         ownerId={searchId}
         type='user'
       />
-      <div>
-        <button className={activeTab === 'plant' ? 'active' : ''} onClick={() => setActiveTab('plant')}>식물</button>
-        <button className={activeTab === 'sns' ? 'active' : ''} onClick={() => setActiveTab('sns')}>SNS</button>
-        <button className={activeTab === 'bookmark' ? 'active' : ''} onClick={() => setActiveTab('bookmark')}>북마크</button>
+
+      <div className='mb-20'>
+        <UserProfileTab activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
 
       {activeTab === 'plant' && (
