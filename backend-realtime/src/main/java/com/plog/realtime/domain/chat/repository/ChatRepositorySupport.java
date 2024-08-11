@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public class ChatRepositorySupport extends QuerydslRepositorySupport {
     private JPAQueryFactory queryFactory;
-    private int size = 30;
+    private int size = 20;
 
     public ChatRepositorySupport(JPAQueryFactory paQueryFactory) {
         super(Chat.class);

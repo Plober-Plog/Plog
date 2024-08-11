@@ -5,6 +5,7 @@ import com.plog.realtime.domain.chat.dto.response.ChatGetResponseDto;
 import com.plog.realtime.domain.chat.service.ChatService;
 import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.util.JwtTokenUtil;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -75,11 +76,11 @@ public class ChatController {
         chatService.leaveUser(chatGetRequestDto, headerAccessor.getSessionId());
     }
 
-    @GetMapping("/get-data/{chatRoomId}")
+    @GetMapping("/{chatRoomId}/history")
     public ResponseEntity<List<ChatGetResponseDto>> getChatData(
-            @RequestHeader("Authorization") String token,
-            @PathVariable("chatRoomId") Long chatRoomId,
-            @RequestParam(required = false, defaultValue = "0") int page
+            @Parameter(description = "인증 토큰")  @RequestHeader("Authorization") String token,
+            @Parameter(description = "채팅방 번호")  @PathVariable("chatRoomId") Long chatRoomId,
+            @Parameter(description = "page 번호") @RequestParam(required = false, defaultValue = "0") int page
     ) {
         if (token == null) {
             throw new NotValidRequestException("토큰은 필수값입니다.");
