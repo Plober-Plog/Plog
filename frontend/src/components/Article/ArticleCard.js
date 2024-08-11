@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../../pages/Plant/PlantDetail.css';
 import '../../../src/output.css';
 import defaultImg from '../../assets/icon/default.png';
+import './ArticleCard.css';
 
 const ArticleCard = ({ ownerId, id, log, thumbnail, type }) => {
 
@@ -30,8 +31,10 @@ const ArticleCard = ({ ownerId, id, log, thumbnail, type }) => {
 
   return (
     <div onClick={handleClick}>
-      <img src={thumbnail || defaultImg} alt="thumbnail" className='article-thumbnail'/>
-      <p>{log}</p>
+      <img src={thumbnail || defaultImg} alt="thumbnail" className='article-card-img'/>
+      <div className='article-card-content'>
+        <p>{log}</p>
+      </div>
     </div>
   )
 }

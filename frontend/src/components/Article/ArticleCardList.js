@@ -1,5 +1,6 @@
 import React from 'react';
 import ArticleCard from './ArticleCard';
+import './ArticleCardList.css';
 
 const ArticleCardList = ({ ownerId, articles = [], type }) => {
 
@@ -20,7 +21,7 @@ const ArticleCardList = ({ ownerId, articles = [], type }) => {
   };
 
   return (
-    <div>
+    <div className='article-card-list'>
       {articles.map(article => {
         if (type === 'plant') {
           return (
