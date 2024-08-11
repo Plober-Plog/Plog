@@ -1,21 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import API from '../../apis/api';
+import axios from 'axios';
 import AlarmItem from '../../components/Alarm/AlarmItem';
+import useAuthStore from '../../stores/member';
 
 const Alarm = () => {
-  const [alarms, setAlarms] = useState([]);
+  const [groupedAlarms, setGroupedAlarms] = useState({});
   const [page, setPage] = useState(0);
+  const searchId = useAuthStore((state) => state.getSearchId());
 
   useEffect(() => {
     const fetchAlarms = async () => {
       try {
-        const response = await API.get('/notification/history', {
-          params: { page },
+        const response = await axios.get('https://i11b308.p.ssafy.io/realtime/notification/history', {
+          params: { searchId, page },
         });
-        setAlarms(response.data);
-        console.log(response.data)
+        
+        // 알림을 날짜별로 그룹화
+        const alarmsByDate = response.data.reduce((groups, alarm) => {
+          const date = alarm.notificationDate;
+          if (!groups[date]) {
+            groups[date] = [];
+          }
+          groups[date].push(alarm);
+          return groups;
+        }, {});
+
+        setGroupedAlarms(alarmsByDate);
+        console.log('날짜별로 그룹화된 알림 내역: ', alarmsByDate);
       } catch (error) {
-        console.error('Failed to fetch alarms:', error);
+        console.error('알림 받아오기 실패:', error);
       }
     };
 
@@ -24,14 +37,18 @@ const Alarm = () => {
 
   return (
     <div>
-      {alarms.length > 0 ? (
-        <div>
-          {alarms.map((alarm) => (
-            <AlarmItem 
-              alarm={alarm}
-            />
-          ))}
-        </div>
+      {Object.keys(groupedAlarms).length > 0 ? (
+        Object.keys(groupedAlarms).map((date) => (
+          <div key={date}>
+            <h3>{date}</h3>
+            {groupedAlarms[date].map((alarm) => (
+              <AlarmItem 
+                key={alarm.notificationId} 
+                alarm={alarm}
+              />
+            ))}
+          </div>
+        ))
       ) : (
         <p>알림이 없습니다</p>
       )}

@@ -38,14 +38,6 @@ const UserProfile = () => {
     return <div>Loading...</div>;
   }
 
-  // const handleAddPlant = () => {
-  //   navigate(`/plant/register`, { state: { plantId: 0 } });
-  // };
-
-  // const handleAddSns = () => {
-  //   navigate(`/sns/write`, { state: { articleId: 0 } });
-  // };
-
   const handleFilterUpdate = (plants) => {
     setFilteredPlants(plants);
   };
@@ -62,6 +54,7 @@ const UserProfile = () => {
       <div>
         <button className={activeTab === 'plant' ? 'active' : ''} onClick={() => setActiveTab('plant')}>식물</button>
         <button className={activeTab === 'sns' ? 'active' : ''} onClick={() => setActiveTab('sns')}>SNS</button>
+        <button className={activeTab === 'bookmark' ? 'active' : ''} onClick={() => setActiveTab('bookmark')}>북마크</button>
       </div>
 
       {activeTab === 'plant' && (
@@ -88,6 +81,19 @@ const UserProfile = () => {
             type='sns'
           />
           <SnsCardMdList 
+            type='sns'
+            searchId={searchId}
+          />
+        </>
+      )}
+
+      {activeTab === 'bookmark' && (
+        <>
+          <AddBtn 
+            type='bookmark'
+          />
+          <SnsCardMdList 
+            type='bookmark'
             searchId={searchId}
           />
         </>

@@ -13,7 +13,7 @@ const ProfileHeader = ({ data = {}, type }) => {
     profileData.nickname = data.nickname || '닉네임 없음';
     profileData.bio = data.bio || '자기소개가 비어 있습니다.';
     profileData.ownerId = data.plantId || null;
-    profileData.hasNotified = data.hasNotified;
+    profileData.hasNotification = data.hasNotification;
     profileData.isFixed = data.isFixed;
   } else if (type === 'user') {
     console.log('ProfileHeader Data:', data)
@@ -38,7 +38,7 @@ const ProfileHeader = ({ data = {}, type }) => {
         bio={profileData.bio}
         type={type}
         ownerId={profileData.ownerId}
-        hasNotified={profileData.hasNotified}
+        hasNotification={profileData.hasNotification}
         isFixed={profileData.isFixed}
         profileData={data}
       />

@@ -3,7 +3,7 @@ import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
 import SnsCardMd from './SnsCardMd';
 
-const SnsCardMdList = ({ searchId }) => {
+const SnsCardMdList = ({ searchId, type }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
 
   const [snslist, setSnsList] = useState([]);
@@ -14,8 +14,9 @@ const SnsCardMdList = ({ searchId }) => {
   const fetchSnsList = async (searchId, page) => {
     setLoading(true);
     try {
-      const response = await API.get(`/user/sns`, {
-        params: {searchId, page}
+      const endpoint = type === 'bookmark' ? '/user/sns/bookmark' : '/user/sns';
+      const response = await API.get(endpoint, {
+        params: { searchId, page }
       });
       if (response.data.length === 0) {
         setHasMore(false);
@@ -33,6 +34,29 @@ const SnsCardMdList = ({ searchId }) => {
       setLoading(false);
     }
   };
+
+  // const fetchSnsList = async (searchId, page) => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await API.get(`/user/sns`, {
+  //       params: {searchId, page}
+  //     });
+  //     if (response.data.length === 0) {
+  //       setHasMore(false);
+  //     } else {
+  //       if (page === 0) {
+  //         setSnsList(response.data);
+  //       } else {
+  //         setSnsList((prevSnsList) => [...prevSnsList, ...response.data]);
+  //       }
+  //       setPage(page + 1);
+  //     }
+  //   } catch (error) {
+  //     console.error('Fetch SnsList Error:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     fetchSnsList(searchId, 0);
