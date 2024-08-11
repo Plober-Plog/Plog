@@ -42,7 +42,8 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
                         containsKeyword(keyword),
                         inTagTypeList(tagTypeList),
                         filterByNeighborType(userId, neighborType),
-                        article.state.eq(1) // PLAIN
+                        article.state.eq(1), // PLAIN 상태인 게시글만 조회
+                        article.visibility.eq(1) // visibility가 1인 게시글만 조회
                 )
                 .fetch();
 
@@ -50,7 +51,6 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
                 .sorted((a1, a2) -> {
                     if (orderType == 1) {
                         // 좋아요 순서로 정렬
-//                        return Integer.compare(a2.getLikes().size(), a1.getLikes().size());
                         return Integer.compare(
                                 articleLikeRepositorySupport.countLikesByArticleId(a2.getArticleId()),
                                 articleLikeRepositorySupport.countLikesByArticleId(a1.getArticleId()));
@@ -84,11 +84,9 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
         if (neighborType == 0) {
             return null; // 이웃 관계 없이 모든 게시글 조회
         } else if (neighborType == 1) {
-            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1, 2))
-                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(1, 2)));
+            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1, 2));
         } else if (neighborType == 2) {
-            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.eq(2))
-                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.eq(2)));
+            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(2));
         } else {
             return null; // 잘못된 neighborType인 경우 모든 게시글 조회
         }
@@ -105,7 +103,8 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
                         .or(neighbor.neighborFrom.userId.eq(article.user.userId)))
                 .where(
                         inTagTypeList(tagTypeList),
-                        article.state.eq(1) // PLAIN
+                        article.state.eq(1), // PLAIN
+                        article.visibility.eq(1) // visibility가 1인 게시글만 조회
                 )
                 .fetch();
 
