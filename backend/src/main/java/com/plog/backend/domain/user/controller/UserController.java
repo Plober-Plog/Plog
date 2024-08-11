@@ -83,7 +83,9 @@ public class UserController {
 
     @Operation(summary = "회원 수정", description = "회원 정보를 수정합니다.")
     @PatchMapping
-    public ResponseEntity<BaseResponseBody> updateUser(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+    public ResponseEntity<BaseResponseBody> updateUser(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @ModelAttribute UserUpdateRequestDto userUpdateRequestDto) {
         log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", userUpdateRequestDto);
 
         if(token == null)

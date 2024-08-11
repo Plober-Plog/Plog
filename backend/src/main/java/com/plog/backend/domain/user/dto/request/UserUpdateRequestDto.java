@@ -2,6 +2,7 @@ package com.plog.backend.domain.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 public class UserUpdateRequestDto {
     private String nickname;
     private String searchId;
-    private String profile;
+    private MultipartFile profile;
     private int gender;
     private LocalDate birthDate;
     private String source;

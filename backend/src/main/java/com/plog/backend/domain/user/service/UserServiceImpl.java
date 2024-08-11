@@ -2,6 +2,7 @@ package com.plog.backend.domain.user.service;
 
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.repository.ImageRepository;
+import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
 import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
@@ -27,6 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenUtil jwtTokenUtil;
     private final RedisUtil redisUtil;
     private final ImageRepository imageRepository;
+    private final ImageServiceImpl imageService;
 
     @Override
     public User getUserBySearchId(String searchId) {
@@ -214,10 +217,21 @@ public class UserServiceImpl implements UserService {
         log.info(">>> updateUser - 토큰: {}, 요청 데이터: {}", token, request);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> updateUser - 추출된 사용자 ID: {}", userId);
+
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             log.info(">>> updateUser - 사용자 찾음: {}", user);
+            // 회원 대표 사진 변경
+            if (request.getProfile() != null) {
+                MultipartFile[] images = new MultipartFile[]{request.getProfile()};
+                if (images.length > 1)
+                    throw new NotValidRequestException("회원 프로필 사진은 한 장만 등록할 수 있습니다.");
+                String[] imageUrl = imageService.uploadImages(images);
+                Image userImage = imageRepository.findByImageUrl(imageUrl[0])
+                                .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
+                user.setImage(userImage);
+            }
             user.setNickname(request.getNickname());
             user.setProfileInfo(request.getProfileInfo());
             user.setGender(Gender.gender(request.getGender()));
