@@ -29,11 +29,11 @@ const TabVisibilitySelector = ({ selectedVisibility, setSelectedVisibility }) =>
         onClick={() => setSelectedVisibility(1)}
         style={buttonStyle(selectedVisibility === 1)}
       />
-      <Btn
+      {/* <Btn
         content="서로이웃 공개"
         onClick={() => setSelectedVisibility(2)}
         style={buttonStyle(selectedVisibility === 2)}
-      />
+      /> */}
     </div>
   );
 };
