@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
         log.info(">>> [USER SIGN OUT] - Redis에서 토큰 삭제 완료: 유저 ID = {}", userId);
 
         SecurityContextHolder.clearContext();
-        
+
         log.info(">>> [USER SIGN OUT] - SecurityContextHolder 초기화 완료");
     }
 

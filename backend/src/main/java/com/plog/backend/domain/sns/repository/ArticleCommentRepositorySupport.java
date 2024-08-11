@@ -51,4 +51,15 @@ public class ArticleCommentRepositorySupport extends QuerydslRepositorySupport {
                 .limit(size)
                 .fetch();
     }
+
+    public int findCommentCountByArticle(Article article) {
+        QArticleComment articleComment = QArticleComment.articleComment;
+
+        return (int) queryFactory
+                .selectFrom(articleComment)
+                .where(
+                        articleComment.article.eq(article),
+                        articleComment.state.eq(1))
+                .fetchCount();
+    }
 }
