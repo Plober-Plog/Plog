@@ -6,7 +6,7 @@ import AddBtn from '../../components/Common/AddBtn';
 
 const SnsList = () => {
   const [tagTypeList, setTagTypeList] = useState([]);
-  const [selectedVisibility, setSelectedVisibility] = useState(0);
+  const [selectedVisibility, setSelectedVisibility] = useState(1);
   const tags = [
     { tagTypeId: 1, tagName: '일지' },
     { tagTypeId: 2, tagName: '분석 레포트' },
