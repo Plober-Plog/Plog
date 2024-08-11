@@ -56,14 +56,20 @@ public class ReportServiceImpl implements ReportService {
         PlantType plantType = plant.getPlantType();
         log.info(">>> Plant: " + plant + ", PlantType: " + plantType);
 
-        LocalDate startDate = LocalDate.from(plantDiaries.get(0).getCreatedAt());
-        LocalDate endDate = LocalDate.from(plantDiaries.get(plantDiaries.size() - 1).getCreatedAt());
+        LocalDate startDate = LocalDate.from(plantDiaries.get(0).getRecordDate());
+        LocalDate endDate = LocalDate.from(plantDiaries.get(plantDiaries.size() - 1).getRecordDate());
 
-        String firstDayImageUrl = plantDiaryImageRepository
-                .findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(
-                    plantDiaries.get(0).getPlantDiaryId())
-                .get(0).getImage().getImageUrl();
-        String recentImageUrl = plantDiaries.get(plantDiaries.size() - 1).getPlant().getImage().getImageUrl(); // 제일 최근 사진
+        log.info(">>> Report - startDate: " + startDate + ", endDate: " + endDate);
+
+//        String firstDayImageUrl = plantDiaryImageRepository
+//                .findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(
+//                        plantDiaries.get(0).getPlantDiaryId())
+//                .get(0).getImage().getImageUrl();
+        String firstDayImageUrl = plantDiaries.get(0).getPlant().getImage().getImageUrl();
+//        String recentImageUrl = plantDiaries.get(plantDiaries.size() - 1).getPlant().getImage().getImageUrl(); // 제일 최근 사진
+        String recentImageUrl = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndIsThumbnailTrue(
+                plantDiaries.get(plantDiaries.size() - 1).getPlantDiaryId())
+                .get().getImage().getImageUrl(); // 제일 최근 사진
         log.info("첫 번째 날 이미지 URL: " + firstDayImageUrl);
         log.info("최근 이미지 URL: " + recentImageUrl);
 
