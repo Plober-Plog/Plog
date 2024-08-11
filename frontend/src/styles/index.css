@@ -27,3 +27,8 @@ body {
 .full-width {
   @apply w-full;
 }
+
+.cardlist-subtitle {
+  font-weight: bold;
+  font-size: 20px;
+}
