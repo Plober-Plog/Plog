@@ -71,7 +71,6 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     <div>
       {authSearchId === ownerId && (
         <>
-          <button style={{ margin: '10px' }}>🔖</button>
           <button 
             style={{ margin: '10px' }}
             onClick={handleClickNeighborList}
