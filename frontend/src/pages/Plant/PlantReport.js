@@ -50,6 +50,7 @@ const PlantReport = () => {
   \n
   앞으로도 ${plantData.plantName} 잘 돌봐주실 거죠 😊?\n `
 
+  // 캡쳐링 부분
   const handleCapture = async () => {
     if (reportRef.current) {
       try {
