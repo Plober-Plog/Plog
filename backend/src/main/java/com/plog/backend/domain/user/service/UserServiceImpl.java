@@ -139,19 +139,19 @@ public class UserServiceImpl implements UserService {
 
         String userId = jwtTokenProvider.getPayload(token, null);
 
-        redisUtil.deleteData("accessToken:" + userId);
-        redisUtil.deleteData("refreshToken:" + userId);
-
-        log.info(">>> [USER SIGN OUT] - Redis에서 토큰 삭제 완료: 유저 ID = {}", userId);
-
-        SecurityContextHolder.clearContext();
-
         // FCM 토큰 null로 변경
         User user = userRepository.findUserBySearchId(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setNotificationToken(null); // FCM 토큰을 null로 변경
         userRepository.save(user); // 변경된 내용을 DB에 저장
+
+        redisUtil.deleteData("accessToken:" + userId);
+        redisUtil.deleteData("refreshToken:" + userId);
+
+        log.info(">>> [USER SIGN OUT] - Redis에서 토큰 삭제 완료: 유저 ID = {}", userId);
+
+        SecurityContextHolder.clearContext();
 
         log.info(">>> [USER SIGN OUT] - SecurityContextHolder 초기화 완료");
     }

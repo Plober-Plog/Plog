@@ -43,6 +43,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ImageServiceImpl imageService;
     private final ArticleCommentRepository articleCommentRepository;
     private final ArticleLikeRepositorySupport articleLikeRepositorySupport;
+    private final ArticleCommentRepositorySupport articleCommentRepositorySupport;
 
     @Override
     public List<TagType> getTagTypeList() {
@@ -92,7 +93,7 @@ public class ArticleServiceImpl implements ArticleService {
             List<String> articleImageList = imageService.loadImagUrlsByArticleId(articleId);
             log.info(">>> getArticle - 게시글 조회 완료 : id {}", articleId);
             int likeCnt = articleLikeRepository.countByArticleArticleId(articleId);
-            int commentCnt = articleCommentRepository.countByArticleArticleId(articleId);
+            int commentCnt = articleCommentRepositorySupport.findCommentCountByArticle(article.get());
             boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, articleId);
             boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(userId, articleId);
             return ArticleGetResponseDto.builder()
