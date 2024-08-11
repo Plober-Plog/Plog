@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ProfilePlantCard from './ProfilePlantCard';
 import useAuthStore from '../../stores/member';
 import API from '../../apis/api';
+import './ProfilePlantCardList.css';
 
 const ProfilePlantCardList = ({ searchId }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
@@ -49,8 +50,7 @@ const ProfilePlantCardList = ({ searchId }) => {
   }, [hasMore, page, loading]);
 
   return (
-    <div>
-      <h3>유저의 식물 목록</h3>
+    <div className='profile-plant-card-list'>
       {plants.map((plant) => (
         <ProfilePlantCard
           key={plant.plantId}
