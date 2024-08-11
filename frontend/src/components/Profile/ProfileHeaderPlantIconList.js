@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 
-const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData }) => {
+const ProfileHeaderPlantIconList = ({ ownerId, hasNotification, isFixed, profileData }) => {
 
   const navigate = useNavigate();
-  const [nowNotified, setNowNotified] = useState(hasNotified);
+  const [nowNotified, setNowNotified] = useState(hasNotification);
   const [nowFixed, setNowFixed] = useState(isFixed);
 
   const handleToggleFixed = async () => {
@@ -32,32 +32,28 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
   };
 
 
-  /* TODO: [예진] 윤서가 알람 api PATCH 메서드 추가해주면 이 부분 수정할 것
-    아마도 알람 api를 따로 뺄 거라고 합니다
-  */
-  const handleToggleNotification = async () => {
+  const handleToggledNotification = async () => {
     const updatedNotificationStatus = !nowNotified;
-    const updatedPlantData = {
-      ...profileData,
-      hasNotified: updatedNotificationStatus
-    };
 
     try {
-      const response = await API.patch(`/user/plant/${ownerId}`, updatedPlantData, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
+      const response = await API.patch(`/user/plant/${ownerId}/notification`,
+        { hasNotification: updatedNotificationStatus},
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
       if (response.status === 200) {
         setNowNotified(updatedNotificationStatus);
       } else {
-        console.error('Failed to update notification status');
+        console.error('Fail to update notification status', response.data);
       }
     } catch (error) {
       console.error('Error:', error);
     }
-  };
+  }
 
   const handleEdit = () => {
     navigate(`/plant/register`,
@@ -95,7 +91,7 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotified, isFixed, profileData
 
   return (
     <div>
-      <i title="알람" onClick={handleToggleNotification}>
+      <i title="알람" onClick={handleToggledNotification}>
         {nowNotified ? '🔔' : '🔕'}
       </i>
       <i title="편집" onClick={handleEdit}>✏️</i>
