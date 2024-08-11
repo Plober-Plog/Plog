@@ -31,22 +31,13 @@ const SnsDetail = () => {
         const response = await API.get(`/user/sns/${articleId}`);
         console.log('@@@게시글 정보:', response.data);
         setArticle(response.data);
-
-        // 유저 정보 가져오기
-        try {
-          const userResponse = await API.get(`/user/profile/${response.data.searchId}`);
-          console.log('@@@유저 정보:', userResponse.data);
-          const createAt = article.createdAt.slice(0, 10);
-          const writerInfo = {
-            imgSrc: userResponse.data.profile,
-            recordDate: createAt,
-            nickname: userResponse.data.nickname,
-          }
-          console.log(writerInfo)
-          setWriterInfo(writerInfo);
-        } catch (err) {
-          console.error('@@@유저 정보 불러오기 실패 : ', err);
+        console.log('응?')
+        const writerInfo = {
+          imgSrc: response.data.profile,
+          recordDate: response.data.createdAt.slice(0, 10),
+          nickname: response.data.nickname,
         }
+        setWriterInfo(writerInfo);
       } catch (err) {
         console.error('@@@게시물 불러오기 실패 : ', err);
       }
