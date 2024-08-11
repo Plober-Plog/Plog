@@ -337,7 +337,7 @@ public class WeatherServiceImpl implements WeatherService {
         return com.plog.backend.domain.diary.entity.Weather.SUNNY.getValue();
     }
 
-    @PostConstruct
+//    @PostConstruct
     @Override
     public void updateWeatherData() {
         if (!isExistedWeatherDataInRedis())
