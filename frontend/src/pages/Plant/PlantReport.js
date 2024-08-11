@@ -38,7 +38,10 @@ const PlantReport = () => {
   if (!plantData) return <p>데이터가 없습니다.</p>;
 
   // 이미지 배열 생성
-  const imageUrls = [plantData.firstDayImageUrl, plantData.recentImageUrl];
+  const uniqueUrl1 = `${plantData.firstDayImageUrl}?t=${new Date().getTime()}`;
+  const uniqueUrl2 = `${plantData.recentImageUrl}?t=${new Date().getTime()}`;
+  
+  const imageUrls = [uniqueUrl1, uniqueUrl2];
 
   const reportContent = `기간 동안 물 준 횟수 ${plantData.fertilizeData}번 💧\n 
   기간 동안 영양제 준 횟수 ${plantData.fertilizeData}번💊\n
@@ -50,10 +53,11 @@ const PlantReport = () => {
   \n
   앞으로도 ${plantData.plantName} 잘 돌봐주실 거죠 😊?\n `
 
+  // 캡쳐링 부분
   const handleCapture = async () => {
     if (reportRef.current) {
       try {
-        const canvas = await html2canvas(reportRef.current);
+        const canvas = await html2canvas(reportRef.current, { useCORS: true }); // useCORS 옵션 추가
         const reportImgData = canvas.toDataURL('image/png');
   
         // base64 문자열을 Blob으로 변환

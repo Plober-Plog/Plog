@@ -124,7 +124,7 @@ const PlantDiaryDetail = () => {
   const handleCapture = async () => {
     if (reportRef.current) {
       try {
-        const canvas = await html2canvas(reportRef.current);
+        const canvas = await html2canvas(reportRef.current, { useCORS: true }); 
         const diaryImgData = canvas.toDataURL('image/png');
   
         // base64 문자열을 Blob으로 변환
