@@ -23,6 +23,8 @@ const SignUpForm = () => {
   const [gender, setGender] = useState(1);
   const [sidoCode, setSidoCode] = useState(0);
   const [gugunCode, setGugunCode] = useState(0);
+  const [sidoOptions, setSidoOptions] = useState([]);
+  const [gugunOptions, setGugunOptions] = useState([]);
   // 회원 동의
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeAdvertisement, setAgreeAdvertisement] = useState(false);
@@ -41,8 +43,7 @@ const SignUpForm = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
   const [timer, setTimer] = useState(0);
-  const [sidoOptions, setSidoOptions] = useState([]);
-  const [gugunOptions, setGugunOptions] = useState([]);
+
 
   const URI = 'https://i11b308.p.ssafy.io/api';
 
