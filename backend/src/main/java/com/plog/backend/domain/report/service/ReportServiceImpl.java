@@ -2,10 +2,13 @@ package com.plog.backend.domain.report.service;
 
 import com.plog.backend.domain.diary.entity.PlantDiary;
 import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
+import com.plog.backend.domain.image.repository.ImageRepository;
+import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
 import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.entity.PlantCheck;
 import com.plog.backend.domain.plant.entity.PlantType;
 import com.plog.backend.domain.plant.repository.PlantCheckRepository;
+import com.plog.backend.domain.plant.repository.PlantRepository;
 import com.plog.backend.domain.plant.repository.PlantTypeRepository;
 import com.plog.backend.domain.report.dto.request.ReportCreateRequestDto;
 import com.plog.backend.domain.report.dto.response.ReportResultResponseDto;
@@ -27,6 +30,9 @@ public class ReportServiceImpl implements ReportService {
 
     private final PlantDiaryRepository plantDiaryRepository;
     private final PlantCheckRepository plantCheckRepository;
+    private final PlantRepository plantRepository;
+    private final PlantDiaryImageRepository plantDiaryImageRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     public ReportResultResponseDto createReport(Long plantId) {
@@ -42,14 +48,21 @@ public class ReportServiceImpl implements ReportService {
             throw new EntityNotFoundException(">>> 없는 식물 일지 입니다.");
         }
 
-        Plant plant = plantDiaries.get(0).getPlant();
+        Plant plant = plantRepository.findById(plantId).orElseThrow(
+                ()->{
+                    return new EntityNotFoundException("없는 식물 입니다.");
+                }
+        );
         PlantType plantType = plant.getPlantType();
         log.info(">>> Plant: " + plant + ", PlantType: " + plantType);
 
         LocalDate startDate = LocalDate.from(plantDiaries.get(0).getCreatedAt());
         LocalDate endDate = LocalDate.from(plantDiaries.get(plantDiaries.size() - 1).getCreatedAt());
 
-        String firstDayImageUrl = plant.getImage().getImageUrl();
+        String firstDayImageUrl = plantDiaryImageRepository
+                .findByPlantDiaryPlantDiaryIdAndImageIsDeletedFalseOrderByOrderAsc(
+                    plantDiaries.get(0).getPlantDiaryId())
+                .get(0).getImage().getImageUrl();
         String recentImageUrl = plantDiaries.get(plantDiaries.size() - 1).getPlant().getImage().getImageUrl(); // 제일 최근 사진
         log.info("첫 번째 날 이미지 URL: " + firstDayImageUrl);
         log.info("최근 이미지 URL: " + recentImageUrl);
