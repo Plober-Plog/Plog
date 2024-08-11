@@ -1,6 +1,6 @@
-
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React, { useEffect } from 'react';
+import useAuthStore from './stores/member';
 
 // private
 import PrivateRoute from './components/Account/PrivateRoute';
@@ -37,12 +37,23 @@ import SnsDetail from './pages/Sns/SnsDetail';
 import SnsList from './pages/Sns/SnsList';
 import CommentDetail from './pages/Sns/CommentDetail';
 
+
+
 // 로그인 후에만 FCM 토큰을 요청하고 저장했다면, 여기는 onForegroundMessage만 설정
 if (Notification.permission === 'granted') {
   onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
 }
 
 function App() {
+
+  // 앱 실행시 자동로그인 시도
+  const autoLogin = useAuthStore((state) => state.autoLogin);
+
+  useEffect(() => {
+    autoLogin();
+  }, [autoLogin]);
+
+
   // useEffect(() => {
   //   const initFCM = async () => {
   //     const token = await requestForToken();
