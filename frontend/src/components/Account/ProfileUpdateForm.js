@@ -16,8 +16,6 @@ import defaultImage from '../../assets/icon/default.png';
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
   const { userData, setUserData } = useAuthStore();
-  console.log(userData)
-  console.log(userData.searchId)
   const URI = 'https://i11b308.p.ssafy.io/api';
   
   // 상태 초기화
@@ -27,10 +25,11 @@ const ProfileUpdateForm = () => {
   const [birthdate, setBirthdate] = useState(userData?.birthdate || '');
   const [gender, setGender] = useState(userData?.gender || '');
   const [source, setSource] = useState(userData?.source || '');
-  const [sidoCode, setSidoCode] = useState(0);
-  const [gugunCode, setGugunCode] = useState(0);
+  const [sidoCode, setSidoCode] = useState(userData?.sidoCode || 0);
+  const [gugunCode, setGugunCode] = useState(userData?.gugunCode || 0);
   const [sidoOptions, setSidoOptions] = useState([]);
   const [gugunOptions, setGugunOptions] = useState([]);
+  const [filteredGugunOptions, setFilteredGugunOptions] = useState([]);
   const [profileInfo, setProfileInfo] = useState(userData?.profileInfo || '');
   const [isAd, setIsAd] = useState(userData?.isAd || false);
   // 사진 업로드
@@ -75,15 +74,31 @@ const ProfileUpdateForm = () => {
   useEffect(() => {
     const getGugunOptions = async (sidoCode) => {
       try {
-        const response = await axios.get(`${URI}/area/gugun/${sidoCode}`)
+        const response = await axios.get(`${URI}/area/gugun/${sidoCode}`,
+          { params: { sidoCode } }
+        )
         setGugunOptions(response.data);
       } catch (error) {
         console.error(error);
       }
     };
-    getGugunOptions(sidoCode);
 
-  }, [])
+    if (sidoCode) {
+      getGugunOptions(sidoCode);
+    }
+  }, [sidoCode]);
+
+  // sidoCode 변경 시 해당 구군 코드 필터링
+  useEffect(() => {
+    if (gugunOptions.length > 0) {
+      const filtered = gugunOptions.filter(gugunOption => gugunOption.sidoCode === Number(sidoCode));
+      setFilteredGugunOptions(filtered);
+      setGugunCode(filtered.length > 0 ? filtered[0].gugunCode : 0);
+    } else {
+      setFilteredGugunOptions([]);
+      setGugunCode(0);
+    }
+  }, [gugunOptions, sidoCode]);
 
   // 사진 삭제
   const handleImageRemove = () => {
@@ -272,6 +287,7 @@ const ProfileUpdateForm = () => {
             required={false}
             className="account-drop-box"
           >
+            <option value="0">시/도 선택</option>
             {sidoOptions.map(sidoOption => (
               <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
             ))}
@@ -282,13 +298,12 @@ const ProfileUpdateForm = () => {
             required={false}
             className="account-drop-box"
           >
-            {gugunOptions
-              .filter(gugunOption => gugunOption.sidoCode === sidoCode) // sidoCode가 일치하는 항목만 필터링
-              .map(filteredGugunOption => (
-                <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
-                  {filteredGugunOption.gugunName}
-                </option>
-              ))}
+            <option value="0">구/군 선택</option>
+            {filteredGugunOptions.map(filteredGugunOption => (
+              <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
+                {filteredGugunOption.gugunName}
+              </option>
+            ))}
           </select>
         </div>
         <Btn

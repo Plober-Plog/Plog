@@ -36,9 +36,10 @@ const SnsDetail = () => {
         try {
           const userResponse = await API.get(`/user/profile/${response.data.searchId}`);
           console.log('@@@유저 정보:', userResponse.data);
+          const createAt = article.createdAt.slice(0, 10);
           const writerInfo = {
             imgSrc: userResponse.data.profile,
-            recordDate: userResponse.data.createAt,
+            recordDate: createAt,
             nickname: userResponse.data.nickname,
           }
           console.log(writerInfo)
