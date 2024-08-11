@@ -153,7 +153,7 @@ public class WeatherServiceImpl implements WeatherService {
 
                     // Remove yesterday's data from Redis
 //                    redisTemplate.delete(yesterdayKey);
-                    log.info("Removed yesterday's weather data from Redis for key: {}", yesterdayKey);
+//                    log.info("Removed yesterday's weather data from Redis for key: {}", yesterdayKey);
                 } catch (Exception e) {
 //                    log.error("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
                     log.error("DB 저장 또는 Redis 삭제 중 에러 발생 - Gugun: " + gugun.getGugunId());
@@ -356,6 +356,7 @@ public class WeatherServiceImpl implements WeatherService {
             String todayKey = "weather:" + today.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ":" + gugun.getGugunId();
             Map<Object, Object> todayData = redisTemplate.opsForHash().entries(todayKey);
             AtomicBoolean isExisted = new AtomicBoolean(true);
+            if (todayData.isEmpty()) isExisted.set(false);
             todayData.forEach((key, value) -> {
                 if (!redisTemplate.opsForHash().hasKey(todayKey, key)) {
                     isExisted.set(false);
