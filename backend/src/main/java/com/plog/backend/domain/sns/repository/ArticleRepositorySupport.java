@@ -33,6 +33,7 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
         QArticleTag articleTag = QArticleTag.articleTag;
         QNeighbor neighbor = QNeighbor.neighbor;
 
+        // 모든 게시글을 먼저 불러옵니다.
         List<Article> articleList = queryFactory.selectFrom(article)
                 .leftJoin(articleTag).on(article.articleId.eq(articleTag.article.articleId))
                 .leftJoin(neighbor).on(neighbor.neighborTo.userId.eq(article.user.userId)
@@ -43,7 +44,7 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
                         inTagTypeList(tagTypeList),
                         filterByNeighborType(userId, neighborType),
                         article.state.eq(1), // PLAIN 상태인 게시글만 조회
-                        article.visibility.eq(1) // visibility가 1인 게시글만 조회
+                        filterByVisibility(userId, neighborType) // visibility 필터링 추가
                 )
                 .fetch();
 
@@ -84,12 +85,36 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
         if (neighborType == 1) {
             return null; // 이웃 관계 없이 모든 게시글 조회
         } else if (neighborType == 2) {
-            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1, 2));
+            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1, 2))
+                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(1, 2)));
         } else if (neighborType == 3) {
-            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(2));
+            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(2))
+                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(2)));
         } else {
             return null; // 잘못된 neighborType인 경우 모든 게시글 조회
         }
+    }
+
+    private BooleanExpression filterByVisibility(long userId, int neighborType) {
+        QArticle article = QArticle.article;
+        QNeighbor neighbor = QNeighbor.neighbor;
+
+        // visibility가 1인 경우는 항상 보이도록
+        BooleanExpression visibilityCondition = article.visibility.eq(1);
+
+        // visibility가 2인 경우 이웃 관계에 따라 필터링 추가
+        if (neighborType == 1) {
+            // 이웃 관계 없이 모든 게시글 조회
+            visibilityCondition = visibilityCondition.or(article.visibility.eq(2));
+        } else if (neighborType == 2 || neighborType == 3) {
+            // visibility가 2인 게시글은 이웃과 서로이웃에 대해서만 조회
+            BooleanExpression neighborCondition = neighbor.neighborFrom.userId.eq(userId).and(
+                    neighborType == 2 ? neighbor.neighborType.in(1, 2) : neighbor.neighborType.eq(2)
+            );
+            visibilityCondition = visibilityCondition.or(article.visibility.eq(2).and(neighborCondition));
+        }
+
+        return visibilityCondition;
     }
 
     public List<Article> loadArticleTop5List(List<Integer> tagTypeList, int orderType) {

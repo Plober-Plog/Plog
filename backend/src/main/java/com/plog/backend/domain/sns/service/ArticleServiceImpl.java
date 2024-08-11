@@ -92,6 +92,7 @@ public class ArticleServiceImpl implements ArticleService {
             List<String> articleImageList = imageService.loadImagUrlsByArticleId(articleId);
             log.info(">>> getArticle - 게시글 조회 완료 : id {}", articleId);
             int likeCnt = articleLikeRepository.countByArticleArticleId(articleId);
+            int commentCnt = articleCommentRepository.countByArticleArticleId(articleId);
             boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, articleId);
             boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(userId, articleId);
             return ArticleGetResponseDto.builder()
@@ -103,8 +104,10 @@ public class ArticleServiceImpl implements ArticleService {
                     .visibility(article.get().getVisibility())
                     .images(articleImageList)
                     .likeCnt(likeCnt)
+                    .commentCnt(commentCnt)
                     .isLiked(isLiked)
                     .isBookmarked(isBookmarked)
+                    .createAt(article.get().getCreatedAt())
                     .build();
         } else {
             throw new EntityNotFoundException("게시글을 조회할 수 없습니다.");
