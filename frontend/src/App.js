@@ -34,6 +34,7 @@ import Neighbor from './pages/Profile/Neighbor';
 // SNS
 import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
+<<<<<<< HEAD
 import SnsList from './pages/Sns/SnsList';
 import CommentDetail from './pages/Sns/CommentDetail';
 
@@ -43,6 +44,10 @@ import CommentDetail from './pages/Sns/CommentDetail';
 if (Notification.permission === 'granted') {
   onForegroundMessage(); // 포그라운드 메시지 리스너 초기화
 }
+=======
+import ChatRoom from './pages/Chat/ChatRoom';
+import ChatRooms from './pages/Chat/ChatRoomList';
+>>>>>>> 0ebe558b7c8f579450dc1137108f5953cc36de62
 
 function App() {
 
@@ -98,6 +103,9 @@ function App() {
             <Route path="/sns/write" element={<PrivateRoute><SnsWrite /></PrivateRoute>} />
             <Route path="/sns/:articleId" element={<SnsDetail />} />
             <Route path="/sns/:articleId/comment" element={<CommentDetail />} />
+            {/* chat */}
+            <Route path="/chat" element={<ChatRooms />} />
+            <Route path="/chat/:chatRoomId" element={<ChatRoom />} />
           </Routes>
         </main>
         <FooterWithCondition />
