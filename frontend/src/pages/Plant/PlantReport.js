@@ -54,7 +54,7 @@ const PlantReport = () => {
   const handleCapture = async () => {
     if (reportRef.current) {
       try {
-        const canvas = await html2canvas(reportRef.current);
+        const canvas = await html2canvas(reportRef.current, { useCORS: true }); // useCORS 옵션 추가
         const reportImgData = canvas.toDataURL('image/png');
   
         // base64 문자열을 Blob으로 변환
