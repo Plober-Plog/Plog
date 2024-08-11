@@ -1,5 +1,6 @@
 package com.plog.realtime.domain.notification.repository;
 
+import com.plog.realtime.domain.image.entity.QImage;
 import com.plog.realtime.domain.notification.dto.NotificationHistoryResponseDto;
 import com.plog.realtime.domain.notification.entity.Notification;
 import com.plog.realtime.domain.notification.entity.QNotification;
@@ -25,6 +26,7 @@ public class NotificationRepositorySupport extends QuerydslRepositorySupport {
     public List<NotificationHistoryResponseDto> findByUserSearchId(String searchId, int page) {
         QNotification notification = QNotification.notification;
         QUser user = QUser.user;
+        QImage image = QImage.image;  // Image 엔티티 추가
 
         List<Tuple> results = queryFactory.select(
                         notification.notificationId,
@@ -32,10 +34,12 @@ public class NotificationRepositorySupport extends QuerydslRepositorySupport {
                         notification.content,
                         notification.isRead,
                         notification.clickUrl,
+                        image.imageUrl,  // imageUrl 필드 추가
                         notification.createdAt
                 )
                 .from(notification)
                 .leftJoin(notification.user, user)
+                .leftJoin(notification.image, image)  // Image 엔티티와 조인
                 .where(user.searchId.eq(searchId))
                 .orderBy(notification.createdAt.desc())
                 .offset(page * size)
@@ -49,6 +53,7 @@ public class NotificationRepositorySupport extends QuerydslRepositorySupport {
                         .content(tuple.get(notification.content))
                         .isRead(tuple.get(notification.isRead))
                         .clickUrl(tuple.get(notification.clickUrl))
+                        .image(tuple.get(image.imageUrl))  // imageUrl을 매핑
                         .notificationDate(tuple.get(notification.createdAt).toLocalDate())
                         .build()
                 )

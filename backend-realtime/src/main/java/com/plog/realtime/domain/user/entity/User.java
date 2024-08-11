@@ -1,5 +1,6 @@
 package com.plog.realtime.domain.user.entity;
 
+import com.plog.realtime.domain.image.entity.Image;
 import com.plog.realtime.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

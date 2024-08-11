@@ -1,5 +1,7 @@
 package com.plog.realtime.domain.notification.service;
 
+import com.plog.realtime.domain.image.entity.Image;
+import com.plog.realtime.domain.image.repository.ImageRepository;
 import com.plog.realtime.domain.notification.dto.NotificationHistoryResponseDto;
 import com.plog.realtime.domain.notification.dto.NotificationMessageResponseDto;
 import com.plog.realtime.domain.notification.entity.Notification;
@@ -13,7 +15,6 @@ import com.plog.realtime.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final PlantRepository plantRepository;
     private final FCMService fcmService;
     private final NotificationRepositorySupport notificationRepositorySupport;
+    private final ImageRepository imageRepository;
 
     @Override
     public List<NotificationHistoryResponseDto> getNotifications(String searchId, int page) {
@@ -55,6 +57,12 @@ public class NotificationServiceImpl implements NotificationService {
         });
         log.info("targetUser 정보: {}", targetUser);
 
+        Image image = null;
+        List<Image> listImage = imageRepository.findByImageUrlAndIsDeletedFalse("https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png");
+        if (listImage.isEmpty()) {
+            image = listImage.get(0);
+        }
+
         String messageTemplate = type.getDefaultMessage();
         String formattedMessage;
 
@@ -66,6 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
                 return new RuntimeException("Source user not found");
             });
             log.info("sourceUser 정보: {}", sourceUser);
+            image = sourceUser.getImage();
             formattedMessage = String.format(messageTemplate, requireSource, targetSearchId);
         } else if (type.requiresPlant()) {
             Plant plant = plantRepository.findById((long) Integer.parseInt(requireSource)).orElseThrow(() -> {
@@ -73,6 +82,7 @@ public class NotificationServiceImpl implements NotificationService {
                 return new RuntimeException("Plant not found");
             });
             log.info("plant 정보: {}", plant);
+//            image = plant.getImage().getImageUrl();
             formattedMessage = String.format(messageTemplate, targetSearchId, plant.getNickname());
         } else {
             log.info("일반 데이터 넘기는 정보");
@@ -84,6 +94,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setContent(formattedMessage);
         notification.setType(type.getValue());
         notification.setClickUrl(clickUrl);
+        notification.setImage(image);
         notification = notificationRepository.save(notification);
         log.info("알림 저장 완료 - notificationId: {}", notification.getNotificationId());
 
@@ -92,7 +103,7 @@ public class NotificationServiceImpl implements NotificationService {
         // FCM을 통해 메시지를 전송합니다.
         if (targetUser.isPushNotificationEnabled() && targetUser.getNotificationToken() != null) {
             String title = type.name(); // 여기에 알림 제목을 설정합니다.
-            fcmService.sendNotification(targetUser.getNotificationToken(), title, clickUrl, formattedMessage, notification.getNotificationId());
+            fcmService.sendNotification(targetUser.getNotificationToken(), title, clickUrl, formattedMessage, image.getImageUrl(), notification.getNotificationId());
         }
 
         log.info("sendNotification 완료 - requireSource: {}, targetSearchId: {}, type: {}", requireSource, targetSearchId, type);
@@ -152,7 +163,6 @@ public class NotificationServiceImpl implements NotificationService {
         if (!today.isBefore(startFertilizeDate) && !today.isAfter(endFertilizeDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.FERTILIZE_REMINDER);
         }
-
 
 
         log.info("checkFertilizeNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
