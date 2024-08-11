@@ -20,7 +20,8 @@ body {
 }
 
 .content {
-  @apply w-9/12 mx-auto;
+  width: 90%;
+  @apply mx-auto;
 }
 
 .full-width {

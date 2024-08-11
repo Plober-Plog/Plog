@@ -24,12 +24,15 @@ const ArticleCardList = ({ ownerId, articles = [], type }) => {
     <div className='article-card-list'>
       {articles.map(article => {
         if (type === 'plant') {
+
+          const monthDay = article.recordDate ? article.recordDate.slice(5) : '';
+          
           return (
             <ArticleCard 
               key={article.plantDiaryId}
               ownerId={ownerId}
               id={article.plantDiaryId}
-              log={article.recordDate}
+              log={monthDay}
               thumbnail={article.thumbnail}
               type={type}
             />

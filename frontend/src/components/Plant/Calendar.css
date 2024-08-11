@@ -1,7 +1,8 @@
 .react-calendar {
-  width: 400px;
+  width: 100%;
   border: 1px solid #e6e6e6;
   border-radius: 15px;
+  background-color: #f8f8f8;
 }
 
 /* 네비 바 (연, 월, 버튼) */
@@ -15,6 +16,7 @@
   background-color: white;
   border: 0;
   flex-grow: 0;
+  font-weight: bold;
 }
 
 .react-calendar__navigation__arrow {
