@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import API from "../../apis/api";
 
 import WriterInfo from "../../components/Common/WriterInfo";
@@ -12,15 +12,13 @@ import Btn from "../../components/Common/Btn";
 import useAuthStore from "../../stores/member";
 
 const SnsDetail = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { articleId } = location.state;
+  const { articleId } = useParams()
   const [article, setArticle] = useState({});
   const [writerInfo, setWriterInfo] = useState({});
 
   const { userData } = useAuthStore();
 
-  // 게시물 불러오기
   useEffect(() => {
     if (!articleId) {
       console.error('@@@Invalid access: No articleId found.');
@@ -38,7 +36,13 @@ const SnsDetail = () => {
         try {
           const userResponse = await API.get(`/user/profile/${response.data.searchId}`);
           console.log('@@@유저 정보:', userResponse.data);
-          setWriterInfo(userResponse.data);
+          const writerInfo = {
+            imgSrc: userResponse.data.profile,
+            recordDate: userResponse.data.createAt,
+            nickname: userResponse.data.nickname,
+          }
+          console.log(writerInfo)
+          setWriterInfo(writerInfo);
         } catch (err) {
           console.error('@@@유저 정보 불러오기 실패 : ', err);
         }
@@ -49,20 +53,17 @@ const SnsDetail = () => {
     fetchArticle();
   }, [articleId]);
 
-  if (!article || !writerInfo.profile) {
+  if (!article || !writerInfo.imgSrc) {
     return <div>Loading...</div>;
   }
 
-  // 현재 사용자가 게시물 작성자인지 확인
-  // TODO userId로 확인
   const isAuthor = userData && userData.searchId === article.searchId;
 
-  // 게시물 삭제하기
   const handleSnsDlelete = async () => {
     try {
       const response = await API.delete(`/user/sns/${articleId}`);
       console.log('게시물 삭제 성공:', response.data);
-      navigate('/sns'); // 삭제 후 SNS 목록 페이지로 이동
+      navigate('/sns');
     } catch (err) {
       console.error('게시물 삭제 실패 : ', err);
     }

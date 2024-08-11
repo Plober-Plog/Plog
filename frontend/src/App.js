@@ -36,9 +36,15 @@ import SnsWrite from './pages/Sns/SnsWrite';
 import SnsDetail from './pages/Sns/SnsDetail';
 import SnsList from './pages/Sns/SnsList';
 import CommentDetail from './pages/Sns/CommentDetail';
+<<<<<<< HEAD
 // Chat
 import ChatRoom from './pages/Chat/ChatRoom';
 import ChatRooms from './pages/Chat/ChatRoomList';
+=======
+// Alarm
+import Alarm from './pages/Alarm/Alarm';
+
+>>>>>>> de84b74b825daaa5474492a905365efa59138254
 
 
 // 로그인 후에만 FCM 토큰을 요청하고 저장했다면, 여기는 onForegroundMessage만 설정
@@ -105,6 +111,9 @@ function App() {
             {/* chat */}
             <Route path="/chat" element={<ChatRooms />} />
             <Route path="/chat/:chatRoomId" element={<ChatRoom />} />
+            {/* alarm */}
+            <Route path="/alarm" element={<PrivateRoute><Alarm /></PrivateRoute>} />
+
           </Routes>
         </main>
         <FooterWithCondition />
