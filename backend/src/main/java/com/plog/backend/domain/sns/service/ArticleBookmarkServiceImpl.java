@@ -14,8 +14,11 @@ import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +30,9 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 @RequiredArgsConstructor
 @Service("articleBookmarkService")
 public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
+
+    @Value("${server.url}")
+    private String serverUrl;
 
     private final ArticleBookmarkRepository articleBookmarkRepository;
     private final UserRepository userRepository;
@@ -64,6 +70,28 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
 
         articleBookmarkRepository.save(articleBookmark);
         log.info(">>> [addBookmark] - 북마크 등록 완료, 사용자 ID: {}, 게시글 ID: {}", userId, articleId);
+
+        // 게시글 작성자에게 북마크 알림 보내기
+        String sourceSearchId = user.getSearchId();
+        String targetSearchId = article.getUser().getSearchId();
+        String articleUrl = String.format("%s/sns/%d", serverUrl, articleId);
+        if (!sourceSearchId.equals(targetSearchId)) {
+            String type = "BOOKMARK";
+            String urlString = String.format("%s/realtime/notification/send?sourceSearchId=%s&targetSearchId=%s&clickUrl=%s&type=%s",
+                    serverUrl, sourceSearchId, targetSearchId, articleUrl, type);
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-type", "application/json");
+
+                int responseCode = conn.getResponseCode();
+                log.info("알림 전송 HTTP 응답 코드: " + responseCode);
+                conn.disconnect();
+            } catch (Exception e) {
+                log.error("알림 전송 중 오류 발생", e);
+            }
+        }
     }
 
     @Transactional
