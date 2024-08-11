@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useNavigate } from'react-router-dom';
 import useAuthStore from '../../stores/member';
 import API from '../../apis/api';
+import './ProfileHeaderUserBtnList.css'
 
 const ProfileHeaderUserBtnList = ({ ownerId }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
@@ -59,7 +60,6 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
   const getRequestUserRelText = () => {
     if (requestUserRel === 0) return `${ownerId}님은 당신을 이웃으로 두지 않습니다.`;
     if (requestUserRel === 1) return `${ownerId}님은 당신을 이웃으로 추가하고 있습니다.`;
-    if (requestUserRel === 2) return `${ownerId}님은 당신과 서로이웃 입니다.`;
     return '';
   };
 
@@ -81,21 +81,17 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
       )}
       {authSearchId !== ownerId && (
         <>
-          <span>
+          {/*<span className='ProfileHeaderUserBtnList-sub-txt'>
             {getRequestUserRelText()}
-          </span>
+          </span>*/}
           <div>
             {profileUserRel === 0 && (
               <button style={{ margin: '10px' }} onClick={addNeighbor}>이웃 추가</button>
             )}
             {profileUserRel === 1 && (
               <>
-                <button style={{ margin: '10px' }}>서로이웃 신청</button>
                 <button style={{ margin: '10px' }} onClick={removeNeighbor}>이웃 취소</button>
               </>
-            )}
-            {profileUserRel === 2 && (
-              <button style={{ margin: '10px' }}>서로이웃 끊기</button>
             )}
           </div>
         </>

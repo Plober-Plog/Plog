@@ -42,8 +42,6 @@ const UserProfile = () => {
     setFilteredPlants(plants);
   };
 
-  console.log('User Data:', userData);
-
   return (
     <div>
       <ProfileHeader 
@@ -70,7 +68,6 @@ const UserProfile = () => {
           />
           <ProfilePlantCardList
             searchId={searchId}
-            plants={filteredPlants}
           />
         </>
       )}
