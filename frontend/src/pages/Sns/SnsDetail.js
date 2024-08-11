@@ -22,22 +22,28 @@ const SnsDetail = () => {
 
   // 게시물 불러오기
   useEffect(() => {
+    if (!articleId) {
+      console.error('@@@Invalid access: No articleId found.');
+      navigate('/sns');
+      return;
+    }
+
     const fetchArticle = async () => {
       try {
         const response = await API.get(`/user/sns/${articleId}`);
-        console.log('게시글 정보:', response.data);
+        console.log('@@@게시글 정보:', response.data);
         setArticle(response.data);
 
         // 유저 정보 가져오기
         try {
           const userResponse = await API.get(`/user/profile/${response.data.searchId}`);
-          console.log('유저 정보:', userResponse.data);
+          console.log('@@@유저 정보:', userResponse.data);
           setWriterInfo(userResponse.data);
         } catch (err) {
-          console.error('유저 정보 불러오기 실패 : ', err);
+          console.error('@@@유저 정보 불러오기 실패 : ', err);
         }
       } catch (err) {
-        console.error('게시물 불러오기 실패 : ', err);
+        console.error('@@@게시물 불러오기 실패 : ', err);
       }
     };
     fetchArticle();

@@ -17,7 +17,7 @@ const SnsWrite = () => {
   const { articleId, reportImgData, diaryImgData } = location.state;  // articleId가 없을 때 0으로 초기화
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
-  const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
+  const [selectedVisibility, setSelectedVisibility] = useState(0); // 공개 상태 관리
   const [tagTypeList, setTagTypeList] = useState([]); // 선택된 태그 리스트 상태
   const [isModalOpen, setIsModalOpen] = useState(false); 
   
