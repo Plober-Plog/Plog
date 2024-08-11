@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import API from '../../apis/api';
+import axios from 'axios';
 import useAuthStore from '../../stores/member';
 
 import Btn from '../Common/Btn';
@@ -17,6 +18,7 @@ const ProfileUpdateForm = () => {
   const { userData, setUserData } = useAuthStore();
   console.log(userData)
   console.log(userData.searchId)
+  const URI = 'https://i11b308.p.ssafy.io/api';
   
   // 상태 초기화
   const [searchId, setSearchId] = useState(userData?.searchId || '');
@@ -25,8 +27,10 @@ const ProfileUpdateForm = () => {
   const [birthdate, setBirthdate] = useState(userData?.birthdate || '');
   const [gender, setGender] = useState(userData?.gender || '');
   const [source, setSource] = useState(userData?.source || '');
-  const [sido, setSido] = useState(userData?.sido || '');
-  const [gugun, setGugun] = useState(userData?.gugun || '');
+  const [sidoCode, setSidoCode] = useState(0);
+  const [gugunCode, setGugunCode] = useState(0);
+  const [sidoOptions, setSidoOptions] = useState([]);
+  const [gugunOptions, setGugunOptions] = useState([]);
   const [profileInfo, setProfileInfo] = useState(userData?.profileInfo || '');
   const [isAd, setIsAd] = useState(userData?.isAd || false);
   // 사진 업로드
@@ -52,6 +56,34 @@ const ProfileUpdateForm = () => {
       setUploadedFile(file); // 업로드된 파일 저장
     }
   };
+
+  // 시도 옵션 가져오기
+  useEffect(() => {
+    const getSidoOptions = async () => {
+      try {
+        const response = await axios.get(`${URI}/area/sido`)
+        setSidoOptions(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getSidoOptions();
+
+  }, []);
+
+  // 구군 옵션 가져오기
+  useEffect(() => {
+    const getGugunOptions = async (sidoCode) => {
+      try {
+        const response = await axios.get(`${URI}/area/gugun/${sidoCode}`)
+        setGugunOptions(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getGugunOptions(sidoCode);
+
+  }, [])
 
   // 사진 삭제
   const handleImageRemove = () => {
@@ -105,8 +137,8 @@ const ProfileUpdateForm = () => {
       gender,
       birthdate,
       source,
-      sido,
-      gugun,
+      sidoCode,
+      gugunCode,
       isAd
     };
 
@@ -234,18 +266,30 @@ const ProfileUpdateForm = () => {
         />
         <div>
           <label>지역</label>
-          <SelectField
-            value={sido}
-            onChange={(e) => setSido(e.target.value)}
-            options={['시/도']}
-            isRequired={false}
-          />
-          <SelectField
-            value={gugun}
-            onChange={(e) => setGugun(e.target.value)}
-            options={['구/군']}
-            isRequired={false}
-          />
+          <select
+            value={sidoCode}
+            onChange={(e) => setSidoCode(e.target.value)}
+            required={false}
+            className="account-drop-box"
+          >
+            {sidoOptions.map(sidoOption => (
+              <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
+            ))}
+          </select>
+          <select
+            value={gugunCode}
+            onChange={(e) => setGugunCode(e.target.value)}
+            required={false}
+            className="account-drop-box"
+          >
+            {gugunOptions
+              .filter(gugunOption => gugunOption.sidoCode === sidoCode) // sidoCode가 일치하는 항목만 필터링
+              .map(filteredGugunOption => (
+                <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
+                  {filteredGugunOption.gugunName}
+                </option>
+              ))}
+          </select>
         </div>
         <Btn
           content="수정하기"
