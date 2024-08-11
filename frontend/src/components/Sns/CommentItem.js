@@ -26,7 +26,7 @@ const CommentItem = ({ comment, handleReply }) => {
     : {};
 
   // 날짜 시간 수정
-  const formattedDate = comment.createDate.slice(0, 16);
+  const formattedDate = comment.createDate.slice(0, 10);
 
   return (
     <div style={divStyle}>
