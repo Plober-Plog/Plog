@@ -23,7 +23,7 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
       };
       const queryString = qs.stringify(params, { arrayFormat: 'comma', skipNulls: true });
       const url = `/user/sns?${queryString}`;
-      console.log('Request URL:', url);
+      console.log('%^%^%^%^Request URL:', url);
 
       const response = await API.get(url);
       console.log('API response:', response.data);
