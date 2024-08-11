@@ -62,16 +62,21 @@ const Comment = ({ articleId }) => {
     setIsFooterCmtActive(true);
   };
 
+  // /sns/${articleId} 페이지에서만 댓글을 3개로 제한
+  const displayedComments = location.pathname === `/sns/${articleId}`
+    ? commentList.slice(0, 3)
+    : commentList;
+
   return (
     <div>
       <hr />
       <h3>댓글</h3>
       <div>
-        {commentList.map((comment) => (
+        {displayedComments.map((comment) => (
           <CommentItem key={comment.articleCommentId} comment={comment} handleReply={handleReply} />
         ))}
       </div>
-      {location.pathname === `/sns/${articleId}` && (
+      {location.pathname === `/sns/${articleId}` && commentList.length > 3 && (
         <Btn 
           content='댓글 자세히 보기'
           onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId } })}

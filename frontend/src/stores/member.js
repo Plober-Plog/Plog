@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { setCookie, getCookie, eraseCookie } from '../utils/cookieUtils';
+import API from '../apis/api';
 
 const useAuthStore = create((set) => ({
   accessToken: getCookie('accessToken'),
@@ -22,7 +23,7 @@ const useAuthStore = create((set) => ({
     console.log('유저정보 저장 (localStorage):', userData);
   },
 
-  // 유저 정보 삭제 (localStorage에서 삭제)
+  // 토큰 및 유저 정보 삭제 (localStorage에서 삭제)
   clearToken: () => {
     eraseCookie('accessToken');
     eraseCookie('refreshToken');
@@ -36,6 +37,24 @@ const useAuthStore = create((set) => ({
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     console.log('아이디:', userData.searchId);
     return userData ? userData.searchId : null;
+  },
+
+  // 자동 로그인 시도
+  autoLogin: async () => {
+    const refreshToken = getCookie('refreshToken');
+    if (refreshToken) {
+      try {
+        const response = await API.post('/auth/refresh', { refreshToken });
+        const newAccessToken = response.data.split(' : ')[1];
+        setCookie('accessToken', newAccessToken, 60);
+        set({ accessToken: newAccessToken, isLogin: true });
+        console.log('자동 로그인 성공!');
+      } catch (error) {
+        console.error('자동 로그인 실패:', error);
+        set({ isLogin: false });
+        eraseCookie('refreshToken');
+      }
+    }
   },
 }));
 

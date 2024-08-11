@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
 import PropTypes from 'prop-types';
 
 const CommentItem = ({ comment, handleReply }) => {
-  const [searchId, setSearchId] = useState(null);
   const navigate = useNavigate();
   const { userData } = useAuthStore();
-
 
   // 댓글 삭제
   const handleCmtDelete = async (commentId) => {
@@ -27,6 +25,9 @@ const CommentItem = ({ comment, handleReply }) => {
     ? { marginLeft: '20px' }
     : {};
 
+  // 날짜 시간 수정
+  const formattedDate = comment.createDate.slice(0, 16);
+
   return (
     <div style={divStyle}>
       {comment.state === 1 ? (
@@ -34,7 +35,7 @@ const CommentItem = ({ comment, handleReply }) => {
           <img src={comment.profile} alt="profile" onClick={() => navigate(`/profile/${comment.searchId}`)} />
           <h4>{comment.nickname}</h4>
           <p>{comment.content}</p>
-          <p>{comment.createDate}</p>
+          <p>{formattedDate}</p>
           {comment.parentId === comment.articleCommentId && (
             <button onClick={() => handleReply(comment.articleCommentId)}>답글작성</button>
           )}
