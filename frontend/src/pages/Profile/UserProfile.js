@@ -18,6 +18,7 @@ const UserProfile = () => {
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState('plant');
   const [filteredPlants, setFilteredPlants] = useState([]);
+  const [allPlants, setAllPlants] = useState([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -28,6 +29,12 @@ const UserProfile = () => {
           return;
         }
         setUserData(response.data);
+
+        const plantResponse = await API.get('/user/plant', {
+          params: { searchId }
+        });
+        setAllPlants(plantResponse.data);
+        setFilteredPlants(plantResponse.data);
       } catch (error) {
         console.error("***UserData Error:***", error);
       }
@@ -68,6 +75,7 @@ const UserProfile = () => {
             onFilterUpdate={handleFilterUpdate}
           />
           <ProfilePlantCardList
+            plants={filteredPlants}
             searchId={searchId}
           />
         </>

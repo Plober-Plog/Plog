@@ -4,9 +4,8 @@ import useAuthStore from '../../stores/member';
 import API from '../../apis/api';
 import './ProfilePlantCardList.css';
 
-const ProfilePlantCardList = ({ searchId }) => {
+const ProfilePlantCardList = ({ plants, searchId }) => {
   const authSearchId = useAuthStore((state) => state.getSearchId());
-  const [plants, setPlants] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -20,11 +19,6 @@ const ProfilePlantCardList = ({ searchId }) => {
       if (response.data.length === 0) {
         setHasMore(false);
       } else {
-        if (page === 0) {
-          setPlants(response.data);
-        } else {
-          setPlants((prevPlants) => [...prevPlants, ...response.data]);
-        }
         setPage(page + 1);
       }
     } catch (error) {
