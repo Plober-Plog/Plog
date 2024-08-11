@@ -3,10 +3,12 @@ import SnsCardLgList from '../../components/Article/SnsCardLgList';
 import Tags from '../../components/Sns/Tags';
 import Tab from '../../components/Sns/Tab';
 import AddBtn from '../../components/Common/AddBtn';
+import useAuthStore from '../../stores/member';
 
 const SnsList = () => {
+  const isLogin = useAuthStore(state => state.isLogin);
   const [tagTypeList, setTagTypeList] = useState([]);
-  const [selectedVisibility, setSelectedVisibility] = useState(0);
+  const [selectedVisibility, setSelectedVisibility] = useState(1);
   const tags = [
     { tagTypeId: 1, tagName: '일지' },
     { tagTypeId: 2, tagName: '분석 레포트' },
@@ -26,10 +28,12 @@ const SnsList = () => {
 
   return (
     <div>
-      <Tab
-        selectedVisibility={selectedVisibility}
-        setSelectedVisibility={setSelectedVisibility}
-      />
+      {isLogin && (
+        <Tab
+          selectedVisibility={selectedVisibility}
+          setSelectedVisibility={setSelectedVisibility}
+        />
+      )}
       <Tags 
         selectedTags={tagTypeList}
         onTagSelect={handleTagSelect}
