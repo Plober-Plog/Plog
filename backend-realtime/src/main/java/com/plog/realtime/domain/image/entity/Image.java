@@ -1,4 +1,4 @@
-package com.plog.realtime.domain.user.entity;
+package com.plog.realtime.domain.image.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

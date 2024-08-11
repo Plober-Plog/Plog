@@ -22,6 +22,8 @@ public class NotificationHistoryResponseDto {
     private String content;
     @Schema(description = "클릭시 가야하는 url", example = "https://i11b308.p.ssafy.io/plant/1")
     private String clickUrl;
+    @Schema(description = "image url", example = "https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png")
+    private String image;
     @Schema(description = "알림 시각", example = "2024-01-01")
     private LocalDate notificationDate;
 }
