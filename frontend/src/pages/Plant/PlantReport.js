@@ -38,7 +38,10 @@ const PlantReport = () => {
   if (!plantData) return <p>데이터가 없습니다.</p>;
 
   // 이미지 배열 생성
-  const imageUrls = [plantData.firstDayImageUrl, plantData.recentImageUrl];
+  const uniqueUrl1 = `${plantData.firstDayImageUrl}?t=${new Date().getTime()}`;
+  const uniqueUrl2 = `${plantData.recentImageUrl}?t=${new Date().getTime()}`;
+  
+  const imageUrls = [uniqueUrl1, uniqueUrl2];
 
   const reportContent = `기간 동안 물 준 횟수 ${plantData.fertilizeData}번 💧\n 
   기간 동안 영양제 준 횟수 ${plantData.fertilizeData}번💊\n
