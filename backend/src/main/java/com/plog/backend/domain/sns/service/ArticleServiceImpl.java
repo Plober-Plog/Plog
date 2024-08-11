@@ -97,6 +97,8 @@ public class ArticleServiceImpl implements ArticleService {
             boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(userId, articleId);
             return ArticleGetResponseDto.builder()
                     .searchId(article.get().getUser().getSearchId())
+                    .nickname(article.get().getUser().getNickname())
+                    .profile(article.get().getUser().getImage().getImageUrl())
                     .articleId(article.get().getArticleId())
                     .content(article.get().getContent())
                     .view(article.get().getView())
@@ -107,7 +109,7 @@ public class ArticleServiceImpl implements ArticleService {
                     .commentCnt(commentCnt)
                     .isLiked(isLiked)
                     .isBookmarked(isBookmarked)
-                    .createAt(article.get().getCreatedAt())
+                    .createdAt(article.get().getCreatedAt())
                     .build();
         } else {
             throw new EntityNotFoundException("게시글을 조회할 수 없습니다.");
@@ -127,8 +129,6 @@ public class ArticleServiceImpl implements ArticleService {
         log.info(">>> getArticleList - page: {}, searchId: {}, tagTypeList: {}, keyword: {}, userId: {}, neighborType: {}, orderType: {}",
                 page, searchId, tagTypeList, keyword, userId, neighborType, orderType);
 
-
-
         List<Article> articleList = articleRepositorySupport.loadArticleList(page, searchId, tagTypeList, keyword, userId, neighborType, orderType);
 
         log.info(">>> getArticleList - Retrieved {} articles from the repository", articleList.size());
@@ -138,7 +138,8 @@ public class ArticleServiceImpl implements ArticleService {
             List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
             int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
             int commentCnt = articleCommentRepository.countByArticleArticleId(article.getArticleId());
-            boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(articleGetListRequestDto.getUserId(), article.getArticleId());
+            boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, article.getArticleId());
+            boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(userId, article.getArticleId());
 
             log.info(">>> getArticleList - Processing articleId: {}, likeCnt: {}, commentCnt: {}, isBookmarked: {}",
                     article.getArticleId(), likeCnt, commentCnt, isBookmarked);
@@ -150,7 +151,11 @@ public class ArticleServiceImpl implements ArticleService {
                             .likeCnt(likeCnt)
                             .view(article.getView())
                             .nickname(article.getUser().getNickname())
+                            .searchId(article.getUser().getSearchId())
+                            .profile(article.getUser().getImage().getImageUrl())
+                            .createdAt(article.getCreatedAt())
                             .commentCnt(commentCnt)
+                            .isLiked(isLiked)
                             .isBookmarked(isBookmarked)
                             .content(article.getContent())
                             .build()

@@ -24,6 +24,10 @@ public class ArticleGetResponseDto {
     @Schema(description = "사용자 searchId", example = "test")
     private String searchId;
 
+    private String nickname;
+
+    private String profile;
+
     @Schema(description = "게시글 내용", example = "오늘은 날씨가 좋네요.")
     private String content;
 
@@ -53,5 +57,5 @@ public class ArticleGetResponseDto {
     @Schema(description = "태그 타입 목록")
     private List<TagType> tagTypeList;
 
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 }
