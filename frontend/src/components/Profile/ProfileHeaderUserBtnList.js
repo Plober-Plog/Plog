@@ -57,11 +57,11 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     return null;
   }
 
-  const getRequestUserRelText = () => {
-    if (requestUserRel === 0) return `${ownerId}님은 당신을 이웃으로 두지 않습니다.`;
-    if (requestUserRel === 1) return `${ownerId}님은 당신을 이웃으로 추가하고 있습니다.`;
-    return '';
-  };
+  // const getRequestUserRelText = () => {
+  //   if (requestUserRel === 0) return `${ownerId}님은 당신을 이웃으로 두지 않습니다.`;
+  //   if (requestUserRel === 1) return `${ownerId}님은 당신을 이웃으로 추가하고 있습니다.`;
+  //   return '';
+  // };
 
   const handleClickNeighborList = () => {
     navigate(`/profile/${ownerId}/neighbor`)
