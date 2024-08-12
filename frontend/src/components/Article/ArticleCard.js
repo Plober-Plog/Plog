@@ -5,15 +5,15 @@ import '../../../src/output.css';
 import defaultImg from '../../assets/icon/default.png';
 import './ArticleCard.css';
 
-const ArticleCard = ({ ownerId, id, log, thumbnail, type }) => {
+const ArticleCard = ({ ownerId, id, recordDate, log, thumbnail, type }) => {
 
   const navigate = useNavigate();
   // console.log('Article Card의 id값 콘솔***', id)
   const handleClick = () => {
     if (type === 'plant') {
-      navigate(`/plant/${ownerId}/${log}`, {
+      navigate(`/plant/${ownerId}/${recordDate}`, {
         state: {
-          date: log,
+          date: recordDate,
           plantId: ownerId
         }
       });
