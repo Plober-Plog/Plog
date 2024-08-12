@@ -14,7 +14,7 @@ import alarmDefault from "../../assets/icon/footer/alarm-default.svg";
 import alarmNewDefault from "../../assets/icon/footer/alarm-new-default.svg";
 import useAuthStore from '../../stores/member';
 
-import "./Footer.css";
+// import "./Footer.css";
 
 const Footer = () => {
   const { activeButton, setActiveButton } = useButtonStore(); 
@@ -68,43 +68,43 @@ const Footer = () => {
   };
 
   return (
-    <div className="footer-container">
-      <button className="footer-button" onClick={() => handleClick("sns")}>
+    <footer className="w-full max-w-custom mx-auto flex justify-between items-center bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0">
+      <button className="p-4" onClick={() => handleClick("sns")}>
         <img
           src={activeButton === "sns" ? snsSelect : snsDefault}
-          alt="sns 아이콘"
-          className={activeButton === "sns" ? "footer-icon-select" : "footer-icon"}
+          alt="SNS"
+          className="w-6 h-6"
         />
       </button>
-      <button className="footer-button" onClick={() => handleClick("profile")}>
+      <button className="p-4" onClick={() => handleClick("profile")}>
         <img
           src={activeButton === "profile" ? profileSelect : profileDefault}
-          alt="profile 아이콘"
-          className={activeButton === "profile" ? "footer-icon-select" : "footer-icon"}
+          alt="프로필"
+          className="w-6 h-6"
         />
       </button>
-      <button className="footer-button" onClick={() => handleClick("home")}>
+      <button className="p-4" onClick={() => handleClick("home")}>
         <img
           src={activeButton === "home" ? homeSelect : homeDefault}
-          alt="home 아이콘"
-          className={activeButton === "home" ? "footer-icon-select" : "footer-icon"}
+          alt="홈"
+          className="w-6 h-6"
         />
       </button>
-      <button className="footer-button" onClick={() => handleClick("chat")}>
+      <button className="p-4" onClick={() => handleClick("chat")}>
         <img
           src={activeButton === "chat" ? chatSelect : chatDefault}
-          alt="chat 아이콘"
-          className={activeButton === "chat" ? "footer-icon-select" : "footer-icon"}
+          alt="채팅"
+          className="w-6 h-6"
         />
       </button>
-      <button className="footer-button" onClick={() => handleClick("alarm")}>
+      <button className="p-4" onClick={() => handleClick("alarm")}>
         <img
           src={activeButton === "alarm" ? alarmSelect : alarmDefault}
-          alt="alarm 아이콘"
-          className={activeButton === "alarm" ? "footer-icon-select" : "footer-icon"}
+          alt="알람"
+          className="w-6 h-6"
         />
       </button>
-    </div>
+    </footer>
   );
 };
 

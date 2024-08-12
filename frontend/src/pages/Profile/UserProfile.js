@@ -7,6 +7,8 @@ import API from '../../apis/api';
 import useAuthStore from '../../stores/member';
 import SnsCardMdList from '../../components/Article/SnsCardMdList';
 import AddBtn from '../../components/Common/AddBtn';
+import './UserProfile.css';
+import UserProfileTab from '../../components/Profile/UserProfileTab'
 
 const UserProfile = () => {
   const { searchId } = useParams();
@@ -16,6 +18,7 @@ const UserProfile = () => {
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState('plant');
   const [filteredPlants, setFilteredPlants] = useState([]);
+  const [allPlants, setAllPlants] = useState([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -26,6 +29,12 @@ const UserProfile = () => {
           return;
         }
         setUserData(response.data);
+
+        const plantResponse = await API.get('/user/plant', {
+          params: { searchId }
+        });
+        setAllPlants(plantResponse.data);
+        setFilteredPlants(plantResponse.data);
       } catch (error) {
         console.error("***UserData Error:***", error);
       }
@@ -42,8 +51,6 @@ const UserProfile = () => {
     setFilteredPlants(plants);
   };
 
-  console.log('User Data:', userData);
-
   return (
     <div>
       <ProfileHeader 
@@ -51,10 +58,9 @@ const UserProfile = () => {
         ownerId={searchId}
         type='user'
       />
-      <div>
-        <button className={activeTab === 'plant' ? 'active' : ''} onClick={() => setActiveTab('plant')}>식물</button>
-        <button className={activeTab === 'sns' ? 'active' : ''} onClick={() => setActiveTab('sns')}>SNS</button>
-        <button className={activeTab === 'bookmark' ? 'active' : ''} onClick={() => setActiveTab('bookmark')}>북마크</button>
+
+      <div className='mb-20'>
+        <UserProfileTab activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
 
       {activeTab === 'plant' && (
@@ -69,8 +75,8 @@ const UserProfile = () => {
             onFilterUpdate={handleFilterUpdate}
           />
           <ProfilePlantCardList
-            searchId={searchId}
             plants={filteredPlants}
+            searchId={searchId}
           />
         </>
       )}
