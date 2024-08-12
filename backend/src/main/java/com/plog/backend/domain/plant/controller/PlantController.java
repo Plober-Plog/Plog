@@ -32,6 +32,7 @@ import java.util.List;
 @Tag(name = "Plant Controller", description = "식물 관리 API")
 public class PlantController {
 
+    private static final int NICKNAME_MAX_LENGTH = 6;
     private final PlantService plantService;
     private final PlantCheckService plantCheckService;
     private final PlantDiaryService plantDiaryService;
@@ -48,9 +49,14 @@ public class PlantController {
         if (plantAddRequestDto.getNickname() == null || plantAddRequestDto.getNickname().isEmpty()) {
             throw new NotValidRequestException("nickname은 필수 필드입니다.");
         }
+        if(plantAddRequestDto.getNickname().length() > NICKNAME_MAX_LENGTH) {
+            log.error(">>> [POST] /user/plant -  식물 닉네임은 최대 {}자 입니다.", NICKNAME_MAX_LENGTH);
+            throw new NotValidRequestException("식물 닉네임은 최대 " + NICKNAME_MAX_LENGTH + "자 입니다.");
+        }
         if (plantAddRequestDto.getBirthDate() == null) {
             throw new NotValidRequestException("birthDate는 필수 필드입니다.");
         }
+
         plantService.addPlant(token, plantAddRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 등록이 완료되었습니다."));
     }
@@ -128,6 +134,13 @@ public class PlantController {
         log.info(">>> [PATCH] /user/plant/{} - 요청 데이터: {}", plantId, plantUpdateRequestDto);
         if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
+        if (plantUpdateRequestDto.getNickname() == null || plantUpdateRequestDto.getNickname().isEmpty()) {
+            throw new NotValidRequestException("nickname은 필수 필드입니다.");
+        }
+        if(plantUpdateRequestDto.getNickname().length() > NICKNAME_MAX_LENGTH) {
+            log.error(">>> [PATCH] /user/plant/{} -  식물 닉네임은 최대 {}자 입니다.", plantId, NICKNAME_MAX_LENGTH);
+            throw new NotValidRequestException("식물 닉네임은 최대 " + NICKNAME_MAX_LENGTH + "자 입니다.");
+        }
         plantUpdateRequestDto.setPlantId(plantId);
         plantService.updatePlant(token, plantUpdateRequestDto);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "식물 수정이 완료되었습니다."));
