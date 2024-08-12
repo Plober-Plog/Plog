@@ -11,22 +11,22 @@ const Setting = () => {
   const [showSignoutConfirm, setShowSignoutConfirm] = useState(false);
   const clearToken = useAuthStore((state) => state.clearToken);
 
+  const getrefreshToken = () => useAuthStore.getState().refreshToken;
   const getAccessToken = () => useAuthStore.getState().accessToken;
 
   const handleLogout = async () => {
     try {
-      const accessToken = getAccessToken();
-      if (!accessToken) {
-        console.log('이미 로그아웃된 상태입니다.');
+      const refreshToken = getrefreshToken();
+      if (!refreshToken) {
         clearToken();
+        console.log('이미 로그아웃된 상태입니다.');
         navigate('/login');
         return;
       }
 
       const response = await API.get('/user/logout');
-      console.log('로그아웃 성공:', response.data);
-
       clearToken();
+      console.log('로그아웃 성공:', response.data);
       navigate('/login');
     } catch (error) {
       console.error('로그아웃 실패:', error);

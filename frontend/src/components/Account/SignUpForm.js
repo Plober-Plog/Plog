@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import sha256 from 'js-sha256';
 
@@ -8,7 +9,7 @@ import InputField from '../Common/InputField';
 import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
 import ModalComplete from '../Common/ModalComplete';
-import defaultProfile from '../../assets/image/defaultprofile.png';
+import defaultProfile from './defaultprofile.png';
 
 const SignUpForm = () => {
   // 회원 정보
@@ -25,6 +26,7 @@ const SignUpForm = () => {
   const [gugunCode, setGugunCode] = useState(0);
   const [sidoOptions, setSidoOptions] = useState([]);
   const [gugunOptions, setGugunOptions] = useState([]);
+  const [filteredGugunOptions, setFilteredGugunOptions] = useState([]);
   // 회원 동의
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeAdvertisement, setAgreeAdvertisement] = useState(false);
@@ -46,6 +48,8 @@ const SignUpForm = () => {
 
 
   const URI = 'https://i11b308.p.ssafy.io/api';
+  const navigate = useNavigate();
+
 
   // 시도 옵션 가져오기
   useEffect(() => {
@@ -65,15 +69,31 @@ const SignUpForm = () => {
   useEffect(() => {
     const getGugunOptions = async (sidoCode) => {
       try {
-        const response = await axios.get(`${URI}/area/gugun/${sidoCode}`)
+        const response = await axios.get(`${URI}/area/gugun/${sidoCode}`,
+          { params: { sidoCode } }
+        )
         setGugunOptions(response.data);
       } catch (error) {
         console.error(error);
       }
     };
-    getGugunOptions(sidoCode);
 
-  }, [sidoCode])
+    if (sidoCode) {
+      getGugunOptions(sidoCode);
+    }
+  }, [sidoCode]);
+
+  // sidoCode 변경 시 해당 구군 코드 필터링
+  useEffect(() => {
+    if (gugunOptions.length > 0) {
+      const filtered = gugunOptions.filter(gugunOption => gugunOption.sidoCode === Number(sidoCode));
+      setFilteredGugunOptions(filtered);
+      setGugunCode(filtered.length > 0 ? filtered[0].gugunCode : 0);
+    } else {
+      setFilteredGugunOptions([]);
+      setGugunCode(0);
+    }
+  }, [gugunOptions, sidoCode]);
 
 
   // 유효성 검사
@@ -240,7 +260,7 @@ const handleSignUp = async () => {
   formData.append('userSignUpRequestDto', new Blob([JSON.stringify(userInfo)], { type: 'application/json' }));
   const response = await fetch(defaultProfile);
   const blob = await response.blob();
-  const file = new File([blob], "../../assets/image/defaultprofile.png", { type: blob.type });
+  const file = new File([blob], "defaultprofile.png", { type: blob.type });
   formData.append('profile', file);
   
   console.log('정보 받기 성공!');
@@ -262,6 +282,7 @@ const handleSignUp = async () => {
 
 const closeModal = () => {
   setOpenModal(false);
+  navigate('/login')
 };
 
 
@@ -431,6 +452,7 @@ const closeModal = () => {
             required={false}
             className="account-drop-box"
           >
+            <option value="0">시/도 선택</option>
             {sidoOptions.map(sidoOption => (
               <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
             ))}
@@ -441,13 +463,12 @@ const closeModal = () => {
             required={false}
             className="account-drop-box"
           >
-            {gugunOptions
-              .filter(gugunOption => gugunOption.sidoCode === sidoCode) // sidoCode가 일치하는 항목만 필터링
-              .map(filteredGugunOption => (
-                <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
-                  {filteredGugunOption.gugunName}
-                </option>
-              ))}
+            <option value="0">구/군 선택</option>
+            {filteredGugunOptions.map(filteredGugunOption => (
+              <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
+                {filteredGugunOption.gugunName}
+              </option>
+            ))}
           </select>
         </div>
         <div>
