@@ -104,7 +104,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             // 사용자가 마지막 메시지를 읽었는지 여부를 판단
             log.info(">>> 사용자의 메시지 읽음 여부 판단 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
-            ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
+            ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
                     .orElseThrow(() -> new EntityNotFoundException("ChatUser not found"));
             boolean isRead = lastChat.getCreatedAt().isBefore(chatUser.getLastReadAt());
             log.info(">>> 메시지 읽음 여부: {}", isRead);
@@ -128,7 +128,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new EntityNotFoundException("채팅방을 못 찾았습니다."));
-        ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
+        ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
                 .orElseThrow(() -> new EntityNotFoundException("채팅 참여자를 못 찾았습니다."));
 
         chatUser.setLastReadAt(LocalDateTime.now());
@@ -217,7 +217,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
         ChatRoom chatRoom =chatRoomRepository.findByChatRoomId(chatRoomId);
 
-        ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(user, chatRoom)
+        ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(user, chatRoom)
                 .orElseThrow(() -> {
                     log.error(">>> 없는 방, chatRoomId: {}, userId: {}", chatRoomId, userId);
                     return new EntityNotFoundException("없는 방입니다.");
