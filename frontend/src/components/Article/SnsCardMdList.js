@@ -35,29 +35,6 @@ const SnsCardMdList = ({ searchId, type }) => {
     }
   };
 
-  // const fetchSnsList = async (searchId, page) => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await API.get(`/user/sns`, {
-  //       params: {searchId, page}
-  //     });
-  //     if (response.data.length === 0) {
-  //       setHasMore(false);
-  //     } else {
-  //       if (page === 0) {
-  //         setSnsList(response.data);
-  //       } else {
-  //         setSnsList((prevSnsList) => [...prevSnsList, ...response.data]);
-  //       }
-  //       setPage(page + 1);
-  //     }
-  //   } catch (error) {
-  //     console.error('Fetch SnsList Error:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   useEffect(() => {
     fetchSnsList(searchId, 0);
   }, [searchId]);
@@ -74,8 +51,7 @@ const SnsCardMdList = ({ searchId, type }) => {
   }, [hasMore, page, loading]);
 
   return (
-    <div>
-      <h3>SNS MD CardList목록</h3>
+    <div className="pt-1">
       {snslist.map((sns) => (
         <SnsCardMd 
           key={sns.articleId}

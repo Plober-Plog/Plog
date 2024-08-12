@@ -53,6 +53,7 @@ const Alarm = () => {
   }, [page]); // page가 변경될 때마다 알림을 가져옴
 
   
+  
   // 스크롤 이벤트로 페이지 증가
   useEffect(() => {
     const handleScroll = () => {

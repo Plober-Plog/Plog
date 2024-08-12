@@ -28,12 +28,14 @@ const SnsList = () => {
 
   return (
     <div>
-      {isLogin && (
-        <Tab
-          selectedVisibility={selectedVisibility}
-          setSelectedVisibility={setSelectedVisibility}
-        />
-      )}
+      <div className='pb-20'>
+        {isLogin && (
+          <Tab
+            selectedVisibility={selectedVisibility}
+            setSelectedVisibility={setSelectedVisibility}
+          />
+        )}
+      </div>
       <Tags 
         selectedTags={tagTypeList}
         onTagSelect={handleTagSelect}

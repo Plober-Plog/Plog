@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
+import './ProfilePlantCardList.css';
 
 const ProfilePlantCard = ({ plantId, profile, nickname, birthDate, plantTypeName, otherPlantTypeName, isClickable }) => {
   
@@ -13,15 +14,16 @@ const ProfilePlantCard = ({ plantId, profile, nickname, birthDate, plantTypeName
   }
   
   return (
-    <div onClick={handleClick}>
+    <div className="profile-plant-card" onClick={handleClick}>
       <img
         src={profile || defaultImg}
         alt="thumbnail"
       />
-      <p>{nickname}</p>
-      <p>{plantTypeName}</p>
-      <p>{otherPlantTypeName}</p>
-      <p>생일: {birthDate}</p>
+      <div className="profile-plant-card-text">
+        <p className="profile-plant-card-nickname">{nickname}</p>
+        <p className="profile-plant-card-planttype">{plantTypeName || otherPlantTypeName}</p>
+        <p className="profile-plant-card-birth">{birthDate}</p>
+      </div>
     </div>
   );
 };

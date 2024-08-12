@@ -15,12 +15,20 @@ body {
 
 .container {
   @apply max-w-custom mx-auto flex flex-col items-center;
+  padding-top: 57px;
+  padding-bottom: 57px;
 }
 
 .content {
-  @apply w-9/12 mx-auto;
+  width: 90%;
+  @apply mx-auto;
 }
 
 .full-width {
   @apply w-full;
+}
+
+.cardlist-subtitle {
+  font-weight: bold;
+  font-size: 20px;
 }
