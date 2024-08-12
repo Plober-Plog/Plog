@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,6 +102,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             log.info(">>> 마지막 메시지 조회 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
             log.info(">>> 마지막 메시지 조회 완료 - Message: {}", lastChat != null ? lastChat.getMessage() : "메시지가 없습니다.");
+            lastChat.getCreatedAt().atZone(ZoneId.of("Asia/Seoul"));
 
             // 사용자가 마지막 메시지를 읽었는지 여부를 판단
             log.info(">>> 사용자의 메시지 읽음 여부 판단 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
