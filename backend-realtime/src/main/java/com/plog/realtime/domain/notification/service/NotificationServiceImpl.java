@@ -57,9 +57,9 @@ public class NotificationServiceImpl implements NotificationService {
         });
         log.info("targetUser 정보: {}", targetUser);
 
-        Image image = imageRepository.findById(1L);
+        Image image = null;
         List<Image> listImage = imageRepository.findByImageUrlAndIsDeletedFalse("https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png");
-        if (listImage.isEmpty()) {
+        if (!listImage.isEmpty()) {
             image = listImage.get(0);
         }
 
