@@ -17,7 +17,7 @@ const ChatRoom = ({ chatRoomId }) => { // ChatRoomList에서 해당 채팅방을
   const [messageContent, setMessageContent] = useState("");
 
   useEffect(() => {
-    const socket = new SockJS(`${REALTIME_API.defaults.baseURL}/chat/ws`); // sockjs 를 이용한 websocket 연결
+    const socket = new SockJS(`https://i11b308.p.ssafy.io/realtime/chat/ws`); // sockjs 를 이용한 websocket 연결
 
     const stompClient = new Client({
       webSocketFactory: () => socket,
