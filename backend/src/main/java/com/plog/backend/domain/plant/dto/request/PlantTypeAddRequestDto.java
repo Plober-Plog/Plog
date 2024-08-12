@@ -13,25 +13,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @ToString
 public class PlantTypeAddRequestDto {
-    @Column
     private String plantName;
-    @Column
     private String guide;
-    @OneToOne
-    @JoinColumn(name = "image_id", referencedColumnName = "imageId")
     private MultipartFile[] image;
 
-    @Column
     private int waterInterval;
-    @Column
     private int repotInterval;
-    @Column
     private int fertilizeInterval;
 
-    @Column
     private int repotMid;
-    @Column
     private int waterMid;
-    @Column
     private int fertilizeMid;
 }

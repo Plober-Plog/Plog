@@ -1,10 +1,16 @@
 package com.plog.backend.domain.plant.controller;
 
+import com.plog.backend.domain.image.entity.Image;
+import com.plog.backend.domain.plant.dto.request.PlantTypeAddRequestDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeGetSimpleResponseDto;
 import com.plog.backend.domain.plant.dto.response.PlantTypeIdsGetListByUserResponseDto;
 import com.plog.backend.domain.plant.service.PlantTypeService;
+import com.plog.backend.global.exception.EntityNotFoundException;
+import com.plog.backend.global.exception.NotValidRequestException;
+import com.plog.backend.global.model.response.BaseResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,4 +50,13 @@ public class PlantTypeController {
         List<PlantTypeGetSimpleResponseDto> plantTypeGetSimpleResponseDtoList = plantTypeService.getAllPlantTypes();
         return ResponseEntity.status(200).body(plantTypeGetSimpleResponseDtoList);
     }
+
+    @PostMapping
+    public ResponseEntity<?> setGuide(
+            @Parameter(description = "식물 추가 요청 데이터", required = true)
+            @ModelAttribute PlantTypeAddRequestDto plantTypeAddRequestDto
+    ) {
+        return ResponseEntity.ok(plantTypeService.addPlantType(plantTypeAddRequestDto));
+    }
+
 }

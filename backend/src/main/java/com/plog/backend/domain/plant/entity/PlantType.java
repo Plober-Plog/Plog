@@ -3,10 +3,7 @@ package com.plog.backend.domain.plant.entity;
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -16,6 +13,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @ToString
 public class PlantType extends BaseEntity {
