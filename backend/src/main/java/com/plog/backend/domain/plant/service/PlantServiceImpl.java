@@ -80,6 +80,10 @@ public class PlantServiceImpl implements PlantService {
                         .image(plantImage.get())
                         .birthDate(plantAddRequestDto.getBirthDate())
                         .bio(plantAddRequestDto.getBio())
+                        .notifySetting(7)
+                        .fertilizeDate(plantAddRequestDto.getBirthDate().plusDays(plantType.getFertilizeMid()))
+                        .repotDate(plantAddRequestDto.getBirthDate().plusDays(plantType.getRepotMid()))
+                        .waterDate(plantAddRequestDto.getBirthDate().plusDays(plantType.getWaterMid()))
                         .build());
                 log.info(">>> addPlant - 기본 식물 생성: {}", plantByPlantType.getPlantId());
             } else { // 2. 기타 식물
