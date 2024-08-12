@@ -85,8 +85,8 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
         if (neighborType == 1) {
             return null; // 이웃 관계 없이 모든 게시글 조회
         } else if (neighborType == 2) {
-            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1, 2))
-                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(1, 2)));
+            return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1))
+                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(1)));
         } else if (neighborType == 3) {
             return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(2))
                     .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(2)));
@@ -106,16 +106,18 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
             visibilityCondition = article.visibility.eq(1);
         } else if (neighborType == 2) {
             // neighborType이 2인 경우 visibility가 2인 게시글만 조회
-            visibilityCondition = article.visibility.eq(2)
-                    .and(neighbor.neighborTo.user.userId.eq(userId)
-                            .or(neighbor.neighborFrom.userId.eq(userId))
-                            .and(neighbor.neighborType.eq(1).or(neighbor.neighborType.eq(2))));
+//            visibilityCondition = article.visibility.eq(2)
+//                    .and(neighbor.neighborTo.user.userId.eq(userId)
+//                            .or(neighbor.neighborFrom.userId.eq(userId))
+//                            .and(neighbor.neighborType.eq(1).or(neighbor.neighborType.eq(2))));
+            visibilityCondition = article.visibility.eq(2);
         } else if (neighborType == 3) {
             // neighborType이 3인 경우 visibility가 3인 게시글만 조회
-            visibilityCondition = article.visibility.eq(3)
-                    .and(neighbor.neighborTo.user.userId.eq(userId)
-                            .or(neighbor.neighborFrom.userId.eq(userId))
-                            .and(neighbor.neighborType.eq(2)));
+//            visibilityCondition = article.visibility.eq(3)
+//                    .and(neighbor.neighborTo.user.userId.eq(userId)
+//                            .or(neighbor.neighborFrom.userId.eq(userId))
+//                            .and(neighbor.neighborType.eq(2)));
+            visibilityCondition = article.visibility.eq(3);
         }
 
         return visibilityCondition;
