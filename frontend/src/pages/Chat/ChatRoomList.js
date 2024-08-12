@@ -1,17 +1,23 @@
-// import axios from 'axios';
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import REALTIME_API from '../../apis/api';
+import { getCookie } from '../../utils/cookieUtils';
 
-// const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
-// const token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDUzMTUsImlhdCI6MTcyMjgzNTcxNX0.BFVSXUtidgN3jrayov5V0wnDeU2QkItay86uQu2wf3o";
+const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
 
 const ChatRooms = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const navigate = useNavigate();
+  const token = getCookie('accessToken');  
+  console.log(token);
+  
   const fetchChatRooms = async () => {
     try {
-      const response = await REALTIME_API.get(`/chat/room`);
+      const response = await axios.get(`${API_REALTIME_URL}/chat/room`, {
+        headers: {
+          Authorization: token
+        }
+      });
       console.log(response);
       setChatRooms(response.data);
     } catch (error) {
@@ -26,10 +32,15 @@ const ChatRooms = () => {
 
   const handleCreateChatRoom = async () => {
     try {
-      const response = await REALTIME_API.post(`/chat/room`, {
+      const response = await axios.post(`${API_REALTIME_URL}/chat/room`, {
+        targetSearchId: "dddddd",
         chatRoomType: 1,
-        chatRoomName: "테스트"
-      },);
+        chatRoomName: "dddddd"
+      }, {
+        headers: {
+          Authorization: token
+        }
+      });
       console.log('새 채팅방 개설:', response.data);
       fetchChatRooms(); // 새로운 채팅방 생성 후 목록 갱신
     } catch (error) {
@@ -38,7 +49,11 @@ const ChatRooms = () => {
   };
 
   const handleEnterChatRoom = (chatRoomId) => {
-    navigate(`/chat/${chatRoomId}`);
+    navigate(`/chat/${chatRoomId}`, {
+      state: {
+        chatRoomId: chatRoomId,
+      }
+    });
   };
 
   return (
