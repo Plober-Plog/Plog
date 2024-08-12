@@ -20,9 +20,9 @@ const BtnChat = ({ userData }) => {
           Authorization: token
         }
       });
-      console.log('새 채팅방 개설:', response.data);
+      console.log('새 채팅방 개설:', response.data.message);
       
-      const chatRoomId = response.data.chatRoomId;
+      const chatRoomId = response.data.message;
       navigate(`/chat/${chatRoomId}`, {
         state: {
           chatRoomId: chatRoomId,

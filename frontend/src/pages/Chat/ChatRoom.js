@@ -10,7 +10,7 @@ const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime"; // realtime api 
 
 const ChatRoom = () => { 
   const location = useLocation(); 
-  const { chatRoomId } = location.state; 
+  const { chatRoomId, otherUserNickname } = location.state; 
   const [client, setClient] = useState(null); // stomp client
   const [messages, setMessages] = useState([]);
   const { userData } = useAuthStore();
@@ -46,7 +46,7 @@ const ChatRoom = () => {
         if (page === 0) {
           setMessages(response.data);
         } else {
-          setMessages((prevSnsList) => [...prevSnsList, ...response.data]);
+          setMessages((prevChatList) => [...prevChatList, ...response.data]);
         }
         setPage(page + 1);
       }
@@ -81,7 +81,7 @@ const ChatRoom = () => {
             profile: user.profile,
             // message: `${user.nickname}님이 들어오셨습니다.`,
             chatType: "JOIN",
-            createdAt: null
+            createdAt: new Date().toISOString(),
           })
         });
       },
@@ -126,6 +126,7 @@ const ChatRoom = () => {
 
     console.log("보내는 메시지: " + messageContent);
     console.log('Send 메시지 전송');
+    
     if (client && client.connected) {
       client.publish({
         destination: `/app/chat.sendMessage/${chatRoomId}`, 
@@ -136,7 +137,7 @@ const ChatRoom = () => {
           profile: user.profile,
           message: messageContent,
           chatType: "SEND",
-          createdAt: null
+          createdAt: new Date().toISOString()  // 현재 시간
         })
       });
     }
@@ -167,19 +168,27 @@ const ChatRoom = () => {
     setMessages(prevMessages => [...prevMessages, message]);
   };
 
+  // 시간을 포맷팅하는 함수 (날짜는 제거하고 시간만)
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+      return "Invalid Date"; // 잘못된 날짜 처리
+    }
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // 시간과 분만 표시
+  };
+
 
   return (
     <div className="chat-container">
       <div className="offcanvas-title" style={{ height: "40px" }}>
-        <span>테테테테스트</span> {/* 상대 프로필 닉네임 .....*/}
+        <span>{otherUserNickname}</span> {/* 상대 프로필 닉네임 .....*/}
       </div>
       <div className="chat-box" id="response">
         {messages.map((message, index) => (
           <div key={index}>
-            {message.chatType === "SEND" && <img src={message.profile} className="profile-img" alt="Profile Image" />}
             <div className="message-content">
-              <div className="nickname">{message.nickname}</div>
               <div className="content">{message.message}</div>
+              <div className="timestamp">{formatTime(message.createdAt)}</div> {/* 시간만 표시 */}
             </div>
           </div>
         ))}
