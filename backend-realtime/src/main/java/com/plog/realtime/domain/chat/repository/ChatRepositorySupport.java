@@ -25,13 +25,12 @@ public class ChatRepositorySupport extends QuerydslRepositorySupport {
         // 모든 채팅 메시지를 최신순으로 정렬한 후
         List<Chat> sortedChats = queryFactory.selectFrom(chat)
                 .where(chat.chatRoom.chatRoomId.eq(chatRoomId))
-                .orderBy(chat.createdAt.desc())
                 .fetch();
 
         // 정렬된 리스트에서 페이지네이션 적용
         List<Chat> filteredArticleList = sortedChats.stream()
                 .sorted((a1, a2) -> {
-                        return a2.getCreatedAt().compareTo(a1.getCreatedAt());
+                        return a1.getCreatedAt().compareTo(a2.getCreatedAt());
                 })
                 .skip(page * size)
                 .limit(size)
