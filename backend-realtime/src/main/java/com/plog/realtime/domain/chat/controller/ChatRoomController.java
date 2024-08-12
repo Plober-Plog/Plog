@@ -48,7 +48,7 @@ public class ChatRoomController {
 
     @Operation(summary = "채팅방 목록 조회", description = "사용자가 소속된 모든 채팅방 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<?> getAllChatRooms(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<ChatRoomGetListResponseDto>> getAllChatRooms(@RequestHeader("Authorization") String token) {
         log.info(">>> getAllChatRooms 호출됨");
         List<ChatRoomGetListResponseDto> chatRoomList = chatRoomService.getAllChatRooms(token);
         log.info(">>> 조회된 채팅방 목록: {}", chatRoomList.stream().toList());
