@@ -2,12 +2,11 @@ package com.plog.realtime.domain.chat.service;
 
 import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
 import com.plog.realtime.domain.chat.dto.request.ChatRoomUpdateRequestDto;
+import com.plog.realtime.domain.chat.dto.response.ChatRoomGetListResponseDto;
+import com.plog.realtime.domain.chat.entity.Chat;
 import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.entity.ChatUser;
-import com.plog.realtime.domain.chat.repository.ChatRoomRepositorySupport;
-import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
-import com.plog.realtime.domain.chat.repository.ChatUserRepository;
-import com.plog.realtime.domain.chat.repository.ChatUserRepositorySupport;
+import com.plog.realtime.domain.chat.repository.*;
 import com.plog.realtime.domain.user.entity.User;
 import com.plog.realtime.domain.user.repository.UserRepository;
 import com.plog.realtime.global.exception.EntityNotFoundException;
@@ -19,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatUserRepository chatUserRepository;
     private final ChatUserRepositorySupport chatUserRepositorySupport;
     private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     @Transactional
     @Override
@@ -72,15 +74,46 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    public List<ChatRoom> getAllChatRooms(String token) {
+    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token) {
         log.info(">>> getAllChatRooms 호출됨");
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> 토큰에서 추출된 userId: {}", userId);
 
+        // 사용자가 참여한 모든 채팅방을 가져옵니다.
         List<ChatRoom> chatRooms = chatRoomRepositorySupport.findChatRoomsByUserId(userId);
-        log.info(">>> 조회된 채팅방 목록: {}", chatRooms);
 
-        return chatRooms;
+        // 채팅방에 대한 정보를 담을 DTO 리스트를 생성합니다.
+        List<ChatRoomGetListResponseDto> response = chatRooms.stream().map(chatRoom -> {
+            // 각 채팅방에 참여하고 있는 사용자들을 가져옵니다.
+            List<User> users = chatRoomRepository.findUserByChatRoomId(chatRoom.getChatRoomId());
+
+            // 마지막 메시지를 가져옵니다.
+            Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
+
+            // 사용자가 마지막 메시지를 읽었는지 여부를 판단합니다.
+            ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
+                    .orElseThrow(() -> new EntityNotFoundException("ChatUser not found"));
+            boolean isRead = lastChat.getCreatedAt().isBefore(chatUser.getLastReadAt());
+
+            // DTO를 생성하여 리스트에 추가합니다.
+            return new ChatRoomGetListResponseDto(chatRoom, users, lastChat, isRead);
+        }).collect(Collectors.toList());
+
+        log.info(">>> 조회된 채팅방 목록: {}", response);
+
+        return response;
+    }
+
+    @Transactional
+    public void updateLastReadAt(String token, Long chatRoomId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new EntityNotFoundException("채팅방을 못 찾았습니다."));
+        ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
+                .orElseThrow(() -> new EntityNotFoundException("채팅 참여자를 못 찾았습니다."));
+
+        chatUser.setLastReadAt(LocalDateTime.now());
+        chatUserRepository.save(chatUser);
     }
 
     @Override

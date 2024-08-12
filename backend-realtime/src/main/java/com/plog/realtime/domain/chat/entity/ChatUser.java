@@ -4,6 +4,8 @@ import com.plog.realtime.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +25,7 @@ public class ChatUser {
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "userId")
     private User user;
+
+    // 추가: 사용자가 마지막으로 읽은 메시지의 시간
+    private LocalDateTime lastReadAt;
 }

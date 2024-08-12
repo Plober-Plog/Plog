@@ -2,6 +2,7 @@ package com.plog.realtime.domain.chat.controller;
 
 import com.plog.realtime.domain.chat.dto.request.ChatRoomCreateRequestDto;
 import com.plog.realtime.domain.chat.dto.request.ChatRoomUpdateRequestDto;
+import com.plog.realtime.domain.chat.dto.response.ChatRoomGetListResponseDto;
 import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
 import com.plog.realtime.domain.chat.service.ChatRoomService;
@@ -49,9 +50,21 @@ public class ChatRoomController {
     @GetMapping
     public ResponseEntity<?> getAllChatRooms(@RequestHeader("Authorization") String token) {
         log.info(">>> getAllChatRooms 호출됨");
-        List<ChatRoom> chatRoomList = chatRoomService.getAllChatRooms(token);
-        log.info(">>> 조회된 채팅방 목록: {}", chatRoomList);
+        List<ChatRoomGetListResponseDto> chatRoomList = chatRoomService.getAllChatRooms(token);
+        log.info(">>> 조회된 채팅방 목록: {}", chatRoomList.stream().toList());
         return ResponseEntity.ok(chatRoomList);
+    }
+
+    @Operation(summary = "채팅방 입장", description = "사용자가 채팅방에 입장을 합니다.")
+    @PostMapping("/api/chatRooms/{chatRoomId}/updateLastReadAt")
+    public ResponseEntity<?> updateLastReadAt(@PathVariable Long chatRoomId,
+                                              @RequestHeader("Authorization") String token) {
+        if(token == null || !token.startsWith("Bearer ")) {
+            log.error(">>> updateLastReadAt - 토큰이 없거나 Bearer로 시작하지 않습니다.");
+            throw new NotValidRequestException("토큰이 없거나 Bearer로 시작하지 않습니다.");
+        }
+        chatRoomService.updateLastReadAt(token, chatRoomId);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "채팅방 사용자 목록 조회", description = "특정 채팅방에 소속된 사용자 목록을 조회합니다.")

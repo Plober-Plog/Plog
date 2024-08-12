@@ -1,5 +1,6 @@
 package com.plog.realtime.domain.chat.repository;
 
+import com.plog.realtime.domain.chat.dto.response.ChatRoomGetListResponseDto;
 import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.entity.QChatRoom;
 import com.plog.realtime.domain.chat.entity.QChatUser;
@@ -30,10 +31,13 @@ public class ChatRoomRepositorySupport extends QuerydslRepositorySupport {
         QChatUser qChatUser = QChatUser.chatUser;
         QChatRoom qChatRoom = QChatRoom.chatRoom;
 
-        return queryFactory.select(qChatRoom)
+        // 사용자가 참여하고 있는 채팅방을 조회하는 쿼리
+        List<ChatRoom> chatRoomList = queryFactory.select(qChatRoom)
                 .from(qChatUser)
-                .join(qChatUser.chatRoom, qChatRoom)
-                .where(qChatUser.user.userId.eq(userId))
+                .join(qChatUser.chatRoom, qChatRoom) // ChatUser와 ChatRoom을 조인
+                .where(qChatUser.user.userId.eq(userId)) // 해당 userId에 대한 조건
                 .fetch();
+
+        return chatRoomList;
     }
 }
