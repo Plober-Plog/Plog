@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
-import REALTIME_API from '../../apis/api';
+import { getCookie } from '../../utils/cookieUtils';
+
 
 // const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime"; // realtime api 주소
 // // 1. 사용자를 식별할 JWT -> cookie에서 가져오기
@@ -15,12 +16,17 @@ const ChatRoom = ({ chatRoomId }) => { // ChatRoomList에서 해당 채팅방을
     profile: "https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png", // cookie에서 가져올 로그인한 회원 프로필 사진
   });
   const [messageContent, setMessageContent] = useState("");
-
+  const token = getCookie('accessToken');    
   useEffect(() => {
+    // 쿠키에서 토큰 가져오기
+
     const socket = new SockJS(`https://i11b308.p.ssafy.io/realtime/chat/ws`); // sockjs 를 이용한 websocket 연결
 
     const stompClient = new Client({
       webSocketFactory: () => socket,
+      connectHeaders: {
+        Authorization: `Bearer ${token}`,  // connectHeaders에 토큰 추가
+      },
       onConnect: (frame) => {
         console.log('WebSocket 연결 성공: ' + frame);
         stompClient.subscribe(`/topic/chatroom-${chatRoomId}`, messageOutput => { // chatroom-${chatRoomId} 가 돼야 함! 
@@ -30,6 +36,7 @@ const ChatRoom = ({ chatRoomId }) => { // ChatRoomList에서 해당 채팅방을
         console.log('Join 메시지 전송');
         stompClient.publish({
           destination: `/app/chat.addUser/${chatRoomId}`, // /add.chat.addUser/${chatRoomId} 가 돼야 함
+          headers: { 'Authorization': token }, 
           body: JSON.stringify({
             nickname: user.nickname,
             profile: user.profile,
@@ -63,6 +70,8 @@ const ChatRoom = ({ chatRoomId }) => { // ChatRoomList에서 해당 채팅방을
     if (client && client.connected) {
       client.publish({
         destination: `/app/chat.sendMessage/${chatRoomId}`, // 2 대신 chatRoomId
+        headers: 
+        { 'Authorization': token }, 
         body: JSON.stringify({
           nickname: user.nickname,
           profile: user.profile,
@@ -80,6 +89,7 @@ const ChatRoom = ({ chatRoomId }) => { // ChatRoomList에서 해당 채팅방을
       console.log('Leave 메시지 전송');
       client.publish({
         destination: `/app/chat.leaveUser/${chatRoomId}`, // 2 대신 chatRoomId
+        headers: { 'Authorization': token }, 
         body: JSON.stringify({
           nickname: user.nickname,
           profile: user.profile,
