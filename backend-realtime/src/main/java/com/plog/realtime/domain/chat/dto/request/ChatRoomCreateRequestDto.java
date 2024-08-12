@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @ToString
 public class ChatRoomCreateRequestDto {
+    private String targetSearchId;
     private int chatRoomType;
     private String chatRoomName;
 }
