@@ -49,10 +49,11 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
   }, [searchId, tagTypeList, selectedVisibility]);
 
   const handleScroll = () => {
-    if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1 && hasMore && !loading) {
+    if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 10 && hasMore && !loading) {
        fetchSnsList(searchId, page);
     }
   };
+ 
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
