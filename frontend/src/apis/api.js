@@ -68,9 +68,7 @@ API.interceptors.response.use(
         // 만료됐으면 로그인 페이지로 이동
         eraseCookie('accessToken');
         eraseCookie('refreshToken');
-        eraseCookie('userData');
         useAuthStore.getState().clearToken();
-        useAuthStore.getState().clearUserData();
         useNavigate()('/login');
         return Promise.reject(refreshError);
       }

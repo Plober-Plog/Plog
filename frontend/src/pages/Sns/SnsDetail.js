@@ -32,7 +32,7 @@ const SnsDetail = () => {
         console.log('@@@게시글 정보:', response.data);
         setArticle(response.data);
         const writerInfo = {
-          imgSrc: response.data.profile,
+          profile: response.data.profile,
           recordDate: response.data.createdAt.slice(0, 10),
           nickname: response.data.nickname,
         }
@@ -45,7 +45,7 @@ const SnsDetail = () => {
     fetchArticle();
   }, [articleId]);
 
-  if (!article || !writerInfo.imgSrc) {
+  if (!article || !writerInfo.profile) {
     return <div>Loading...</div>;
   }
 
