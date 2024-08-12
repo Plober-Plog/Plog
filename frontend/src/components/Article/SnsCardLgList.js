@@ -76,6 +76,7 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
           isBookmarked={sns.isBookmarked}
           createdAt={sns.createdAt}
           profile={sns.profile}
+          searchId={sns.searchId}
         />
       ))}
       {loading && <div>Loading...</div>}

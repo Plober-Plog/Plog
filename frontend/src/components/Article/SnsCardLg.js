@@ -3,7 +3,7 @@ import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 import './SnsCardLg.css';
 
-const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked, createdAt, profile}) => {
+const SnsCardMd = ({ searchId, articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked, createdAt, profile}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -25,6 +25,10 @@ const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, i
   const cutContent = content && content.length > 50 ? content.slice(0, 50) + "..." : content;
   const formattedDate = formatDate(createdAt);
 
+  const handleProfileClick = (event) => {
+    event.stopPropagation();
+    navigate(`/profile/${searchId}`)
+  }
 
   return (
     <div className="sns-card-lg" onClick={handleClick}>
@@ -41,6 +45,7 @@ const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, i
           <img
             src={profile}
             alt="profile img"
+            onClick={handleProfileClick}
           />
           <div className="sns-card-lg-profile-info">
             <span>{nickname}</span>
