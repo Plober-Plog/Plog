@@ -85,7 +85,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         // 채팅방에 대한 정보를 담을 DTO 리스트를 생성합니다.
         List<ChatRoomGetListResponseDto> response = chatRooms.stream().map(chatRoom -> {
             // 각 채팅방에 참여하고 있는 사용자들을 가져옵니다.
-            List<User> users = chatRepository.findUserByChatRoom(chatRoom);
+            List<User> users = chatRepository.findUsersByChatRoom(chatRoom);
 
             // 마지막 메시지를 가져옵니다.
             Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
@@ -119,7 +119,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Override
     public List<User> getChatRoomUsers(Long chatRoomId) {
         log.info(">>> getChatRoomUsers 호출됨, chatRoomId: {}", chatRoomId);
-        List<User> users = chatRepository.findUserByChatRoom(chatRoomRepository.findByChatRoomId(chatRoomId));
+        List<User> users = chatRepository.findUsersByChatRoom(chatRoomRepository.findByChatRoomId(chatRoomId));
         log.info(">>> 조회된 채팅방 유저 목록: {}", users);
 
         return users;
