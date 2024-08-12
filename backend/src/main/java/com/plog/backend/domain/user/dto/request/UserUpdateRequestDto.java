@@ -1,6 +1,5 @@
 package com.plog.backend.domain.user.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,5 +20,4 @@ public class UserUpdateRequestDto {
     private int gugunCode;
     private String profileInfo;
     private boolean isAd;
-    private boolean isPushNotificationEnabled;
 }

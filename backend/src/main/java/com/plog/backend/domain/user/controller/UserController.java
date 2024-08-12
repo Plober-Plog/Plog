@@ -6,6 +6,7 @@ import com.plog.backend.domain.user.dto.request.*;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
+import com.plog.backend.domain.user.dto.response.UserPushResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.service.UserServiceImpl;
@@ -247,5 +248,38 @@ public class UserController {
         UserGetResponseDto responseDto = userService.getUser(email);
         log.info(">>> 상대 프로필 조회, 이메일, 반환값 : {}, {}", email, responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @Operation(summary = "회원 푸시 정보 조회", description = "회원 푸시 정보를 조회합니다.")
+    @GetMapping("/push")
+    public ResponseEntity<UserPushResponseDto> getPushUser(@RequestHeader(value = "Authorization", required = false) String token) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
+        log.info(">>> [GET] /user/logout - 로그아웃 요청: {}", token);
+        log.info(">>> [GET] /user - 회원 푸시 정보 조회 요청: {}", token);
+        UserPushResponseDto userPushResponseDto = userService.getPushUser(token);
+        log.info(">>> [GET] /user - 회원 푸시 정보 조회 완료: {}", userPushResponseDto);
+        return ResponseEntity.status(200).body(userPushResponseDto);
+    }
+
+    @Operation(summary = "회원 푸시 수정", description = "회원 푸시 정보를 수정합니다.")
+    @PatchMapping("/push")
+    public ResponseEntity<BaseResponseBody> updatePushUser(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @ModelAttribute UserPushRequestDto userPushRequestDto) {
+        log.info(">>> [PATCH] /user - 회원 푸시 수정 요청 데이터: {}", userPushRequestDto);
+
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            log.info(">>> [PATCH] /user - Bearer 제거 후 토큰: {}", token);
+        }
+
+        User user = userService.updatePushUser(token, userPushRequestDto);
+        log.info(">>> [PATCH] /user - 회원 푸시 수정 완료: {}", user);
+
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 푸시 정보 수정이 완료되었습니다."));
     }
 }
