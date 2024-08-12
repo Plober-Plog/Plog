@@ -35,7 +35,7 @@ const PlantReport = () => {
 
   if (loading) return <p>로딩중입니당..</p>;
 
-  if (!plantData) return <p>데이터가 없습니다.</p>;
+  if (!plantData) return <p>데이터가 없습니다. 식물 등록 또는 일지를 작성해주세요. </p>;
 
   // 이미지 배열 생성
   const uniqueUrl1 = `${plantData.firstDayImageUrl}?t=${new Date().getTime()}`;
