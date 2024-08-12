@@ -3,13 +3,11 @@ package com.plog.backend.domain.user.service;
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
-import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
-import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
-import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
-import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
+import com.plog.backend.domain.user.dto.request.*;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
+import com.plog.backend.domain.user.dto.response.UserPushResponseDto;
 import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.global.exception.DuplicateEntityException;
 import com.plog.backend.domain.user.repository.UserRepository;
@@ -238,7 +236,6 @@ public class UserServiceImpl implements UserService {
             user.setSource(request.getSource());
             user.setSidoCode(request.getSidoCode());
             user.setGugunCode(request.getGugunCode());
-            user.setPushNotificationEnabled(request.isPushNotificationEnabled());
             User updatedUser = userRepository.save(user);
             log.info(">>> updateUser - 사용자 업데이트됨: {}", updatedUser);
             return updatedUser;
@@ -346,5 +343,39 @@ public class UserServiceImpl implements UserService {
 
         log.info(">>> getProfile - 프로필 정보: {}", responseDto);
         return responseDto;
+    }
+
+    @Override
+    public UserPushResponseDto getPushUser(String token) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> getPushUser - 추출된 사용자 ID: {}", userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error(">>> getPushUser - 사용자를 찾을 수 없음: {}", userId);
+            return new NotValidRequestException("사용자를 찾을 수 없습니다.");
+        });
+
+        return UserPushResponseDto.builder()
+                .isPushNotificationEnabled(user.isPushNotificationEnabled())
+                .build();
+    }
+
+    @Override
+    public User updatePushUser(String token, UserPushRequestDto userPushRequestDto) {
+        log.info(">>> updatePushUser - 토큰: {}, 요청 데이터: {}", token, userPushRequestDto);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> updatePushUser - 추출된 사용자 ID: {}", userId);
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            log.info(">>> updatePushUser - 사용자 찾음: {}", user);
+            user.setPushNotificationEnabled(userPushRequestDto.isPushNotificationEnabled());
+            User updatedUser = userRepository.save(user);
+            log.info(">>> updatePushUser - 사용자 업데이트됨: {}", updatedUser);
+            return updatedUser;
+        } else {
+            log.error(">>> updatePushUser - 사용자를 찾을 수 없음: {}", userId);
+            throw new EntityNotFoundException("사용자를 찾을 수 없습니다.");
+        }
     }
 }
