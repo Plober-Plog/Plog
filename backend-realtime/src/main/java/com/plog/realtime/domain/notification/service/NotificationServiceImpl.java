@@ -115,6 +115,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void checkPlantNotifications() {
         log.info("checkPlantNotifications 시작");
         List<Plant> plants = plantRepository.findAll();
+        log.info("plants count" + plants.size());
 
         for (Plant plant : plants) {
             User user = plant.getUser();
