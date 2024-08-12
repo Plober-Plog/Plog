@@ -32,7 +32,7 @@ const CommentItem = ({ comment, handleReply }) => {
     <div style={divStyle}>
       {comment.state === 1 ? (
         <>
-          <img src={comment.profile} alt="profile" onClick={() => navigate(`/profile/${comment.searchId}`)} />
+          <img src={comment.profile} style={{ width: '60px', height: '60px' }} alt="profile" onClick={() => navigate(`/profile/${comment.searchId}`)} />
           <h4>{comment.nickname}</h4>
           <p>{comment.content}</p>
           <p>{formattedDate}</p>

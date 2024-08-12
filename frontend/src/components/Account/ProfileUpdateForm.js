@@ -143,6 +143,14 @@ const ProfileUpdateForm = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
+      
+      // 유저데이터 변경
+      setUserData({
+       ...userData,
+       ...updatedUserData,
+        profile: uploadedFile? URL.createObjectURL(uploadedFile) : userData.profile
+      });
+
       console.log('회원 정보 수정 성공:', response.data);
       setOpenModal(true);
     } catch (error) {
