@@ -83,7 +83,7 @@ const PasswordUpdate = () => {
     <div className="account-container">
       <h2 className="account-title">비밀번호 변경</h2>
       <form onSubmit={e => e.preventDefault()} className="account-form">
-        <div>
+        <div className="password-container">
           <InputField
             type={showPassword ? "text" : "password"}
             placeholder="비밀번호" 
@@ -92,13 +92,15 @@ const PasswordUpdate = () => {
             isRequired={true} 
             className="account-input"
           />
-          <ATag
+          <span
             onClick={() => setShowPassword(!showPassword)}
-            content={showPassword ? '숨기기' : '보기'}
-          />
+            className="password-toggle"
+          >
+            {showPassword ? '숨기기' : '보기'}
+          </span>
           {passwordError && <p className="account-error">{passwordError}</p>}
         </div>
-        <div>
+        <div className="password-container">
           <InputField
             type={showPassword ? "text" : "password"}
             placeholder="비밀번호 확인" 
@@ -107,10 +109,12 @@ const PasswordUpdate = () => {
             isRequired={true} 
             className="account-input"
           />
-          <ATag
+          <span
             onClick={() => setShowPassword(!showPassword)}
-            content={showPassword ? '숨기기' : '보기'}
-          />
+            className="password-toggle"
+          >
+            {showPassword ? '숨기기' : '보기'}
+          </span>
           {passwordConfirmError && <p className="account-error">{passwordConfirmError}</p>}
         </div>
         <Btn
@@ -127,6 +131,7 @@ const PasswordUpdate = () => {
         onClose={closeModal}
       />
     </div>
+
   )
 }
 

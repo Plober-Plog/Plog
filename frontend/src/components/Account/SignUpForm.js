@@ -289,8 +289,8 @@ const closeModal = () => {
   return (
     <div>
       <form onSubmit={(e) => e.preventDefault()} className="account-form">
-        <div>
-          {!isFormValid && <p className="account-error">필수 항목을 모두 입력해 주세요.</p>}
+        {!isFormValid && <p className="account-error">필수 항목을 모두 입력해 주세요.</p>}
+        <div className="password-container">
           <InputField
             type="text"
             placeholder="아이디"
@@ -307,10 +307,15 @@ const closeModal = () => {
             isRequired={true}
             className="account-input"
           />
-          <ATag content="중복확인" onClick={handleCheckSearchId}/>
-          {searchIdCheckMsg && <p className="account-error">{searchIdCheckMsg}</p>}
+          <span
+            onClick={handleCheckSearchId}
+            className="password-toggle"
+          >
+            중복확인
+          </span>
         </div>
-        <div>
+        {searchIdCheckMsg && <p className="account-error">{searchIdCheckMsg}</p>}
+        <div className="password-container">
           <InputField
             type="email"
             placeholder="이메일"
@@ -329,14 +334,17 @@ const closeModal = () => {
             className="account-input"
           />
           {!isEmailVerified && (
-            <ATag
-              content="인증번호 전송" onClick={handleCheckEmail}
-            />
+            <span
+              onClick={handleCheckEmail}
+              className="password-toggle"
+            >
+              인증번호 전송
+            </span>
           )}
           {emailCheckMsg && <p className="account-error">{emailCheckMsg}</p>}
         </div>
         {isEmailVerificationSent && (
-          <div>
+          <div className="password-container">
             <InputField
               type="text"
               placeholder="이메일 인증 코드"
@@ -346,12 +354,14 @@ const closeModal = () => {
               disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
               className="account-input"
             />
-            <p>{formatTime(timer)}</p>
-            <ATag content="인증 확인" onClick={handleVerifyEmailCode} />
+            <span className="password-toggle">
+              <span>{formatTime(timer)}</span>
+              <span onClick={handleVerifyEmailCode}>인증확인</span>
+            </span>
             {emailVerificationMsg && <p className="account-error">{emailVerificationMsg}</p>}
           </div>
         )}
-        <div>
+        <div className="password-container">
           <InputField
             type={showPassword ? 'text' : 'password'}
             placeholder="비밀번호"
@@ -368,13 +378,15 @@ const closeModal = () => {
             isRequired={true}
             className="account-input"
           />
-          <ATag
+          <span
             onClick={() => setShowPassword(!showPassword)}
-            content={showPassword ? '숨기기' : '보기'}
-          />
+            className="password-toggle"
+          >
+            {showPassword ? '숨기기' : '보기'}
+          </span>
           {passwordCheckMsg && <p className="account-error">{passwordCheckMsg}</p>}
         </div>
-        <div>
+        <div className="password-container">
           <InputField
             type={showPassword ? 'text' : 'password'}
             placeholder="비밀번호 확인"
@@ -391,10 +403,12 @@ const closeModal = () => {
             isRequired={true}
             className="account-input"
           />
-          <ATag
+          <span
             onClick={() => setShowPassword(!showPassword)}
-            content={showPassword ? '숨기기' : '보기'}
-          />
+            className="password-toggle"
+          >
+            {showPassword ? '숨기기' : '보기'}
+          </span>
           {passwordConfirmCheckMsg && <p className="account-error">{passwordConfirmCheckMsg}</p>}
         </div>
         <div>
@@ -415,8 +429,9 @@ const closeModal = () => {
             className="account-input"
           />
           {nicknameCheckMsg && <p className="account-error">{nicknameCheckMsg}</p>}
-          <ATag content="추천받기" />
         </div>
+
+
         <div>
           <InputField
             type="date"
@@ -427,6 +442,9 @@ const closeModal = () => {
             className="account-input"
           />
         </div>
+
+
+        
         <SelectField
           value={source}
           onChange={(e) => setSource(e.target.value)}

@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react'; // useEffect 추가
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 import axios from 'axios';
 import sha256 from 'js-sha256';
 import useAuthStore from '../../stores/member';
+import { requestForToken } from '../../firebase'; // FCM 관련 코드 추가
+
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
 import ATag from '../Common/ATag';
-import { requestForToken } from '../../firebase'; // FCM 관련 코드 추가
+
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +20,6 @@ const LoginForm = () => {
   const setUserData = useAuthStore((state) => state.setUserData);
   const navigate = useNavigate();
 
-  // TODO 유저 데이터 로컬에 저장
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -64,21 +65,23 @@ const LoginForm = () => {
             className="account-input"
           />
         </div>
-        <div>
+        <div className="password-container">
           <InputField
             type={showPassword ? 'text' : 'password'}
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true}
-            className="account-input"
+            className="account-input password-input"
           />
-          <ATag
+          <span
             onClick={() => setShowPassword(!showPassword)}
-            content={showPassword ? '숨기기' : '보기'}
-          />
+            className="password-toggle"
+          >
+            {showPassword ? '숨기기' : '보기'}
+          </span>
         </div>
-        {loginError && <p>{loginError}</p>}
+        {loginError && <p className="account-error">{loginError}</p>}
         <Btn
           content="로그인"
           disabled={!email || !password}

@@ -6,8 +6,8 @@ import './Account.css';
 const ProfileUpdate = () => {
 
   return (
-    <div>
-      <h1 className='account-title'>회원정보 수정</h1>
+    <div className="account-container">
+      <h1 className="account-title">회원정보 수정</h1>
       <ProfileUpdateForm />
     </div>
   );
