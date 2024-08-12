@@ -149,7 +149,7 @@ public class NeighborServiceImpl implements NeighborService {
         // 서로 이웃 신청 알림 보내기
         String sourceSearchId = user.getSearchId();
         String targetSearchId = neighborUser.getSearchId();
-        String articleUrl = String.format("%s/profile/%d", serverUrl, sourceSearchId);
+        String articleUrl = String.format("%s/profile/%s", serverUrl, sourceSearchId);
         if (!sourceSearchId.equals(targetSearchId)) {
             String type = "M_NEIGHBOR_REQUEST";
             String urlString = String.format("%s/realtime/notification/send?sourceSearchId=%s&targetSearchId=%s&clickUrl=%s&type=%s",
