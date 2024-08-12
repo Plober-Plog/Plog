@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import API from "../../apis/api";
+import useAuthStore from "../../stores/member";
 
 import WriterInfo from "../../components/Common/WriterInfo";
 import Comment from '../../components/Sns/Comment';
@@ -9,7 +10,6 @@ import ImgSlider from "../../components/Common/ImgSlider";
 import BtnList from "../../components/Sns/BtnList";
 import Btn from "../../components/Common/Btn";
 
-import useAuthStore from "../../stores/member";
 
 const SnsDetail = () => {
   const navigate = useNavigate();
@@ -31,21 +31,12 @@ const SnsDetail = () => {
         const response = await API.get(`/user/sns/${articleId}`);
         console.log('@@@게시글 정보:', response.data);
         setArticle(response.data);
-
-        // 유저 정보 가져오기
-        try {
-          const userResponse = await API.get(`/user/profile/${response.data.searchId}`);
-          console.log('@@@유저 정보:', userResponse.data);
-          const writerInfo = {
-            imgSrc: userResponse.data.profile,
-            recordDate: userResponse.data.createAt,
-            nickname: userResponse.data.nickname,
-          }
-          console.log(writerInfo)
-          setWriterInfo(writerInfo);
-        } catch (err) {
-          console.error('@@@유저 정보 불러오기 실패 : ', err);
+        const writerInfo = {
+          imgSrc: response.data.profile,
+          recordDate: response.data.createdAt.slice(0, 10),
+          nickname: response.data.nickname,
         }
+        setWriterInfo(writerInfo);
       } catch (err) {
         console.error('@@@게시물 불러오기 실패 : ', err);
       }

@@ -9,7 +9,7 @@ const WriterInfo = ({ data = {}, type }) => {
   if (type === 'plant') {
     writerInfoData.imgSrc = data.profile || defaultImg;
     writerInfoData.nickname = data.nickname || 'Unknown Nickname';
-    writerInfoData.info = data.plantTypeName || 'Unknown Plant';
+    writerInfoData.info = data.plantTypeName || data.otherPlantTypeName;
   } else if (type === 'user') {
     writerInfoData.imgSrc = data.profile || defaultImg;
     writerInfoData.nickname = data.nickname || 'Unknown Nickname';

@@ -28,20 +28,24 @@ const ProfileHeader = ({ data = {}, type }) => {
   console.log('ProfileHeader Processed Data:', profileData);
 
   return (
-    <div>
-      <ProfileImgAndTitle 
-        imgSrc={profileData.profile}
-        title={profileData.title}
-        nickname={profileData.nickname}
-      />
-      <ProfileBio 
-        bio={profileData.bio}
-        type={type}
-        ownerId={profileData.ownerId}
-        hasNotification={profileData.hasNotification}
-        isFixed={profileData.isFixed}
-        profileData={data}
-      />
+    <div className='grid grid-cols-12 gap-4 mt-5 mb-4'>
+      <div className='col-span-4'>
+        <ProfileImgAndTitle 
+          imgSrc={profileData.profile}
+          title={profileData.title}
+          nickname={profileData.nickname}
+        />
+      </div>
+      <div className='col-span-8'>
+        <ProfileBio 
+          bio={profileData.bio}
+          type={type}
+          ownerId={profileData.ownerId}
+          hasNotification={profileData.hasNotification}
+          isFixed={profileData.isFixed}
+          profileData={data}
+        />
+      </div>
     </div>
   );
 };

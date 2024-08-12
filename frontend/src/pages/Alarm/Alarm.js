@@ -7,6 +7,7 @@ import { format, isToday, isYesterday, subDays } from 'date-fns';
 const Alarm = () => {
   const [groupedAlarms, setGroupedAlarms] = useState({});
   const [page, setPage] = useState(0);
+  const [hasMoreAlarms, setHasMoreAlarms] = useState(true); // 추가된 상태
   const searchId = useAuthStore((state) => state.getSearchId());
 
   useEffect(() => {
@@ -16,25 +17,56 @@ const Alarm = () => {
           params: { searchId, page },
         });
         
-        // 알림을 날짜별로 그룹화
-        const alarmsByDate = response.data.reduce((groups, alarm) => {
-          const date = alarm.notificationDate;
-          if (!groups[date]) {
-            groups[date] = [];
-          }
-          groups[date].push(alarm);
-          return groups;
-        }, {});
+        if (response.data.length === 0) {
+          setHasMoreAlarms(false);
+        } else {
+          const alarmsByDate = response.data.reduce((groups, alarm) => {
+            const date = alarm.notificationDate;
+            if (!groups[date]) {
+              groups[date] = [];
+            }
+            groups[date].push(alarm);
+            return groups;
+          }, {});
 
-        setGroupedAlarms(alarmsByDate);
-        console.log('날짜별로 그룹화된 알림 내역: ', alarmsByDate);
+          setGroupedAlarms((prevAlarms) => {
+            const mergedAlarms = { ...prevAlarms };
+            Object.keys(alarmsByDate).forEach((date) => {
+              if (!mergedAlarms[date]) {
+                mergedAlarms[date] = [];
+              }
+              mergedAlarms[date] = [...mergedAlarms[date], ...alarmsByDate[date]];
+            });
+            return mergedAlarms;
+          });
+
+          console.log('날짜별로 그룹화된 알림 내역: ', alarmsByDate);
+        }
       } catch (error) {
         console.error('알림 받아오기 실패:', error);
       }
     };
 
-    fetchAlarms();
-  }, []);
+    if (hasMoreAlarms) {
+      fetchAlarms();
+    }
+  }, [page]); // page가 변경될 때마다 알림을 가져옴
+
+  
+  // 스크롤 이벤트로 페이지 증가
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight && hasMoreAlarms) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [hasMoreAlarms]);
+
 
   // 날짜 포맷팅 함수
   const formatDate = (dateStr) => {
@@ -72,7 +104,7 @@ const Alarm = () => {
                 alarm={alarm}
               />
             ))}
-          <hr />
+            <hr />
           </div>
         ))
       ) : (
