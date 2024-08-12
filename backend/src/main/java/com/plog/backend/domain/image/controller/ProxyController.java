@@ -2,7 +2,8 @@ package com.plog.backend.domain.image.controller;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
-import org.apache.commons.io.IOUtils;
+import com.amazonaws.util.IOUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,11 @@ import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/image")
+@RequiredArgsConstructor
 @Slf4j
 public class ProxyController {
 
-    @Autowired
-    private AmazonS3 amazonS3;
+    private final AmazonS3 amazonS3;
 
     @GetMapping("/proxy")
     public ResponseEntity<byte[]> getImage(@RequestParam String url) {
