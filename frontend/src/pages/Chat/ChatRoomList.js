@@ -33,8 +33,9 @@ const ChatRooms = () => {
   const handleCreateChatRoom = async () => {
     try {
       const response = await axios.post(`${API_REALTIME_URL}/chat/room`, {
+        targetSearchId: "dddddd",
         chatRoomType: 1,
-        chatRoomName: "테스트"
+        chatRoomName: "dddddd"
       }, {
         headers: {
           Authorization: token
@@ -48,7 +49,11 @@ const ChatRooms = () => {
   };
 
   const handleEnterChatRoom = (chatRoomId) => {
-    navigate(`/chat/${chatRoomId}`);
+    navigate(`/chat/${chatRoomId}`, {
+      state: {
+        chatRoomId: chatRoomId,
+      }
+    });
   };
 
   return (

@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import { getCookie } from '../../utils/cookieUtils';
-
+import { useLocation } from 'react-router-dom';
 
 // const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime"; // realtime api 주소
 // // 1. 사용자를 식별할 JWT -> cookie에서 가져오기
 // const token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDUzMTUsImlhdCI6MTcyMjgzNTcxNX0.BFVSXUtidgN3jrayov5V0wnDeU2QkItay86uQu2wf3o";
 
-const ChatRoom = ({ chatRoomId }) => { // ChatRoomList에서 해당 채팅방을 클릭하면 chatRoomId를 가지고 페이지 이동
+const ChatRoom = ({ }) => { // ChatRoomList에서 해당 채팅방을 클릭하면 chatRoomId를 가지고 페이지 이동
+  const location = useLocation(); 
+  const { chatRoomId } = location.state; 
   const [client, setClient] = useState(null); // stomp client
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState({
@@ -20,7 +22,6 @@ const ChatRoom = ({ chatRoomId }) => { // ChatRoomList에서 해당 채팅방을
 
   useEffect(() => {
     // 쿠키에서 토큰 가져오기
-
     const socket = new SockJS(`https://i11b308.p.ssafy.io/realtime/chat/ws`); // sockjs 를 이용한 websocket 연결
 
     const stompClient = new Client({
