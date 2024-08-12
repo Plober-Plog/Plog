@@ -52,7 +52,7 @@ const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSe
   return (
     <div className={`footercmt-container ${isActive ? 'footercmt-active' : ''}`}>
       <div>
-        {profile && <img src={profile} alt="profile" className="footercmt-img" style={{ width: '40px', height: '40px' }} />}
+        {profile && <img src={profile} alt="profile" className="footercmt-img" />}
       </div>
       <form onSubmit={handleCmtWrite} className="footercmt-form">
         <div>

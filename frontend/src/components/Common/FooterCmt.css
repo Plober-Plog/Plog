@@ -1,5 +1,3 @@
-/* FooterCmt.css */
-
 .footercmt-container {
   display: flex;
   width: 100%;
@@ -8,14 +6,16 @@
   justify-content: space-between;
   background-color: #fff;
   border-top: 1px solid #e7e7e7;
-  position: sticky; /* 화면에 고정 */
-  bottom: 0; /* 화면 하단에 위치 */
+  position: sticky; 
+  bottom: 0; 
   padding: 0 10px; 
 }
 
 .footercmt-img {
   border-radius: 50%;
   margin-right: 10px;
+  height: 40px;
+  width: 40px;
 }
 
 .footercmt-form {
@@ -29,7 +29,7 @@
   padding: 10px;
   flex: 1; 
   border-radius: 10px; 
-  background-color: #ffffff; /* 입력 박스 배경색 */
+  background-color: #ffffff; 
 }
 
 .footercmt-input::placeholder {
@@ -48,8 +48,8 @@
 }
 
 .footercmt-icon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 .footercmt-active {
