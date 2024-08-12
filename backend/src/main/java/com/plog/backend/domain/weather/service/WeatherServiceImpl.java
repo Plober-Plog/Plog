@@ -340,8 +340,12 @@ public class WeatherServiceImpl implements WeatherService {
 //    @PostConstruct
     @Override
     public void updateWeatherData() {
-        if (!isExistedWeatherDataInRedis())
-            updateAllWeatherForecast();
+        try{
+            if (!isExistedWeatherDataInRedis())
+                updateAllWeatherForecast();
+        }catch(Exception e){
+            throw e;
+        }
     }
 
 
