@@ -49,8 +49,8 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
   }, [searchId, tagTypeList, selectedVisibility]);
 
   const handleScroll = () => {
-    if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && hasMore && !loading) {
-      fetchSnsList(searchId, page);
+    if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1 && hasMore && !loading) {
+       fetchSnsList(searchId, page);
     }
   };
 
