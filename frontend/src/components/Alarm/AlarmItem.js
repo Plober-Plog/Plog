@@ -26,13 +26,15 @@ const AlarmItem = ({ alarm }) => {
   };
 
   return (
-    <div>
+    <div className='alarm-item-box'>
       <img 
         src={getImageSrc()}
         alt='프로필 이미지'
+        className='alarm-image'
       />
       <span
         onClick={handleMove}
+        className='alarm-content'
       >
         {alarm.content}
       </span>

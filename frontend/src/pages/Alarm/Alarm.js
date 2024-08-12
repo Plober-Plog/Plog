@@ -3,6 +3,7 @@ import axios from 'axios';
 import AlarmItem from '../../components/Alarm/AlarmItem';
 import useAuthStore from '../../stores/member';
 import { format, isToday, isYesterday, subDays } from 'date-fns';
+import './Alarm.css';
 
 const Alarm = () => {
   const [groupedAlarms, setGroupedAlarms] = useState({});
@@ -94,11 +95,11 @@ const Alarm = () => {
   };
 
   return (
-    <div>
+    <div className='alarm-container'>
       {Object.keys(groupedAlarms).length > 0 ? (
         Object.keys(groupedAlarms).map((date) => (
-          <div key={date}>
-            <h3>{formatDate(date)}</h3>
+          <div key={date} className='alarm-group-box'>
+            <h3 className='alarm-date'>{formatDate(date)}</h3>
             {groupedAlarms[date].map((alarm) => (
               <AlarmItem 
                 key={alarm.notificationId} 

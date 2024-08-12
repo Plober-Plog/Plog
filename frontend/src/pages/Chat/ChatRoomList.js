@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../utils/cookieUtils';
 
+import ChatListItem from '../../components/Chat/ChatListItem';
+
 const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
 
 const ChatRooms = () => {
@@ -19,7 +21,7 @@ const ChatRooms = () => {
           Authorization: token
         }
       });
-      console.log(response);
+      console.log('채팅방 불러오기 성공:', response.data);
       setChatRooms(response.data);
     } catch (error) {
       console.error('채팅방 목록을 불러오는 중 오류 발생:', error);
@@ -43,13 +45,13 @@ const ChatRooms = () => {
   return (
     <div className="chat-room-container">
       <h1>채팅방 목록</h1>
-      <ul>
-        {chatRooms.map((room) => (
-          <li key={room.chatRoomId} onClick={() => handleEnterChatRoom(room.chatRoomId, room.chatRoomName)}>
-            {room.chatRoomName}
-          </li>
-        ))}
-      </ul>
+      {chatRooms.map((chatRoom) => (
+        <ChatListItem
+          key={chatRoom.chatRoomId}
+          chatRoomId={chatRoom.chatRoomId}
+          chatRoomName={chatRoom.chatRoomName}
+        />
+      ))}
       {/* <button onClick={handleCreateChatRoom}>채팅방 개설</button> */}
     </div>
   );
