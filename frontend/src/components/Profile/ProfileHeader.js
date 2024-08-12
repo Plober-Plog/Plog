@@ -6,10 +6,13 @@ const ProfileHeader = ({ data = {}, type }) => {
 
   const profileData = {}
 
+  // const title = data.plantTypeName === 'Dummy' ? data.otherPlantTypeName : data.plantTypeName;
+
   if (type === 'plant') {
     console.log('ProfileHeader Data:', data)
     profileData.imgSrc = data.profile || '';
-    profileData.title = data.plantTypeName || '미지정 식물';
+    // profileData.title = title
+    profileData.title = data.plantTypeName || data.otherPlantTypeName
     profileData.nickname = data.nickname || '닉네임 없음';
     profileData.bio = data.bio || '자기소개가 비어 있습니다.';
     profileData.ownerId = data.plantId || null;

@@ -20,12 +20,22 @@ const PlantDetail = () => {
   const [plantData, setPlantData] = useState(null);
   const [articles, setArticles] = useState([]);
   const [plantTypeId, setPlantTypeId] = useState(null); //plantTypeId 받아오기
+  // const [otherPlantTypeId, setOtherPlantTypeId] = useState(null);
 
   useEffect(() => {
     const fetchPlantData = async () => {
       try {
         const response = await API.get(`/user/plant/${plantId}/info`);
-        setPlantData(response.data);
+
+        const displayPlantTypeName = response.data.plantTypeName === 'Dummy'
+          ? response.data.otherPlantTypeName
+          : response.data.plantTypeName;
+
+        setPlantData({
+          ...response.data,
+          plantTypeName: displayPlantTypeName,
+        });
+
         setPlantTypeId(response.data.plantTypeId);
       } catch (error) {
         console.error("PlantData Error:", error.response.data);
