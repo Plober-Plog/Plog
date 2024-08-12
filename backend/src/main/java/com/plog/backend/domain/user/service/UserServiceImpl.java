@@ -17,11 +17,13 @@ import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
+import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
 import com.plog.backend.global.util.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -346,5 +348,44 @@ public class UserServiceImpl implements UserService {
 
         log.info(">>> getProfile - 프로필 정보: {}", responseDto);
         return responseDto;
+    }
+
+    @Transactional
+    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
+        // 이메일로 사용자 조회
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        // 사용자가 없으면 회원가입 처리
+        if (user == null) {
+            user = User.builder()
+                    .email(email)
+                    .searchId(generateSearchId(email, provider)) // searchId 생성 로직 필요
+                    .nickname(name)
+                    .password("oauth2") // OAuth2.0 사용 시 비밀번호는 의미가 없을 수 있음.
+                    .provider(provider)
+                    .providerId(providerId)
+                    .image(new Image(profileImage))
+                    .role(1)
+                    .state(1)
+                    .totalExp(0)
+                    .chatAuth(1)
+                    .isPushNotificationEnabled(true)
+                    .build();
+            userRepository.save(user);
+        }
+
+        return ResponseEntity.ok(BaseResponseBody.of(200, "소셜 로그인이 되었습니다."));
+    }
+
+    private String generateSearchId(String email, int providerId) {
+        // searchId를 이메일 기반으로 생성하는 로직 구현
+        if(providerId == 1)
+            return email.split("@")[0] + "G";
+        else if(providerId == 2)
+            return email.split("@")[0] + "K";
+        else if(providerId == 3)
+            return email.split("@")[0] + "N";
+        else
+            return email.split("@")[0] + "S";
     }
 }

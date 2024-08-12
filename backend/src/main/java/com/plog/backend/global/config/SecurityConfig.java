@@ -71,6 +71,10 @@ public class SecurityConfig {
         config.addAllowedOrigin("https://i11b308.p.ssafy.io");
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("https://plogbucket.s3.ap-northeast-2.amazonaws.com/**");
+        config.addAllowedOrigin("https://plogbucket.s3.ap-northeast-2.amazonaws.com");
+        config.addAllowedOriginPattern("https://plogbucket.s3.ap-northeast-2.amazonaws.com/**");
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addAllowedOriginPattern("*");

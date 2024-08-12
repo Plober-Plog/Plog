@@ -63,8 +63,6 @@ public class User extends BaseEntity {
 
     @Column
     private int provider;
-    public Provider getProvider() {return Provider.provider(provider);};
-    public void setProvider(Provider provider) {this.provider = provider.getValue();}
 
     @Column
     private String providerId;
