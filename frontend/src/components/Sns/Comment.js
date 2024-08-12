@@ -46,7 +46,7 @@ const Comment = ({ articleId }) => {
   // 스크롤 이벤트 핸들러
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop + 50 >= document.documentElement.offsetHeight && hasMoreComments) {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight && hasMoreComments) {
         setPage(prevPage => prevPage + 1);
       }
     };
