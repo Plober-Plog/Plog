@@ -33,6 +33,7 @@ const ArticleCardList = ({ ownerId, articles = [], type }) => {
               ownerId={ownerId}
               id={article.plantDiaryId}
               log={monthDay}
+              recordDate={article.recordDate}
               thumbnail={article.thumbnail}
               type={type}
             />
