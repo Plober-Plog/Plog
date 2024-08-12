@@ -7,6 +7,7 @@ import com.plog.realtime.domain.chat.entity.ChatUser;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepositorySupport;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
 import com.plog.realtime.domain.chat.repository.ChatUserRepository;
+import com.plog.realtime.domain.chat.repository.ChatUserRepositorySupport;
 import com.plog.realtime.domain.user.entity.User;
 import com.plog.realtime.domain.user.repository.UserRepository;
 import com.plog.realtime.global.exception.EntityNotFoundException;
@@ -28,6 +29,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomRepositorySupport chatRoomRepositorySupport;
     private final ChatUserRepository chatUserRepository;
+    private final ChatUserRepositorySupport chatUserRepositorySupport;
     private final UserRepository userRepository;
 
     @Transactional
@@ -37,8 +39,15 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> 토큰에서 추출된 userId: {}", userId);
 
+        User targetUser = userRepository.findUserBySearchId(chatRoomCreateRequestDto.getTargetSearchId())
+                .orElseThrow(() -> new EntityNotFoundException("일치하는 타겟을 찾을 수 없습니다."));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // token user와 targetSearchId user가 포함된 게 이미 있는지 - 1:1 채팅
+        boolean isExisted = chatUserRepositorySupport.areBothUsersInSameChatRoom(userId, targetUser.getUserId());
+        if (isExisted)
+            throw new NotValidRequestException("이미 존재한 채팅방입니다.");
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .user(user)
@@ -52,8 +61,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .user(user)
                 .chatRoom(chatRoom)
                 .build();
-
         chatUserRepository.save(chatUser);
+        chatUserRepository.save(ChatUser.builder()
+                .user(targetUser)
+                .chatRoom(chatRoom)
+                .build());
         log.info(">>> 채팅방의 채팅인원 등록 완료: {}", chatUser);
 
         return BaseResponseBody.of(200, "성공적으로 방이 만들어졌습니다.");
@@ -65,7 +77,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> 토큰에서 추출된 userId: {}", userId);
 
-        List<ChatRoom> chatRooms = chatRoomRepositorySupport.findByChatUserId(userId);
+        List<ChatRoom> chatRooms = chatRoomRepositorySupport.findChatRoomsByUserId(userId);
         log.info(">>> 조회된 채팅방 목록: {}", chatRooms);
 
         return chatRooms;

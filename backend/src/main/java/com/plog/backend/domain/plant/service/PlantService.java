@@ -28,4 +28,7 @@ public interface PlantService {
 
     //TODO [강윤서]
     // - waterDate, fertilizeDate, repotDate 계산하는 로직
+//    void calculateNextDateToWater(Long plantId);
+//    void calculateNextDateToFertilize(Long plantId);
+//    void calculateNextDateToRepot(Long plantId);
 }
