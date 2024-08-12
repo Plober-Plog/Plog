@@ -118,6 +118,7 @@ public class NotificationServiceImpl implements NotificationService {
         log.info("plants count" + plants.size());
 
         for (Plant plant : plants) {
+            if(plant.getOtherPlantType().getOtherPlantTypeId()==1) continue; // otherPlantType 제외
             User user = plant.getUser();
             LocalDate today = LocalDate.now();
             int notifySettings = plant.getNotifySetting(); // 비트마스크 값
@@ -141,11 +142,12 @@ public class NotificationServiceImpl implements NotificationService {
         // int waterMid = plant.getPlantType().getWaterMid();
         int waterInterval = plant.getPlantType().getWaterInterval();
         LocalDate startWaterDate = waterDate.minusDays(waterInterval);
-        LocalDate endWaterDate = waterDate.plusDays(waterInterval);
+//        LocalDate endWaterDate = waterDate.plusDays(waterInterval);
 
         String clickUrl = "https://i11b308.p.ssafy.io/plant/" + plant.getPlantId();
 
-        if (!today.isBefore(startWaterDate) && !today.isAfter(endWaterDate)) {
+        // 오늘 날짜가 시작 날짜 이상이면 알림을 보냄
+        if (!today.isBefore(startWaterDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.WATER_REMINDER);
         }
         log.info("checkWaterNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
@@ -157,11 +159,12 @@ public class NotificationServiceImpl implements NotificationService {
         // int fertilizeMid = plant.getPlantType().getFertilizeMid();
         int fertilizeInterval = plant.getPlantType().getFertilizeInterval();
         LocalDate startFertilizeDate = fertilizeDate.minusDays(fertilizeInterval);
-        LocalDate endFertilizeDate = fertilizeDate.plusDays(fertilizeInterval);
+//        LocalDate endFertilizeDate = fertilizeDate.plusDays(fertilizeInterval);
 
         String clickUrl = "https://i11b308.p.ssafy.io/plant/" + plant.getPlantId();
 
-        if (!today.isBefore(startFertilizeDate) && !today.isAfter(endFertilizeDate)) {
+        // 오늘 날짜가 시작 날짜 이상이면 알림을 보냄
+        if (!today.isBefore(startFertilizeDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.FERTILIZE_REMINDER);
         }
 
@@ -175,11 +178,12 @@ public class NotificationServiceImpl implements NotificationService {
         // int repotMid = plant.getPlantType().getRepotMid();
         int repotInterval = plant.getPlantType().getRepotInterval();
         LocalDate startRepotDate = repotDate.minusDays(repotInterval);
-        LocalDate endRepotDate = repotDate.plusDays(repotInterval);
+//        LocalDate endRepotDate = repotDate.plusDays(repotInterval);
 
         String clickUrl = "https://i11b308.p.ssafy.io/plant/" + plant.getPlantId();
 
-        if (!today.isBefore(startRepotDate) && !today.isAfter(endRepotDate)) {
+        // 오늘 날짜가 시작 날짜 이상이면 알림을 보냄
+        if (!today.isBefore(startRepotDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.REPOT_REMINDER);
         }
         log.info("checkRepotNotification 완료 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());

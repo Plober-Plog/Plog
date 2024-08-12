@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @ToString
+@Builder
+@AllArgsConstructor
 public class Plant extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,15 +77,14 @@ public class Plant extends BaseEntity {
     @Column
     private LocalDateTime fixedAt;
 
-    @Builder
-    public Plant(User user, PlantType plantType, OtherPlantType otherPlantType,
-                 String nickname, Image image, String bio, LocalDate birthDate) {
-        this.user = user;
-        this.plantType = plantType;
-        this.otherPlantType = otherPlantType;
-        this.nickname = nickname;
-        this.image = image;
-        this.bio = bio;
-        this.birthDate = birthDate;
-    }
+//    public Plant(User user, PlantType plantType, OtherPlantType otherPlantType,
+//                 String nickname, Image image, String bio, LocalDate birthDate) {
+//        this.user = user;
+//        this.plantType = plantType;
+//        this.otherPlantType = otherPlantType;
+//        this.nickname = nickname;
+//        this.image = image;
+//        this.bio = bio;
+//        this.birthDate = birthDate;
+//    }
 }
