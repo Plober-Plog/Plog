@@ -39,6 +39,7 @@ public class UserController {
 
     private static final String EMAIL_PATTERN =
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    private static final int NICKNAME_MAX_LENGTH = 6;
 
     @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping
@@ -68,6 +69,10 @@ public class UserController {
             log.error(">>> [POST] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
+        if(userSignUpRequestDto.getNickname().length() > NICKNAME_MAX_LENGTH) {
+            log.error(">>> [POST] /user - 닉네임은 최대 {}자 입니다.", NICKNAME_MAX_LENGTH);
+            throw new NotValidRequestException("닉네임은 최대 " + NICKNAME_MAX_LENGTH + "자 입니다.");
+        }
 
         // 프로필 이미지를 처리하는 로직 추가
         String[] profileImageUrl = null;
@@ -96,6 +101,10 @@ public class UserController {
         if(userUpdateRequestDto.getNickname() == null || userUpdateRequestDto.getNickname().trim().isEmpty()) {
             log.error(">>> [PATCH] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
+        }
+        if(userUpdateRequestDto.getNickname().length() > NICKNAME_MAX_LENGTH) {
+            log.error(">>> [PATCH] /user - 닉네임은 최대 {}자 입니다.", NICKNAME_MAX_LENGTH);
+            throw new NotValidRequestException("닉네임은 최대 " + NICKNAME_MAX_LENGTH + "자 입니다.");
         }
 
         if(userUpdateRequestDto.getSearchId() == null || userUpdateRequestDto.getSearchId().trim().isEmpty()) {
