@@ -11,5 +11,4 @@ import java.util.List;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     Chat findTopByChatRoomOrderByCreatedAtDesc(ChatRoom chatRoom);
-    List<User> findUsersByChatRoom(ChatRoom chatRoom);
 }
