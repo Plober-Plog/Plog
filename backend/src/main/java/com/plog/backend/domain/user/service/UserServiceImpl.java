@@ -140,10 +140,12 @@ public class UserServiceImpl implements UserService {
     public void userSignOut(String token) {
         log.info(">>> [USER SIGN OUT] - 사용자 로그아웃 요청: 토큰 = {}", token);
 
-        String userId = jwtTokenProvider.getPayload(token, null);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+
+        String searchId = userRepository.findSearchIdById(userId);
 
         // FCM 토큰 null로 변경
-        User user = userRepository.findUserBySearchId(userId)
+        User user = userRepository.findUserBySearchId(searchId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setNotificationToken(null); // FCM 토큰을 null로 변경
