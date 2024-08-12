@@ -68,7 +68,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .build());
         log.info(">>> 채팅방의 채팅인원 등록 완료: {}", chatUser);
 
-        return BaseResponseBody.of(200, "성공적으로 방이 만들어졌습니다.");
+        return BaseResponseBody.of(200, "" + chatRoom.getChatRoomId());
     }
 
     @Override

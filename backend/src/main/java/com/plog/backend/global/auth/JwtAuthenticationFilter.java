@@ -50,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         put("/api/auth/refresh", new HashSet<>(List.of("POST"))); // 토큰 갱신 제외
         put("/api/user/report", new HashSet<>(List.of("POST"))); // 분석 리포트 제외
         put("/api/auth/logout", new HashSet<>(List.of("POST"))); // 로그아웃 제외
+        put("/api/user/plant-type", new HashSet<>(List.of("POST"))); // 식물 가이드 등록 제외
     }};
 
     @Override
