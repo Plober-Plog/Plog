@@ -1,5 +1,3 @@
-// ArticleRepositorySupport.java
-
 package com.plog.backend.domain.sns.repository;
 
 import com.plog.backend.domain.neighbor.entity.QNeighbor;
@@ -8,6 +6,8 @@ import com.plog.backend.domain.sns.entity.QArticle;
 import com.plog.backend.domain.sns.entity.QArticleTag;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Repository
 public class ArticleRepositorySupport extends QuerydslRepositorySupport {
+    private static final Logger logger = LoggerFactory.getLogger(ArticleRepositorySupport.class);
+
     private final JPAQueryFactory queryFactory;
     private final int size = 10;
     private final ArticleLikeRepositorySupport articleLikeRepositorySupport;
@@ -29,11 +31,12 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
     }
 
     public List<Article> loadArticleList(int page, String searchId, List<Integer> tagTypeList, String keyword, long userId, int neighborType, int orderType) {
+        logger.info("Loading article list with page: {}, searchId: {}, userId: {}, neighborType: {}, orderType: {}", page, searchId, userId, neighborType, orderType);
+
         QArticle article = QArticle.article;
         QArticleTag articleTag = QArticleTag.articleTag;
         QNeighbor neighbor = QNeighbor.neighbor;
 
-        // 모든 게시글을 먼저 불러옵니다.
         List<Article> articleList = queryFactory.selectFrom(article)
                 .leftJoin(articleTag).on(article.articleId.eq(articleTag.article.articleId))
                 .leftJoin(neighbor).on(neighbor.neighborTo.userId.eq(article.user.userId)
@@ -47,6 +50,8 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
                         filterByVisibility(userId, neighborType) // visibility 필터링 추가
                 )
                 .fetch();
+
+        logger.debug("Fetched {} articles before filtering", articleList.size());
 
         List<Article> filteredArticleList = articleList.stream()
                 .sorted((a1, a2) -> {
@@ -64,22 +69,28 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
                 .limit(size)
                 .collect(Collectors.toList());
 
+        logger.info("Returning {} filtered articles", filteredArticleList.size());
+
         return filteredArticleList;
     }
 
     private BooleanExpression eqSearchId(String searchId) {
+        logger.debug("Filtering by searchId: {}", searchId);
         return searchId != null ? QArticle.article.user.searchId.eq(searchId) : null;
     }
 
     private BooleanExpression containsKeyword(String keyword) {
+        logger.debug("Filtering by keyword: {}", keyword);
         return keyword != null && !keyword.isEmpty() ? QArticle.article.content.containsIgnoreCase(keyword) : null;
     }
 
     private BooleanExpression inTagTypeList(List<Integer> tagTypeList) {
+        logger.debug("Filtering by tag types: {}", tagTypeList);
         return (tagTypeList != null && !tagTypeList.isEmpty()) ? QArticleTag.articleTag.tagType.tagTypeId.in(tagTypeList) : null;
     }
 
     private BooleanExpression filterByNeighborType(long userId, int neighborType) {
+        logger.debug("Filtering by neighborType: {}", neighborType);
         QNeighbor neighbor = QNeighbor.neighbor;
 
         if (neighborType == 1) {
@@ -96,8 +107,8 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
     }
 
     private BooleanExpression filterByVisibility(long userId, int neighborType) {
+        logger.debug("Filtering by visibility with neighborType: {}", neighborType);
         QArticle article = QArticle.article;
-        QNeighbor neighbor = QNeighbor.neighbor;
 
         BooleanExpression visibilityCondition = null;
 
@@ -106,26 +117,18 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
             visibilityCondition = article.visibility.eq(1);
         } else if (neighborType == 2) {
             // neighborType이 2인 경우 visibility가 2인 게시글만 조회
-//            visibilityCondition = article.visibility.eq(2)
-//                    .and(neighbor.neighborTo.user.userId.eq(userId)
-//                            .or(neighbor.neighborFrom.userId.eq(userId))
-//                            .and(neighbor.neighborType.eq(1).or(neighbor.neighborType.eq(2))));
             visibilityCondition = article.visibility.eq(2);
         } else if (neighborType == 3) {
             // neighborType이 3인 경우 visibility가 3인 게시글만 조회
-//            visibilityCondition = article.visibility.eq(3)
-//                    .and(neighbor.neighborTo.user.userId.eq(userId)
-//                            .or(neighbor.neighborFrom.userId.eq(userId))
-//                            .and(neighbor.neighborType.eq(2)));
             visibilityCondition = article.visibility.eq(3);
         }
 
         return visibilityCondition;
     }
 
-
-
     public List<Article> loadArticleTop5List(List<Integer> tagTypeList, int orderType) {
+        logger.info("Loading top 5 articles with tag types: {}, orderType: {}", tagTypeList, orderType);
+
         QArticle article = QArticle.article;
         QArticleTag articleTag = QArticleTag.articleTag;
         QNeighbor neighbor = QNeighbor.neighbor;
@@ -141,6 +144,8 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
                 )
                 .fetch();
 
+        logger.debug("Fetched {} articles before sorting", articleList.size());
+
         List<Article> filteredArticleList = articleList.stream()
                 .sorted((a1, a2) -> {
                     if (orderType == 1) {
@@ -155,6 +160,8 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
                 })
                 .limit(5)
                 .collect(Collectors.toList());
+
+        logger.info("Returning top 5 filtered articles");
 
         return filteredArticleList;
     }
