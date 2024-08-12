@@ -31,7 +31,7 @@ const ProfileHeader = ({ data = {}, type }) => {
     <div className='grid grid-cols-12 gap-4 mt-5 mb-4'>
       <div className='col-span-4'>
         <ProfileImgAndTitle 
-          imgSrc={profileData.profile}
+          imgSrc={profileData.imgSrc}
           title={profileData.title}
           nickname={profileData.nickname}
         />
