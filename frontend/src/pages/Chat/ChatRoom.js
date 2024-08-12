@@ -17,6 +17,7 @@ const ChatRoom = ({ chatRoomId }) => { // ChatRoomList에서 해당 채팅방을
   });
   const [messageContent, setMessageContent] = useState("");
   const token = getCookie('accessToken');    
+
   useEffect(() => {
     // 쿠키에서 토큰 가져오기
 
