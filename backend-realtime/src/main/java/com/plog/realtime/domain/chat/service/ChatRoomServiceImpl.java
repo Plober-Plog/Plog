@@ -77,33 +77,51 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Override
     public List<ChatRoomGetListResponseDto> getAllChatRooms(String token) {
         log.info(">>> getAllChatRooms 호출됨");
+
+        // 토큰에서 userId 추출
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> 토큰에서 추출된 userId: {}", userId);
 
-        // 사용자가 참여한 모든 채팅방을 가져옵니다.
+        // 사용자가 참여한 모든 채팅방을 가져옴
+        log.info(">>> 사용자가 참여한 채팅방 목록 조회 시작");
         List<ChatRoom> chatRooms = chatRoomRepositorySupport.findChatRoomsByUserId(userId);
+        log.info(">>> 조회된 채팅방 수: {}", chatRooms.size());
 
-        // 채팅방에 대한 정보를 담을 DTO 리스트를 생성합니다.
+        // 채팅방에 대한 정보를 담을 DTO 리스트를 생성
+        log.info(">>> 채팅방 정보를 DTO로 변환 시작");
         List<ChatRoomGetListResponseDto> response = chatRooms.stream().map(chatRoom -> {
-            // 각 채팅방에 참여하고 있는 사용자들을 가져옵니다.
+            log.info(">>> 채팅방 처리 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
+
+            // 각 채팅방에 참여하고 있는 사용자들을 가져옴
+            log.info(">>> 해당 채팅방에 참여한 사용자 조회 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             List<User> users = chatRepositorySupport.findUsersByChatRoomId(chatRoom.getChatRoomId());
+            log.info(">>> 조회된 사용자 수: {}", users.size());
 
-            // 마지막 메시지를 가져옵니다.
+            // 마지막 메시지를 가져옴
+            log.info(">>> 마지막 메시지 조회 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
+            log.info(">>> 마지막 메시지 조회 완료 - Message: {}", lastChat != null ? lastChat.getMessage() : "메시지가 없습니다.");
 
-            // 사용자가 마지막 메시지를 읽었는지 여부를 판단합니다.
+            // 사용자가 마지막 메시지를 읽었는지 여부를 판단
+            log.info(">>> 사용자의 메시지 읽음 여부 판단 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
                     .orElseThrow(() -> new EntityNotFoundException("ChatUser not found"));
             boolean isRead = lastChat.getCreatedAt().isBefore(chatUser.getLastReadAt());
+            log.info(">>> 메시지 읽음 여부: {}", isRead);
 
-            // DTO를 생성하여 리스트에 추가합니다.
-            return new ChatRoomGetListResponseDto(chatRoom, users, lastChat, isRead);
+            // DTO를 생성하여 리스트에 추가
+            log.info(">>> ChatRoomGetListResponseDto 생성 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
+            ChatRoomGetListResponseDto dto = new ChatRoomGetListResponseDto(chatRoom, users, lastChat, isRead);
+            log.info(">>> ChatRoomGetListResponseDto 생성 완료 - DTO: {}", dto);
+
+            return dto;
         }).collect(Collectors.toList());
 
-        log.info(">>> 조회된 채팅방 목록: {}", response);
+        log.info(">>> 조회된 채팅방 목록 최종 반환 - 총 {}개의 채팅방", response.size());
 
         return response;
     }
+
 
     @Transactional
     public void updateLastReadAt(String token, Long chatRoomId) {
