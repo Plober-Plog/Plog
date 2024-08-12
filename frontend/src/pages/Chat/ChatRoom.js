@@ -1,48 +1,85 @@
 import React, { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
+import axios from 'axios';  // axios import 추가
 import { getCookie } from '../../utils/cookieUtils';
 import { useLocation } from 'react-router-dom';
+import useAuthStore from '../../stores/member';
 
-// const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime"; // realtime api 주소
-// // 1. 사용자를 식별할 JWT -> cookie에서 가져오기
-// const token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoicGxvZy5jb20iLCJleHAiOjE3MjQwNDUzMTUsImlhdCI6MTcyMjgzNTcxNX0.BFVSXUtidgN3jrayov5V0wnDeU2QkItay86uQu2wf3o";
+const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime"; // realtime api 주소
 
-const ChatRoom = ({ }) => { // ChatRoomList에서 해당 채팅방을 클릭하면 chatRoomId를 가지고 페이지 이동
+const ChatRoom = () => { 
   const location = useLocation(); 
   const { chatRoomId } = location.state; 
   const [client, setClient] = useState(null); // stomp client
   const [messages, setMessages] = useState([]);
-  const [user, setUser] = useState({
-    nickname: "nickname", // cookie에서 가져올 로그인한 회원 닉네임
-    profile: "https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png", // cookie에서 가져올 로그인한 회원 프로필 사진
-  });
+  const { userData } = useAuthStore();
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  
+  const user = {
+    nickname: userData.nickname,
+    profile: userData.profile,
+  };
+
   const [messageContent, setMessageContent] = useState("");
   const token = getCookie('accessToken');    
 
+  // 채팅 내역 가져오기 함수
+  const fetchChatHistory = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_REALTIME_URL}/chat/${chatRoomId}/history`, {
+        headers: {
+          Authorization: token,
+        },
+        params: {
+          chatRoomId,
+          page, 
+        }
+      });
+
+      if (response.data.length === 0) {
+        setHasMore(false);
+      } else {
+        if (page === 0) {
+          setMessages(response.data);
+        } else {
+          setMessages((prevSnsList) => [...prevSnsList, ...response.data]);
+        }
+        setPage(page + 1);
+      }
+    } catch (error) {
+      console.error("채팅 내역을 가져오는 중 오류 발생:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 웹 소켓 연결 
   useEffect(() => {
-    // 쿠키에서 토큰 가져오기
-    const socket = new SockJS(`https://i11b308.p.ssafy.io/realtime/chat/ws`); // sockjs 를 이용한 websocket 연결
+    const socket = new SockJS(`${API_REALTIME_URL}/chat/ws`); // sockjs 를 이용한 websocket 연결
 
     const stompClient = new Client({
       webSocketFactory: () => socket,
       connectHeaders: {
-        Authorization: `Bearer ${token}`,  // connectHeaders에 토큰 추가
+        Authorization: token,  // connectHeaders에 토큰 추가
       },
       onConnect: (frame) => {
         console.log('WebSocket 연결 성공: ' + frame);
-        stompClient.subscribe(`/topic/chatroom-${chatRoomId}`, messageOutput => { // chatroom-${chatRoomId} 가 돼야 함! 
-          showMessage(JSON.parse(messageOutput.body)); // subscriber들이 받을 publish 된 메시지 띄워주는 함수
+        stompClient.subscribe(`/topic/chatroom-${chatRoomId}`, messageOutput => { 
+          showMessage(JSON.parse(messageOutput.body)); 
         });
 
         console.log('Join 메시지 전송');
         stompClient.publish({
-          destination: `/app/chat.addUser/${chatRoomId}`, // /add.chat.addUser/${chatRoomId} 가 돼야 함
+          destination: `/app/chat.addUser/${chatRoomId}`, 
           headers: { 'Authorization': token }, 
           body: JSON.stringify({
             nickname: user.nickname,
             profile: user.profile,
-            message: `${user.nickname}님이 들어오셨습니다.`,
+            // message: `${user.nickname}님이 들어오셨습니다.`,
             chatType: "JOIN",
             createdAt: null
           })
@@ -62,8 +99,28 @@ const ChatRoom = ({ }) => { // ChatRoomList에서 해당 채팅방을 클릭하�
       }
       stompClient.deactivate();
     };
-  }, [chatRoomId]);
+  }, [chatRoomId, token, user.nickname, user.profile]);
 
+
+  // 페이지 네이션
+  const handleScroll = () => {
+    if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 10 && hasMore && !loading) {
+      fetchChatHistory();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasMore, page, loading]);
+
+
+
+  useEffect(() => {
+    fetchChatHistory(); // 초기 채팅 내역 로드
+  }, [chatRoomId, token]);
+
+  // 메세지 보내기 
   const sendMessage = () => {
     if (!messageContent.trim()) return;
 
@@ -71,7 +128,7 @@ const ChatRoom = ({ }) => { // ChatRoomList에서 해당 채팅방을 클릭하�
     console.log('Send 메시지 전송');
     if (client && client.connected) {
       client.publish({
-        destination: `/app/chat.sendMessage/${chatRoomId}`, // 2 대신 chatRoomId
+        destination: `/app/chat.sendMessage/${chatRoomId}`, 
         headers: 
         { 'Authorization': token }, 
         body: JSON.stringify({
@@ -86,16 +143,17 @@ const ChatRoom = ({ }) => { // ChatRoomList에서 해당 채팅방을 클릭하�
     setMessageContent("");
   };
 
+  // 채팅방 나가기 
   const leaveChat = (client) => {
     if (client && client.connected) {
       console.log('Leave 메시지 전송');
       client.publish({
-        destination: `/app/chat.leaveUser/${chatRoomId}`, // 2 대신 chatRoomId
+        destination: `/app/chat.leaveUser/${chatRoomId}`, 
         headers: { 'Authorization': token }, 
         body: JSON.stringify({
           nickname: user.nickname,
           profile: user.profile,
-          message: `${user.nickname}님이 나갔습니다.`,
+          // message: `${user.nickname}님이 나갔습니다.`,
           chatType: "LEAVE",
           createdAt: null
         })
@@ -103,6 +161,7 @@ const ChatRoom = ({ }) => { // ChatRoomList에서 해당 채팅방을 클릭하�
     }
   };
 
+  // 수신한 메세지 
   const showMessage = (message) => {
     console.log("수신한 메시지: " + JSON.stringify(message));
     setMessages(prevMessages => [...prevMessages, message]);
@@ -130,7 +189,7 @@ const ChatRoom = ({ }) => { // ChatRoomList에서 해당 채팅방을 클릭하�
                value={messageContent} onChange={(e) => setMessageContent(e.target.value)}
                onKeyUp={(e) => { if (e.key === 'Enter') sendMessage(); }} />
         <button onClick={sendMessage} className="btn btn-outline-secondary">전송</button>
-        <button onClick={() => leaveChat(client)} className="btn btn-outline-secondary">나가기</button> 
+        {/* <button onClick={() => leaveChat(client)} className="btn btn-outline-secondary">나가기</button>  */}
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ const ChatRooms = () => {
   const token = getCookie('accessToken');  
   console.log(token);
   
+  // 채팅방 불러오기 
   const fetchChatRooms = async () => {
     try {
       const response = await axios.get(`${API_REALTIME_URL}/chat/room`, {
@@ -24,29 +25,31 @@ const ChatRooms = () => {
       console.error('채팅방 목록을 불러오는 중 오류 발생:', error);
     }
   };
+
   useEffect(() => {
     
-
     fetchChatRooms();
   }, []);
 
-  const handleCreateChatRoom = async () => {
-    try {
-      const response = await axios.post(`${API_REALTIME_URL}/chat/room`, {
-        targetSearchId: "dddddd",
-        chatRoomType: 1,
-        chatRoomName: "dddddd"
-      }, {
-        headers: {
-          Authorization: token
-        }
-      });
-      console.log('새 채팅방 개설:', response.data);
-      fetchChatRooms(); // 새로운 채팅방 생성 후 목록 갱신
-    } catch (error) {
-      console.error('채팅방 개설 중 오류 발생:', error);
-    }
-  };
+// 채팅방 개설 -> userprofile 에서 할 것 이므로 그쪽으로 옮김
+//  const handleCreateChatRoom = async () => {
+//     try {
+//       const response = await axios.post(`${API_REALTIME_URL}/chat/room`, {
+//         targetSearchId: "dddddd",
+//         chatRoomType: 1,
+//         chatRoomName: "dddddd"
+//       }, {
+//         headers: {
+//           Authorization: token
+//         }
+//       });
+//       console.log('새 채팅방 개설:', response.data);
+//       fetchChatRooms(); // 새로운 채팅방 생성 후 목록 갱신
+//     } catch (error) {
+//       console.error('채팅방 개설 중 오류 발생:', error);
+//     }
+//   };
+ 
 
   const handleEnterChatRoom = (chatRoomId) => {
     navigate(`/chat/${chatRoomId}`, {
@@ -66,7 +69,7 @@ const ChatRooms = () => {
           </li>
         ))}
       </ul>
-      <button onClick={handleCreateChatRoom}>채팅방 개설</button>
+      {/* <button onClick={handleCreateChatRoom}>채팅방 개설</button> */}
     </div>
   );
 };
