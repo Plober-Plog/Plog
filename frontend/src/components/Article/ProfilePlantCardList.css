@@ -12,6 +12,7 @@
     overflow: hidden;
     text-align: center;
     height: 220px;
+    margin-bottom: 10px;
 }
 
 .profile-plant-card img {
@@ -27,7 +28,7 @@
 .profile-plant-card-nickname {
     font-weight: bold;
     font-size: 18px;
-    padding-bottom: 4px;
+    padding-bottom: 2px;
 }
 
 .profile-plant-card-planttype {
