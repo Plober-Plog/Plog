@@ -99,23 +99,29 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
         QArticle article = QArticle.article;
         QNeighbor neighbor = QNeighbor.neighbor;
 
-        // visibility가 1인 경우는 항상 보이도록
-        BooleanExpression visibilityCondition = article.visibility.eq(1);
+        BooleanExpression visibilityCondition = null;
 
-        // visibility가 2인 경우 이웃 관계에 따라 필터링 추가
         if (neighborType == 1) {
-            // 이웃 관계 없이 모든 게시글 조회
-            visibilityCondition = visibilityCondition.or(article.visibility.eq(1));
-        } else if (neighborType == 2 || neighborType == 3) {
-            // visibility가 2인 게시글은 이웃과 서로이웃에 대해서만 조회
-            BooleanExpression neighborCondition = neighbor.neighborFrom.userId.eq(userId).and(
-                    neighborType == 2 ? neighbor.neighborType.in(1, 2) : neighbor.neighborType.eq(2)
-            );
-            visibilityCondition = visibilityCondition.or(article.visibility.eq(2).and(neighborCondition));
+            // neighborType이 1인 경우 visibility가 1인 게시글만 조회
+            visibilityCondition = article.visibility.eq(1);
+        } else if (neighborType == 2) {
+            // neighborType이 2인 경우 visibility가 2인 게시글만 조회
+            visibilityCondition = article.visibility.eq(2)
+                    .and(neighbor.neighborTo.user.userId.eq(userId)
+                            .or(neighbor.neighborFrom.userId.eq(userId))
+                            .and(neighbor.neighborType.eq(1).or(neighbor.neighborType.eq(2))));
+        } else if (neighborType == 3) {
+            // neighborType이 3인 경우 visibility가 3인 게시글만 조회
+            visibilityCondition = article.visibility.eq(3)
+                    .and(neighbor.neighborTo.user.userId.eq(userId)
+                            .or(neighbor.neighborFrom.userId.eq(userId))
+                            .and(neighbor.neighborType.eq(2)));
         }
 
         return visibilityCondition;
     }
+
+
 
     public List<Article> loadArticleTop5List(List<Integer> tagTypeList, int orderType) {
         QArticle article = QArticle.article;
