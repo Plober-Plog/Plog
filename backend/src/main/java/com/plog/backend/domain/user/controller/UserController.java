@@ -10,6 +10,7 @@ import com.plog.backend.domain.user.dto.response.UserPushResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.service.UserServiceImpl;
+import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NoTokenRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
@@ -124,7 +125,7 @@ public class UserController {
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "이미 존재하는 ID 입니다."));
         } else {
             log.info(">>> [GET] /user/{} - 없는 검색 ID 입니다.", searchId);
-            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "없는 검색 ID 입니다."));
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "없는 검색 ID 입니다."));
         }
     }
 

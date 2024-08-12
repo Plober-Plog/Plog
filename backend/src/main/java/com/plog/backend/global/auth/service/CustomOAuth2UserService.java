@@ -69,6 +69,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return userRepository.save(user);
     }
 
+
     private String generateSearchId(String email) {
         // searchId를 이메일 기반으로 생성하는 로직 구현
         return email.split("@")[0];
