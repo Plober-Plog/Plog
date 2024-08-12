@@ -46,6 +46,7 @@ public class ProxyController {
             if (imageBytes != null && imageBytes.length > 0) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Content-Type", "image/jpeg");  // 이미지 타입에 맞게 변경
+                headers.set("Access-Control-Allow-Origin", "*");  // CORS 헤더 추가
                 log.info("Image fetched successfully from S3 with key: {}", key);
                 return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
             } else {
