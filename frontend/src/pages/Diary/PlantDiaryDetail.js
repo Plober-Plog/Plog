@@ -6,7 +6,7 @@ import ImageSlider from '../../components/Common/ImgSlider';
 import DiaryWeather from '../../components/Diary/DiaryWeather';
 import DiaryDetailContent from '../../components/Diary/DiaryDetailContent';
 import Btn from '../../components/Common/Btn';
-import html2canvas from 'html2canvas';
+// import html2canvas from 'html2canvas';
 
 import pencilIcon from '../../assets/icon/pencil.png'; 
 import waterIcon from '../../assets/icon/water.png'; 
@@ -121,30 +121,30 @@ const PlantDiaryDetail = () => {
 
   const weatherContent = `날씨는 ${weather}이고 온도는 ${temperature}'C 이며 습도는 ${humidity}입니다.`;
 
-  const handleCapture = async () => {
-    if (reportRef.current) {
-      try {
-        const canvas = await html2canvas(reportRef.current, { useCORS: true }); 
-        const diaryImgData = canvas.toDataURL('image/png');
+  // const handleCapture = async () => {
+  //   if (reportRef.current) {
+  //     try {
+  //       const canvas = await html2canvas(reportRef.current, { useCORS: true }); 
+  //       const diaryImgData = canvas.toDataURL('image/png');
   
-        // base64 문자열을 Blob으로 변환
-        const byteString = atob(diaryImgData.split(',')[1]);
-        const mimeString = diaryImgData.split(',')[0].split(':')[1].split(';')[0];
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-        for (let i = 0; i < byteString.length; i++) {
-          ia[i] = byteString.charCodeAt(i);
-        }
-        const blob = new Blob([ab], { type: mimeString });
-        const file = new File([blob], 'report.png', { type: mimeString });
+  //       // base64 문자열을 Blob으로 변환
+  //       const byteString = atob(diaryImgData.split(',')[1]);
+  //       const mimeString = diaryImgData.split(',')[0].split(':')[1].split(';')[0];
+  //       const ab = new ArrayBuffer(byteString.length);
+  //       const ia = new Uint8Array(ab);
+  //       for (let i = 0; i < byteString.length; i++) {
+  //         ia[i] = byteString.charCodeAt(i);
+  //       }
+  //       const blob = new Blob([ab], { type: mimeString });
+  //       const file = new File([blob], 'report.png', { type: mimeString });
   
-        // 파일 객체를 배열로 감싸서 `navigate`로 전달
-        navigate('/sns/write', { state: { diaryImgData: [{ url: URL.createObjectURL(file), file }], articleId: 0 } });
-      } catch (error) {
-        console.error('이미지 캡처 중 오류 발생:', error);
-      }
-    }
-  };
+  //       // 파일 객체를 배열로 감싸서 `navigate`로 전달
+  //       navigate('/sns/write', { state: { diaryImgData: [{ url: URL.createObjectURL(file), file }], articleId: 0 } });
+  //     } catch (error) {
+  //       console.error('이미지 캡처 중 오류 발생:', error);
+  //     }
+  //   }
+  // };
   
 
   return (
@@ -198,7 +198,7 @@ const PlantDiaryDetail = () => {
       </div>
       <div>
         <Btn content="삭제하기" onClick={handleDelete} /> 
-        <Btn content="SNS 업로드" onClick={handleCapture} /> 
+        {/* <Btn content="SNS 업로드" onClick={handleCapture} />  */}
       </div>
     </div>
   );
