@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import './AddBtn.css'
 
 const AddBtn = ({ type }) => {
   const navigate = useNavigate();
@@ -17,8 +18,10 @@ const AddBtn = ({ type }) => {
   }
 
   return (
-    <button onClick={handleClick}>
-      {type === 'plant' ? '식물 등록' : '게시글 등록'}
+    <button
+      className='add-btn' 
+      onClick={handleClick}>
+      {type === 'plant' ? '🌱' : '💬'}
     </button>
   )
 }

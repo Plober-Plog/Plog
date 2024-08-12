@@ -1,6 +1,7 @@
 import React from 'react';
 import ProfileHeaderPlantIconList from './ProfileHeaderPlantIconList';
 import ProfileHeaderUserBtnList from './ProfileHeaderUserBtnList';
+import './ProfileBio.css'
 
 const ProfileBio = ({ bio, type, ownerId, hasNotification, isFixed, profileData }) => {
 
@@ -24,9 +25,13 @@ const ProfileBio = ({ bio, type, ownerId, hasNotification, isFixed, profileData 
 
 
   return (
-    <div>
-      <span>{bio}</span>
-      {renderBtnIcon()}
+    <div className="profile-bio-container">
+      <div className="profile-bio">
+        <span>{bio}</span>
+      </div>
+      <div className="profile-bio-btn justify-end">
+        {renderBtnIcon()}
+      </div>
     </div>
   );
 };

@@ -1,0 +1,16 @@
+.profile-img-and-title-title {
+  position: absolute;
+  bottom: -12px;
+  transform: translateX(-50%);
+  background-color: #87B989;
+  border-radius: 15px;
+  padding: 3px;
+  color: white;
+  font-size: 14px;
+}
+
+.profile-img-and-title-nickname {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 24px;
+}

@@ -1,0 +1,54 @@
+.sns-card-md {
+    display: flex;
+    align-items: center;
+    background-color: #F5F5F5;
+    border-radius: 10px;
+    width: 100%;
+    height: 150px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+  
+  .sns-card-md-thumbnail {
+    flex-shrink: 0;
+    width: 150px;
+    height: 100%;
+    background-color: #D9D9D9; /* 이미지가 없는 경우 */
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .sns-card-md-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .sns-card-md-content {
+    flex-grow: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+  
+  .sns-card-md-text {
+    font-size: 16px;
+  }
+  
+  .sns-card-md-icons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .sns-card-md-icon {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #000;
+  }
+  

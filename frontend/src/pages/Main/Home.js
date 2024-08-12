@@ -3,6 +3,7 @@ import ArticleCardList from "../../components/Article/ArticleCardList";
 import Img from "../../components/Common/Img";
 import bannerImg from '../../assets/image/banner.png'; 
 import API from '../../apis/api';
+import '../../styles/index.css'
 
 const Home = () => {
 
@@ -44,11 +45,20 @@ const Home = () => {
 
   return (
     <div>
-      <h2>일지 SNS 발견하기</h2>
-      <ArticleCardList articles={diaryArticles} type="sns" />
-      <Img src={bannerImg} alt="Banner Image" style={{ width: '100%', height: 'auto' }} />
-      <h2>인기 SNS 발견하기</h2>
-      <ArticleCardList articles={snsArticles} type="sns" />
+      <div className="pt-8">
+        <p className="cardlist-subtitle">일지 SNS 발견하기</p>
+        <ArticleCardList articles={diaryArticles} type="sns" />
+      </div>
+      
+      <div className="pt-8">
+        <Img src={bannerImg} alt="Banner Image" style={{ width: '100%', height: 'auto' }} />
+      </div>
+      
+      <div className="pt-8">
+        <p className="cardlist-subtitle">인기 SNS 발견하기</p>
+        <ArticleCardList articles={snsArticles} type="sns" />
+      </div>
+
     </div>
   )
 }
