@@ -77,7 +77,7 @@ public class NotificationServiceImpl implements NotificationService {
             image = sourceUser.getImage();
             formattedMessage = String.format(messageTemplate, requireSource, targetSearchId);
         } else if (type.requiresPlant()) {
-            Plant plant = plantRepository.findById((long) Integer.parseInt(requireSource)).orElseThrow(() -> {
+            Plant plant = plantRepository.findByNicknameAndIsDeletedFalseAndDeadDateIsNull(requireSource).orElseThrow(() -> {
                 log.error("sendNotification 실패 - Plant not found, requireSource: {}", requireSource);
                 return new RuntimeException("Plant not found");
             });
@@ -142,7 +142,7 @@ public class NotificationServiceImpl implements NotificationService {
         LocalDate startWaterDate = waterDate.minusDays(waterInterval);
         LocalDate endWaterDate = waterDate.plusDays(waterInterval);
 
-        String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
+        String clickUrl = "https://i11b308.p.ssafy.io/plant/" + plant.getPlantId();
 
         if (!today.isBefore(startWaterDate) && !today.isAfter(endWaterDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.WATER_REMINDER);
@@ -158,7 +158,7 @@ public class NotificationServiceImpl implements NotificationService {
         LocalDate startFertilizeDate = fertilizeDate.minusDays(fertilizeInterval);
         LocalDate endFertilizeDate = fertilizeDate.plusDays(fertilizeInterval);
 
-        String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
+        String clickUrl = "https://i11b308.p.ssafy.io/plant/" + plant.getPlantId();
 
         if (!today.isBefore(startFertilizeDate) && !today.isAfter(endFertilizeDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.FERTILIZE_REMINDER);
@@ -176,7 +176,7 @@ public class NotificationServiceImpl implements NotificationService {
         LocalDate startRepotDate = repotDate.minusDays(repotInterval);
         LocalDate endRepotDate = repotDate.plusDays(repotInterval);
 
-        String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
+        String clickUrl = "https://i11b308.p.ssafy.io/plant/" + plant.getPlantId();
 
         if (!today.isBefore(startRepotDate) && !today.isAfter(endRepotDate)) {
             sendNotification(plant.getNickname(), user.getSearchId(), clickUrl, NotificationType.REPOT_REMINDER);
