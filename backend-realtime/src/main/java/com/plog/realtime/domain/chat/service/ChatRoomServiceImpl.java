@@ -106,7 +106,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             log.info(">>> 사용자의 메시지 읽음 여부 판단 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
                     .orElseThrow(() -> new EntityNotFoundException("ChatUser not found"));
-            boolean isRead = lastChat.getCreatedAt().isBefore(chatUser.getLastReadAt());
+
+            boolean isRead = false;
+            if (lastChat != null && chatUser.getLastReadAt() != null) {
+                isRead = lastChat.getCreatedAt().isBefore(chatUser.getLastReadAt());
+            }
             log.info(">>> 메시지 읽음 여부: {}", isRead);
 
             // DTO를 생성하여 리스트에 추가
@@ -121,6 +125,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
         return response;
     }
+
 
 
     @Transactional
