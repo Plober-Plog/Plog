@@ -5,7 +5,6 @@ import useAuthStore from '../../stores/member';
 
 import defaultImage from '../../assets/icon/default.png';
 import InputField from '../../components/Common/InputField';
-import SelectField from '../../components/Common/SelectField';
 import TextareaField from '../../components/Common/TextareaField';
 import Btn from '../../components/Common/Btn';
 
@@ -13,7 +12,7 @@ const PlantRegister = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { plantId } = location.state;
-
+  const [plantTypeOptions, setPlantTypeOptions] = useState([]);
   const [searchId, setSearchId] = useState(null);
 
   useEffect(() => {
@@ -29,6 +28,7 @@ const PlantRegister = () => {
   const [bio, setBio] = useState('');
   const [nickname, setNickname] = useState('');
   const [birthDate, setBirthDate] = useState('');
+  const [isFarewell, setIsFarewell] = useState(false)
 
   // 사진 업로드
   const fileInputRef = useRef(null);
@@ -53,6 +53,22 @@ const PlantRegister = () => {
     fileInputRef.current.value = null; // input 필드를 초기화하여 동일 파일 업로드 가능하게 함
   };
 
+
+  // 식물 종류 불러오기
+  useEffect(() => {
+    const fetchPlantTypeOptions = async () => {
+      try {
+        const response = await API.get('/user/plant-type/all');
+        setPlantTypeOptions(response.data);
+        console.log('식물종류:',response.data)
+      } catch (error) {
+        console.error('식물 종류 불러오기 실패:', error);
+      }
+    };
+    fetchPlantTypeOptions();
+  }, []);
+
+
   // 수정일 경우 식물 정보 가져오기
   useEffect(() => {
     if (plantId !== 0) {
@@ -68,6 +84,7 @@ const PlantRegister = () => {
           setBio(response.data.bio);
           setNickname(response.data.nickname);
           setBirthDate(response.data.birthDate);
+          setIsFarewell(response.data.deadDate)
         } catch (err) {
           console.error('식물 정보 불러오기 실패 : ', err);
         }
@@ -75,6 +92,7 @@ const PlantRegister = () => {
       fetchPlantInfo();
     }
   }, [plantId]);
+
 
   // 식물 등록
   const handleSubmit = async (e) => {
@@ -127,17 +145,29 @@ const PlantRegister = () => {
     }
   };
 
-  // 임시 식물 종 옵션
-  const plantTypeOptions = [
-    { value: 1, label: '기타' },
-    { value: 2, label: '복숭아' },
-    { value: 3, label: '참외' },
-    { value: 4, label: '수박' },
-    { value: 5, label: '바나나' },
-    { value: 6, label: '붕어빵' },
-    { value: 7, label: '참치' },
-    { value: 8, label: '구아바' },
-  ];
+
+  // 식물 삭제하기
+  const handleDelete = async () => {
+    try {
+      const response = await API.delete(`/user/plant/${plantId}`);
+      console.log('식물 삭제 성공:', response.data);
+      navigate(`/profile/${searchId}`);
+    } catch (err) {
+      console.error('식물 삭제 실패 : ', err);
+    }
+  }
+
+  // 식물 이별하기
+  const handleFarewell = async () => {
+    try {
+      const response = await API.patch(`/user/plant/${plantId}/farewell`);
+      console.log('식물과 이별 성공:', response.data);
+      navigate(`/profile/${searchId}`);
+    } catch (err) {
+      console.error('식물과 이별 실패 : ', err);
+    }
+  }
+
 
   return (
     <div>
@@ -165,12 +195,17 @@ const PlantRegister = () => {
         </div>
         <div>
           <p>식물 종</p>
-          <SelectField
+          <select
             value={plantTypeId}
             onChange={(e) => setPlantTypeId(Number(e.target.value))}
-            options={plantTypeOptions}
-            className="drop-box"
-          />
+            required={false}
+          >
+            {plantTypeOptions.map(plantTypeOption => (
+              <option key={plantTypeOption.plantTypeId} value={plantTypeOption.plantTypeId}>
+                {plantTypeOption.plantName}
+              </option>
+            ))}
+          </select>
           {plantTypeId === 1 && (
             <InputField
               type="text"
@@ -216,6 +251,24 @@ const PlantRegister = () => {
           className="button"
         />
       </form>
+      {plantId && 
+        <>
+          <Btn
+            content={'식물 삭제하기'}
+            onClick={() => handleDelete()}  // 함수 호출로 변경
+            className="button"
+          />
+        </>
+      }
+      {plantId && !isFarewell && (
+        <>
+          <Btn
+            content={'식물과 이별하기'}
+            onClick={() => handleFarewell()}  // 함수 호출로 변경
+            className="button"
+          />
+        </>
+      )}
     </div>
   );
 };

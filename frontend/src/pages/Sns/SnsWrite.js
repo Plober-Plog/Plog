@@ -155,7 +155,7 @@ const SnsWrite = () => {
 
   return (
     <div>
-      <div>
+      <div className='pb-20'>
         <Tab
           selectedVisibility={selectedVisibility}
           setSelectedVisibility={setSelectedVisibility}

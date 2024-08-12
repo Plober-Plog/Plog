@@ -6,13 +6,13 @@ import repottedFill from '../../assets/icon/repotted-fill.svg';
 const AlarmItem = ({ alarm }) => {
   // 이미지 출력 선택
   const getImageSrc = () => {
-    if (alarm.type === 'COMMENT' || alarm.type === 'LIKE' || alarm.type === 'BOOKMARK' || alarm.type === 'NEIGHBOR_REQUEST') {
+    if (alarm.type === 1 || alarm.type === 2 || alarm.type === 3 || alarm.type === 7) {
       return alarm.image;
-    } else if (alarm.type === 'WATER_REMINDER') {
+    } else if (alarm.type === 13) {
       return waterFill;
-    } else if (alarm.type === 'REPOT_REMINDER') {
+    } else if (alarm.type === 15) {
       return repottedFill;
-    } else if (alarm.type === 'FERTILIZE_REMINDER') {
+    } else if (alarm.type === 14) {
       return fertilizedFill;
     } else {
       return alarm.image;

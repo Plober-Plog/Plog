@@ -28,12 +28,14 @@ const SnsList = () => {
 
   return (
     <div>
-      <div className='pb-20'>
+      <div className='pb-5'>
         {isLogin && (
-          <Tab
-            selectedVisibility={selectedVisibility}
-            setSelectedVisibility={setSelectedVisibility}
-          />
+          <div className='pb-12'>
+            <Tab
+              selectedVisibility={selectedVisibility}
+              setSelectedVisibility={setSelectedVisibility}
+            />
+          </div>
         )}
       </div>
       <Tags 

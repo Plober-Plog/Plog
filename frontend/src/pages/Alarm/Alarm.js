@@ -16,7 +16,7 @@ const Alarm = () => {
         const response = await axios.get('https://i11b308.p.ssafy.io/realtime/notification/history', {
           params: { searchId, page },
         });
-        
+        console.log(response.data)
         if (response.data.length === 0) {
           setHasMoreAlarms(false);
         } else {
@@ -52,6 +52,7 @@ const Alarm = () => {
     }
   }, [page]); // page가 변경될 때마다 알림을 가져옴
 
+  
   
   // 스크롤 이벤트로 페이지 증가
   useEffect(() => {
