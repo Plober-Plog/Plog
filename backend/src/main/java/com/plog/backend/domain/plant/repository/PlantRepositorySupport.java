@@ -51,7 +51,7 @@ public class PlantRepositorySupport extends QuerydslRepositorySupport {
                 .from(plant)
                 .leftJoin(plantType).on(plant.plantType.plantTypeId.eq(plantType.plantTypeId))
                 .leftJoin(otherPlantType).on(plant.otherPlantType.otherPlantTypeId.eq(otherPlantType.otherPlantTypeId))
-                .where(plant.user.searchId.eq(searchId))
+                .where(plant.user.searchId.eq(searchId).and(plant.isDeleted.eq(false)))
                 .orderBy(plant.isFixed.desc(), plant.fixedAt.desc(), plant.createdAt.desc())
                 .offset(page * size)
                 .limit(size)

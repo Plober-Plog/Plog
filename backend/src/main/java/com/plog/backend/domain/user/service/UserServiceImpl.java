@@ -350,10 +350,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
         // 이메일로 사용자 조회
-        User user = userRepository.findByEmail(email).orElse(null);
+        Optional<User> userOptional = userRepository.findByEmail(email);
 
+        User user;
         // 사용자가 없으면 회원가입 처리
-        if (user == null) {
+        if (userOptional.isEmpty()) {
             user = User.builder()
                     .email(email)
                     .searchId(generateSearchId(email, provider)) // searchId 생성 로직 필요
@@ -362,17 +363,23 @@ public class UserServiceImpl implements UserService {
                     .provider(provider)
                     .providerId(providerId)
                     .image(new Image(profileImage))
-                    .role(1)
-                    .state(1)
+                    .role(Role.USER.getValue())
+                    .state(State.ACTIVTE.getValue())
                     .totalExp(0)
-                    .chatAuth(1)
+                    .chatAuth(ChatAuth.PUBLIC.getValue())
                     .isPushNotificationEnabled(true)
                     .build();
             userRepository.save(user);
+            log.info(">>> 회원가입 성공: {}", user);
+        } else {
+            user = userOptional.get();
+            log.info(">>> 로그인 성공: {}", user);
         }
 
+        // 로그인 또는 회원가입 성공 시 반환
         return ResponseEntity.ok(BaseResponseBody.of(200, "소셜 로그인이 되었습니다."));
     }
+
 
     private String generateSearchId(String email, int providerId) {
         // searchId를 이메일 기반으로 생성하는 로직 구현

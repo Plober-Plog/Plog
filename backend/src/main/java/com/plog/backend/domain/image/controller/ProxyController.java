@@ -2,7 +2,8 @@ package com.plog.backend.domain.image.controller;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
-import org.apache.commons.io.IOUtils;
+import com.amazonaws.util.IOUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,11 @@ import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/image")
+@RequiredArgsConstructor
 @Slf4j
 public class ProxyController {
 
-    @Autowired
-    private AmazonS3 amazonS3;
+    private final AmazonS3 amazonS3;
 
     @GetMapping("/proxy")
     public ResponseEntity<byte[]> getImage(@RequestParam String url) {
@@ -45,6 +46,7 @@ public class ProxyController {
             if (imageBytes != null && imageBytes.length > 0) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Content-Type", "image/jpeg");  // 이미지 타입에 맞게 변경
+                // headers.set("Access-Control-Allow-Origin", "*");  // CORS 헤더 추가
                 log.info("Image fetched successfully from S3 with key: {}", key);
                 return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
             } else {

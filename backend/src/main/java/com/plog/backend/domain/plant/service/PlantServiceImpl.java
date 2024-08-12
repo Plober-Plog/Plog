@@ -39,11 +39,11 @@ public class PlantServiceImpl implements PlantService {
     private final PlantRepositorySupport plantRepositorySupport;
     private final PlantTypeRepository plantTypeRepository;
     private final OtherPlantTypeRepository otherPlantTypeRepository;
-    private final PlantCheckRepository plantCheckRepository;
     private final UserRepository userRepository;
 
     private final ImageService imageService;
     private final ImageRepository imageRepository;
+    private final PlantCheckRepositorySupport plantCheckRepositorySupport;
 
     @Override
     public void addPlant(String token, PlantAddRequestDto plantAddRequestDto) {
@@ -137,6 +137,8 @@ public class PlantServiceImpl implements PlantService {
                 .bio(plant.getBio())
                 .profile(plant.getImage() != null ? plant.getImage().getImageUrl() : null)
                 .plantTypeName(plant.getPlantType().getPlantName())
+                .otherPlantId(plant.getOtherPlantType().getOtherPlantTypeId())
+                .otherPlantTypeName(plant.getOtherPlantType().getPlantName())
                 .birthDate(plant.getBirthDate())
                 .hasNotification(plant.getNotifySetting() == 7 ? true : false)
                 .isFixed(plant.isFixed())
@@ -318,4 +320,23 @@ public class PlantServiceImpl implements PlantService {
         plantRepository.save(plant);
         log.info(">>> updateNotificationPlant - 식물 알림 수신 여부 수정 완료, ID: {}", plantId);
     }
+
+//    @Override
+//    public void calculateNextDateToWater(Long plantId) {
+//        Plant plant = plantRepository.findById(plantId).orElseThrow(() -> new EntityNotFoundException("식물 정보가 없습니다."));
+//        // 1. 마지막으로 물을 준 날자 가져오기 (plantCheck 에 값 기록될 때 계산하기,,)
+//        LocalDate lastWateredDate = plantCheckRepositorySupport.findLastWateredDateByPlantId(plantId);
+//        // 2. plant_type에서 물 주기 가져오기
+//        // 3. 마지막으로 물 준 날 + 그 주기 가져와서 더하기 -> plant 테이블의 waterDate 값 채우기
+//    }
+//
+//    @Override
+//    public void calculateNextDateToFertilize(Long plantId) {
+//
+//    }
+//
+//    @Override
+//    public void calculateNextDateToRepot(Long plantId) {
+//
+//    }
 }
