@@ -8,6 +8,7 @@ import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.entity.PlantCheck;
 import com.plog.backend.domain.plant.repository.PlantCheckRepository;
 import com.plog.backend.domain.plant.repository.PlantRepository;
+import com.plog.backend.domain.plant.repository.PlantTypeRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
@@ -31,6 +32,7 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 public class PlantCheckServiceImpl implements PlantCheckService {
     private final PlantRepository plantRepository;
     private final PlantCheckRepository plantCheckRepository;
+    private final PlantTypeRepository plantTypeRepository;
 
     @Override
     public void addPlantCheck(String token, PlantCheckAddRequestDto plantCheckAddRequestDto) {
@@ -42,12 +44,12 @@ public class PlantCheckServiceImpl implements PlantCheckService {
             throw new NotValidRequestException("미래의 식물 관리 기록은 작성할 수 없습니다");
         }
 
-        Optional<Plant> plant = plantRepository.findById(plantCheckAddRequestDto.getPlantId());
-        if (plant.isPresent()) {
-            if (userId != plant.get().getUser().getUserId())
+        Optional<Plant> optionalPlant = plantRepository.findById(plantCheckAddRequestDto.getPlantId());
+        if (optionalPlant.isPresent()) {
+            if (userId != optionalPlant.get().getUser().getUserId())
                 throw new NotAuthorizedRequestException();
             PlantCheck plantCheck = PlantCheck.builder()
-                    .plant(plant.get())
+                    .plant(optionalPlant.get())
                     .isWatered(plantCheckAddRequestDto.isWatered())
                     .isFertilized(plantCheckAddRequestDto.isFertilized())
                     .isRepotted(plantCheckAddRequestDto.isRepotted())
@@ -55,6 +57,21 @@ public class PlantCheckServiceImpl implements PlantCheckService {
                     .build();
             plantCheckRepository.save(plantCheck);
             log.info(">>> addPlantCheck - 관리 기록 추가 완료, 식물 ID: {}, 관리 날짜: {}", plantCheckAddRequestDto.getPlantId(), plantCheckAddRequestDto.getCheckDate());
+            Plant plant = optionalPlant.get();
+            // 필요하다면 다음 물주기, 분갈이, 영양제 날짜 업데이트하기
+            if(plant.getOtherPlantType().getOtherPlantTypeId()==1){
+                if(plantCheckAddRequestDto.isFertilized() && isCheckUpdateFertilize(plant, recordDate)){
+                    plant.setFertilizeDate(recordDate.plusDays(plant.getPlantType().getFertilizeMid()));
+                }
+                if(plantCheckAddRequestDto.isRepotted() && isCheckUpdateRepot(plant, recordDate)){
+                    plant.setRepotDate(recordDate.plusDays(plant.getPlantType().getRepotMid()));
+                }
+                if(plantCheckAddRequestDto.isWatered() && isCheckUpdateWater(plant, recordDate)){
+                    plant.setWaterDate(recordDate.plusDays(plant.getPlantType().getWaterMid()));
+                }
+                plantRepository.save(plant);
+            }
+
         } else {
             throw new EntityNotFoundException("일치하는 식물이 없습니다.");
         }
@@ -71,9 +88,9 @@ public class PlantCheckServiceImpl implements PlantCheckService {
             throw new NotValidRequestException("미래의 관리 기록을 수정 할 수 없습니다");
         }
 
-        Optional<Plant> plant = plantRepository.findById(plantCheckUpdateRequestDto.getPlantId());
-        if (plant.isPresent()) {
-            if (userId != plant.get().getUser().getUserId())
+        Optional<Plant> optionalPlant = plantRepository.findById(plantCheckUpdateRequestDto.getPlantId());
+        if (optionalPlant.isPresent()) {
+            if (userId != optionalPlant.get().getUser().getUserId())
                 throw new NotAuthorizedRequestException();
             Optional<PlantCheck> plantCheck = plantCheckRepository.findByPlantPlantIdAndCheckDate(plantCheckUpdateRequestDto.getPlantId(), plantCheckUpdateRequestDto.getCheckDate());
             if (plantCheck.isPresent()) {
@@ -84,6 +101,20 @@ public class PlantCheckServiceImpl implements PlantCheckService {
                 pc.setRepotted(plantCheckUpdateRequestDto.isRepotted());
                 plantCheckRepository.save(pc);
                 log.info(">>> updatePlantCheck - 관리 기록 수정 완료, 식물 ID: {}, 관리 날짜: {}", plantCheckUpdateRequestDto.getCheckDate(), plantCheckUpdateRequestDto.getCheckDate());
+                Plant plant = optionalPlant.get();
+                // 필요하다면 다음 물주기, 분갈이, 영양제 날짜 업데이트하기
+                if(plant.getOtherPlantType().getOtherPlantTypeId()==1){
+                    if(plantCheckUpdateRequestDto.isFertilized() && isCheckUpdateFertilize(plant, recordDate)){
+                        plant.setFertilizeDate(recordDate.plusDays(plant.getPlantType().getFertilizeMid()));
+                    }
+                    if(plantCheckUpdateRequestDto.isRepotted() && isCheckUpdateRepot(plant, recordDate)){
+                        plant.setRepotDate(recordDate.plusDays(plant.getPlantType().getRepotMid()));
+                    }
+                    if(plantCheckUpdateRequestDto.isWatered() && isCheckUpdateWater(plant, recordDate)){
+                        plant.setWaterDate(recordDate.plusDays(plant.getPlantType().getWaterMid()));
+                    }
+                    plantRepository.save(plant);
+                }
             } else {
                 throw new EntityNotFoundException("일치하는 식물 관리 기록이 없습니다.");
             }
@@ -154,6 +185,18 @@ public class PlantCheckServiceImpl implements PlantCheckService {
             }
         }
         return result;
+    }
+
+    private boolean isCheckUpdateWater(Plant plant, LocalDate recordDate) {
+        return !recordDate.isBefore(plant.getWaterDate().minusDays(plant.getPlantType().getWaterInterval()));
+    }
+
+    private boolean isCheckUpdateRepot(Plant plant, LocalDate recordDate) {
+        return !recordDate.isBefore(plant.getRepotDate().minusDays(plant.getPlantType().getRepotInterval()));
+    }
+
+    private boolean isCheckUpdateFertilize(Plant plant, LocalDate recordDate) {
+        return !recordDate.isBefore(plant.getFertilizeDate().minusDays(plant.getPlantType().getFertilizeInterval()));
     }
 
 }
