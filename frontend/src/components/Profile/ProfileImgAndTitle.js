@@ -11,7 +11,8 @@ const ProfileImgAndTitle = ({ imgSrc, title, nickname }) => {
         <img 
           src={imgSrc || defaultImg} 
           alt="profile img" 
-          className="w-full h-auto rounded-full object-cover"
+          className="w-full h-full rounded-full object-cover"
+          style={{ aspectRatio: '1 / 1' }}
         />
         <span className="w-full profile-img-and-title-title">
           {title}
