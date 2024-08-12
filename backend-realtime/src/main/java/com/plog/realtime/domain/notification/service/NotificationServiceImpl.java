@@ -57,9 +57,9 @@ public class NotificationServiceImpl implements NotificationService {
         });
         log.info("targetUser 정보: {}", targetUser);
 
-        Image image = imageRepository.findById(1L);
+        Image image = null;
         List<Image> listImage = imageRepository.findByImageUrlAndIsDeletedFalse("https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png");
-        if (listImage.isEmpty()) {
+        if (!listImage.isEmpty()) {
             image = listImage.get(0);
         }
 
@@ -120,6 +120,7 @@ public class NotificationServiceImpl implements NotificationService {
         log.info("plants count" + plants.size());
 
         for (Plant plant : plants) {
+            if(plant.getOtherPlantType()!=null) continue; // otherPlantType 제외
             User user = plant.getUser();
             LocalDate today = LocalDate.now();
             int notifySettings = plant.getNotifySetting(); // 비트마스크 값
