@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from "../../apis/api";
-import send from "../../assets/icon/footer/send.svg";
+import send from "../../assets/icon/footer/send.png";
 import './FooterCmt.css';
 
 const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSelectedParentId, isActive, setIsActive }) => {
