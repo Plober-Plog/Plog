@@ -22,7 +22,7 @@ public class ChatRepositorySupport extends QuerydslRepositorySupport {
 
         return queryFactory.selectFrom(chat)
                 .where(chat.chatRoom.chatRoomId.eq(chatRoomId))
-                .orderBy(chat.createdAt.desc())
+                .orderBy(chat.createdAt.asc())
                 .offset(page * size)
                 .limit(size)
                 .fetch();
