@@ -7,9 +7,28 @@ const API = axios.create({
   baseURL: 'https://i11b308.p.ssafy.io/api',
 });
 
+const REALTIME_API = axios.create({
+  baseURL: 'https://i11b308.p.ssafy.io/realtime',
+})
+
 
 // 토큰 인터셉터
 API.interceptors.request.use(
+  (config) => {
+    const accessToken = getCookie('accessToken');
+    console.log('현재 토큰 :', accessToken);
+
+    if (accessToken) {
+      config.headers.Authorization = accessToken;
+      console.log('headers에 토큰 추가 :', config.headers.Authorization);
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// 토큰 인터셉터
+REALTIME_API.interceptors.request.use(
   (config) => {
     const accessToken = getCookie('accessToken');
     console.log('현재 토큰 :', accessToken);
