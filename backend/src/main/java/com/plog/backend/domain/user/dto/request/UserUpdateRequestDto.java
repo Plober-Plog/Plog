@@ -14,7 +14,6 @@ import java.time.LocalDate;
 public class UserUpdateRequestDto {
     private String nickname;
     private String searchId;
-    private MultipartFile profile;
     private int gender;
     private LocalDate birthDate;
     private String source;

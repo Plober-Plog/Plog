@@ -85,7 +85,8 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<BaseResponseBody> updateUser(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @ModelAttribute UserUpdateRequestDto userUpdateRequestDto) {
+            @RequestPart(value = "userUpdateRequestDto") UserUpdateRequestDto userUpdateRequestDto,
+            @RequestPart(value = "profile", required = false) MultipartFile[] profile) {
         log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", userUpdateRequestDto);
 
         if(token == null)
@@ -105,7 +106,7 @@ public class UserController {
             log.info(">>> [PATCH] /user - Bearer 제거 후 토큰: {}", token);
         }
 
-        User user = userService.updateUser(token, userUpdateRequestDto);
+        User user = userService.updateUser(token, userUpdateRequestDto, profile);
         log.info(">>> [PATCH] /user - 회원 수정 완료: {}", user);
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 정보 수정이 완료되었습니다."));

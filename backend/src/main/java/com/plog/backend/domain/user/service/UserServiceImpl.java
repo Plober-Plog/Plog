@@ -213,7 +213,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User updateUser(String token, UserUpdateRequestDto request) {
+    public User updateUser(String token, UserUpdateRequestDto request, MultipartFile[] profile) {
         log.info(">>> updateUser - 토큰: {}, 요청 데이터: {}", token, request);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> updateUser - 추출된 사용자 ID: {}", userId);
@@ -223,11 +223,10 @@ public class UserServiceImpl implements UserService {
             User user = userOptional.get();
             log.info(">>> updateUser - 사용자 찾음: {}", user);
             // 회원 대표 사진 변경
-            if (request.getProfile() != null) {
-                MultipartFile[] images = new MultipartFile[]{request.getProfile()};
-                if (images.length > 1)
+            if (profile != null) {
+                if (profile.length > 1)
                     throw new NotValidRequestException("회원 프로필 사진은 한 장만 등록할 수 있습니다.");
-                String[] imageUrl = imageService.uploadImages(images);
+                String[] imageUrl = imageService.uploadImages(profile);
                 Image userImage = imageRepository.findByImageUrl(imageUrl[0])
                                 .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
                 user.setImage(userImage);
