@@ -14,7 +14,7 @@ public class SchedulerConfig {
     private final NotificationService notificationService;
 
     // @Scheduled(cron = "0 0 23 * * *")  // 매일 오전 8시, 11시에 실행
-    @Scheduled(cron = "0 10 7 * * *")
+    @Scheduled(cron = "0 30 7 * * *")
     public void schedulePlantNotifications() {
         notificationService.checkPlantNotifications();
     }

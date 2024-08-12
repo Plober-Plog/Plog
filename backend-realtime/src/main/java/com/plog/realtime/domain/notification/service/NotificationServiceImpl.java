@@ -101,7 +101,9 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationMessageResponseDto notificationMessageResponseDto = NotificationMessageResponseDto.toNotificationDTO(notification);
 
         // FCM을 통해 메시지를 전송합니다.
-        if (targetUser.isPushNotificationEnabled() && targetUser.getNotificationToken() != null) {
+        if ((targetUser.isPushNotificationEnabled() && targetUser.getNotificationToken() != null) 
+            || (type == NotificationType.WATER_REMINDER || type == NotificationType.FERTILIZE_REMINDER || type == NotificationType.REPOT_REMINDER)) {
+
             String title = type.name(); // 여기에 알림 제목을 설정합니다.
             fcmService.sendNotification(targetUser.getNotificationToken(), title, clickUrl, formattedMessage, image.getImageUrl(), notification.getNotificationId());
         }
