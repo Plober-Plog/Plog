@@ -14,7 +14,7 @@ import cameraIcon from '../../assets/icon/camera.png';
 const SnsWrite = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { articleId, reportImgData, diaryImgData } = location.state;  // articleId가 없을 때 0으로 초기화
+  const { articleId, reportImgData } = location.state;  // articleId가 없을 때 0으로 초기화
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
@@ -59,15 +59,12 @@ const SnsWrite = () => {
 
   // 수정일 경우 게시물 가져오기
   useEffect(() => {
-    if (reportImgData || diaryImgData) {
-      setImgs(reportImgData || diaryImgData);
+    if (reportImgData) {
+      setImgs(reportImgData);
     }
 
     if (reportImgData) {
       setTagTypeList(prev => [...prev, 2]); 
-    }
-    if (diaryImgData) {
-      setTagTypeList(prev => [...prev, 1]);
     }
 
     console.log(articleId);
@@ -93,7 +90,7 @@ const SnsWrite = () => {
       };
       fetchSns();
     }
-  }, [articleId, reportImgData, diaryImgData]);
+  }, [articleId, reportImgData]);
 
   // 게시물 작성 또는 수정
   const handleSave = async () => {
@@ -155,7 +152,7 @@ const SnsWrite = () => {
 
   return (
     <div>
-      <div className='pb-20'>
+      <div>
         <Tab
           selectedVisibility={selectedVisibility}
           setSelectedVisibility={setSelectedVisibility}
