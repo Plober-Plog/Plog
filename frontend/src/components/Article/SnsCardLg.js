@@ -10,7 +10,21 @@ const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, i
     navigate(`/sns/${articleId}`, {state: { articleId }});
   }
 
-  const cutContent = content && content.length > 50? content.slice(0, 50) + "..." : content;
+  // const cutContent = content && content.length > 50? content.slice(0, 50) + "..." : content;
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
+  }
+
+  const cutContent = content && content.length > 50 ? content.slice(0, 50) + "..." : content;
+  const formattedDate = formatDate(createdAt);
+
 
   return (
     <div className="sns-card-lg" onClick={handleClick}>
@@ -23,14 +37,15 @@ const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, i
 
       <div className="sns-card-lg-content">
 
-
-        <div>
+        <div className="sns-card-lg-profile">
           <img
             src={profile}
             alt="profile img"
           />
-          <span>닉네임: {nickname}</span>
-          <span>{createdAt}</span>
+          <div className="sns-card-lg-profile-info">
+            <span>{nickname}</span>
+            <span>{formattedDate}</span>
+          </div>
         </div>
 
 
