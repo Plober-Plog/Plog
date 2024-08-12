@@ -137,10 +137,10 @@ public class NotificationServiceImpl implements NotificationService {
     private void checkWaterNotification(Plant plant, User user, LocalDate today) {
         log.info("checkWaterNotification 시작 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
         LocalDate waterDate = plant.getWaterDate();
-        int waterMid = plant.getPlantType().getWaterMid();
+        // int waterMid = plant.getPlantType().getWaterMid();
         int waterInterval = plant.getPlantType().getWaterInterval();
-        LocalDate startWaterDate = waterDate.minusDays(waterMid - waterInterval);
-        LocalDate endWaterDate = waterDate.plusDays(waterMid + waterInterval);
+        LocalDate startWaterDate = waterDate.minusDays(waterInterval);
+        LocalDate endWaterDate = waterDate.plusDays(waterInterval);
 
         String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
 
@@ -153,10 +153,10 @@ public class NotificationServiceImpl implements NotificationService {
     private void checkFertilizeNotification(Plant plant, User user, LocalDate today) {
         log.info("checkFertilizeNotification 시작 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
         LocalDate fertilizeDate = plant.getFertilizeDate();
-        int fertilizeMid = plant.getPlantType().getFertilizeMid();
+        // int fertilizeMid = plant.getPlantType().getFertilizeMid();
         int fertilizeInterval = plant.getPlantType().getFertilizeInterval();
-        LocalDate startFertilizeDate = fertilizeDate.minusDays(fertilizeMid - fertilizeInterval);
-        LocalDate endFertilizeDate = fertilizeDate.plusDays(fertilizeMid + fertilizeInterval);
+        LocalDate startFertilizeDate = fertilizeDate.minusDays(fertilizeInterval);
+        LocalDate endFertilizeDate = fertilizeDate.plusDays(fertilizeInterval);
 
         String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
 
@@ -171,10 +171,10 @@ public class NotificationServiceImpl implements NotificationService {
     private void checkRepotNotification(Plant plant, User user, LocalDate today) {
         log.info("checkRepotNotification 시작 - plantId: {}, userId: {}", plant.getPlantId(), user.getUserId());
         LocalDate repotDate = plant.getRepotDate();
-        int repotMid = plant.getPlantType().getRepotMid();
+        // int repotMid = plant.getPlantType().getRepotMid();
         int repotInterval = plant.getPlantType().getRepotInterval();
-        LocalDate startRepotDate = repotDate.minusDays(repotMid - repotInterval);
-        LocalDate endRepotDate = repotDate.plusDays(repotMid + repotInterval);
+        LocalDate startRepotDate = repotDate.minusDays(repotInterval);
+        LocalDate endRepotDate = repotDate.plusDays(repotInterval);
 
         String clickUrl = "https://i11b308.p.ssafy.io/plant" + plant.getPlantId();
 

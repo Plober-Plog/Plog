@@ -26,7 +26,6 @@ public class SchedulerConfig {
             weatherService.updateWeatherData();
         } catch (Exception e) {
             log.error("날씨 데이터 업데이트중 에러 발생, 1분 뒤 재시작", e);
-            throw new WeatherUpdateException("날씨 데이터 업데이트중 에러 발생, 1분 뒤 재시작");
         }
     }
 }
