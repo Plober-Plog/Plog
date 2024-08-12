@@ -142,7 +142,7 @@ public class UserServiceImpl implements UserService {
 
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
 
-        String searchId = userRepository.findSearchIdById(userId);
+        String searchId = userRepository.findSearchIdByUserId(userId);
 
         // FCM 토큰 null로 변경
         User user = userRepository.findUserBySearchId(searchId)

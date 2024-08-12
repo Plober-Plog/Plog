@@ -263,11 +263,11 @@ public class PlantController {
     }
 
     // ================== 일지 ==================
-    @PostMapping
-    public ResponseEntity<?> setGuide(
-            @Parameter(description = "식물 추가 요청 데이터", required = true) @ModelAttribute PlantGuideAddRequestDto plantGuideAddRequestDto
-    ) {
-        return null;
-    }
+//    @PostMapping
+//    public ResponseEntity<?> setGuide(
+//            @Parameter(description = "식물 추가 요청 데이터", required = true) @ModelAttribute PlantGuideAddRequestDto plantGuideAddRequestDto
+//    ) {
+//        return null;
+//    }
 
 }
