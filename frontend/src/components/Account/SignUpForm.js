@@ -125,7 +125,7 @@ const SignUpForm = () => {
     try {
       const response = await axios.get(`${URI}/user/${searchId}`);
       // 중복 X
-      if (response.status === 200) {
+      if (response.status === 400) {
         setSearchIdCheckMsg('사용 가능한 아이디입니다.');
         setIsSearchIdAvailable(true);
         console.log('아이디 중복확인 성공!');
