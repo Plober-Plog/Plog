@@ -3,7 +3,7 @@ import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 import './SnsCardLg.css';
 
-const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked}) => {
+const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked, createdAt, profile}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -22,9 +22,18 @@ const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, i
       </div>
 
       <div className="sns-card-lg-content">
+
+
         <div>
+          <img
+            src={profile}
+            alt="profile img"
+          />
           <span>닉네임: {nickname}</span>
+          <span>{createdAt}</span>
         </div>
+
+
         <p>{cutContent}</p>
 
         <div className="sns-card-lg-icons">
