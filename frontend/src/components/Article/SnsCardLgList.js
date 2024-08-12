@@ -62,7 +62,6 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
 
   return (
     <div>
-      <h3>SNS LG CardList목록</h3>
       {snslist.map((sns) => (
         <SnsCardLg 
           key={sns.articleId}
