@@ -7,7 +7,7 @@ import ChatListItem from '../../components/Chat/ChatListItem';
 
 const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
 
-const ChatRooms = () => {
+const ChatRoomList = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const navigate = useNavigate();
   const token = getCookie('accessToken');  
@@ -48,8 +48,7 @@ const ChatRooms = () => {
       {chatRooms.map((chatRoom) => (
         <ChatListItem
           key={chatRoom.chatRoomId}
-          chatRoomId={chatRoom.chatRoomId}
-          chatRoomName={chatRoom.chatRoomName}
+          chatRoom={chatRoom}
         />
       ))}
       {/* <button onClick={handleCreateChatRoom}>채팅방 개설</button> */}
@@ -57,4 +56,4 @@ const ChatRooms = () => {
   );
 };
 
-export default ChatRooms;
+export default ChatRoomList;

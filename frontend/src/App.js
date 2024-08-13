@@ -39,7 +39,7 @@ import CommentDetail from './pages/Sns/CommentDetail';
 
 // Chat
 import ChatRoom from './pages/Chat/ChatRoom';
-import ChatRooms from './pages/Chat/ChatRoomList';
+import ChatRoomList from './pages/Chat/ChatRoomList';
 
 // Alarm
 import Alarm from './pages/Alarm/Alarm';
@@ -108,7 +108,7 @@ function App() {
             <Route path="/sns/:articleId" element={<SnsDetail />} />
             <Route path="/sns/:articleId/comment" element={<CommentDetail />} />
             {/* chat */}
-            <Route path="/chat" element={<ChatRooms />} />
+            <Route path="/chat" element={<ChatRoomList />} />
             <Route path="/chat/:chatRoomId" element={<ChatRoom />} />
             {/* alarm */}
             <Route path="/alarm" element={<PrivateRoute><Alarm /></PrivateRoute>} />
