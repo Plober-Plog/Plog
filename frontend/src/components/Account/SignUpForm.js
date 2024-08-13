@@ -57,6 +57,7 @@ const SignUpForm = () => {
       try {
         const response = await axios.get(`${URI}/area/sido`)
         setSidoOptions(response.data);
+        console.log(response.data)
       } catch (error) {
         console.error(error);
       }
@@ -73,6 +74,7 @@ const SignUpForm = () => {
           { params: { sidoCode } }
         )
         setGugunOptions(response.data);
+        console.log(response.data)
       } catch (error) {
         console.error(error);
       }
@@ -125,7 +127,7 @@ const SignUpForm = () => {
     try {
       const response = await axios.get(`${URI}/user/${searchId}`);
       // 중복 X
-      if (response.status === 400) {
+      if (response.status === 200) {
         setSearchIdCheckMsg('사용 가능한 아이디입니다.');
         setIsSearchIdAvailable(true);
         console.log('아이디 중복확인 성공!');
@@ -247,6 +249,8 @@ const handleSignUp = async () => {
     profileInfo: "",
     isAd: agreeAdvertisement
   };
+
+  console.log('회원정보:',userInfo);
 
   //// git push 전, 지울부분  -> 이해를 위해 남겨두겠음..!////
   // 기본 프로필 이미지를 Blob으로 변환하여 추가

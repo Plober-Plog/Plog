@@ -1,7 +1,7 @@
 import React from 'react';
-import fertilizedFill from '../../assets/icon/fertilized-fill.svg';
-import waterFill from '../../assets/icon/water-fill.svg';
-import repottedFill from '../../assets/icon/repotted-fill.svg';
+import fertilizedFill from '../../assets/icon/fertilized-select.png';
+import waterFill from '../../assets/icon/water-select.png';
+import repottedFill from '../../assets/icon/repotted-select.png';
 
 const AlarmItem = ({ alarm }) => {
   // 이미지 출력 선택
@@ -26,13 +26,15 @@ const AlarmItem = ({ alarm }) => {
   };
 
   return (
-    <div>
+    <div className='alarm-item-box'>
       <img 
         src={getImageSrc()}
         alt='프로필 이미지'
+        className='alarm-image'
       />
       <span
         onClick={handleMove}
+        className='alarm-content'
       >
         {alarm.content}
       </span>

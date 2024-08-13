@@ -39,7 +39,7 @@ import CommentDetail from './pages/Sns/CommentDetail';
 
 // Chat
 import ChatRoom from './pages/Chat/ChatRoom';
-import ChatRooms from './pages/Chat/ChatRoomList';
+import ChatRoomList from './pages/Chat/ChatRoomList';
 
 // Alarm
 import Alarm from './pages/Alarm/Alarm';
@@ -108,8 +108,8 @@ function App() {
             <Route path="/sns/:articleId" element={<SnsDetail />} />
             <Route path="/sns/:articleId/comment" element={<CommentDetail />} />
             {/* chat */}
-            <Route path="/chat" element={<ChatRooms />} />
-            <Route path="/chat/:chatRoomId" element={<ChatRoom />} />
+            <Route path="/chat" element={<PrivateRoute><ChatRoomList /></PrivateRoute>} />
+            <Route path="/chat/:chatRoomId" element={<PrivateRoute><ChatRoom /></PrivateRoute>} />
             {/* alarm */}
             <Route path="/alarm" element={<PrivateRoute><Alarm /></PrivateRoute>} />
 
@@ -125,12 +125,14 @@ function App() {
 const FooterWithCondition = () => {
   const location = useLocation();
   const isSnsDetailPage = location.pathname.startsWith('/sns/');
+  const isChatDetailPage = location.pathname.startsWith('/chat/');
 
   return (
     <footer className='full-width'>
-      {isSnsDetailPage ? null : <Footer />}
+      {isSnsDetailPage || isChatDetailPage ? null : <Footer />}
     </footer>
   );
 }
+
 
 export default App;
