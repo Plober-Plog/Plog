@@ -1,0 +1,16 @@
+.textarea-field {
+  width: 100%;
+  min-height: 300px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cccccc;
+  font-size: 1rem;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.textarea-field-sns {
+  margin-top: 20px;
+  min-height: 570px; 
+  margin-bottom: 10px;
+}

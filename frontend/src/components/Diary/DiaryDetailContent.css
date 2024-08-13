@@ -1,0 +1,11 @@
+.diary-detail-container {
+  background-color: #f2f2f2; 
+  border-radius: 10px; 
+  margin: 20px 0;
+}
+
+.diary-detail-text {
+  line-height: 1.5;
+  white-space: pre-wrap; 
+  padding: 15px;
+}

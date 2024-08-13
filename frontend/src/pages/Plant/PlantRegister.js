@@ -171,86 +171,90 @@ const PlantRegister = () => {
 
   return (
     <div>
-      <h1>{plantId ? '식물정보 수정' : '식물정보 등록'}</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            accept="image/*"
-            onChange={handleImageUpload}
-          />
-          <img
-            src={profile}
-            alt="Plant profile"
-            onClick={() => fileInputRef.current.click()}
-            style={{ cursor: 'pointer', width: '100px', height: '100px' }}
-          />
-          {profile !== defaultImage && (
-            <button type="button" onClick={handleImageRemove}>
-              이미지 삭제
-            </button>
-          )}
-        </div>
-        <div>
-          <p>식물 종</p>
-          <select
-            value={plantTypeId}
-            onChange={(e) => setPlantTypeId(Number(e.target.value))}
-            required={false}
-          >
-            {plantTypeOptions.map(plantTypeOption => (
-              <option key={plantTypeOption.plantTypeId} value={plantTypeOption.plantTypeId}>
-                {plantTypeOption.plantName}
-              </option>
-            ))}
-          </select>
-          {plantTypeId === 1 && (
+      <div>
+        <h1>{plantId ? '식물정보 수정' : '식물정보 등록'}</h1>
+      </div>
+      <div>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+            <img
+              src={profile}
+              alt="Plant profile"
+              onClick={() => fileInputRef.current.click()}
+              style={{ cursor: 'pointer', width: '100px', height: '100px' }}
+            />
+            {profile !== defaultImage && (
+              <button type="button" onClick={handleImageRemove}>
+                이미지 삭제
+              </button>
+            )}
+          </div>
+          <div>
+            <p>식물 종</p>
+            <select
+              value={plantTypeId}
+              onChange={(e) => setPlantTypeId(Number(e.target.value))}
+              required={false}
+            >
+              {plantTypeOptions.map(plantTypeOption => (
+                <option key={plantTypeOption.plantTypeId} value={plantTypeOption.plantTypeId}>
+                  {plantTypeOption.plantName}
+                </option>
+              ))}
+            </select>
+            {plantTypeId === 1 && (
+              <InputField
+                type="text"
+                placeholder="식물 종을 입력해주세요."
+                value={otherPlantName}
+                onChange={(e) => setOtherPlantName(e.target.value)}
+                className="input"
+              />
+            )}
+          </div>
+          <div>
+            <p>식물 닉네임</p>
             <InputField
               type="text"
-              placeholder="식물 종을 입력해주세요."
-              value={otherPlantName}
-              onChange={(e) => setOtherPlantName(e.target.value)}
+              placeholder="식물 닉네임을 입력해주세요."
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
               className="input"
             />
-          )}
-        </div>
-        <div>
-          <p>식물 닉네임</p>
-          <InputField
-            type="text"
-            placeholder="식물 닉네임을 입력해주세요."
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            className="input"
+          </div>
+          <div>
+            <p>식물 생일</p>
+            <InputField
+              type="date"
+              placeholder="식물 생일을 입력해주세요."
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              className="input"
+            />
+          </div>
+          <div>
+            <p>식물 소개</p>
+            <TextareaField
+              placeholder="식물 소개를 입력해주세요."
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              className="textarea"
+            />
+          </div>
+          <Btn
+            content={plantId ? '수정하기' : '등록하기'}
+            onClick={handleSubmit}
+            className="button"
           />
-        </div>
-        <div>
-          <p>식물 생일</p>
-          <InputField
-            type="date"
-            placeholder="식물 생일을 입력해주세요."
-            value={birthDate}
-            onChange={(e) => setBirthDate(e.target.value)}
-            className="input"
-          />
-        </div>
-        <div>
-          <p>식물 소개</p>
-          <TextareaField
-            placeholder="식물 소개를 입력해주세요."
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            className="textarea"
-          />
-        </div>
-        <Btn
-          content={plantId ? '수정하기' : '등록하기'}
-          onClick={handleSubmit}
-          className="button"
-        />
-      </form>
+        </form>
+      </div>
       {plantId && 
         <>
           <Btn

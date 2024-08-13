@@ -107,7 +107,7 @@ const PlantReport = () => {
 
   return (
     <div className="plant-report-container" ref={reportRef}>
-      <div className="plant-report-title">
+      <div className="cardlist-subtitle mb-4">
         <h2>{plantData.plantName} 분석보고서</h2>
       </div>
       <div className="plant-report-slider">

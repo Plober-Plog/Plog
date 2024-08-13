@@ -33,6 +33,19 @@
   margin-bottom: 10px; /* 입력 필드 간의 간격 */
 }
 
+.account-disable-input {
+  display: flex;
+  width: 340px;
+  height: 50px;
+  padding: 12px 20px; /* 패딩을 약간 조정 */
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid #E3E3E3;
+  background: var(--naver-text, #d9d9d9);
+  margin-bottom: 10px; /* 입력 필드 간의 간격 */
+}
+
 .account-button {
   width: 240px;
   height: 50px;
@@ -88,5 +101,6 @@
   cursor: pointer;
   font-size: 16px;
 }
+
 
 

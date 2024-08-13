@@ -1,4 +1,5 @@
 import React from 'react';
+import './TextareaField.css';
 
 const TextareaField = ({ type, placeholder, value, onChange, isrequired, className, disabled }) => {
   return (
@@ -9,7 +10,7 @@ const TextareaField = ({ type, placeholder, value, onChange, isrequired, classNa
         value={value} 
         onChange={onChange} 
         required={isrequired}
-        className={className}
+        className={`textarea-field ${className}`}
         disabled={disabled}
       />
     </div>
