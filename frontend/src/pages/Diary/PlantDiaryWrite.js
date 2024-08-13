@@ -14,9 +14,12 @@ import weatherIcon from '../../assets/icon/weather.png';
 import humidityIcon from '../../assets/icon/humidity.png'; 
 import temperatureIcon from '../../assets/icon/temperature.png'; 
 import cameraIcon from '../../assets/icon/camera.png';
-import waterIcon from '../../assets/icon/water.png'; 
-import fertilizedIcon from '../../assets/icon/fertilized.png'; 
-import repottedIcon from '../../assets/icon/repotted.png'; 
+import waterIcon from '../../assets/icon/water-default.png'; 
+import waterFillIcon from '../../assets/icon/water-select.png'; 
+import fertilizedIcon from '../../assets/icon/fertilized-default.png'; 
+import fertilizedFillIcon from '../../assets/icon/fertilized-select.png'; 
+import repottedIcon from '../../assets/icon/repotted-default.png'; 
+import repottedFillIcon from '../../assets/icon/repotted-select.png';
 
 import './PlantDiaryWrite.css';
 
