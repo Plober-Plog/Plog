@@ -52,7 +52,7 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     @Override
     public void sendMessage(ChatGetRequestDto chatGetRequestDto) {
-        chatRepository.save(
+        Chat chat = chatRepository.save(
                 Chat.builder()
                         .user(userRepository.getReferenceById(chatGetRequestDto.getUserId()))
                         .chatRoom(chatRoomRepository.getReferenceById(chatGetRequestDto.getChatRoomId()))
@@ -67,6 +67,11 @@ public class ChatServiceImpl implements ChatService {
         });
         chatUser.setLastReadAt(LocalDateTime.now());
         chatUserRepository.save(chatUser);
+
+        chatGetRequestDto.setImage(chatUser.getUser().getImage().getImageUrl());
+        chatGetRequestDto.setNickname(chatUser.getUser().getNickname());
+        chatGetRequestDto.setSearchId(chatUser.getUser().getSearchId());
+        chatGetRequestDto.setCreatedAt(chat.getCreatedAt());
 
         log.info(" >>> sendMessage 완료 - DB에 저장: {}", chatGetRequestDto.getUserId());
         String topicName = "chatroom-" + chatGetRequestDto.getChatRoomId();
@@ -95,8 +100,8 @@ public class ChatServiceImpl implements ChatService {
                 chat.getUser().getUserId(),
                 chat.getChatRoom().getChatRoomId(),
                 chat.getUser().getNickname(),
-                chat.getUser().getSearchId(),
                 chat.getUser().getImage().getImageUrl(),
+                chat.getUser().getSearchId(),
                 chat.getMessage(),
                 chat.getCreatedAt()
         )).collect(Collectors.toList());

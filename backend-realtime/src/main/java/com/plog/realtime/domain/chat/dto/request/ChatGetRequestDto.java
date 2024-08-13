@@ -15,4 +15,9 @@ public class ChatGetRequestDto {
     private Long chatRoomId;
     private String message;
     private String chatType;
+    // 추가 데이터
+    private String image;
+    private String searchId;
+    private String nickname;
+    LocalDateTime createdAt;
 }
