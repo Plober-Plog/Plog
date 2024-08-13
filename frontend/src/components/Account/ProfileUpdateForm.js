@@ -11,7 +11,7 @@ import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
 import ATag from '../Common/ATag';
 import ModalComplete from '../Common/ModalComplete';
-import './ProfileUpdateForm.css';  // CSS 파일을 임포트합니다
+import './ProfileUpdateForm.css'; 
 
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
