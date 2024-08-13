@@ -40,9 +40,9 @@ public class PlantTypeServiceImpl implements PlantTypeService {
                     .plantName(pt.getPlantName())
                     .guide(pt.getGuide())
                     .profile(pt.getImage() != null ? pt.getImage().getImageUrl() : null)
-                    .waterInterval(pt.getWaterInterval())
-                    .fertilizeInterval(pt.getFertilizeInterval())
-                    .repotInterval(pt.getRepotInterval())
+                    .waterInterval(pt.getWaterMid())
+                    .fertilizeInterval(pt.getFertilizeMid())
+                    .repotInterval(pt.getRepotMid())
                     .build();
         } else {
             throw new EntityNotFoundException();
