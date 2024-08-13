@@ -142,11 +142,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
                     .orElseThrow(() -> new EntityNotFoundException("ChatUser not found"));
 
-            log.info(">>> 채팅방의 마지막 메시지와 사용자의 읽은 시간 비교 - lastChat {}, chatUser {}", lastChat.getCreatedAt(), chatUser.getLastReadAt());
-
             boolean isRead = false;
             if (lastChat != null && chatUser.getLastReadAt() != null) {
-//                isRead = lastChat.getCreatedAt().isBefore(chatUser.getLastReadAt());
+                log.info(">>> 채팅방의 마지막 메시지와 사용자의 읽은 시간 비교 - lastChat {}, chatUser {}", lastChat.getCreatedAt(), chatUser.getLastReadAt());
                 isRead = !lastChat.getCreatedAt().isAfter(chatUser.getLastReadAt());
             }
             log.info(">>> 메시지 읽음 여부: {}", isRead);
