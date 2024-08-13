@@ -35,6 +35,7 @@ const SnsDetail = () => {
           profile: response.data.profile,
           recordDate: response.data.createdAt.slice(0, 10),
           nickname: response.data.nickname,
+          searchId: response.data.searchId,
         }
         setWriterInfo(writerInfo);
         console.log('작성자 정보:', writerInfo);
@@ -61,19 +62,51 @@ const SnsDetail = () => {
     }
   }
 
+  const allTagsSelected = article.tagTypeList.map(tag => tag.tagTypeId);
+
+  const handleProfileClick = () => {
+    navigate(`/profile/${writerInfo.searchId}`)
+
+    console.log(writerInfo)
+  }
+
   return (
-    <div>
-      <WriterInfo data={writerInfo} type="user" onClick={() => navigate(`/profile/${writerInfo.searchId}`)}/>
+    <div className="mt-5">
+      
+      <div className="mb-4"
+        onClick={handleProfileClick}
+      >
+        <WriterInfo data={writerInfo} type="user"
+        />
+      </div>
+      
+      <div className="mb-7">
+        <ImgSlider imgs={article.images} />
+      </div>
+      
+      <div className="mb-2" style={{ pointerEvents: 'none' }}>
+        <Tags selectedTags={allTagsSelected} tags={article.tagTypeList} />
+      </div>
+      
+      <p>{article.content}</p>
+
       {isAuthor && (
         <>
-          <Btn content='수정하기' onClick={() => navigate('/sns/write', { state: { articleId } })} />
-          <Btn content='삭제하기' onClick={() => handleSnsDlelete()} />
+          <div className="grid grid-cols-12 gap-3 mt-10 mb-5">
+            <div className="col-span-6">
+              <Btn content='수정하기' onClick={() => navigate('/sns/write', { state: { articleId } })} />
+            </div>
+            
+            <div className="col-span-6">
+              <Btn content='삭제하기' onClick={() => handleSnsDlelete()} />
+            </div>
+          </div>
         </>
       )}
-      <ImgSlider imgs={article.images} />
-      <Tags selectedTags={article.tagTypeList} tags={article.tagTypeList} />
-      <p>{article.content}</p>
-      <BtnList likeCnt={article.likeCnt} isLiked={article.isLiked} commentCnt={article.commentCnt} isBookmarked={article.isBookmarked} articleId={articleId} />
+
+      <div className="mb-5">
+        <BtnList likeCnt={article.likeCnt} isLiked={article.isLiked} commentCnt={article.commentCnt} isBookmarked={article.isBookmarked} articleId={articleId} />
+      </div>
       <Comment articleId={articleId}/>
     </div>
   );

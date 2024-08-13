@@ -8,6 +8,8 @@
   height: 50px;
   border-radius: 50%;
   margin-right: 10px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }
 
 .writerInfo-text {

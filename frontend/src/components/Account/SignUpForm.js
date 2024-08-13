@@ -57,6 +57,7 @@ const SignUpForm = () => {
       try {
         const response = await axios.get(`${URI}/area/sido`)
         setSidoOptions(response.data);
+        console.log(response.data)
       } catch (error) {
         console.error(error);
       }
@@ -73,6 +74,7 @@ const SignUpForm = () => {
           { params: { sidoCode } }
         )
         setGugunOptions(response.data);
+        console.log(response.data)
       } catch (error) {
         console.error(error);
       }
@@ -247,6 +249,8 @@ const handleSignUp = async () => {
     profileInfo: "",
     isAd: agreeAdvertisement
   };
+
+  console.log('회원정보:',userInfo);
 
   //// git push 전, 지울부분  -> 이해를 위해 남겨두겠음..!////
   // 기본 프로필 이미지를 Blob으로 변환하여 추가
