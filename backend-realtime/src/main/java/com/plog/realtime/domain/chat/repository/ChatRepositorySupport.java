@@ -24,20 +24,16 @@ public class ChatRepositorySupport extends QuerydslRepositorySupport {
     public List<Chat> findChatsByChatRoomId(Long chatRoomId, int page) {
         QChat chat = QChat.chat;
 
-        // 모든 채팅 메시지를 최신순으로 정렬한 후
-        List<Chat> sortedChats = queryFactory.selectFrom(chat)
+        // 최신순으로 정렬하고 페이지네이션을 적용하여 쿼리 실행
+        List<Chat> paginatedChats = queryFactory.selectFrom(chat)
                 .where(
                         chat.chatRoom.chatRoomId.eq(chatRoomId)
                 )
-                .orderBy(chat.chatRoom.createdAt.desc())
+                .orderBy(chat.createdAt.desc()) // 최신순으로 정렬
+                .offset(page * size)             // 페이지 시작점
+                .limit(size)                     // 페이지 크기만큼 데이터 가져오기
                 .fetch();
 
-        // 정렬된 리스트에서 페이지네이션 적용
-        List<Chat> filteredArticleList = sortedChats.stream()
-                .skip(page * size)
-                .limit(size)
-                .collect(Collectors.toList());
-
-        return filteredArticleList;
+        return paginatedChats;
     }
 }
