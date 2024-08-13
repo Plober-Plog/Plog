@@ -147,7 +147,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             boolean isRead = false;
             if (lastChat != null && chatUser.getLastReadAt() != null) {
-                isRead = lastChat.getCreatedAt().isBefore(chatUser.getLastReadAt());
+//                isRead = lastChat.getCreatedAt().isBefore(chatUser.getLastReadAt());
+                isRead = !lastChat.getCreatedAt().isAfter(chatUser.getLastReadAt());
             }
             log.info(">>> 메시지 읽음 여부: {}", isRead);
 
