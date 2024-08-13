@@ -1,6 +1,10 @@
 package com.plog.realtime.domain.user.entity;
 
 import com.plog.realtime.domain.image.entity.Image;
+import com.plog.realtime.domain.user.entity.ChatAuth;
+import com.plog.realtime.domain.user.entity.Gender;
+import com.plog.realtime.domain.user.entity.Role;
+import com.plog.realtime.domain.user.entity.State;
 import com.plog.realtime.global.model.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,19 +47,25 @@ public class User extends BaseEntity {
     private LocalDate birthDate;
 
     @Column(nullable = false)
-    private Gender gender;
+    private int gender;
+    public Gender getGender() {return Gender.gender(gender);};
+    public void setGender(Gender gender) {this.gender = gender.getValue();}
 
     @Column
     private String source;
 
     @Column(nullable = false)
-    private State state;
+    private int state;
+    public State getState() {return State.state(state);};
+    public void setState(State state) {this.state = state.getValue();}
 
     @Column(nullable = false)
-    private Role role;
+    private int role;
+    public Role getRole() {return Role.role(role);};
+    public void setRole(Role role) {this.role = role.getValue();}
 
     @Column
-    private Provider provider;
+    private int provider;
 
     @Column
     private String providerId;
@@ -65,7 +75,9 @@ public class User extends BaseEntity {
     private int totalExp;
 
     @Column(nullable = false)
-    private ChatAuth chatAuth;
+    private int chatAuth;
+    public ChatAuth getChatAuth() {return ChatAuth.chatAuth(chatAuth);};
+    public void setChatAuth(ChatAuth chatAuth) {this.chatAuth = chatAuth.getValue();}
 
     @Column
     private String profileInfo;
