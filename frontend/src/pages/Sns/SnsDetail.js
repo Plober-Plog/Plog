@@ -71,7 +71,7 @@ const SnsDetail = () => {
         </>
       )}
       <ImgSlider imgs={article.images} />
-      <Tags selectedTags={article.tagTypeList} tags={article.tagTypeList} />
+      <Tags selectedTags={article.tagTypeList} tags={article.tagTypeList}/>
       <p>{article.content}</p>
       <BtnList likeCnt={article.likeCnt} isLiked={article.isLiked} commentCnt={article.commentCnt} isBookmarked={article.isBookmarked} articleId={articleId} />
       <Comment articleId={articleId}/>

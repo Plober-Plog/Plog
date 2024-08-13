@@ -37,6 +37,21 @@ const ChatListItem = ({ chatRoom, token }) => {
     });
   };
 
+  // 시간을 포맷팅하는 함수 (날짜는 제거하고 시간만)
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    if (isNaN(date.getDate())) {
+      return "Invalid Date"; // 잘못된 날짜 처리
+    }
+
+    return new Intl.DateTimeFormat('default', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'Asia/Seoul'
+    }).format(date);
+  };
+
   return (
     <div className="chat-list-item" onClick={() => handleEnterChatRoom(chatRoom.chatRoom.chatRoomId, chatRoom.chatRoom.chatRoomName)}>
       <div className="chat-list-item-avatar">
@@ -47,7 +62,7 @@ const ChatListItem = ({ chatRoom, token }) => {
         <span className="chat-list-item-message">{chatRoom.lastChat.message}</span>
       </div>
       <div className="chat-list-item-info">
-        <span className="chat-list-item-date">{chatRoom.lastChat.updatedAt}</span>
+        <span className="chat-list-item-date">{formatTime(chatRoom.lastChat.updatedAt)}</span>
         {chatRoom.read === false && (
           <span className="chat-list-item-unread">N</span>
         )}
