@@ -3,6 +3,12 @@ import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 import './SnsCardLg.css';
 
+import cmtIcon from '../../assets/icon/cmt-select.png';
+import likeSelectIcon from '../../assets/icon/like-select-org.png';
+import likeIcon from '../../assets/icon/like-default.png';
+import bmkIcon from '../../assets/icon/bmk-default.png';
+import bmkSelectIcon from '../../assets/icon/bmk-select.png';
+
 const SnsCardMd = ({ searchId, articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked, createdAt, profile}) => {
   const navigate = useNavigate();
 
@@ -57,18 +63,26 @@ const SnsCardMd = ({ searchId, articleId, nickname, image, content, likeCnt, com
         <p>{cutContent}</p>
 
         <div className="sns-card-lg-icons">
+          
           <div className="sns-card-lg-left">
-            <i>❤️:{likeCnt}</i>
-            <i>💬:{commentCnt}</i>
+            <span className="sns-card-lg-icon mr-3 gap-1">
+              <img src={likeSelectIcon} alt="좋아요 수" />
+              {likeCnt}
+            </span>
+            <span className="sns-card-lg-icon gap-1">
+              <img src={cmtIcon} alt="댓글 수 " />
+              {commentCnt}
+            </span>
           </div>
 
           <div className="sns-card-lg-right">
-            <i title="좋아요">
-              {isLiked ? '❤️' : '🖤'}
-            </i>
-            <i title="북마크">
-              {isBookmarked ? '🔖' : '📕'}
-            </i>
+          <span className="sns-card-lg-icon mr-3 gap-1">
+            {isLiked? <img src={likeSelectIcon} alt="좋아요on"/> : <img src={likeIcon} alt="좋아요off"/>}
+          </span>
+          <span className="sns-card-lg-icon gap-1">
+            {isBookmarked? <img src={bmkSelectIcon} alt="북마크on"/> : <img src={bmkIcon} alt="북마크off"/>}
+          </span>
+
           </div>
         </div>
         
