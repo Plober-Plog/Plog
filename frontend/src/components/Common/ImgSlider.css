@@ -1,0 +1,23 @@
+.img-slider-container {
+  width: 100%;
+  max-width: 500px; /* 슬라이더의 최대 너비를 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
+  padding-bottom: 30px;
+}
+
+.slick-list {
+  padding: 0px 3px; 
+}
+
+.slide {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide-img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+}
