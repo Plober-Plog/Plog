@@ -119,7 +119,7 @@ const PlantReport = () => {
       <div className="plant-report-details">
         <DiaryDetailContent detailContent={reportContent}/>
       </div>
-      <div>
+      <div className='plant-report-sns-btn'>
         <Btn content='SNS 공유하기' onClick={handleCapture} /> 
       </div>
     </div>

@@ -1,5 +1,5 @@
 .img-slider-container {
-  width: 100%;
+  width: 90%;
   max-width: 500px; /* 슬라이더의 최대 너비를 설정 */
   margin: 0 auto; /* 가운데 정렬 */
   padding-bottom: 30px;
