@@ -7,6 +7,7 @@ import com.plog.realtime.domain.chat.entity.ChatRoom;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
 import com.plog.realtime.domain.chat.service.ChatRoomService;
 import com.plog.realtime.domain.user.entity.User;
+import com.plog.realtime.global.exception.NoTokenRequestException;
 import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.model.response.BaseResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +34,8 @@ public class ChatRoomController {
     public ResponseEntity<?> createChatRoom(
             @RequestHeader("Authorization") String token,
             @RequestBody ChatRoomCreateRequestDto createRequestDto) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> createChatRoom 호출됨");
         if (createRequestDto.getChatRoomName() == null || createRequestDto.getChatRoomName().isEmpty()) {
             log.error(">>> 채팅방 제목이 비어있음");
@@ -49,11 +52,12 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 목록 조회", description = "사용자가 소속된 모든 채팅방 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<List<ChatRoomGetListResponseDto>> getAllChatRooms(
-            @RequestHeader("Authorization") String token
-//            @RequestParam("page") int page
-    ) {
+            @RequestHeader("Authorization") String token,
+            @RequestParam("page") int page) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> getAllChatRooms 호출됨");
-        List<ChatRoomGetListResponseDto> chatRoomList = chatRoomService.getAllChatRooms(token);
+        List<ChatRoomGetListResponseDto> chatRoomList = chatRoomService.getAllChatRooms(token, page);
         log.info(">>> 조회된 채팅방 목록: {}", chatRoomList.stream().toList());
         return ResponseEntity.ok(chatRoomList);
     }
@@ -62,10 +66,8 @@ public class ChatRoomController {
     @PostMapping("/{chatRoomId}/read")
     public ResponseEntity<?> updateLastReadAt(@PathVariable Long chatRoomId,
                                               @RequestHeader("Authorization") String token) {
-        if(token == null || !token.startsWith("Bearer ")) {
-            log.error(">>> updateLastReadAt - 토큰이 없거나 Bearer로 시작하지 않습니다.");
-            throw new NotValidRequestException("토큰이 없거나 Bearer로 시작하지 않습니다.");
-        }
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         chatRoomService.updateLastReadAt(token, chatRoomId);
         return ResponseEntity.ok().build();
     }
@@ -94,6 +96,8 @@ public class ChatRoomController {
             @RequestHeader("Authorization") String token,
             @RequestParam("chatRoomId") Long chatRoomId) {
         log.info(">>> deleteChatRoom 호출됨, chatRoomId: {}", chatRoomId);
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         return ResponseEntity.ok(chatRoomService.deleteChatRoom(token, chatRoomId));
     }
 
@@ -103,6 +107,8 @@ public class ChatRoomController {
             @RequestHeader("Authorization") String token,
             @RequestParam("chatRoomId") Long chatRoomId) {
         log.info(">>> leaveChatRoom 호출됨, chatRoomId: {}", chatRoomId);
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         return ResponseEntity.ok(chatRoomService.leaveChatRoom(token, chatRoomId));
     }
 
@@ -115,6 +121,8 @@ public class ChatRoomController {
                 ,updateRequestDto.getChatRoomId()
                 ,updateRequestDto.getChatRoomName()
                 );
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         return ResponseEntity.ok(chatRoomService.updateChatRoom(token, updateRequestDto));
     }
 }

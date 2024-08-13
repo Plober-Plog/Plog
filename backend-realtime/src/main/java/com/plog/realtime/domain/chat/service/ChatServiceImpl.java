@@ -95,6 +95,7 @@ public class ChatServiceImpl implements ChatService {
                 chat.getUser().getUserId(),
                 chat.getChatRoom().getChatRoomId(),
                 chat.getUser().getNickname(),
+                chat.getUser().getSearchId(),
                 chat.getUser().getImage().getImageUrl(),
                 chat.getMessage(),
                 chat.getCreatedAt()

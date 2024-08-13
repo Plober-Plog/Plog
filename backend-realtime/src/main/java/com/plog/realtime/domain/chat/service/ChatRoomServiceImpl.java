@@ -77,9 +77,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     // TODO[장현준] 채팅방 목록 페이지네이션 적용
     @Override
-    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token) {
+    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token, int page) {
         int pageSize = 15;
-        int page = 0;
         log.info(">>> getAllChatRooms 호출됨");
 
         // 토큰에서 userId 추출

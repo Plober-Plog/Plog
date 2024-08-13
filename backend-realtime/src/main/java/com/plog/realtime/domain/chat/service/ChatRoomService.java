@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ChatRoomService {
     public BaseResponseBody createChatRoom(String token, ChatRoomCreateRequestDto chatRoomCreateRequestDto);
-    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token);
+    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token, int page);
     public List<User> getChatRoomUsers(Long chatRoomId);
     public ChatRoom getChatRoom(Long chatRoomId);
     public BaseResponseBody updateChatRoom(String token, ChatRoomUpdateRequestDto chatRoomUpdateRequestDto);

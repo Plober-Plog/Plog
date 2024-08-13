@@ -1,10 +1,6 @@
-package com.plog.realtime.global.exception.handler;
+package com.plog.realtime.global.exception;
 
-import com.plog.realtime.global.exception.EntityNotFoundException;
-import com.plog.realtime.global.exception.NotAuthorizedRequestException;
-import com.plog.realtime.global.exception.TimeoutException;
 import com.plog.realtime.global.exception.model.ExceptionResponseDto;
-import com.plog.realtime.global.exception.NotValidRequestException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,7 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ExceptionResponseDto> handleEntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
-        log.error("EntityNotFoundException realtime 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        log.error("EntityNotFoundException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
         ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
@@ -32,7 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotValidRequestException.class)
     public ResponseEntity<ExceptionResponseDto> handleNotValidRequestException(
             NotValidRequestException ex, HttpServletRequest request) {
-        log.error("NotValidRequestException realtime 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        log.error("NotValidRequestException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
         ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
@@ -45,7 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotAuthorizedRequestException.class)
     public ResponseEntity<ExceptionResponseDto> handleNotAuthorizedRequestException(
             NotAuthorizedRequestException ex, HttpServletRequest request) {
-        log.error("NotAuthorizedRequestException realtime 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        log.error("NotAuthorizedRequestException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
         ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
@@ -58,7 +54,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TimeoutException.class)
     public ResponseEntity<ExceptionResponseDto> handleTimeoutException(
             TimeoutException ex, HttpServletRequest request) {
-        log.error("TimeoutException realtime 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        log.error("TimeoutException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
         ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
@@ -71,8 +67,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponseDto> handleUnknownException(
             Exception ex, HttpServletRequest request) {
-        log.error("Exception realtime 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
-        ex.printStackTrace();
+        log.error("Exception 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
         ExceptionResponseDto response = ExceptionResponseDto.of(
                 request.getMethod(),
                 request.getRequestURI(),
@@ -80,5 +75,33 @@ public class GlobalExceptionHandler {
                 ex.getMessage()
         );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // 중복된 Entity를 저장시 발생 409에러
+    @ExceptionHandler(DuplicateEntityException.class)
+    public ResponseEntity<ExceptionResponseDto> handleDuplicateEntityException(
+            Exception ex, HttpServletRequest request) {
+        log.error("DuplicateEntityException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        ExceptionResponseDto response = ExceptionResponseDto.of(
+                request.getMethod(),
+                request.getRequestURI(),
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // 토큰이 없을시 401에러
+    @ExceptionHandler(NoTokenRequestException.class)
+    public ResponseEntity<ExceptionResponseDto> handleNoTokenRequestException(
+            Exception ex, HttpServletRequest request) {
+        log.error("NoTokenRequestException 발생 - URL: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        ExceptionResponseDto response = ExceptionResponseDto.of(
+                request.getMethod(),
+                request.getRequestURI(),
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 }

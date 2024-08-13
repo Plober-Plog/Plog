@@ -16,6 +16,7 @@ public class ChatGetResponseDto {
     Long chatRoomId;
     String nickname;
     String profile;
+    String searchId;
     String message;
     LocalDateTime createdAt;
 }
