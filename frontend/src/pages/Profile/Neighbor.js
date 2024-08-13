@@ -44,23 +44,28 @@ const Neighbor = () => {
 
       <NeighborTypeTab activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {activeTab === 'follow' && (
-        <>
-          <h5>팔로우 목록</h5>
-          <NeighborCardList 
-            users={followList}
-          />
-        </>
-      )}
-      
-      {activeTab === 'follower' && (
-        <>
-          <h5>팔로워 목록</h5>
-          <NeighborCardList 
-            users={followerList}
-          />
-        </>
-      )}
+      <div className='pt-20'>
+
+        {activeTab === 'follow' && (
+          <>
+            <NeighborCardList 
+              users={followList}
+            />
+          </>
+        )}
+        
+        {activeTab === 'follower' && (
+          <>
+            <NeighborCardList 
+              users={followerList}
+            />
+          </>
+        )}
+        
+      </div>
+
+
+
     </div>
   )
 }
