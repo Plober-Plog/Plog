@@ -84,7 +84,7 @@ const SnsDetail = () => {
         <ImgSlider imgs={article.images} />
       </div>
       
-      <div className="mb-2">
+      <div className="mb-2" style={{ pointerEvents: 'none' }}>
         <Tags selectedTags={allTagsSelected} tags={article.tagTypeList} />
       </div>
       
