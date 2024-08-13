@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Img from '../../components/Common/Img';
 import DiaryDetailContent from '../../components/Diary/DiaryDetailContent';
 import API from '../../apis/api';
+import './PlantGuide.css';  // CSS 파일을 import
 
 const PlantGuide = () => {
   const location = useLocation();
@@ -21,6 +22,7 @@ const PlantGuide = () => {
         setLoading(false);
       } catch (error) {
         setLoading(false);
+        setError(error);
       }
     };
 
@@ -33,12 +35,18 @@ const PlantGuide = () => {
 
   return (
     <div>
-      <h2>{plantData.plantName} 키우기</h2>
-      <Img src={plantData.profile} alt={`식물이미지`} />
-      <DiaryDetailContent detailContent={plantData.guide} />
-      <p>물주는 주기: {plantData.waterInterval} 일 🌱</p>
-      <p>영양제 주기: {plantData.fertilizeInterval} 일🌱</p>
-      <p>분갈이 주기: {plantData.repotInterval} 일🌱</p>
+      <div>
+        <h2 className='cardlist-subtitle mt-4 m-3'>{plantData.plantName} 키우기</h2>
+      </div>
+      <div>
+        <Img src={plantData.profile} alt={`식물이미지`} />
+      </div>
+      <div className="plant-guide-container plant-guide-info">
+        <DiaryDetailContent detailContent={plantData.guide} />
+        <p>물주는 주기: {plantData.waterInterval} 일 🌱</p>
+        <p>영양제 주기: {plantData.fertilizeInterval} 일 🌱</p>
+        <p>분갈이 주기: {plantData.repotInterval} 일 🌱</p>
+      </div>
     </div>
   );
 };

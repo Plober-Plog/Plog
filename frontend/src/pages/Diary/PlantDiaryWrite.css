@@ -97,7 +97,8 @@
 .plant-diary-write-btn {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .plant-diary-write-textarea {

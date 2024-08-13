@@ -126,7 +126,7 @@ const PlantDiaryDetail = () => {
   return (
     <div className="plant-diary-detail-container" ref={reportRef}>
       <div className="plant-diary-detail-header m-5">
-        <h2 className="plant-diary-detail-date">{date}</h2>
+        <h2 className="plant-diary-detail-date cardlist-subtitle">{date}</h2>
         <button className="plant-diary-detail-icon" onClick={handleEdit}>
           <img src={pencilIcon} alt="Edit" />
         </button>
