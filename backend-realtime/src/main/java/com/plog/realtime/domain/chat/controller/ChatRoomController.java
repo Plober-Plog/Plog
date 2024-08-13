@@ -52,7 +52,7 @@ public class ChatRoomController {
             @RequestHeader("Authorization") String token,
             @RequestParam("page") int page) {
         log.info(">>> getAllChatRooms 호출됨");
-        List<ChatRoomGetListResponseDto> chatRoomList = chatRoomService.getAllChatRooms(token, page);
+        List<ChatRoomGetListResponseDto> chatRoomList = chatRoomService.getAllChatRooms(token);
         log.info(">>> 조회된 채팅방 목록: {}", chatRoomList.stream().toList());
         return ResponseEntity.ok(chatRoomList);
     }

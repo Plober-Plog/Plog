@@ -75,9 +75,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         return BaseResponseBody.of(200, "" + chatRoom.getChatRoomId());
     }
 
+    // TODO[장현준] 채팅방 목록 페이지네이션 적용
     @Override
-    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token, int page) {
+    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token) {
         int pageSize = 15;
+        int page = 0;
         log.info(">>> getAllChatRooms 호출됨");
 
         // 토큰에서 userId 추출
@@ -106,7 +108,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         log.info(">>> 정렬 완료");
 
         // 페이지네이션 적용
-        int skipCount = (page - 1) * pageSize;
+        int skipCount = page * pageSize;
         List<ChatRoom> paginatedChatRooms = sortedChatRooms.stream()
                 .skip(skipCount)
                 .limit(pageSize)
@@ -156,7 +158,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
         return response;
     }
-    
+
     @Transactional
     public void updateLastReadAt(String token, Long chatRoomId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
