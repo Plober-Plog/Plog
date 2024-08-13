@@ -122,7 +122,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             // 각 채팅방에 참여하고 있는 사용자들을 가져옴
             log.info(">>> 해당 채팅방에 참여한 사용자 조회 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
-            List<User> users = chatRoomRepositorySupport.findUsersByChatRoomId(chatRoom.getChatRoomId());
+            List<User> users = chatUserRepositorySupport.findUsersByChatRoomId(chatRoom.getChatRoomId());
             for(User user : users) {
                 log.info(">>> 해당 채팅방에 참여한 사용자 확인 - {}", user.getUserId());
             }
@@ -177,7 +177,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Override
     public List<User> getChatRoomUsers(Long chatRoomId) {
         log.info(">>> getChatRoomUsers 호출됨, chatRoomId: {}", chatRoomId);
-        List<User> users = chatRoomRepositorySupport.findUsersByChatRoomId(chatRoomId);
+        List<User> users = chatUserRepositorySupport.findUsersByChatRoomId(chatRoomId);
         log.info(">>> 조회된 채팅방 유저 목록: {}", users);
 
         return users;

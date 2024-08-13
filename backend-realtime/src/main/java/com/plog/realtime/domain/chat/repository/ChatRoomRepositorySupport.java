@@ -42,17 +42,4 @@ public class ChatRoomRepositorySupport extends QuerydslRepositorySupport {
 
         return chatRoomList;
     }
-
-    public List<User> findUsersByChatRoomId(Long chatRoomId) {
-        QChat qChat = QChat.chat;
-
-        List<User> users = queryFactory
-                .select(qChat.user)
-                .from(qChat)
-                .where(qChat.chatRoom.chatRoomId.eq(chatRoomId))
-                .distinct()  // 중복 제거
-                .fetch();
-
-        return users;
-    }
 }
