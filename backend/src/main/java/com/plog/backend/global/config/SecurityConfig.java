@@ -46,13 +46,13 @@ public class SecurityConfig {
                 )
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.xssProtection(HeadersConfigurer.XXssConfig::disable))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .oauth2Login(oauth2 -> oauth2 // OAuth2 설정 추가
-//                        .loginPage("/user/login/oauth2")
-//                        .userInfoEndpoint(userInfo -> userInfo
-//                                .userService(oAuth2UserService()) // OAuth2UserService 설정
-//                        )
-//                        .defaultSuccessUrl("/login/oauth2/code/google", true) // 로그인 성공 후 리다이렉트될 URL
-//                )
+                .oauth2Login(oauth2 -> oauth2 // OAuth2 설정 추가
+                        .loginPage("/user/login/oauth2")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oAuth2UserService()) // OAuth2UserService 설정
+                        )
+                        .defaultSuccessUrl("/login/oauth2/code/google", true) // 로그인 성공 후 리다이렉트될 URL
+                )
                 .build();
     }
 

@@ -3,15 +3,19 @@ package com.plog.backend.global.auth.Controller;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.service.UserServiceImpl;
 import com.plog.backend.global.model.response.BaseResponseBody;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+@Slf4j
 @RestController
+@RequestMapping
 public class OAuth2Controller {
 
     private final UserServiceImpl userService;
@@ -21,8 +25,9 @@ public class OAuth2Controller {
         this.userService = userService;
     }
 
-    @GetMapping("/user/login/oauth2")
+    @PostMapping("/user/login/oauth2")
     public String login(@AuthenticationPrincipal OAuth2User principal, Model model) {
+        log.info(">>> oauth2 - principal {}, Model {}", principal, model);
         if (principal != null) {
             // 사용자 정보를 모델에 추가
             model.addAttribute("name", principal.getAttribute("name"));
@@ -36,7 +41,7 @@ public class OAuth2Controller {
         }
     }
 
-    @GetMapping("/login/oauth2/code/google")
+    @GetMapping("/user/login/oauth2/code/google")
     public ResponseEntity<?> loginOrRegisterG(@AuthenticationPrincipal OAuth2User oAuth2User) {
         if (oAuth2User == null) {
             throw new RuntimeException("User is not authenticated");
@@ -50,7 +55,7 @@ public class OAuth2Controller {
         return userService.loginOrRegister(email, name, profileImage, providerId, 1);
     }
 
-    @GetMapping("/login/oauth2/code/kakao")
+    @GetMapping("/user/login/oauth2/code/kakao")
     public ResponseEntity<?> loginOrRegisterK(@AuthenticationPrincipal OAuth2User oAuth2User) {
         if (oAuth2User == null) {
             throw new RuntimeException("User is not authenticated");
@@ -64,7 +69,7 @@ public class OAuth2Controller {
         return userService.loginOrRegister(email, name, profileImage, providerId, 2);
     }
 
-    @GetMapping("/login/oauth2/code/naver")
+    @GetMapping("/user/login/oauth2/code/naver")
     public ResponseEntity<?> loginOrRegisterN(@AuthenticationPrincipal OAuth2User oAuth2User) {
         if (oAuth2User == null) {
             throw new RuntimeException("User is not authenticated");

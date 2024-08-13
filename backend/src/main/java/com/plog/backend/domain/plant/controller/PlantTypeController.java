@@ -29,7 +29,7 @@ public class PlantTypeController {
 
     @GetMapping("/{plantTypeId}")
     @Operation(summary = "가이드 기능을 위한 식물 종류 상세 조회", description = "식물 종류 ID로 식물 종류의 상세 정보를 조회합니다.")
-    public ResponseEntity<PlantTypeGetResponseDto> getPlantType(@PathVariable Long plantTypeId) {
+    public ResponseEntity<PlantTypeGetResponseDto> getPlantType(@PathVariable("plantTypeId") Long plantTypeId) {
         log.info(">>> [GET] /user/plant-type/{} - 요청 데이터: {}", plantTypeId);
         PlantTypeGetResponseDto plantTypeGetResponseDto = plantTypeService.getPlantType(plantTypeId);
         return ResponseEntity.status(200).body(plantTypeGetResponseDto);
