@@ -1,77 +1,88 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../utils/cookieUtils';
+import ChatListItem from '../../components/Chat/ChatListItem';
 
 const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
 
-const ChatRooms = () => {
-  const [chatRooms, setChatRooms] = useState([]);
+const ChatRoomList = () => {
   const navigate = useNavigate();
+  const [chatRooms, setChatRooms] = useState([]);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const token = getCookie('accessToken');  
-  console.log(token);
-  
+  console.log('채팅방 토큰 : ', token);
+  const containerRef = useRef(null);
+
   // 채팅방 불러오기 
   const fetchChatRooms = async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+
     try {
       const response = await axios.get(`${API_REALTIME_URL}/chat/room`, {
         headers: {
           Authorization: token
+        },
+        params: {
+          page: page,
+          size: 10, // 한 번에 가져올 채팅방 수 (필요에 따라 조정)
         }
       });
-      console.log(response);
-      setChatRooms(response.data);
+      console.log('채팅방 불러오기 성공:', response.data);
+
+      if (response.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setChatRooms((prevChatRooms) => [...prevChatRooms, ...response.data]);
+        setPage((prevPage) => prevPage + 1);
+      }
     } catch (error) {
       console.error('채팅방 목록을 불러오는 중 오류 발생:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    
     fetchChatRooms();
   }, []);
 
-// 채팅방 개설 -> userprofile 에서 할 것 이므로 그쪽으로 옮김
-//  const handleCreateChatRoom = async () => {
-//     try {
-//       const response = await axios.post(`${API_REALTIME_URL}/chat/room`, {
-//         targetSearchId: "dddddd",
-//         chatRoomType: 1,
-//         chatRoomName: "dddddd"
-//       }, {
-//         headers: {
-//           Authorization: token
-//         }
-//       });
-//       console.log('새 채팅방 개설:', response.data);
-//       fetchChatRooms(); // 새로운 채팅방 생성 후 목록 갱신
-//     } catch (error) {
-//       console.error('채팅방 개설 중 오류 발생:', error);
-//     }
-//   };
- 
-
-  const handleEnterChatRoom = (chatRoomId) => {
-    navigate(`/chat/${chatRoomId}`, {
-      state: {
-        chatRoomId: chatRoomId,
+  // 스크롤 이벤트 핸들러
+  const handleScroll = () => {
+    if (containerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+      if (scrollTop + clientHeight >= scrollHeight - 5) { // 페이지의 끝에 도달하면
+        fetchChatRooms();
       }
-    });
+    }
   };
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => {
+        container.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [page, loading, hasMore]);
+
   return (
-    <div className="chat-room-container">
-      <h1>채팅방 목록</h1>
-      <ul>
-        {chatRooms.map((room) => (
-          <li key={room.chatRoomId} onClick={() => handleEnterChatRoom(room.chatRoomId)}>
-            {room.chatRoomName}
-          </li>
-        ))}
-      </ul>
-      {/* <button onClick={handleCreateChatRoom}>채팅방 개설</button> */}
+    <div className="chat-room-container" ref={containerRef} style={{ height: '80vh', overflowY: 'auto' }}>
+      {chatRooms.map((chatRoom) => (
+        <ChatListItem
+          key={chatRoom.chatRoomId}
+          chatRoom={chatRoom}
+          token={token}
+        />
+      ))}
+      {loading && <p>Loading more chat rooms...</p>}
     </div>
   );
 };
 
-export default ChatRooms;
+export default ChatRoomList;
