@@ -17,59 +17,132 @@ const ChatRoom = () => {
   const [client, setClient] = useState(null); // stomp client
   const [messages, setMessages] = useState([]);
   const { userData } = useAuthStore();
-  const chatBoxRef = useRef(null);
+  const chatContainerRef = useRef(null);
   const token = getCookie('accessToken');
   const [messageContent, setMessageContent] = useState("");
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const user = {
     nickname: userData.nickname,
     profile: userData.profile,
+    searchId: userData.searchId,
   };
+  console.log(user)
 
   // 채팅 내역 전체 가져오기
-  const fetchChatHistory = async () => {
+  const fetchChatHistory = async (page, isFirstLoad = false) => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+
+    // 이전 스크롤 위치와 컨텐츠 높이를 저장
+    const prevScrollHeight = chatContainerRef.current?.scrollHeight;
+    const prevScrollTop = chatContainerRef.current?.scrollTop;
+
     try {
       const response = await axios.get(`${API_REALTIME_URL}/chat/${chatRoomId}/history`, {
         headers: {
           Authorization: token,
+        },
+        params: {
+          page: page,
         }
       });
 
-      setMessages(response.data);
-      console.log('채팅 내역 가져오기 성공:', response.data);
+      if (response.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setMessages(prevMessages => [...response.data.reverse(), ...prevMessages]);
+        console.log('채팅 내역 가져오기 성공:', response.data);
 
+        if (!isFirstLoad && prevScrollHeight && prevScrollTop !== undefined) {
+          // 새 메시지를 불러온 후, 이전 스크롤 위치를 유지
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight - prevScrollHeight + prevScrollTop;
+        }
+
+        if (isFirstLoad) {
+          scrollToBottom();
+        }
+      }
     } catch (error) {
       console.error("채팅 내역을 가져오는 중 오류 발생:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 초기 채팅 내역 로드 및 스크롤 하단 이동
+  // 초기 채팅 내역 로드
   useEffect(() => {
-    fetchChatHistory(); // 채팅 내역을 한 번에 로드
+    fetchChatHistory(page, true); // 첫 페이지의 채팅 내역을 로드할 때만 스크롤을 맨 밑으로 이동
   }, [chatRoomId, token]);
+
+  // 스크롤을 맨 밑으로 이동시키는 함수
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  };
+
+  // 새로운 메시지가 추가될 때만 스크롤을 맨 밑으로 이동
+  useEffect(() => {
+    if (messages.length && page === 0) {
+      scrollToBottom();
+    }
+  }, [messages]);
+
+  // 스크롤 맨 위 감지 및 페이지네이션 처리
+  const handleScroll = () => {
+    if (chatContainerRef.current.scrollTop === 0 && !loading && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchChatHistory(nextPage);
+    }
+  };
+
+  useEffect(() => {
+    const container = chatContainerRef.current;
+    container.addEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [page, loading, hasMore]);
 
   // 메세지 보내기
   const sendMessage = (e) => {
     e.preventDefault(); // 폼 제출 방지
+
+    // 메시지가 비어 있으면 아무 처리도 하지 않음
     if (!messageContent.trim()) return;
 
     console.log("보내는 메시지: " + messageContent);
     console.log('Send 메시지 전송');
+    const sendData = {
+      nickname: user.nickname,
+      profile: user.profile,
+      searchId: user.searchId,
+      message: messageContent,
+      chatType: "SEND",
+      createdAt: new Date().toISOString()
+    }
+    console.log('SendData:', sendData);
 
     if (client && client.connected) {
       client.publish({
         destination: `/app/chat.sendMessage/${chatRoomId}`,
         headers: { 'Authorization': token },
-        body: JSON.stringify({
-          nickname: user.nickname,
-          profile: user.profile,
-          message: messageContent,
-          chatType: "SEND",
-          createdAt: new Date().toISOString()
-        })
+        body: JSON.stringify(sendData)
       });
     }
     setMessageContent("");
+    console.log('SendData 전송 완료');
+
+    // 새로운 메시지를 보낸 후 스크롤을 맨 밑으로 이동
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
   };
+
 
   // 수신한 메시지
   const showMessage = (message) => {
@@ -136,18 +209,7 @@ const ChatRoom = () => {
     };
   }, [chatRoomId, token, user.nickname, user.profile]);
 
-  // 스크롤을 맨 밑으로 이동시키는 함수
-  const scrollToBottom = () => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  };
-
-  // 메시지가 추가될 때마다 스크롤을 맨 밑으로 이동
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
+  
   // 시간을 포맷팅하는 함수 (날짜는 제거하고 시간만)
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -164,13 +226,13 @@ const ChatRoom = () => {
   };
 
   return (
-    <div className="chat-container">
-      <div className="offcanvas-title" style={{ height: "40px" }}>
-        <span>{otherUserNickname}</span>
-      </div>
-      <div className="chat-box" ref={chatBoxRef}>
+    <div ref={chatContainerRef}>
+      <div className="chat-box">
         {messages.map((message, index) => (
-          <div key={index} className="chat-message-box">
+          <div
+            key={index}
+            className={`chat-message-box ${message.nickname === user.nickname ? "sent" : ""}`}
+          >
             <img src={message.profile} className='chat-image' alt="Profile" />
             <div className="chat-content">{message.message}</div>
             <div className="chat-timestamp">{formatTime(message.createdAt)}</div>

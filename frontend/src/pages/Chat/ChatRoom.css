@@ -1,12 +1,4 @@
-.chat-container {
-  width: 400px; /* Adjust to your desired width */
-  margin: 0 auto;
-  padding: 10px;
-  background-color: #f9f9f9; /* Background color for the chat container */
-  border-radius: 10px;
-  overflow-y: auto;
-  max-height: 600px; /* Limit the height with scroll */
-}
+
 
 .chat-box {
   display: flex;
@@ -22,10 +14,11 @@
 }
 
 .chat-image {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  margin-right: 10px;
+  object-fit: cover;
+  margin-right: 15px;
 }
 
 .chat-content {
@@ -58,12 +51,3 @@
   left: 0;
   right: auto;
 }
-
-.chat-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 15px;
-}
-
