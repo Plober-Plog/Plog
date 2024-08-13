@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,7 +51,7 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     @Override
     public void sendMessage(ChatGetRequestDto chatGetRequestDto) {
-        chatRepository.save(
+        Chat chat = chatRepository.save(
                 Chat.builder()
                         .user(userRepository.getReferenceById(chatGetRequestDto.getUserId()))
                         .chatRoom(chatRoomRepository.getReferenceById(chatGetRequestDto.getChatRoomId()))
@@ -62,11 +61,16 @@ public class ChatServiceImpl implements ChatService {
         ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(
                 userRepository.getReferenceById(chatGetRequestDto.getUserId()),
                 chatRoomRepository.getReferenceById(chatGetRequestDto.getChatRoomId())
-        ).orElseThrow(()-> {
+        ).orElseThrow(() -> {
             return new EntityNotFoundException("찾을 수 없는 유저이거나 채팅방 입니다.");
         });
         chatUser.setLastReadAt(LocalDateTime.now());
         chatUserRepository.save(chatUser);
+
+        chatGetRequestDto.setImage(chatUser.getUser().getImage().getImageUrl());
+        chatGetRequestDto.setNickname(chatUser.getUser().getNickname());
+        chatGetRequestDto.setSearchId(chatUser.getUser().getSearchId());
+        chatGetRequestDto.setCreatedAt(chatGetRequestDto.getCreatedAt());
 
         log.info(" >>> sendMessage 완료 - DB에 저장: {}", chatGetRequestDto.getUserId());
         String topicName = "chatroom-" + chatGetRequestDto.getChatRoomId();
@@ -87,7 +91,7 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(() -> new NotAuthorizedRequestException("채팅창에 입장할 권한이 없습니다."));
 
         List<Chat> chats = chatRepositorySupport.findChatsByChatRoomId(chatRoomId, page);
-        for(Chat chat : chats) {
+        for (Chat chat : chats) {
             log.info(">>> getChatDate - chat : {}", chat.toString());
         }
         log.info(" >>> getChatData 완료: chatRoomId - {}, page - {}", chatRoomId, page);
@@ -95,8 +99,8 @@ public class ChatServiceImpl implements ChatService {
                 chat.getUser().getUserId(),
                 chat.getChatRoom().getChatRoomId(),
                 chat.getUser().getNickname(),
-                chat.getUser().getSearchId(),
                 chat.getUser().getImage().getImageUrl(),
+                chat.getUser().getSearchId(),
                 chat.getMessage(),
                 chat.getCreatedAt()
         )).collect(Collectors.toList());
