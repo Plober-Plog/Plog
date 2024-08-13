@@ -17,49 +17,84 @@ const ChatRoom = () => {
   const [client, setClient] = useState(null); // stomp client
   const [messages, setMessages] = useState([]);
   const { userData } = useAuthStore();
-  const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
-
   const chatBoxRef = useRef(null);
   const token = getCookie('accessToken');
   const [messageContent, setMessageContent] = useState("");
-
   const user = {
     nickname: userData.nickname,
     profile: userData.profile,
   };
 
-  // 채팅 내역 가져오기 함수
+  // 채팅 내역 전체 가져오기
   const fetchChatHistory = async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
     try {
       const response = await axios.get(`${API_REALTIME_URL}/chat/${chatRoomId}/history`, {
         headers: {
           Authorization: token,
-        },
-        params: {
-          page,
         }
       });
 
-      if (response.data.length === 0) {
-        setHasMore(false);
-      } else {
-        setMessages(prevMessages => [...response.data, ...prevMessages]);
-        setPage(prevPage => prevPage + 1);
-      }
+      setMessages(response.data);
       console.log('채팅 내역 가져오기 성공:', response.data);
+
     } catch (error) {
       console.error("채팅 내역을 가져오는 중 오류 발생:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // 웹 소켓 연결
+  // 초기 채팅 내역 로드 및 스크롤 하단 이동
+  useEffect(() => {
+    fetchChatHistory(); // 채팅 내역을 한 번에 로드
+  }, [chatRoomId, token]);
+
+  // 메세지 보내기
+  const sendMessage = (e) => {
+    e.preventDefault(); // 폼 제출 방지
+    if (!messageContent.trim()) return;
+
+    console.log("보내는 메시지: " + messageContent);
+    console.log('Send 메시지 전송');
+
+    if (client && client.connected) {
+      client.publish({
+        destination: `/app/chat.sendMessage/${chatRoomId}`,
+        headers: { 'Authorization': token },
+        body: JSON.stringify({
+          nickname: user.nickname,
+          profile: user.profile,
+          message: messageContent,
+          chatType: "SEND",
+          createdAt: new Date().toISOString()
+        })
+      });
+    }
+    setMessageContent("");
+  };
+
+  // 수신한 메시지
+  const showMessage = (message) => {
+    console.log("수신한 메시지: " + JSON.stringify(message));
+    setMessages(prevMessages => [...prevMessages, message]);
+  };
+
+  // 채팅방 나가기
+  const leaveChat = (client) => {
+    if (client && client.connected) {
+      console.log('Leave 메시지 전송');
+      client.publish({
+        destination: `/app/chat.leaveUser/${chatRoomId}`,
+        headers: { 'Authorization': token },
+        body: JSON.stringify({
+          nickname: user.nickname,
+          profile: user.profile,
+          chatType: "LEAVE",
+          createdAt: null
+        })
+      });
+    }
+  };
+
+  // 웹 소켓 연결 설정
   useEffect(() => {
     const socket = new SockJS(`${API_REALTIME_URL}/chat/ws`);
     const stompClient = new Client({
@@ -101,76 +136,17 @@ const ChatRoom = () => {
     };
   }, [chatRoomId, token, user.nickname, user.profile]);
 
-
-  // 페이지 네이션 처리
-  const handleScroll = () => {
-    const chatBox = chatBoxRef.current;
-    if (chatBox) {
-      if (chatBox.scrollTop <= 50 && hasMore && !loading) {
-        const previousHeight = chatBox.scrollHeight;
-        fetchChatHistory().then(() => {
-          chatBox.scrollTop = chatBox.scrollHeight - previousHeight; // 스크롤 위치 유지
-        });
-      }
+  // 스크롤을 맨 밑으로 이동시키는 함수
+  const scrollToBottom = () => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   };
 
+  // 메시지가 추가될 때마다 스크롤을 맨 밑으로 이동
   useEffect(() => {
-    const chatBox = chatBoxRef.current;
-    chatBox.addEventListener('scroll', handleScroll);
-    return () => chatBox.removeEventListener('scroll', handleScroll);
-  }, [hasMore, loading]);
-
-  useEffect(() => {
-    fetchChatHistory(); // 초기 채팅 내역 로드
-  }, [chatRoomId, token]);
-
-  // 메시지 보내기
-  const sendMessage = (e) => {
-    e.preventDefault(); // 폼 제출 방지
-    if (!messageContent.trim()) return;
-
-    console.log("보내는 메시지: " + messageContent);
-    console.log('Send 메시지 전송');
-
-    if (client && client.connected) {
-      client.publish({
-        destination: `/app/chat.sendMessage/${chatRoomId}`,
-        headers: { 'Authorization': token },
-        body: JSON.stringify({
-          nickname: user.nickname,
-          profile: user.profile,
-          message: messageContent,
-          chatType: "SEND",
-          createdAt: new Date().toISOString()
-        })
-      });
-    }
-    setMessageContent("");
-  };
-
-  // 채팅방 나가기
-  const leaveChat = (client) => {
-    if (client && client.connected) {
-      console.log('Leave 메시지 전송');
-      client.publish({
-        destination: `/app/chat.leaveUser/${chatRoomId}`,
-        headers: { 'Authorization': token },
-        body: JSON.stringify({
-          nickname: user.nickname,
-          profile: user.profile,
-          chatType: "LEAVE",
-          createdAt: null
-        })
-      });
-    }
-  };
-
-  // 수신한 메시지
-  const showMessage = (message) => {
-    console.log("수신한 메시지: " + JSON.stringify(message));
-    setMessages(prevMessages => [...prevMessages, message]);
-  };
+    scrollToBottom();
+  }, [messages]);
 
   // 시간을 포맷팅하는 함수 (날짜는 제거하고 시간만)
   const formatTime = (timestamp) => {
@@ -185,17 +161,6 @@ const ChatRoom = () => {
       hour12: false,
       timeZone: 'Asia/Seoul'
     }).format(date);
-  };
-
-  // 밑에서부터 스크롤
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
   };
 
   return (
