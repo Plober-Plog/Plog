@@ -58,7 +58,7 @@ const ChatListItem = ({ chatRoom, token }) => {
         <img src={chatRoom.users[0].image.imageUrl} alt="Avatar" />
       </div>
       <div className="chat-list-item-content">
-        <span className="chat-list-item-name">{chatRoom.chatRoom.chatRoomName}</span>
+        <span className="chat-list-item-name">{chatRoom.users[0].nickname}</span>
         <span className="chat-list-item-message">{chatRoom.lastChat.message}</span>
       </div>
       <div className="chat-list-item-info">
