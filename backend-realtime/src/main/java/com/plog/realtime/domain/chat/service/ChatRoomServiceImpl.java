@@ -76,7 +76,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token) {
+    public List<ChatRoomGetListResponseDto> getAllChatRooms(String token, int page) {
+        int pageSize = 15;
         log.info(">>> getAllChatRooms 호출됨");
 
         // 토큰에서 userId 추출
@@ -88,9 +89,33 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         List<ChatRoom> chatRooms = chatRoomRepositorySupport.findChatRoomsByUserId(userId);
         log.info(">>> 조회된 채팅방 수: {}", chatRooms.size());
 
+        // 각 채팅방의 최신 채팅을 기준으로 정렬
+        log.info(">>> 각 채팅방의 최신 채팅을 기준으로 정렬 시작");
+        List<ChatRoom> sortedChatRooms = chatRooms.stream()
+                .sorted((chatRoom1, chatRoom2) -> {
+                    Chat lastChat1 = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom1);
+                    Chat lastChat2 = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom2);
+
+                    if (lastChat1 == null && lastChat2 == null) return 0;
+                    if (lastChat1 == null) return 1;
+                    if (lastChat2 == null) return -1;
+
+                    return lastChat2.getCreatedAt().compareTo(lastChat1.getCreatedAt());
+                })
+                .collect(Collectors.toList());
+        log.info(">>> 정렬 완료");
+
+        // 페이지네이션 적용
+        int skipCount = (page - 1) * pageSize;
+        List<ChatRoom> paginatedChatRooms = sortedChatRooms.stream()
+                .skip(skipCount)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+        log.info(">>> 페이지네이션 적용 완료 - 페이지: {}, 페이지 크기: {}", page, pageSize);
+
         // 채팅방에 대한 정보를 담을 DTO 리스트를 생성
         log.info(">>> 채팅방 정보를 DTO로 변환 시작");
-        List<ChatRoomGetListResponseDto> response = chatRooms.stream().map(chatRoom -> {
+        List<ChatRoomGetListResponseDto> response = paginatedChatRooms.stream().map(chatRoom -> {
             log.info(">>> 채팅방 처리 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
 
             // 각 채팅방에 참여하고 있는 사용자들을 가져옴
@@ -104,7 +129,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             log.info(">>> 마지막 메시지 조회 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
             log.info(">>> 마지막 메시지 조회 완료 - Message: {}", lastChat != null ? lastChat.getMessage() : "메시지가 없습니다.");
-            lastChat.getCreatedAt().atZone(ZoneId.of("Asia/Seoul"));
+            if (lastChat != null) {
+                lastChat.getCreatedAt().atZone(ZoneId.of("Asia/Seoul"));
+            }
 
             // 사용자가 마지막 메시지를 읽었는지 여부를 판단
             log.info(">>> 사용자의 메시지 읽음 여부 판단 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
@@ -129,9 +156,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
         return response;
     }
-
-
-
+    
     @Transactional
     public void updateLastReadAt(String token, Long chatRoomId) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
