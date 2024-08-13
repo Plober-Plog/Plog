@@ -78,7 +78,7 @@ function App() {
   return (
     <div className='container'>
       <Router>
-        <header className='full-width'>
+        <header className='full-width z-50'>
           <Header />
         </header>
         <main className='content'>
