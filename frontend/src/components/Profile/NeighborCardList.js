@@ -8,7 +8,6 @@ const NeighborCardList = ({ users }) => {
         <NeighborCard
           key={user.searchId}
           user={user}
-          // className='col-span-4'
         />
       ))}
     </ul>
