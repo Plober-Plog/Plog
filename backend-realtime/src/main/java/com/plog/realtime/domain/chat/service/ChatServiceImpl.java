@@ -19,7 +19,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,7 +70,7 @@ public class ChatServiceImpl implements ChatService {
         chatGetRequestDto.setImage(chatUser.getUser().getImage().getImageUrl());
         chatGetRequestDto.setNickname(chatUser.getUser().getNickname());
         chatGetRequestDto.setSearchId(chatUser.getUser().getSearchId());
-        chatGetRequestDto.setCreatedAt(OffsetDateTime.from(chat.getCreatedAt()));
+        chatGetRequestDto.setCreatedAt(chatGetRequestDto.getCreatedAt());
 
         log.info(" >>> sendMessage 완료 - DB에 저장: {}", chatGetRequestDto.getUserId());
         String topicName = "chatroom-" + chatGetRequestDto.getChatRoomId();

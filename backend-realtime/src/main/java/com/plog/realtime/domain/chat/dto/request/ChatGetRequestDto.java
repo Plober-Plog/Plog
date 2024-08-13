@@ -2,8 +2,6 @@ package com.plog.realtime.domain.chat.dto.request;
 
 import lombok.*;
 
-import java.time.OffsetDateTime;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -19,5 +17,5 @@ public class ChatGetRequestDto {
     private String image;
     private String searchId;
     private String nickname;
-    OffsetDateTime createdAt;
+    private String createdAt;
 }
