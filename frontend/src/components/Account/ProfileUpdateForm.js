@@ -11,6 +11,7 @@ import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
 import ATag from '../Common/ATag';
 import ModalComplete from '../Common/ModalComplete';
+import './ProfileUpdateForm.css';  // CSS 파일을 임포트합니다
 
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const ProfileUpdateForm = () => {
   const [isAd, setIsAd] = useState(userData?.isAd || false);
   
   const fileInputRef = useRef(null);
-  const [profile, setProfile] = useState(userData?.profile || ''); // 초기 프로필 이미지를 userData.profile로 설정
+  const [profile, setProfile] = useState(userData?.profile || ''); 
   const [uploadedFile, setUploadedFile] = useState(null);
 
   const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
@@ -40,7 +41,7 @@ const ProfileUpdateForm = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  // 사진 업로드 핸들러
+  // 이미지 업로드 핸들러
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -78,9 +79,9 @@ const ProfileUpdateForm = () => {
     }
   }, [sidoCode, gugunOptions]);
 
-  // 사진 삭제 핸들러
+  // 이미지 삭제 핸들러
   const handleImageRemove = () => {
-    setProfile(userData.profile || ''); // 프로필을 기본 프로필로 복원
+    setProfile(userData.profile || ''); 
     setUploadedFile(null);
     if (fileInputRef.current) fileInputRef.current.value = null;
   };
@@ -144,7 +145,7 @@ const ProfileUpdateForm = () => {
         }
       });
       
-      // 유저데이터 변경
+      // 유저 데이터 갱신
       setUserData({
        ...userData,
        ...updatedUserData,
@@ -165,8 +166,8 @@ const ProfileUpdateForm = () => {
 
   return (
     <div>
-      <form onSubmit={(e) => e.preventDefault()} className="form">
-        <div>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <div className="profile-image-container mb-3">
           <input
             type="file"
             ref={fileInputRef}
@@ -178,10 +179,10 @@ const ProfileUpdateForm = () => {
             src={profile}
             alt="Profile"
             onClick={() => fileInputRef.current.click()}
-            style={{ cursor: 'pointer', width: '100px', height: '100px' }}
+            className="profile-image mb-2"
           />
           {profile !== userData.profile && (
-            <button type="button" onClick={handleImageRemove}>
+            <button type="button" onClick={handleImageRemove} className='profile-remove-button mt-2' >
               이미지 삭제
             </button>
           )}
@@ -197,10 +198,9 @@ const ProfileUpdateForm = () => {
               setIsSearchIdAvailable(false);
             }}
             isRequired={true}
-            className="input"
+            disabled={true}
+            className="account-disable-input mt-5"
           />
-          <ATag content="중복확인" onClick={handleCheckSearchId} />
-          {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
         </div>
         <div>
           <InputField
@@ -209,7 +209,7 @@ const ProfileUpdateForm = () => {
             value={email}
             isRequired={true}
             disabled={true}
-            className="input"
+            className="account-disable-input"
           />
         </div>
         <div>
@@ -227,7 +227,7 @@ const ProfileUpdateForm = () => {
               }
             }}
             isRequired={false}
-            className="input"
+            className="account-input"
           />
           {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
         </div>
@@ -236,7 +236,7 @@ const ProfileUpdateForm = () => {
             placeholder="자기소개를 입력해주세요."
             value={profileInfo}
             onChange={(e) => setProfileInfo(e.target.value)}
-            className="textarea"
+            className="mt-1 mb-1"
           />
         </div>
         <div>
@@ -246,60 +246,68 @@ const ProfileUpdateForm = () => {
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
-            className="input"
+            className="account-input"
           />
         </div>
-        <SelectField
+        {/* <SelectField
           value={source}
           options={['가입경로', '지인추천', '인터넷 검색']}
           isRequired={false}
           disabled={true}
-        />
-        <RadioField
-          selectedValue={gender}
-          onChange={setGender}
-          options={[
-            { value: 1, label: '선택하지 않음' },
-            { value: 2, label: '남자' },
-            { value: 3, label: '여자' },
-          ]}
-          isRequired={false}
-        />
-        <div>
-          <label>지역</label>
-          <select
-            value={sidoCode}
-            onChange={(e) => setSidoCode(e.target.value)}
-            required={false}
-            className="account-drop-box"
-          >
-            <option value="0">시/도 선택</option>
-            {sidoOptions.map(sidoOption => (
-              <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
-            ))}
-          </select>
-          <select
-            value={gugunCode}
-            onChange={(e) => setGugunCode(e.target.value)}
-            required={false}
-            className="account-drop-box"
-          >
-            <option value="0">구/군 선택</option>
-            {gugunOptions
-              .filter(option => option.sidoCode === Number(sidoCode))
-              .map(filteredGugunOption => (
-                <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
-                  {filteredGugunOption.gugunName}
-                </option>
-              ))}
-          </select>
+        /> */}
+        <div className="profile-inline-group">
+          <label className="profile-inline-label">성별</label>
+          <RadioField
+            selectedValue={gender}
+            onChange={setGender}
+            options={[
+              { value: 1, label: '선택하지 않음' },
+              { value: 2, label: '남자' },
+              { value: 3, label: '여자' },
+            ]}
+            isRequired={false}
+            className="profile-radio-field"
+          />
         </div>
-        <Btn
-          content="수정하기"
-          disabled={!isFormValid}
-          onClick={handleProfileUpdate}
-          className="button"
-        />
+        <div className="profile-region-group">
+          <div className="profile-region-select-container">
+            <label>지역</label>
+            <select
+              value={sidoCode}
+              onChange={(e) => setSidoCode(e.target.value)}
+              required={false}
+              className="profile-region-select"
+            >
+              <option value="0">시/도 선택</option>
+              {sidoOptions.map(sidoOption => (
+                <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
+              ))}
+            </select>
+            <select
+              value={gugunCode}
+              onChange={(e) => setGugunCode(e.target.value)}
+              required={false}
+              className="profile-region-select"
+            >
+              <option value="0">구/군 선택</option>
+              {gugunOptions
+                .filter(option => option.sidoCode === Number(sidoCode))
+                .map(filteredGugunOption => (
+                  <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
+                    {filteredGugunOption.gugunName}
+                  </option>
+                ))}
+            </select>
+          </div>
+        </div>
+
+        <div className='mb-5'>
+          <Btn
+            content="수정하기"
+            disabled={!isFormValid}
+            onClick={handleProfileUpdate}
+          />
+        </div>
       </form>
       <ModalComplete title="회원정보 수정 완료" content="회원정보 수정이 완료되었습니다" open={openModal} onClose={closeModal} />
     </div>

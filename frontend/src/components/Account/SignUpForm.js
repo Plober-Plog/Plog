@@ -299,7 +299,7 @@ const closeModal = () => {
               const value = e.target.value
               setSearchID(value)
               if (!/^[a-z0-9]{5,15}$/.test(value)) {
-                setSearchIdCheckMsg('아이디는 5글자 이상 15이하여야 합니다.');
+                setSearchIdCheckMsg('아이디는 영문, 숫자 포함 5글자 이상 15이하여야 합니다.');
               } else {
                 setSearchIdCheckMsg('');
               }
@@ -443,15 +443,14 @@ const closeModal = () => {
           />
         </div>
 
-
-        
-        <SelectField
+        {/* <SelectField
           value={source}
           onChange={(e) => setSource(e.target.value)}
           options={['가입경로', '지인추천', '인터넷 검색']}
           isRequired={false}
           className="account-drop-box"
-        />
+        /> */}
+
         <RadioField
           selectedValue={gender}
           onChange={setGender}
