@@ -37,6 +37,25 @@ const ChatListItem = ({ chatRoom, token }) => {
     });
   };
 
+
+  // 채팅방 삭제
+  const handleChatDelete = async (chatRoomId) => {
+    try {
+      const response = await axios.delete(`${API_REALTIME_URL}/chat/room`, 
+        { params: {chatRoomId} },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+        }
+      );
+      console.log('채팅 입장 성공:', response.data);
+    } catch (error) {
+
+    }
+  }
+
   // 시간을 포맷팅하는 함수 (날짜는 제거하고 시간만)
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -67,6 +86,9 @@ const ChatListItem = ({ chatRoom, token }) => {
           <span className="chat-list-item-unread">N</span>
         )}
       </div>
+      <button onClick={() => handleChatDelete(chatRoom.chatRoom.chatRoomId)}>
+        채팅삭제
+      </button>
     </div>
   );
 };

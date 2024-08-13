@@ -109,6 +109,7 @@ const ChatRoom = () => {
       });
     }
     setMessageContent("");
+    console.log('발신한 메세지:', sendData);
     scrollToBottom();
   };
 
@@ -123,6 +124,7 @@ const ChatRoom = () => {
       chatType: message.chatType,
     };
     setMessages(prevMessages => [...prevMessages, messageObj]);
+    console.log('수신한 메세지:', message)
     scrollToBottom();
   };
 
