@@ -14,9 +14,12 @@ import weatherIcon from '../../assets/icon/weather.png';
 import humidityIcon from '../../assets/icon/humidity.png'; 
 import temperatureIcon from '../../assets/icon/temperature.png'; 
 import cameraIcon from '../../assets/icon/camera.png';
-import waterIcon from '../../assets/icon/water.png'; 
-import fertilizedIcon from '../../assets/icon/fertilized.png'; 
-import repottedIcon from '../../assets/icon/repotted.png'; 
+import waterIcon from '../../assets/icon/water-default.png'; 
+import fertilizedIcon from '../../assets/icon/fertilized-default.png'; 
+import repottedIcon from '../../assets/icon/repotted-default.png'; 
+import waterFillIcon from '../../assets/icon/water-select.png'; 
+import fertilizedFillIcon from '../../assets/icon/fertilized-select.png'; 
+import repottedFillIcon from '../../assets/icon/repotted-select.png';
 
 import './PlantDiaryWrite.css';
 
@@ -340,7 +343,12 @@ useEffect(() => {
       </div>
       <div className="plant-diary-write-icons plant-diary-write-section">
         <div className="plant-diary-write-icon">
-          <DiaryTodoIcon src={weatherIcon} />
+          <DiaryTodoIcon 
+            src={weatherIcon} 
+            fillSrc={weatherIcon} // 필요에 따라 수정 가능
+            active={false} // 날씨는 아이콘 변경 없음
+            onClick={() => {}} // 날씨 선택은 SelectField로 대체
+          />
           <SelectField
             value={weather}
             onChange={(e) => setIsWeather(Number(e.target.value))}
@@ -348,7 +356,12 @@ useEffect(() => {
           />
         </div>
         <div className="plant-diary-write-icon">
-          <DiaryTodoIcon src={humidityIcon} />
+          <DiaryTodoIcon 
+            src={humidityIcon} 
+            fillSrc={humidityIcon} // 필요에 따라 수정 가능
+            active={false} // 습도는 아이콘 변경 없음
+            onClick={() => {}} // 습도 선택은 SelectField로 대체
+          />
           <SelectField
             value={humidity}
             onChange={(e) => setIsHumidity(Number(e.target.value))}
@@ -356,7 +369,12 @@ useEffect(() => {
           />
         </div>
         <div className="plant-diary-write-icon">
-          <DiaryTodoIcon src={temperatureIcon} />
+          <DiaryTodoIcon 
+            src={temperatureIcon} 
+            fillSrc={temperatureIcon} // 필요에 따라 수정 가능
+            active={false} // 온도는 아이콘 변경 없음
+            onClick={() => {}} // 온도 선택은 InputField로 대체
+          />
           <InputField 
             type="number"
             value={temperature}
@@ -367,19 +385,33 @@ useEffect(() => {
       <div className="plant-diary-write-section plant-diary-write-icons">
         <h2>오늘 한 일</h2>
         <div className="plant-diary-write-icon">
-          <DiaryTodoIcon src={waterIcon} active={isWatered} onClick={toggleWatered} />
+          <DiaryTodoIcon 
+            src={waterIcon} 
+            fillSrc={waterFillIcon} // 여기서 fillSrc 추가
+            active={isWatered} 
+            onClick={toggleWatered} 
+          />
         </div>
         <div className="plant-diary-write-icon">
-          <DiaryTodoIcon src={fertilizedIcon} active={isFertilized} onClick={toggleFertilized} />
+          <DiaryTodoIcon 
+            src={fertilizedIcon} 
+            fillSrc={fertilizedFillIcon} // 여기서 fillSrc 추가
+            active={isFertilized} 
+            onClick={toggleFertilized} 
+          />
         </div>
         <div className="plant-diary-write-icon">
-          <DiaryTodoIcon src={repottedIcon} active={isRepotted} onClick={toggleRepotted} />
+          <DiaryTodoIcon 
+            src={repottedIcon} 
+            fillSrc={repottedFillIcon} // 여기서 fillSrc 추가
+            active={isRepotted} 
+            onClick={toggleRepotted} 
+          />
         </div>
       </div>
       <div className="plant-diary-write-section">
         <h2>일지 작성</h2>
         <TextareaField 
-          // className="plant-diary-write-textarea" 
           placeholder='일지를 입력하세요.'
           value={content} 
           onChange={(e) => setContent(e.target.value)}   

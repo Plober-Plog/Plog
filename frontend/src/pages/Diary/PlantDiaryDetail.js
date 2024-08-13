@@ -9,9 +9,9 @@ import Btn from '../../components/Common/Btn';
 // import html2canvas from 'html2canvas';
 
 import pencilIcon from '../../assets/icon/pencil.png'; 
-import waterIcon from '../../assets/icon/water.png'; 
-import fertilizedIcon from '../../assets/icon/fertilized.png'; 
-import repottedIcon from '../../assets/icon/repotted.png'; 
+import waterFillIcon from '../../assets/icon/water-select.png'; 
+import fertilizedFillIcon from '../../assets/icon/fertilized-select.png'; 
+import repottedFillIcon from '../../assets/icon/repotted-select.png';
 import weatherIcon from '../../assets/icon/weather.png'; 
 import humidityIcon from '../../assets/icon/humidity.png'; 
 import temperatureIcon from '../../assets/icon/temperature.png'; 
@@ -164,17 +164,17 @@ const PlantDiaryDetail = () => {
           <div>
             {isWatered && (
               <div>
-                <DiaryTodoIcon src={waterIcon} /> 물주기 완료!
+                <DiaryTodoIcon src={waterFillIcon} /> 물주기 완료!
               </div>
             )}
             {isFertilized && (
               <div>
-                <DiaryTodoIcon src={fertilizedIcon} /> 영양제주기 완료!
+                <DiaryTodoIcon src={fertilizedFillIcon} /> 영양제주기 완료!
               </div>
             )}
             {isRepotted && (
               <div>
-                <DiaryTodoIcon src={repottedIcon} /> 분갈이 완료!
+                <DiaryTodoIcon src={repottedFillIcon} /> 분갈이 완료!
               </div>
             )}
           </div>

@@ -1,0 +1,57 @@
+.footercmt-container {
+  display: flex;
+  width: 100%;
+  height: 60px;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  border-top: 1px solid #e7e7e7;
+  position: sticky; 
+  bottom: 0; 
+  padding: 0 10px; 
+}
+
+.footercmt-img {
+  border-radius: 50%;
+  margin-right: 10px;
+  height: 40px;
+  width: 40px;
+}
+
+.footercmt-form {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.footercmt-input {
+  min-height: 40px;
+  padding: 10px;
+  flex: 1; 
+  border-radius: 10px; 
+  background-color: #ffffff; 
+}
+
+.footercmt-input::placeholder {
+  color: #a1a1a1;
+}
+
+.footercmt-button {
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footercmt-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.footercmt-active {
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
