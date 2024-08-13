@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AddBtn.css'
+import leafIcon from '../../assets/icon/leaf-white.png';
+import docsIcon from '../../assets/icon/docs-white.png';
 
 const AddBtn = ({ type }) => {
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ const AddBtn = ({ type }) => {
     <button
       className='add-btn' 
       onClick={handleClick}>
-      {type === 'plant' ? '🌱' : '💬'}
+      {type === 'plant' ? <img src={leafIcon}/> : <img src={docsIcon}/>}
     </button>
   )
 }
