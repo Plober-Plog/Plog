@@ -64,7 +64,7 @@ const SnsWrite = () => {
     }
 
     if (reportImgData) {
-      setTagTypeList(prev => [...prev, 2]); 
+      setTagTypeList([2]); 
     }
 
     console.log(articleId);
@@ -152,13 +152,13 @@ const SnsWrite = () => {
 
   return (
     <div>
-      <div>
+      <div className='pb-16'>
         <Tab
           selectedVisibility={selectedVisibility}
           setSelectedVisibility={setSelectedVisibility}
         />
       </div>
-      <div>
+      <div className='pt-1'>
         <Tags selectedTags={tagTypeList} onTagSelect={handleTagSelect} tags={tags} />
       </div>
       <div>

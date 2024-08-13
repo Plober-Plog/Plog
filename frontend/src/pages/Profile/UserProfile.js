@@ -103,9 +103,9 @@ const UserProfile = () => {
 
       {activeTab === 'bookmark' && (
         <>
-          <AddBtn 
+          {/* <AddBtn 
             type='bookmark'
-          />
+          /> */}
           <SnsCardMdList 
             type='bookmark'
             searchId={searchId}

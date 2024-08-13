@@ -15,7 +15,7 @@ import repottedFillIcon from '../../assets/icon/repotted-select.png';
 import weatherIcon from '../../assets/icon/weather.png'; 
 import humidityIcon from '../../assets/icon/humidity.png'; 
 import temperatureIcon from '../../assets/icon/temperature.png'; 
-import './PlantDiaryWrite.css';
+import './PlantDiaryDetail.css';
 
 const PlantDiaryDetail = () => {
   const location = useLocation();
@@ -121,82 +121,66 @@ const PlantDiaryDetail = () => {
 
   const weatherContent = `날씨는 ${weather}이고 온도는 ${temperature}'C 이며 습도는 ${humidity}입니다.`;
 
-  // const handleCapture = async () => {
-  //   if (reportRef.current) {
-  //     try {
-  //       const canvas = await html2canvas(reportRef.current, { useCORS: true }); 
-  //       const diaryImgData = canvas.toDataURL('image/png');
-  
-  //       // base64 문자열을 Blob으로 변환
-  //       const byteString = atob(diaryImgData.split(',')[1]);
-  //       const mimeString = diaryImgData.split(',')[0].split(':')[1].split(';')[0];
-  //       const ab = new ArrayBuffer(byteString.length);
-  //       const ia = new Uint8Array(ab);
-  //       for (let i = 0; i < byteString.length; i++) {
-  //         ia[i] = byteString.charCodeAt(i);
-  //       }
-  //       const blob = new Blob([ab], { type: mimeString });
-  //       const file = new File([blob], 'report.png', { type: mimeString });
-  
-  //       // 파일 객체를 배열로 감싸서 `navigate`로 전달
-  //       navigate('/sns/write', { state: { diaryImgData: [{ url: URL.createObjectURL(file), file }], articleId: 0 } });
-  //     } catch (error) {
-  //       console.error('이미지 캡처 중 오류 발생:', error);
-  //     }
-  //   }
-  // };
   
 
   return (
-    <div className="plant-diary-container" ref={reportRef}>
-      <div className="plant-diary-section">
-        <h2>{date}</h2>
-        <DiaryTodoIcon src={pencilIcon} onClick={handleEdit} />
-        <Btn content="X" onClick={() => navigate(`/plant/${plantId}`)} /> {/* 이 부분은 X 를 클릭하면 PlantDetail 페이지로 돌아가야함 */}
+    <div className="plant-diary-detail-container" ref={reportRef}>
+      <div className="plant-diary-detail-header m-5">
+        <h2 className="plant-diary-detail-date">{date}</h2>
+        <button className="plant-diary-detail-icon" onClick={handleEdit}>
+          <img src={pencilIcon} alt="Edit" />
+        </button>
+        <button className="plant-diary-detail-close-btn" onClick={() => navigate(`/plant/${plantId}`)}>
+          X
+        </button>
       </div>
-      <div className="plant-diary-section">
+      <div className='mb-3'>
         <ImageSlider imgs={images.map(img => img)} />
       </div>
-      <div className="plant-diary-section">
+      <div className='plant-diary-detail-todo-container'>
         {(!isWatered && !isFertilized && !isRepotted) ? (
           <div>식물관리내역이 없습니다.</div>
         ) : (
           <div>
             {isWatered && (
-              <div>
-                <DiaryTodoIcon src={waterFillIcon} /> 물주기 완료!
+              <div className="plant-diary-detail-todo-item">
+                <DiaryTodoIcon src={waterFillIcon} className="plant-diary-detail-todo-icon" />
+                <span className="plant-diary-detail-todo-text">물주기 완료!</span>
               </div>
             )}
             {isFertilized && (
-              <div>
-                <DiaryTodoIcon src={fertilizedFillIcon} /> 영양제주기 완료!
+              <div className="plant-diary-detail-todo-item">
+                <DiaryTodoIcon src={fertilizedFillIcon} className="plant-diary-detail-todo-icon" />
+                <span className="plant-diary-detail-todo-text">영양제주기 완료!</span>
               </div>
             )}
             {isRepotted && (
-              <div>
-                <DiaryTodoIcon src={repottedFillIcon} /> 분갈이 완료!
+              <div className="plant-diary-detail-todo-item">
+                <DiaryTodoIcon src={repottedFillIcon} className="plant-diary-detail-todo-icon" />
+                <span className="plant-diary-detail-todo-text">분갈이 완료!</span>
               </div>
             )}
           </div>
         )}
       </div>
-      <div className="plant-diary-section">
-        <div className="plant-diary-todo-icons">
-          <DiaryTodoIcon src={weatherIcon} />
-          <DiaryTodoIcon src={humidityIcon} />
-          <DiaryTodoIcon src={temperatureIcon} />
+      <div className="plant-diary-detail-weather-container">
+        <div className="plant-diary-detail-weather-icons">
+          <div className="plant-diary-detail-weather-item">
+            <DiaryTodoIcon src={weatherIcon} className="plant-diary-detail-weather-icon" />
+          </div>
+          <div className="plant-diary-detail-weather-item">
+            <DiaryTodoIcon src={humidityIcon} className="plant-diary-detail-weather-icon" />
+          </div>
+          <div className="plant-diary-detail-weather-item">
+            <DiaryTodoIcon src={temperatureIcon} className="plant-diary-detail-weather-icon" />
+          </div>
         </div>
-        <DiaryWeather
-          weather={weather}
-          temperature={temperature}
-          humidity={humidity}
-          content={weatherContent}
-        />
+        <DiaryWeather content={weatherContent} />
       </div>
-      <div className="plant-diary-section">
+      <div className="plant-diary-detail-weather-container">
         <DiaryDetailContent detailContent={content} />
       </div>
-      <div>
+      <div className='plant-diary-detail-btn'>
         <Btn content="삭제하기" onClick={handleDelete} /> 
         {/* <Btn content="SNS 업로드" onClick={handleCapture} />  */}
       </div>
