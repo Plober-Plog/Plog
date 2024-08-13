@@ -1,0 +1,27 @@
+.plant-tag-list {
+  display: flex;
+  overflow-x: auto;
+  padding-top: 5px;
+}
+
+.plant-tag {
+  padding: 8px 16px;
+  margin-right: 10px;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.plant-tag.active {
+  background-color: #87B989;
+  color: white;
+}
+
+.plant-tag:last-child {
+  margin-right: 0;
+}
+
+.plant-tag-list::-webkit-scrollbar {
+  display: none;
+}

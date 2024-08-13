@@ -57,22 +57,16 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     return null;
   }
 
-  const getRequestUserRelText = () => {
-    if (requestUserRel === 0) return `${ownerId}님은 당신을 이웃으로 두지 않습니다.`;
-    if (requestUserRel === 1) return `${ownerId}님은 당신을 이웃으로 추가하고 있습니다.`;
-    return '';
-  };
-
   const handleClickNeighborList = () => {
     navigate(`/profile/${ownerId}/neighbor`)
   }
 
   return (
-    <div>
+    <div className="profile-header-btn-container">
       {authSearchId === ownerId && (
         <>
           <button 
-            style={{ margin: '10px' }}
+            className="profile-header-btn-small"
             onClick={handleClickNeighborList}
           >
             이웃목록
@@ -81,16 +75,21 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
       )}
       {authSearchId !== ownerId && (
         <>
-          {/*<span className='ProfileHeaderUserBtnList-sub-txt'>
-            {getRequestUserRelText()}
-          </span>*/}
           <div>
             {profileUserRel === 0 && (
-              <button style={{ margin: '10px' }} onClick={addNeighbor}>이웃 추가</button>
+              <button
+                className="profile-header-btn-small"
+                onClick={addNeighbor}>
+                이웃 추가
+              </button>
             )}
             {profileUserRel === 1 && (
               <>
-                <button style={{ margin: '10px' }} onClick={removeNeighbor}>이웃 취소</button>
+                <button
+                  className="profile-header-btn-small"
+                  onClick={removeNeighbor}>
+                  이웃 취소
+                </button>
               </>
             )}
           </div>

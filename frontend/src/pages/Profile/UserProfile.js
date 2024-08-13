@@ -9,6 +9,7 @@ import SnsCardMdList from '../../components/Article/SnsCardMdList';
 import AddBtn from '../../components/Common/AddBtn';
 import './UserProfile.css';
 import UserProfileTab from '../../components/Profile/UserProfileTab'
+import BtnChat from '../../components/Profile/BtnChat';
 
 const UserProfile = () => {
   const { searchId } = useParams();
@@ -58,10 +59,15 @@ const UserProfile = () => {
         ownerId={searchId}
         type='user'
       />
-
       <div className='mb-20'>
         <UserProfileTab activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
+
+      {searchId !== authSearchId && (
+        <BtnChat 
+          userData={userData}
+        />
+      )}
 
       {activeTab === 'plant' && (
         <>
@@ -83,9 +89,11 @@ const UserProfile = () => {
       
       {activeTab === 'sns' && (
         <>
-          <AddBtn 
-            type='sns'
-          />
+          {searchId === authSearchId && (
+            <AddBtn 
+              type='sns'
+            />
+          )}
           <SnsCardMdList 
             type='sns'
             searchId={searchId}

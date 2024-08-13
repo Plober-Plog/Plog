@@ -1,5 +1,14 @@
-.ProfileHeaderUserBtnList-sub-txt{
-    color: #888888;
-    font-size:13px;
-    text-align: left;
-}
+.profile-header-btn-container {
+    display: flex;
+    /* justify-content: flex-start; */
+  }
+  
+.profile-header-btn-small {
+    background-color: #87B989;
+    color: white;
+    font-size: 14px;
+    padding: 4px 12px;
+    border-radius: 15px;
+    border: none;
+  }
+  

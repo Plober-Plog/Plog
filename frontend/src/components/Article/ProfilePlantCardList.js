@@ -32,6 +32,10 @@ const ProfilePlantCardList = ({ plants, searchId }) => {
     fetchPlantList(searchId, 0);
   }, [searchId]);
 
+  useEffect(() => {
+    console.log('&&&Plants Data:', plants);
+  }, [plants]);
+
   const handleScroll = () => {
     if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && hasMore && !loading) {
       fetchPlantList(searchId, page);
@@ -45,18 +49,23 @@ const ProfilePlantCardList = ({ plants, searchId }) => {
 
   return (
     <div className='profile-plant-card-list'>
-      {plants.map((plant) => (
-        <ProfilePlantCard
-          key={plant.plantId}
-          plantId={plant.plantId}
-          profile={plant.profile}
-          nickname={plant.nickname}
-          plantTypeName={plant.plantTypeName}
-          otherPlantTypeName={plant.otherPlantTypeName}
-          birthDate={plant.birthDate}
-          isClickable={authSearchId === searchId}
-        />
-      ))}
+      {plants.map((plant) => {
+        // "Dummy"인 경우 otherPlantTypeName을 사용
+        const displayPlantTypeName = plant.plantTypeName === 'Dummy' ? plant.otherPlantTypeName : plant.plantTypeName;
+
+        return (
+          <ProfilePlantCard
+            key={plant.plantId}
+            plantId={plant.plantId}
+            profile={plant.profile}
+            nickname={plant.nickname}
+            plantTypeName={displayPlantTypeName} // 여기서 처리
+            otherPlantTypeName={plant.otherPlantTypeName }
+            birthDate={plant.birthDate}
+            isClickable={authSearchId === searchId}
+          />
+        );
+      })}
       {loading && <div>Loading...</div>}
     </div>
   )
