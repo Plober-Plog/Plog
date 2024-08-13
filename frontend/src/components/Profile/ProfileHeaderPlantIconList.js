@@ -2,6 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 
+import bellIcon from '../../assets/icon/bell-default.png';
+import bellSelectIcon from '../../assets/icon/bell-select.png';
+import fixIcon from '../../assets/icon/fix-default.png';
+import fixSelectIcon from '../../assets/icon/fix-select.png';
+import pencilIcon from '../../assets/icon/pencil-select.png';
+import docsIcon from '../../assets/icon/docs-select.png';
+
+import './ProfileHeaderPlantIconList.css';
+
 const ProfileHeaderPlantIconList = ({ ownerId, hasNotification, isFixed, profileData }) => {
 
   const navigate = useNavigate();
@@ -90,14 +99,18 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotification, isFixed, profile
   }
 
   return (
-    <div>
-      <i title="알람" onClick={handleToggledNotification}>
-        {nowNotified ? '🔔' : '🔕'}
+    <div className='profile-header-icon-container'>
+      <i title="알람" className='profile-header-icon' onClick={handleToggledNotification}>
+        {nowNotified ? <img src={bellSelectIcon} alt='알람on'/> : <img src={bellIcon} alt='알람off'/>}
       </i>
-      <i title="편집" onClick={handleEdit}>✏️</i>
-      <i title="일지" onClick={handleWriteDiary}>📒</i>
-      <i title="고정" onClick={handleToggleFixed}>
-        {nowFixed ? '📌' : '❌'}
+      <i title="편집" className='profile-header-icon' onClick={handleEdit}>
+        <img src={pencilIcon} alt="편집" />
+      </i>
+      <i title="일지" className='profile-header-icon' onClick={handleWriteDiary}>
+        <img src={docsIcon} alt="일지" />
+      </i>
+      <i title="고정" className='profile-header-icon' onClick={handleToggleFixed}>
+        {nowFixed ? <img src={fixSelectIcon} alt='고정on'/> : <img src={fixIcon} alt='고정off'/>}
       </i>
     </div>
   );

@@ -2,6 +2,8 @@ import React from "react";
 import axios from 'axios';
 import { getCookie } from '../../utils/cookieUtils';
 import { useNavigate } from 'react-router-dom';
+import chatIcon from '../../assets/icon/chat-white.png';
+
 
 const BtnChat = ({ userData }) => {
 
@@ -35,7 +37,7 @@ const BtnChat = ({ userData }) => {
 
   return (
     <button className="add-btn" onClick={handleChat}>
-      ✉️
+      <img src={chatIcon}/>
     </button>
   ) 
 }

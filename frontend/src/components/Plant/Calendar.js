@@ -4,6 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import './Calendar.css';
 import API from '../../apis/api';
 
+import waterIcon from '../../assets/icon/water-select.png';
+import repottedIcon from '../../assets/icon/repotted-select.png';
+import fertilizedIcon from '../../assets/icon/fertilized-select.png';
+import calendarIcon from '../../assets/icon/calendar-select.png';
+
 const CustomCalendar = ({ plantId }) => {
   const [value, setValue] = useState(new Date());
   const [checkRecords, setCheckRecords] = useState([]);
@@ -103,6 +108,21 @@ const CustomCalendar = ({ plantId }) => {
 
   return (
     <div>
+      <div className='calendar-icon-container mb-2'>
+        <div className='calendar-icon-box'>
+          <img className='calendar-icon' src={waterIcon} />
+        </div>
+        <div className='calendar-icon-box'>
+          <img className='calendar-icon' src={fertilizedIcon} />
+        </div>
+        <div className='calendar-icon-box'>
+          <img className='calendar-icon' src={repottedIcon} />
+        </div>
+        <div className='calendar-icon-box'>
+          <img className='calendar-icon' src={calendarIcon} />
+        </div>
+        
+      </div>
       <Calendar
         onChange={(date) => {
           setValue(date);
