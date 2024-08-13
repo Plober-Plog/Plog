@@ -2,11 +2,19 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../apis/api";
 
-import bookMarkSelect from "../../assets/icon/bookmark-select.svg";
-import bookMarkDefault from "../../assets/icon/bookmark-default.svg";
-import likeSelect from "../../assets/icon/like-select.svg";
-import likeDefault from "../../assets/icon/like-default.svg";
-import comment from "../../assets/icon/comment.svg";
+// import bookMarkSelect from "../../assets/icon/bookmark-select.svg";
+// import bookMarkDefault from "../../assets/icon/bookmark-default.svg";
+// import likeSelect from "../../assets/icon/like-select.svg";
+// import likeDefault from "../../assets/icon/like-default.svg";
+// import comment from "../../assets/icon/comment.svg";
+
+import comment from '../../assets/icon/cmt-select.png';
+import likeSelect from '../../assets/icon/like-select-org.png';
+import likeDefault from '../../assets/icon/like-default.png';
+import bookMarkDefault from '../../assets/icon/bmk-default.png';
+import bookMarkSelect from '../../assets/icon/bmk-select.png';
+
+import './BtnList.css';
 
 const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt, isBookmarked: initialIsBookmarked, articleId }) => {
   const navigate = useNavigate();
@@ -43,28 +51,48 @@ const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt,
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <button onClick={handleLike} style={{ background: 'none', border: 'none', padding: 0 }}>
-          <img src={isLiked ? likeSelect : likeDefault} alt="like" style={imgStyle} />
+    <div className="action-container">
+      <div>
+        <button onClick={handleLike}>
+          <img src={isLiked ? likeSelect : likeDefault} alt="like" />
         </button>
         <span>{likeCnt}</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div>
         <img 
           src={comment} 
           alt="comment" 
-          style={imgStyle} 
-          onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId }})} // navigate를 함수로 감싸기
+          onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId }})}
         />
         <span>{commentCnt}</span>
       </div>
       <div>
-        <button onClick={handleBookmark} style={{ background: 'none', border: 'none', padding: 0 }}>
-          <img src={isBookmarked ? bookMarkSelect : bookMarkDefault} alt="bookmark" style={imgStyle} />
+        <button onClick={handleBookmark}>
+          <img src={isBookmarked ? bookMarkSelect : bookMarkDefault} alt="bookmark" />
         </button>
       </div>
     </div>
+    // <div className="action-container">
+    //   <div>
+    //     <button onClick={handleLike}>
+    //       <img src={isLiked ? likeSelect : likeDefault} alt="like" />
+    //     </button>
+    //     <span>{likeCnt}</span>
+    //   </div>
+    //   <div>
+    //     <img 
+    //       src={comment} 
+    //       alt="comment" 
+    //       onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId }})} // navigate를 함수로 감싸기
+    //     />
+    //     <span>{commentCnt}</span>
+    //   </div>
+    //   <div>
+    //     <button onClick={handleBookmark}>
+    //       <img src={isBookmarked ? bookMarkSelect : bookMarkDefault} alt="bookmark" />
+    //     </button>
+    //   </div>
+    // </div>
   );
 }
 
