@@ -124,7 +124,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             log.info(">>> 해당 채팅방에 참여한 사용자 조회 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             List<User> users = chatUserRepositorySupport.findUsersByChatRoomId(chatRoom.getChatRoomId());
             for(User user : users) {
-                log.info(">>> 해당 채팅방에 참여한 사용자 확인 - {}", user.getUserId());
+                log.info(">>> 해당 채팅방에 참여한 사용자 확인 - {}", user.getNickname());
             }
             // 본인은 제외
             users.removeIf(user -> user.getUserId().equals(userId));
@@ -142,6 +142,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             log.info(">>> 사용자의 메시지 읽음 여부 판단 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
                     .orElseThrow(() -> new EntityNotFoundException("ChatUser not found"));
+
+            log.info(">>> 채팅방의 마지막 메시지와 사용자의 읽은 시간 비교 - lastChat {}, chatUser {}", lastChat.getCreatedAt(), chatUser.getLastReadAt());
 
             boolean isRead = false;
             if (lastChat != null && chatUser.getLastReadAt() != null) {
