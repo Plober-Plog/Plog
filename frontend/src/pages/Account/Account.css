@@ -4,11 +4,11 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  /* background-color: #ffffff; */
+  padding: 20px; /* 전체 레이아웃에 여백 추가 */
 }
 
 .account-title {
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* 제목과 폼 사이의 간격 증가 */
   font-size: 24px;
   font-weight: bold;
 }
@@ -17,52 +17,76 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px; /* 입력 필드와 버튼 사이의 간격 증가 */
 }
 
 .account-input {
   display: flex;
   width: 340px;
   height: 50px;
-  padding: 15px 20px 16px 20px;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 255px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  border: 1px solid #E3E3E3;
-  background: var(--naver-text, #FFF);
-}
-
-.account-drop-box {
-  display: flex;
-  height: 50px;
-  padding: 0px 20px;
-  flex-direction: column;
+  padding: 12px 20px; /* 패딩을 약간 조정 */
   justify-content: center;
   align-items: center;
-  align-self: stretch;
   border-radius: 10px;
   border: 1px solid #E3E3E3;
   background: var(--naver-text, #FFF);
+  margin-bottom: 10px; /* 입력 필드 간의 간격 */
 }
 
 .account-button {
   width: 240px;
   height: 50px;
   padding: 10px 20px;
-  background-color: #77c593;
+  background-color: #87B989;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 20px; /* 로그인 버튼과 입력 필드 사이 간격 */
+}
+
+.account-a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--Green-Primary, #5DB075);
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: normal;
+  gap: 10px;
+  margin-top: 20px; /* 버튼과 하단 링크 사이 간격 */
+}
+
+.account-link {
+  color: var(--Green-Primary, #5DB075);
+  text-decoration: none;
 }
 
 .account-error {
-  margin-top: 20px;
+  margin-top: 10px; /* 오류 메시지와 폼 간격 조정 */
   color: red;
 }
 
-.account-message {
-  margin-top: 20px;
-  color: #77c593;
+.password-container {
+  position: relative;
+  width: 100%;
 }
+
+.password-input {
+  width: 100%;
+  padding-right: 60px; /* 오른쪽에 여유 공간 추가 */
+  box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 20px;
+  top: 40%;
+  transform: translateY(-50%);
+  color: var(--Green-Primary, #5DB075);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+

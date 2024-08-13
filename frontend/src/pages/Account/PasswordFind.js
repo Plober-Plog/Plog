@@ -97,12 +97,12 @@ const PasswordFind = () => {
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
-
+  
   return (
     <div className="account-container">
       <h1 className="account-title">비밀번호 찾기</h1>
       <form onSubmit={e => e.preventDefault()} className="account-form">
-        <div>
+        <div className="password-container">
           <InputField
             type="email"
             placeholder="이메일"
@@ -120,13 +120,16 @@ const PasswordFind = () => {
             disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
             className="account-input"
           />
-          <ATag
-            content="인증하기" onClick={handleEmailVerification}
-          />
-          {emailCheckMsg && <p>{emailCheckMsg}</p>}
+          <span
+            onClick={handleEmailVerification}
+            className="password-toggle"
+          >
+            인증하기
+          </span>
+          {emailCheckMsg && <p className="account-error">{emailCheckMsg}</p>}
         </div>
         {isEmailVerificationSent && (
-          <div>
+          <div className="password-container">
             <InputField
               type="text"
               placeholder="이메일 인증 코드"
@@ -136,8 +139,10 @@ const PasswordFind = () => {
               disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
               className="account-input"
             />
-            <p>{formatTime(timer)}</p>
-            <ATag content="인증 확인" onClick={handleCodeVerification} />
+            <span className="password-toggle">
+              <span>{formatTime(timer)}</span>
+              <span onClick={handleCodeVerification}>인증확인</span>
+            </span>
             {emailVerificationMsg && <p className="account-error">{emailVerificationMsg}</p>}
           </div>
         )}

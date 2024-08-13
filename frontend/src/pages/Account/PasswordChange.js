@@ -6,7 +6,7 @@ import { sha256 } from 'js-sha256';
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Common/InputField';
 import ATag from '../../components/Common/ATag';
-import './Account.css';
+import './Account.css'
 
 const PasswordChange = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -43,18 +43,22 @@ const PasswordChange = () => {
     <div className="account-container">
       <h2 className="account-title">비밀번호 변경</h2>
       <form onSubmit={handlePasswordChange} className="account-form">
-        <InputField
-          type={showPassword ? "text" : "password"}
-          placeholder="현재 비밀번호"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          required
-          className="account-input"
-        />
-        <ATag
-          onClick={() => setShowPassword(!showPassword)}
-          content={showPassword ? '숨기기' : '보기'}
-        />
+        <div className="password-container">
+          <InputField
+            type={showPassword ? "text" : "password"}
+            placeholder="현재 비밀번호"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+            className="account-input"
+          />
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            className="password-toggle"
+          >
+            {showPassword ? '숨기기' : '보기'}
+          </span>
+        </div>
         {passwordConfirmMsg && <p className="account-error">{passwordConfirmMsg}</p>}
         <Btn content="비밀번호 확인" type="submit" className="account-button"/>
       </form>
