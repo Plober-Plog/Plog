@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from "../../apis/api";
-import send from "../../assets/icon/footer/send.svg";
-import './Footer.css';
+import send from "../../assets/icon/footer/send.png";
+import './FooterCmt.css';
 
 const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSelectedParentId, isActive, setIsActive }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [content, setContent] = useState('');
   const inputRef = useRef(null);
 
@@ -50,23 +50,24 @@ const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSe
   };
 
   return (
-    <div className={`footer-container ${isActive ? 'active' : ''}`}>
+    <div className={`footercmt-container ${isActive ? 'footercmt-active' : ''}`}>
       <div>
-        {profile && <img src={profile} alt="profile" style={{ width: '40px', height: '40px' }} />}
+        {profile && <img src={profile} alt="profile" className="footercmt-img" />}
       </div>
-      <form onSubmit={handleCmtWrite}>
+      <form onSubmit={handleCmtWrite} className="footercmt-form">
         <div>
           <input
             type="text"
-            placeholder="댓글을 입력해주세요"
+            placeholder="댓글을 작성하세요"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             ref={inputRef}
+            className="footercmt-input"
           />
         </div>
         <div>
-          <button type="submit" className="footer-button">
-            <img src={send} alt="send 아이콘" className='footer-icon' />
+          <button type="submit" className="footercmt-button">
+            <img src={send} alt="send 아이콘" className="footercmt-icon" />
           </button>
         </div>
       </form>

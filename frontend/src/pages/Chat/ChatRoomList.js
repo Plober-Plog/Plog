@@ -42,9 +42,9 @@ const ChatRoomList = () => {
         <ChatListItem
           key={chatRoom.chatRoomId}
           chatRoom={chatRoom}
+          token={token}
         />
       ))}
-      {/* <button onClick={handleCreateChatRoom}>채팅방 개설</button> */}
     </div>
   );
 };

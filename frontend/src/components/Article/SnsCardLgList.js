@@ -29,6 +29,9 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
       console.log('API response:', response.data);
       if (response.data.length === 0) {
         setHasMore(false);
+        if (page === 0) {
+          setSnsList([]);
+        }
       } else {
         if (page === 0) {
           setSnsList(response.data);

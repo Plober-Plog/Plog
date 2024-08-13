@@ -1,6 +1,6 @@
-const ATag = ({content, onClick}) => {
+const ATag = ({content, onClick, className}) => {
   return (
-    <a onClick={onClick}>
+    <a onClick={onClick} className={className}>
       {content}
     </a>
   )

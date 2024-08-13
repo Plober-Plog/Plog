@@ -125,12 +125,14 @@ function App() {
 const FooterWithCondition = () => {
   const location = useLocation();
   const isSnsDetailPage = location.pathname.startsWith('/sns/');
+  const isChatDetailPage = location.pathname.startsWith('/chat/');
 
   return (
     <footer className='full-width'>
-      {isSnsDetailPage ? null : <Footer />}
+      {isSnsDetailPage || isChatDetailPage ? null : <Footer />}
     </footer>
   );
 }
+
 
 export default App;

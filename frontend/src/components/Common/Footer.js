@@ -1,17 +1,17 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import useButtonStore from "../../stores/footer";
-import snsSelect from "../../assets/icon/footer/sns-select.svg";
-import snsDefault from "../../assets/icon/footer/sns-default.svg";
-import profileSelect from "../../assets/icon/footer/profile-select.svg";
-import profileDefault from "../../assets/icon/footer/profile-default.svg";
-import homeSelect from "../../assets/icon/footer/home-select.svg";
-import homeDefault from "../../assets/icon/footer/home-default.svg";
-import chatSelect from "../../assets/icon/footer/chat-select.svg";
-import chatDefault from "../../assets/icon/footer/chat-default.svg";
-import alarmSelect from "../../assets/icon/footer/alarm-select.svg";
-import alarmDefault from "../../assets/icon/footer/alarm-default.svg";
-import alarmNewDefault from "../../assets/icon/footer/alarm-new-default.svg";
+import snsSelect from "../../assets/icon/footer/sns-select.png";
+import snsDefault from "../../assets/icon/footer/sns-default.png";
+import profileSelect from "../../assets/icon/footer/profile-select.png";
+import profileDefault from "../../assets/icon/footer/profile-default.png";
+import homeSelect from "../../assets/icon/footer/home-select.png";
+import homeDefault from "../../assets/icon/footer/home-default.png";
+import chatSelect from "../../assets/icon/footer/chat-select.png";
+import chatDefault from "../../assets/icon/footer/chat-default.png";
+import alarmSelect from "../../assets/icon/footer/alarm-select.png";
+import alarmDefault from "../../assets/icon/footer/alarm-default.png";
+import alarmNewDefault from "../../assets/icon/footer/alarm-new-default.png";
 import useAuthStore from '../../stores/member';
 
 // import "./Footer.css";

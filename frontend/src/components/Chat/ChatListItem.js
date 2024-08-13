@@ -1,11 +1,34 @@
 import React from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './ChatListItem.css'; // Import the CSS file
 
-const ChatListItem = ({ chatRoom }) => {
+const ChatListItem = ({ chatRoom, token }) => {
   const navigate = useNavigate();
+  const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
 
-  const handleEnterChatRoom = (chatRoomId, chatRoomName) => {
+  const handleEnterChatRoom = async (chatRoomId, chatRoomName) => {
+
+    // 읽음 표시
+    const chatRead = async () => {
+      try {
+        const response = await axios.post(`${API_REALTIME_URL}/chat/room/${chatRoomId}/read`, 
+          { params: {chatRoomId} },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: token,
+            },
+          }
+        );
+        console.log('채팅 입장 성공:', response.data);
+      } catch (error) {
+        console.error('채팅 읽기 오류:', error);
+      }
+    };
+    
+    await chatRead();
+
     navigate(`/chat/${chatRoomId}`, {
       state: {
         chatRoomId,
@@ -25,8 +48,8 @@ const ChatListItem = ({ chatRoom }) => {
       </div>
       <div className="chat-list-item-info">
         <span className="chat-list-item-date">{chatRoom.lastChat.updatedAt}</span>
-        {chatRoom.lastChat.read === false && (
-          <span className="chat-list-item-unread">New</span>
+        {chatRoom.read === false && (
+          <span className="chat-list-item-unread">N</span>
         )}
       </div>
     </div>

@@ -106,7 +106,7 @@ const Alarm = () => {
                 alarm={alarm}
               />
             ))}
-            <hr />
+            <hr className='alarm-hr'/>
           </div>
         ))
       ) : (
