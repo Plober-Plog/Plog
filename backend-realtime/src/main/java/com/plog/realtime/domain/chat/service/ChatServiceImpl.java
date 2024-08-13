@@ -87,6 +87,9 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(() -> new NotAuthorizedRequestException("채팅창에 입장할 권한이 없습니다."));
 
         List<Chat> chats = chatRepositorySupport.findChatsByChatRoomId(chatRoomId, page);
+        for(Chat chat : chats) {
+            log.info(">>> getChatDate - chat : {}", chat.toString());
+        }
         log.info(" >>> getChatData 완료: chatRoomId - {}, page - {}", chatRoomId, page);
         return chats.stream().map(chat -> new ChatGetResponseDto(
                 chat.getUser().getUserId(),
