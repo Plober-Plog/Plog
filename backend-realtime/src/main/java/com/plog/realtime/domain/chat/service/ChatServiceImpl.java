@@ -10,13 +10,16 @@ import com.plog.realtime.domain.chat.repository.ChatRepositorySupport;
 import com.plog.realtime.domain.chat.repository.ChatRoomRepository;
 import com.plog.realtime.domain.chat.repository.ChatUserRepository;
 import com.plog.realtime.domain.user.repository.UserRepository;
+import com.plog.realtime.global.exception.EntityNotFoundException;
 import com.plog.realtime.global.exception.NotAuthorizedRequestException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +49,7 @@ public class ChatServiceImpl implements ChatService {
         log.info(" >>> addUser 완료 : {}", chatGetRequestDto.getUserId());
     }
 
+    @Transactional
     @Override
     public void sendMessage(ChatGetRequestDto chatGetRequestDto) {
         chatRepository.save(
@@ -55,6 +59,15 @@ public class ChatServiceImpl implements ChatService {
                         .message(chatGetRequestDto.getMessage())
                         .build()
         );
+        ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(
+                userRepository.getReferenceById(chatGetRequestDto.getUserId()),
+                chatRoomRepository.getReferenceById(chatGetRequestDto.getChatRoomId())
+        ).orElseThrow(()-> {
+            return new EntityNotFoundException("찾을 수 없는 유저이거나 채팅방 입니다.");
+        });
+        chatUser.setLastReadAt(LocalDateTime.now());
+        chatUserRepository.save(chatUser);
+
         log.info(" >>> sendMessage 완료 - DB에 저장: {}", chatGetRequestDto.getUserId());
         String topicName = "chatroom-" + chatGetRequestDto.getChatRoomId();
         redisTemplate.convertAndSend(topicName, chatGetRequestDto);
