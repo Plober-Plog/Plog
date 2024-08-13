@@ -96,6 +96,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             // 각 채팅방에 참여하고 있는 사용자들을 가져옴
             log.info(">>> 해당 채팅방에 참여한 사용자 조회 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
             List<User> users = chatRepositorySupport.findUsersByChatRoomId(chatRoom.getChatRoomId());
+            // 본인은 제외
+            users.removeIf(user -> user.getUserId().equals(userId));
             log.info(">>> 조회된 사용자 수: {}", users.size());
 
             // 마지막 메시지를 가져옴
