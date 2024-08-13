@@ -323,11 +323,13 @@ useEffect(() => {
 
   return (
     <div className="plant-diary-write-container">
-      <DateDisplay date={date} setDate={handleDateChange} />
+      <div className="mb-4">
+        <DateDisplay date={date} setDate={handleDateChange} />
+      </div>
       <div className="plant-diary-write-section">
         <WriterInfo data={writerInfoData} type="plant" />
       </div>
-      <div className="plant-diary-write-section">
+      <div className="plant-diary-write-section plant-diary-write-camera-container">
         {!isEditMode ? (
           <div>
             <ImgUpload 
@@ -341,83 +343,87 @@ useEffect(() => {
           <p>사진은 수정할 수 없습니다.</p>
         )}
       </div>
-      <div className="plant-diary-write-icons plant-diary-write-section">
-        <div className="plant-diary-write-icon">
-          <DiaryTodoIcon 
-            src={weatherIcon} 
-            fillSrc={weatherIcon} // 필요에 따라 수정 가능
-            active={false} // 날씨는 아이콘 변경 없음
-            onClick={() => {}} // 날씨 선택은 SelectField로 대체
-          />
-          <SelectField
-            value={weather}
-            onChange={(e) => setIsWeather(Number(e.target.value))}
-            options={weatherOptions}
-          />
-        </div>
-        <div className="plant-diary-write-icon">
-          <DiaryTodoIcon 
-            src={humidityIcon} 
-            fillSrc={humidityIcon} // 필요에 따라 수정 가능
-            active={false} // 습도는 아이콘 변경 없음
-            onClick={() => {}} // 습도 선택은 SelectField로 대체
-          />
-          <SelectField
-            value={humidity}
-            onChange={(e) => setIsHumidity(Number(e.target.value))}
-            options={humidityOptions}
-          />
-        </div>
-        <div className="plant-diary-write-icon">
-          <DiaryTodoIcon 
-            src={temperatureIcon} 
-            fillSrc={temperatureIcon} // 필요에 따라 수정 가능
-            active={false} // 온도는 아이콘 변경 없음
-            onClick={() => {}} // 온도 선택은 InputField로 대체
-          />
-          <InputField 
-            type="number"
-            value={temperature}
-            onChange={(e) => setIsTemperature(Number(e.target.value))}
-          />
+      <div className="plant-diary-write-section plant-diary-write-icons">
+        <h2>날씨 정보</h2> {/* 제목 추가 */}
+        <div className="plant-diary-write-icon-container">
+          <div className="plant-diary-write-icon">
+            <DiaryTodoIcon 
+              src={weatherIcon} 
+              active={false} 
+              onClick={() => {}} 
+            />
+            <SelectField
+              value={weather}
+              onChange={(e) => setIsWeather(Number(e.target.value))}
+              options={weatherOptions}
+            />
+          </div>
+          <div className="plant-diary-write-icon">
+            <DiaryTodoIcon 
+              src={humidityIcon} 
+              active={false}
+              onClick={() => {}}
+            />
+            <SelectField
+              value={humidity}
+              onChange={(e) => setIsHumidity(Number(e.target.value))}
+              options={humidityOptions}
+            />
+          </div>
+          <div className="plant-diary-write-icon">
+            <DiaryTodoIcon 
+              src={temperatureIcon} 
+              active={false} 
+              onClick={() => {}} 
+            />
+            <InputField 
+              type="number"
+              value={temperature}
+              onChange={(e) => setIsTemperature(Number(e.target.value))}
+            />
+          </div>
         </div>
       </div>
       <div className="plant-diary-write-section plant-diary-write-icons">
         <h2>오늘 한 일</h2>
-        <div className="plant-diary-write-icon">
-          <DiaryTodoIcon 
-            src={waterIcon} 
-            fillSrc={waterFillIcon} // 여기서 fillSrc 추가
-            active={isWatered} 
-            onClick={toggleWatered} 
-          />
-        </div>
-        <div className="plant-diary-write-icon">
-          <DiaryTodoIcon 
-            src={fertilizedIcon} 
-            fillSrc={fertilizedFillIcon} // 여기서 fillSrc 추가
-            active={isFertilized} 
-            onClick={toggleFertilized} 
-          />
-        </div>
-        <div className="plant-diary-write-icon">
-          <DiaryTodoIcon 
-            src={repottedIcon} 
-            fillSrc={repottedFillIcon} // 여기서 fillSrc 추가
-            active={isRepotted} 
-            onClick={toggleRepotted} 
-          />
+        <div className="plant-diary-write-icon-container">
+          <div className="plant-diary-write-icon">
+            <DiaryTodoIcon 
+              src={waterIcon} 
+              fillSrc={waterFillIcon} 
+              active={isWatered} 
+              onClick={toggleWatered} 
+            />
+          </div>
+          <div className="plant-diary-write-icon">
+            <DiaryTodoIcon 
+              src={fertilizedIcon} 
+              fillSrc={fertilizedFillIcon} 
+              active={isFertilized} 
+              onClick={toggleFertilized} 
+            />
+          </div>
+          <div className="plant-diary-write-icon">
+            <DiaryTodoIcon 
+              src={repottedIcon} 
+              fillSrc={repottedFillIcon} 
+              active={isRepotted} 
+              onClick={toggleRepotted} 
+            />
+          </div>
         </div>
       </div>
       <div className="plant-diary-write-section">
         <h2>일지 작성</h2>
+        <div>
         <TextareaField 
           placeholder='일지를 입력하세요.'
           value={content} 
           onChange={(e) => setContent(e.target.value)}   
         />
+        </div>
       </div>
-      <div>
+      <div className='plant-diary-write-btn'>
         <Btn content={isEditMode ? "수정하기" : "작성하기"} onClick={handleSave} className="plant-diary-write-button" />
       </div>
     </div>

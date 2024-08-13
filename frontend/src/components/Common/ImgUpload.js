@@ -1,27 +1,23 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon'; 
-import ImgPreview from '../../components/Common/ImgPreview'; 
-import Btn from '../../components/Common/Btn'; 
+import ImgPreview from './ImgPreview'; 
+import DiaryTodoIcon from '../Diary/DiaryTodoIcon';
 
 const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) => {
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
-      fileInputRef.current.click();
+    fileInputRef.current.click();
   };
 
   return (
-    <div>
-      <Btn 
-        content={<DiaryTodoIcon src={cameraIcon} alt="upload" />}
+    <div className="img-upload-container">
+      <button 
         onClick={handleClick}
-        style={{ 
-          background: 'none', 
-          border: 'none', 
-          cursor: 'pointer',
-        }}
-      />
+        className="img-upload-button"
+      >
+        <DiaryTodoIcon src={cameraIcon} alt="upload" />
+      </button>
       <input
         type="file"
         ref={fileInputRef}
@@ -29,11 +25,11 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) =
         multiple
         accept="image/*"
         onChange={(e) => {
-            handleImageUpload(e);
-            e.target.value = '';
+          handleImageUpload(e);
+          e.target.value = ''; // Reset the input so that the same file can be uploaded again if needed
         }}
       />
-      <div>
+      <div className="img-previews">
         {imgs.map((img, index) => (
           <ImgPreview 
             key={index} 

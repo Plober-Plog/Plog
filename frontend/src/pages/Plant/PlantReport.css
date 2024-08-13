@@ -36,3 +36,9 @@
 .plant-report-button {
   margin-bottom: 20px;
 }
+
+.plant-report-sns-btn {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}

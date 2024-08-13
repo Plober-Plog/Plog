@@ -64,7 +64,7 @@ const SnsWrite = () => {
     }
 
     if (reportImgData) {
-      setTagTypeList(prev => [...prev, 2]); 
+      setTagTypeList([2]); 
     }
 
     console.log(articleId);
