@@ -78,7 +78,7 @@ function App() {
   return (
     <div className='container'>
       <Router>
-        <header className='full-width'>
+        <header className='full-width z-50'>
           <Header />
         </header>
         <main className='content'>
@@ -108,8 +108,8 @@ function App() {
             <Route path="/sns/:articleId" element={<SnsDetail />} />
             <Route path="/sns/:articleId/comment" element={<CommentDetail />} />
             {/* chat */}
-            <Route path="/chat" element={<ChatRoomList />} />
-            <Route path="/chat/:chatRoomId" element={<ChatRoom />} />
+            <Route path="/chat" element={<PrivateRoute><ChatRoomList /></PrivateRoute>} />
+            <Route path="/chat/:chatRoomId" element={<PrivateRoute><ChatRoom /></PrivateRoute>} />
             {/* alarm */}
             <Route path="/alarm" element={<PrivateRoute><Alarm /></PrivateRoute>} />
 

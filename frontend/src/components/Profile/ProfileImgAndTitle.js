@@ -6,7 +6,7 @@ import './ProfileImgAndTitle.css'
 const ProfileImgAndTitle = ({ imgSrc, title, nickname }) => {
   console.log('ProfileImgAndTitle:', { imgSrc, title, nickname });
   return (
-    <div className='flex flex-col items-center text-center'>
+    <div className='profile-img-and-title-container flex flex-col items-center text-center'>
       <div className="relative w-full max-w-xs">
         <img 
           src={imgSrc || defaultImg} 

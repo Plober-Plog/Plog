@@ -59,12 +59,15 @@ const UserProfile = () => {
         ownerId={searchId}
         type='user'
       />
-      <div>
-        <BtnChat userData={userData}/>
-      </div>
       <div className='mb-20'>
         <UserProfileTab activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
+
+      {searchId !== authSearchId && (
+        <BtnChat 
+          userData={userData}
+        />
+      )}
 
       {activeTab === 'plant' && (
         <>
@@ -86,9 +89,11 @@ const UserProfile = () => {
       
       {activeTab === 'sns' && (
         <>
-          <AddBtn 
-            type='sns'
-          />
+          {searchId === authSearchId && (
+            <AddBtn 
+              type='sns'
+            />
+          )}
           <SnsCardMdList 
             type='sns'
             searchId={searchId}

@@ -25,6 +25,8 @@ const ChatRoom = () => {
     profile: userData.profile,
   };
 
+  console.log(user)
+
   const [messageContent, setMessageContent] = useState("");
   const token = getCookie('accessToken');
 

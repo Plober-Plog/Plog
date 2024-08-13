@@ -1,13 +1,14 @@
 import React from 'react';
+import './Tags.css';
 
 const Tags = ({ selectedTags, onTagSelect, tags }) => {
   return (
-    <div>
+    <div className='tags-container'>
       {tags.map(tag => (
         <button
           key={tag.tagTypeId}
+          className={`tag ${selectedTags.includes(tag.tagTypeId) ? 'active' : ''}`}
           onClick={() => onTagSelect(tag.tagTypeId)}
-          style={{color: selectedTags.includes(tag.tagTypeId) ? 'gray' : 'black'}}
         >
           {tag.tagName}
         </button>

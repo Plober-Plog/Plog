@@ -1,3 +1,12 @@
+.profile-img-and-title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  justify-content: space-between;
+}
+
 .profile-img-and-title-title {
   position: absolute;
   bottom: -12px;

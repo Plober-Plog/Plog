@@ -8,11 +8,12 @@ import ChatListItem from '../../components/Chat/ChatListItem';
 const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
 
 const ChatRoomList = () => {
-  const [chatRooms, setChatRooms] = useState([]);
   const navigate = useNavigate();
+  const [chatRooms, setChatRooms] = useState([]);
   const token = getCookie('accessToken');  
-  console.log(token);
+  console.log('채팅방 토큰 : ', token);
   
+
   // 채팅방 불러오기 
   const fetchChatRooms = async () => {
     try {
@@ -33,18 +34,10 @@ const ChatRoomList = () => {
     fetchChatRooms();
   }, []);
 
-  const handleEnterChatRoom = (chatRoomId, chatRoomName) => {
-    navigate(`/chat/${chatRoomId}`, {
-      state: {
-        chatRoomId: chatRoomId,
-        otherUserNickname: chatRoomName,
-      }
-    });
-  };
+
 
   return (
     <div className="chat-room-container">
-      <h1>채팅방 목록</h1>
       {chatRooms.map((chatRoom) => (
         <ChatListItem
           key={chatRoom.chatRoomId}
