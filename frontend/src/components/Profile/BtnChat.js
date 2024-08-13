@@ -34,8 +34,8 @@ const BtnChat = ({ userData }) => {
   };
 
   return (
-    <button onClick={handleChat}>
-      채팅하기
+    <button className="add-btn" onClick={handleChat}>
+      ✉️
     </button>
   ) 
 }

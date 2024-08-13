@@ -62,7 +62,6 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
 
   return (
     <div>
-      <h3>SNS LG CardList목록</h3>
       {snslist.map((sns) => (
         <SnsCardLg 
           key={sns.articleId}
@@ -74,6 +73,9 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
           commentCnt={sns.commentCnt}
           isLiked={sns.isLiked}
           isBookmarked={sns.isBookmarked}
+          createdAt={sns.createdAt}
+          profile={sns.profile}
+          searchId={sns.searchId}
         />
       ))}
       {loading && <div>Loading...</div>}
