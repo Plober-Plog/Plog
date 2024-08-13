@@ -1,11 +1,11 @@
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useParams } from 'react-router-dom';
 import { getCookie } from '../../utils/cookieUtils';
 import useAuthStore from '../../stores/member';
-import send from "../../assets/icon/footer/send.png";
+import send from '../../assets/icon/footer/send.png';
 import './ChatRoom.css';
 
 const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime"; // realtime api 주소
@@ -17,96 +17,73 @@ const ChatRoom = () => {
   const [client, setClient] = useState(null); // stomp client
   const [messages, setMessages] = useState([]);
   const { userData } = useAuthStore();
-  const chatContainerRef = useRef(null);
+  const chatContainerRef = useRef(null);  // 채팅 컨테이너를 참조하기 위한 ref
   const token = getCookie('accessToken');
   const [messageContent, setMessageContent] = useState("");
-  const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);  // 현재 페이지 상태
+  const [isLastPage, setIsLastPage] = useState(false);  // 마지막 페이지 여부 상태
+  const [scrollHeight, setScrollHeight] = useState(0); // 이전 스크롤 높이 저장
   const user = {
     nickname: userData.nickname,
     profile: userData.profile,
     searchId: userData.searchId,
   };
-  console.log(user)
 
-  // 채팅 내역 전체 가져오기
-  const fetchChatHistory = async (page, isFirstLoad = false) => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-
-    // 이전 스크롤 위치와 컨텐츠 높이를 저장
-    const prevScrollHeight = chatContainerRef.current?.scrollHeight;
-    const prevScrollTop = chatContainerRef.current?.scrollTop;
+  // 채팅 내역 페이지네이션으로 가져오기
+  const fetchChatHistory = async (pageNum) => {
+    if (isLastPage) return;  // 마지막 페이지면 더 이상 요청하지 않음
 
     try {
       const response = await axios.get(`${API_REALTIME_URL}/chat/${chatRoomId}/history`, {
         headers: {
           Authorization: token,
         },
-        params: {
-          page: page,
-        }
+        params: { page: pageNum }
       });
 
       if (response.data.length === 0) {
-        setHasMore(false);
+        setIsLastPage(true);  // 더 이상 데이터가 없으면 마지막 페이지로 설정
       } else {
-        setMessages(prevMessages => [...response.data.reverse(), ...prevMessages]);
-        console.log('채팅 내역 가져오기 성공:', response.data);
-
-        if (!isFirstLoad && prevScrollHeight && prevScrollTop !== undefined) {
-          // 새 메시지를 불러온 후, 이전 스크롤 위치를 유지
-          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight - prevScrollHeight + prevScrollTop;
-        }
-
-        if (isFirstLoad) {
-          scrollToBottom();
-        }
+        setMessages(prevMessages => [...response.data.reverse(), ...prevMessages]);  // 이전 메시지를 앞에 추가
+        setScrollHeight(chatContainerRef.current?.scrollHeight || 0); // 새로운 메시지 추가 전 스크롤 높이 저장
       }
     } catch (error) {
       console.error("채팅 내역을 가져오는 중 오류 발생:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // 초기 채팅 내역 로드
-  useEffect(() => {
-    fetchChatHistory(page, true); // 첫 페이지의 채팅 내역을 로드할 때만 스크롤을 맨 밑으로 이동
-  }, [chatRoomId, token]);
-
-  // 스크롤을 맨 밑으로 이동시키는 함수
+  // 스크롤을 맨 아래로 이동하는 함수
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   };
 
-  // 새로운 메시지가 추가될 때만 스크롤을 맨 밑으로 이동
+  // 페이지 번호가 변경될 때마다 이전 메시지 로드
   useEffect(() => {
-    if (messages.length && page === 0) {
-      scrollToBottom();
+    if (page > 0) {
+      fetchChatHistory(page);
+    }
+  }, [page]);
+
+  // 메시지가 업데이트될 때마다 스크롤 위치를 복원
+  useLayoutEffect(() => {
+    if (chatContainerRef.current && scrollHeight) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight - scrollHeight;
     }
   }, [messages]);
 
-  // 스크롤 맨 위 감지 및 페이지네이션 처리
+  // 초기 채팅 내역 로드
+  useEffect(() => {
+    fetchChatHistory(page);  // 첫 페이지 로드
+  }, [chatRoomId, token]);
+
+  // 스크롤 이벤트 핸들러
   const handleScroll = () => {
-    if (chatContainerRef.current.scrollTop === 0 && !loading && hasMore) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      fetchChatHistory(nextPage);
+    if (chatContainerRef.current.scrollTop === 0) {
+      setPage(prevPage => prevPage + 1);  // 페이지 번호 증가
     }
   };
-
-  useEffect(() => {
-    const container = chatContainerRef.current;
-    container.addEventListener('scroll', handleScroll);
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-    };
-  }, [page, loading, hasMore]);
 
   // 메세지 보내기
   const sendMessage = (e) => {
@@ -115,8 +92,6 @@ const ChatRoom = () => {
     // 메시지가 비어 있으면 아무 처리도 하지 않음
     if (!messageContent.trim()) return;
 
-    console.log("보내는 메시지: " + messageContent);
-    console.log('Send 메시지 전송');
     const sendData = {
       nickname: user.nickname,
       profile: user.profile,
@@ -124,8 +99,7 @@ const ChatRoom = () => {
       message: messageContent,
       chatType: "SEND",
       createdAt: new Date().toISOString()
-    }
-    console.log('SendData:', sendData);
+    };
 
     if (client && client.connected) {
       client.publish({
@@ -135,25 +109,26 @@ const ChatRoom = () => {
       });
     }
     setMessageContent("");
-    console.log('SendData 전송 완료');
-
-    // 새로운 메시지를 보낸 후 스크롤을 맨 밑으로 이동
-    setTimeout(() => {
-      scrollToBottom();
-    }, 100);
+    scrollToBottom();
   };
-
 
   // 수신한 메시지
   const showMessage = (message) => {
-    console.log("수신한 메시지: " + JSON.stringify(message));
-    setMessages(prevMessages => [...prevMessages, message]);
+    const messageObj = {
+      nickname: message.nickname,
+      profile: message.image,
+      searchId: message.searchId,
+      message: message.message,
+      createdAt: message.createdAt,
+      chatType: message.chatType,
+    };
+    setMessages(prevMessages => [...prevMessages, messageObj]);
+    scrollToBottom();
   };
 
   // 채팅방 나가기
   const leaveChat = (client) => {
     if (client && client.connected) {
-      console.log('Leave 메시지 전송');
       client.publish({
         destination: `/app/chat.leaveUser/${chatRoomId}`,
         headers: { 'Authorization': token },
@@ -176,12 +151,10 @@ const ChatRoom = () => {
         Authorization: token,
       },
       onConnect: (frame) => {
-        console.log('WebSocket 연결 성공: ' + frame);
         stompClient.subscribe(`/topic/chatroom-${chatRoomId}`, messageOutput => {
           showMessage(JSON.parse(messageOutput.body));
         });
 
-        console.log('Join 메시지 전송');
         stompClient.publish({
           destination: `/app/chat.addUser/${chatRoomId}`,
           headers: { 'Authorization': token },
@@ -209,7 +182,6 @@ const ChatRoom = () => {
     };
   }, [chatRoomId, token, user.nickname, user.profile]);
 
-  
   // 시간을 포맷팅하는 함수 (날짜는 제거하고 시간만)
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -226,23 +198,35 @@ const ChatRoom = () => {
   };
 
   return (
-    <div ref={chatContainerRef}>
-      <div className="chat-box">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`chat-message-box ${message.nickname === user.nickname ? "sent" : ""}`}
-          >
-            <img src={message.profile} className='chat-image' alt="Profile" />
-            <div className="chat-content">{message.message}</div>
-            <div className="chat-timestamp">{formatTime(message.createdAt)}</div>
-          </div>
-        ))}
+    <div>
+      <div className="chat-box" ref={chatContainerRef} onScroll={handleScroll}>
+        {messages
+          .filter((message) => message.message && message.message.trim() !== '')
+          .map((message, index) => (
+            <div
+              key={index}
+              className={`chat-message-box ${message.searchId === user.searchId ? "sent" : "received"}`}
+            >
+              {message.searchId !== user.searchId && (
+                <>
+                  <img src={message.profile} className='chat-image' alt="Profile" />
+                  <div className="chat-content">{message.message}</div>
+                  <div className="chat-timestamp">{formatTime(message.createdAt)}</div>
+                </>
+              )}
+              {message.searchId === user.searchId && (
+                <>
+                  <div className="chat-timestamp">{formatTime(message.createdAt)}</div>
+                  <div className="chat-content">{message.message}</div>
+                  <img src={message.profile} className='chat-image' alt="Profile" />
+                </>
+              )}
+            </div>
+          ))}
       </div>
 
       <div className='footercmt-container'>
         <form className="footercmt-form" onSubmit={sendMessage}>
-          <div>
             <input
               type="text"
               placeholder="메세지를 입력하세요"
@@ -251,12 +235,9 @@ const ChatRoom = () => {
               onKeyUp={(e) => { if (e.key === 'Enter') sendMessage(e); }}
               className="footercmt-input"
             />
-          </div>
-          <div>
             <button type="submit" className="footercmt-button">
               <img src={send} alt="send 아이콘" className="footercmt-icon" />
             </button>
-          </div>
         </form>
       </div>
     </div>
