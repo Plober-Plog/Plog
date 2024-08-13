@@ -323,13 +323,13 @@ useEffect(() => {
 
   return (
     <div className="plant-diary-write-container">
-      <div className="mb-4">
+      <div className="mb-5 cardlist-subtitle">
         <DateDisplay date={date} setDate={handleDateChange} />
       </div>
-      <div className="plant-diary-write-section">
+      <div className="mb-4 plant-diary-write-section">
         <WriterInfo data={writerInfoData} type="plant" />
       </div>
-      <div className="plant-diary-write-section plant-diary-write-camera-container">
+      <div className="mb-4 plant-diary-write-section plant-diary-write-camera-container">
         {!isEditMode ? (
           <div>
             <ImgUpload 
@@ -343,9 +343,9 @@ useEffect(() => {
           <p>사진은 수정할 수 없습니다.</p>
         )}
       </div>
-      <div className="plant-diary-write-section plant-diary-write-icons">
-        <h2>날씨 정보</h2> {/* 제목 추가 */}
-        <div className="plant-diary-write-icon-container">
+      <div className="mb-4 plant-diary-write-section plant-diary-write-icons">
+        <h2 className='mb-4 cardlist-subtitle'>날씨 정보</h2> {/* 제목 추가 */}
+        <div className="mb-2 plant-diary-write-icon-container">
           <div className="plant-diary-write-icon">
             <DiaryTodoIcon 
               src={weatherIcon} 
@@ -385,8 +385,8 @@ useEffect(() => {
         </div>
       </div>
       <div className="plant-diary-write-section plant-diary-write-icons">
-        <h2>오늘 한 일</h2>
-        <div className="plant-diary-write-icon-container">
+        <h2 className='mb-4 cardlist-subtitle'>오늘 한 일</h2>
+        <div className="mb-4 plant-diary-write-icon-container">
           <div className="plant-diary-write-icon">
             <DiaryTodoIcon 
               src={waterIcon} 
@@ -414,11 +414,12 @@ useEffect(() => {
         </div>
       </div>
       <div className="plant-diary-write-section">
-        <h2>일지 작성</h2>
+        <h2 className='mb-4 cardlist-subtitle'>일지 작성</h2>
         <div>
         <TextareaField 
           placeholder='일지를 입력하세요.'
           value={content} 
+          className="plant-diary-write-textarea"  
           onChange={(e) => setContent(e.target.value)}   
         />
         </div>

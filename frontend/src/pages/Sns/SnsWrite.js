@@ -178,6 +178,7 @@ const SnsWrite = () => {
           value={content}
           onChange={e => setContent(e.target.value)}
           placeholder='내용을 입력해주세요.'
+          className="textarea-field-sns"
         />
       </div>
       <div>
