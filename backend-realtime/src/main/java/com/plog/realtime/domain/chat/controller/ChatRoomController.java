@@ -59,7 +59,7 @@ public class ChatRoomController {
     }
 
     @Operation(summary = "채팅방 입장", description = "사용자가 채팅방에 입장을 합니다.")
-    @PostMapping("/api/chatRooms/{chatRoomId}/read")
+    @PostMapping("/{chatRoomId}/read")
     public ResponseEntity<?> updateLastReadAt(@PathVariable Long chatRoomId,
                                               @RequestHeader("Authorization") String token) {
         if(token == null || !token.startsWith("Bearer ")) {
