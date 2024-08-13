@@ -64,7 +64,7 @@ const SnsCardMd = ({ searchId, articleId, nickname, image, content, likeCnt, com
 
         <div className="sns-card-lg-icons">
           
-          <div className="sns-card-lg-left">
+          <div className="sns-card-lg-left gap-3">
             <span className="sns-card-lg-icon mr-3 gap-1">
               <img src={likeSelectIcon} alt="좋아요 수" />
               {likeCnt}
@@ -76,13 +76,12 @@ const SnsCardMd = ({ searchId, articleId, nickname, image, content, likeCnt, com
           </div>
 
           <div className="sns-card-lg-right">
-          <span className="sns-card-lg-icon mr-3 gap-1">
-            {isLiked? <img src={likeSelectIcon} alt="좋아요on"/> : <img src={likeIcon} alt="좋아요off"/>}
-          </span>
-          <span className="sns-card-lg-icon gap-1">
-            {isBookmarked? <img src={bmkSelectIcon} alt="북마크on"/> : <img src={bmkIcon} alt="북마크off"/>}
-          </span>
-
+            <span className="sns-card-lg-icon mr-3">
+              {isLiked? <img className src={likeSelectIcon} alt="좋아요on"/> : <img src={likeIcon} alt="좋아요off"/>}
+            </span>
+            <span className="sns-card-lg-icon gap-1">
+              {isBookmarked? <img src={bmkSelectIcon} alt="북마크on"/> : <img src={bmkIcon} alt="북마크off"/>}
+            </span>
           </div>
         </div>
         
