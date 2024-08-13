@@ -10,7 +10,7 @@ import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
 import ModalComplete from '../Common/ModalComplete';
 import defaultProfile from './defaultprofile.png';
-
+import './ProfileUpdateForm.css';
 const SignUpForm = () => {
   // 회원 정보
   const [searchId, setSearchID] = useState('');
@@ -455,42 +455,50 @@ const closeModal = () => {
           className="account-drop-box"
         /> */}
 
-        <RadioField
-          selectedValue={gender}
-          onChange={setGender}
-          options={[
-            { value: 1, label: '선택하지 않음' },
-            { value: 2, label: '남자' },
-            { value: 3, label: '여자' },
-          ]}
-          isRequired={false}
-        />
-        <div>
-          <label>지역</label>
-          <select
-            value={sidoCode}
-            onChange={(e) => setSidoCode(e.target.value)}
-            required={false}
-            className="account-drop-box"
-          >
-            <option value="0">시/도 선택</option>
-            {sidoOptions.map(sidoOption => (
-              <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
-            ))}
-          </select>
-          <select
-            value={gugunCode}
-            onChange={(e) => setGugunCode(e.target.value)}
-            required={false}
-            className="account-drop-box"
-          >
-            <option value="0">구/군 선택</option>
-            {filteredGugunOptions.map(filteredGugunOption => (
-              <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
-                {filteredGugunOption.gugunName}
-              </option>
-            ))}
-          </select>
+        <div className="profile-inline-group">
+          <label className="profile-inline-label">성별</label>
+          <RadioField
+            selectedValue={gender}
+            onChange={setGender}
+            options={[
+              { value: 1, label: '선택하지 않음' },
+              { value: 2, label: '남자' },
+              { value: 3, label: '여자' },
+            ]}
+            isRequired={false}
+            className="profile-radio-field"
+          />
+        </div>
+        <div className="profile-region-group">
+          <div className="profile-region-select-container">
+            <label>지역</label>
+            <select
+              value={sidoCode}
+              onChange={(e) => setSidoCode(e.target.value)}
+              required={false}
+              className="profile-region-select"
+            >
+              <option value="0">시/도 선택</option>
+              {sidoOptions.map(sidoOption => (
+                <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
+              ))}
+            </select>
+            <select
+              value={gugunCode}
+              onChange={(e) => setGugunCode(e.target.value)}
+              required={false}
+              className="profile-region-select"
+            >
+              <option value="0">구/군 선택</option>
+              {gugunOptions
+                .filter(option => option.sidoCode === Number(sidoCode))
+                .map(filteredGugunOption => (
+                  <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
+                    {filteredGugunOption.gugunName}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
         <div>
           <input
