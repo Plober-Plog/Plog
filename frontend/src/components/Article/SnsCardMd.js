@@ -32,9 +32,15 @@ const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, i
         <p className="sns-card-md-text">{cutContent}</p>
 
         <div className="sns-card-md-icons">
-          <span className="sns-card-md-icon">{isLiked ? '❤️' : '🖤'} {likeCnt}</span>
-          <span className="sns-card-md-icon">💬 {commentCnt}</span>
-          <span className="sns-card-md-icon">{isBookmarked ? '🔖' : ''}</span>
+          <span className="sns-card-md-icon">
+            {isLiked ? <img className="mr-1" src={likeSelectIcon}/> : <img className="mr-1" src={likeIcon}/>} {likeCnt}
+          </span>
+          <span className="sns-card-md-icon">
+            <img className="mr-1" src={cmtIcon}/> {commentCnt}
+          </span>
+          <span className="sns-card-md-icon">
+            {isBookmarked ? <img className="mr-1" src={bmkSelectIcon}/> : <img className="mr-1" src={bmkIcon}/>}
+          </span>
         </div>
       </div>
     </div>

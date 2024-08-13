@@ -75,7 +75,9 @@
 .sns-card-lg-icon {
     display: flex;
     font-style: normal;
+    width: 20px;
 }
+
 .sns-card-lg-icon img {
     width: 20px;
     height: 100%;
