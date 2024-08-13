@@ -1,23 +1,28 @@
 .img-slider-container {
-  width: 90%;
-  max-width: 500px; /* 슬라이더의 최대 너비를 설정 */
-  margin: 0 auto; /* 가운데 정렬 */
-  padding-bottom: 30px;
+  width: 100%;
+  /* max-width: 500px; */
+  /* margin: 0 auto; */
+  /* padding-bottom: 30px; */
 }
 
 .slick-list {
-  padding: 0px 3px; 
+  /* padding: 0px 3px;  */
+  /* margin: */
 }
 
 .slide {
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
+  /* display: flex !important; */
+  /* justify-content: center; */
+  /* align-items: center; */
 }
 
 .slide-img {
   width: 100%;
-  height: auto;
-  max-height: 300px;
-  object-fit: contain;
+  /* height: 0; */
+  aspect-ratio: 1 / 1;
+  /* padding-bottom: 100%; */
+  object-fit: cover;
+  /* height: auto; */
+  /* max-height: 300px; */
+  /* object-fit: contain; */
 }

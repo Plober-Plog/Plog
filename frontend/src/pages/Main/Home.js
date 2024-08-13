@@ -54,7 +54,7 @@ const Home = () => {
         <Img src={bannerImg} alt="Banner Image" style={{ width: '100%', height: 'auto' }} />
       </div>
       
-      <div className="pt-8">
+      <div className="pt-8 mb-8">
         <p className="cardlist-subtitle">인기 SNS 발견하기</p>
         <ArticleCardList articles={snsArticles} type="sns" />
       </div>

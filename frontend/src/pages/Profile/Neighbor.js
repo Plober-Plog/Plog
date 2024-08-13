@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 import NeighborCardList from '../../components/Profile/NeighborCardList';
+import NeighborTypeTab from '../../components/Profile/NeighborTypeTab';
 
 const Neighbor = () => {
 
@@ -40,29 +41,31 @@ const Neighbor = () => {
 
   return (
     <div>
-      <h3>이웃 목록</h3>
-      <div>
-        <button className={activeTab === 'follow' ? 'active' : ''} onClick={() => setActiveTab('follow')}>팔로우</button>
-        <button className={activeTab === 'follower' ? 'active' : ''} onClick={() => setActiveTab('follower')}>팔로워</button>
+
+      <NeighborTypeTab activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      <div className='pt-20'>
+
+        {activeTab === 'follow' && (
+          <>
+            <NeighborCardList 
+              users={followList}
+            />
+          </>
+        )}
+        
+        {activeTab === 'follower' && (
+          <>
+            <NeighborCardList 
+              users={followerList}
+            />
+          </>
+        )}
+        
       </div>
-      
-      {activeTab === 'follow' && (
-        <>
-          <h5>팔로우 목록</h5>
-          <NeighborCardList 
-            users={followList}
-          />
-        </>
-      )}
-      
-      {activeTab === 'follower' && (
-        <>
-          <h5>팔로워 목록</h5>
-          <NeighborCardList 
-            users={followerList}
-          />
-        </>
-      )}
+
+
+
     </div>
   )
 }
