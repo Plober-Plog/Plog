@@ -3,6 +3,13 @@ import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 import './SnsCardMd.css'
 
+import cmtIcon from '../../assets/icon/cmt-select.png';
+import likeSelectIcon from '../../assets/icon/like-select-org.png';
+import likeIcon from '../../assets/icon/like-default.png';
+import bmkIcon from '../../assets/icon/bmk-default.png';
+import bmkSelectIcon from '../../assets/icon/bmk-select.png';
+
+
 const SnsCardMd = ({ articleId, nickname, image, content, likeCnt, commentCnt, isLiked, isBookmarked}) => {
   const navigate = useNavigate();
 
