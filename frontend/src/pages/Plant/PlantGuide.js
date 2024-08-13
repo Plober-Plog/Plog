@@ -36,13 +36,14 @@ const PlantGuide = () => {
   return (
     <div>
       <div>
-        <h2 className='cardlist-subtitle mt-4 m-3'>{plantData.plantName} 키우기</h2>
+        <h2 className='cardlist-subtitle mt-5 m-4'>{plantData.plantName} 키우기</h2>
       </div>
       <div>
         <Img src={plantData.profile} alt={`식물이미지`} />
       </div>
       <div className="plant-guide-container plant-guide-info">
         <DiaryDetailContent detailContent={plantData.guide} />
+        <br/>
         <p>물주는 주기: {plantData.waterInterval} 일 🌱</p>
         <p>영양제 주기: {plantData.fertilizeInterval} 일 🌱</p>
         <p>분갈이 주기: {plantData.repotInterval} 일 🌱</p>
