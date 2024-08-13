@@ -165,7 +165,7 @@ const ProfileUpdateForm = () => {
   };
 
   return (
-    <div>
+    <div className="profile-update-container">
       <form onSubmit={(e) => e.preventDefault()}>
         <div className="profile-image-container mb-3">
           <input
@@ -300,7 +300,6 @@ const ProfileUpdateForm = () => {
             </select>
           </div>
         </div>
-
         <div className='mb-5'>
           <Btn
             content="수정하기"
