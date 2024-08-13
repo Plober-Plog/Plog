@@ -82,16 +82,31 @@ const PlantDetail = () => {
         data={{ ...plantData, ownerId:plantId }}
         type="plant"
       />
-      <CustomCalendar 
-        plantId={plantId}
-      />
-      <ArticleCardList 
-        ownerId={plantId}
-        articles={articles}
-        type="plant"
-      />
-      <Btn content ="분석보고서" onClick={handleReportClick}/>
-      <Btn content ="가이드" onClick={handleGuideClick}/>
+      
+      <div className='mt-8'>
+        <CustomCalendar 
+          plantId={plantId}
+        />
+      </div>
+
+      <div className="pt-9">
+        <p className="cardlist-subtitle">최근 일지 모아보기</p>
+        <ArticleCardList 
+          ownerId={plantId}
+          articles={articles}
+          type="plant"
+        />
+      </div>
+
+      <div className='grid grid-cols-12 gap-3 mt-10 mb-10'>
+        <div className='col-span-6'>
+          <Btn content ="분석보고서" onClick={handleReportClick}/>
+        </div>
+        <div className='col-span-6'>
+          <Btn content ="가이드" onClick={handleGuideClick}/>
+        </div>
+      </div>
+
     </div>
   )
 };
