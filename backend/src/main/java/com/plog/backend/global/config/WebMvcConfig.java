@@ -83,6 +83,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "${server.domain.host}",
                         "https://i11b308.p.ssafy.io/**",
                         "http://localhost:3000",
+                        "http://localhost:3000/**",
+                        "http://localhost:8080/**",
                         "https://plogbucket.s3.ap-northeast-2.amazonaws.com/**",
                         "https://plogbucket.s3.ap-northeast-2.amazonaws.com"
                         )
