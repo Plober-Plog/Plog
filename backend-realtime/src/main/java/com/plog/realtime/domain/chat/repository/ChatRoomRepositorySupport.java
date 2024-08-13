@@ -2,8 +2,10 @@ package com.plog.realtime.domain.chat.repository;
 
 import com.plog.realtime.domain.chat.dto.response.ChatRoomGetListResponseDto;
 import com.plog.realtime.domain.chat.entity.ChatRoom;
+import com.plog.realtime.domain.chat.entity.QChat;
 import com.plog.realtime.domain.chat.entity.QChatRoom;
 import com.plog.realtime.domain.chat.entity.QChatUser;
+import com.plog.realtime.domain.user.entity.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
@@ -39,5 +41,18 @@ public class ChatRoomRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
 
         return chatRoomList;
+    }
+
+    public List<User> findUsersByChatRoomId(Long chatRoomId) {
+        QChat qChat = QChat.chat;
+
+        List<User> users = queryFactory
+                .select(qChat.user)
+                .from(qChat)
+                .where(qChat.chatRoom.chatRoomId.eq(chatRoomId))
+                .distinct()  // 중복 제거
+                .fetch();
+
+        return users;
     }
 }

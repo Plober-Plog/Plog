@@ -21,19 +21,6 @@ public class ChatRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = paQueryFactory;
     }
 
-    public List<User> findUsersByChatRoomId(Long chatRoomId) {
-        QChat qChat = QChat.chat;
-
-        List<User> users = queryFactory
-                .select(qChat.user)
-                .from(qChat)
-                .where(qChat.chatRoom.chatRoomId.eq(chatRoomId))
-                .distinct()  // 중복 제거
-                .fetch();
-
-        return users;
-    }
-
     public List<Chat> findChatsByChatRoomId(Long chatRoomId, int page) {
         QChat chat = QChat.chat;
 
