@@ -134,7 +134,7 @@ public class UserController {
             return ResponseEntity.status(409).body(BaseResponseBody.of(409, "이미 존재하는 ID 입니다."));
         } else {
             log.info(">>> [GET] /user/{} - 없는 검색 ID 입니다.", searchId);
-            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "없는 검색 ID 입니다."));
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "없는 검색 ID 입니다."));
         }
     }
 
