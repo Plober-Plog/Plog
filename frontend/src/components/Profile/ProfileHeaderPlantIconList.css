@@ -1,0 +1,8 @@
+.profile-header-icon-container {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-header-icon img {
+  width: 20px;
+}
