@@ -78,7 +78,7 @@ public class ChatController {
 
     @GetMapping("/{chatRoomId}/history")
     public ResponseEntity<List<ChatGetResponseDto>> getChatData(
-            @Parameter(description = "인증 토큰")  @RequestHeader("Authorization") String token,
+            @Parameter(description = "인증 토큰")  @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "채팅방 번호")  @PathVariable("chatRoomId") Long chatRoomId,
             @Parameter(description = "page 번호") @RequestParam(required = false, defaultValue = "0") int page
     ) {

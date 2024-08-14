@@ -65,7 +65,7 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 입장", description = "사용자가 채팅방에 입장을 합니다.")
     @PostMapping("/{chatRoomId}/read")
     public ResponseEntity<?> updateLastReadAt(@PathVariable Long chatRoomId,
-                                              @RequestHeader("Authorization") String token) {
+                                              @RequestHeader(value = "Authorization", required = false) String token) {
         if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         chatRoomService.updateLastReadAt(token, chatRoomId);
@@ -93,7 +93,7 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 삭제", description = "채팅방 개설자가 채팅방을 삭제합니다.")
     @DeleteMapping
     public ResponseEntity<?> deleteChatRoom(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestParam("chatRoomId") Long chatRoomId) {
         log.info(">>> deleteChatRoom 호출됨, chatRoomId: {}", chatRoomId);
         if(token == null)
@@ -104,7 +104,7 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 나가기", description = "사용자가 채팅방에서 나갑니다.")
     @DeleteMapping("/leave")
     public ResponseEntity<?> leaveChatRoom(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestParam("chatRoomId") Long chatRoomId) {
         log.info(">>> leaveChatRoom 호출됨, chatRoomId: {}", chatRoomId);
         if(token == null)
@@ -115,7 +115,7 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 제목 변경", description = "채팅방의 제목을 변경합니다.")
     @PatchMapping
     public ResponseEntity<?> updateChatRoom(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody ChatRoomUpdateRequestDto updateRequestDto) {
         log.info(">>> updateChatRoom 호출됨, chatRoomId: {}, chatRoomName: {}"
                 ,updateRequestDto.getChatRoomId()
