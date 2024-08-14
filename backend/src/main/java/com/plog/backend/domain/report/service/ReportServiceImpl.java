@@ -69,15 +69,19 @@ public class ReportServiceImpl implements ReportService {
         Optional<PlantDiaryImage> optionalImage = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndIsThumbnailTrue(
                 plantDiaries.get(plantDiaries.size() - 1).getPlantDiaryId());
 
+
+        String recentImageUrl;
         if (optionalImage.isPresent()) {
-            String recentImageUrl = optionalImage.get().getImage().getImageUrl();
+            recentImageUrl = optionalImage.get().getImage().getImageUrl();
             log.info("최근 이미지 URL: " + recentImageUrl);
         } else {
             log.error(">>> 최근 이미지 URL을 찾을 수 없습니다.");
-            throw new EntityNotFoundException("최근 이미지 URL을 찾을 수 없습니다.");
+            recentImageUrl = imageRepository.findById(1L)
+                    .orElseThrow(()->{
+                        return new EntityNotFoundException("이미지를 찾을 수가 없습니다.");
+                    }).getImageUrl();
+            log.error(">>> 기본 이미지로 대체 합니다.");
         }
-
-        String recentImageUrl = optionalImage.get().getImage().getImageUrl();
 
         log.info("첫 번째 날 이미지 URL: " + firstDayImageUrl);
         log.info("최근 이미지 URL: " + recentImageUrl);
