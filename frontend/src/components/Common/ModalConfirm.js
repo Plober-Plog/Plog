@@ -13,16 +13,18 @@ const ModalConfirm = ({ open, onClose, onConfirm, title, content, confirmText })
         <h1 className="modal-title">{title}</h1>
         <p className="modal-text">{content}</p>
         <div className="modal-buttons">
-          <Btn 
-            content='취소'
+        <button
             onClick={onClose}
             className="modal-cancel-btn"
-          />
-          <Btn 
-            content={confirmText}
+          >
+            취소
+          </button>
+          <button
             onClick={onConfirm}
             className="modal-confirm-btn"
-          />
+          >
+            {confirmText}
+          </button>
         </div>
       </div>
     </div>
