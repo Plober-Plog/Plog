@@ -182,8 +182,8 @@ public class UserServiceImpl implements UserService {
                 .chatAuth(ChatAuth.PUBLIC.getValue())
                 .searchId(userSignUpRequestDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
-                .sidoCode(userSignUpRequestDto.getSidoCode().hashCode())
-                .gugunCode(userSignUpRequestDto.getGugunCode().hashCode())
+                .sidoCode(userSignUpRequestDto.getSidoCode())
+                .gugunCode(userSignUpRequestDto.getGugunCode())
                 .source(userSignUpRequestDto.getSource())
                 .birthDate(userSignUpRequestDto.getBirthDate())
                 .build();
