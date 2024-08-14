@@ -53,10 +53,6 @@
   margin-bottom: 10px; 
 }
 
-.profile-inline-label {
-  margin-right: 10px; 
-}
-
 .profile-radio-field {
   display: flex;
   gap: 10px; 
@@ -89,4 +85,8 @@
 .profile-error {
   margin-top: 10px; /* 오류 메시지와 폼 간격 조정 */
   color: red;
+}
+
+.profile-region {
+  margin-right: 10px;
 }

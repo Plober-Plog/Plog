@@ -418,49 +418,53 @@ return (
           className="account-input"
         />
       </div>
-      <div className="profile-inline-group">
-        <label className="profile-inline-label">성별</label>
-        <RadioField
-          selectedValue={gender}
-          onChange={setGender}
-          options={[
-            { value: 1, label: '선택하지 않음' },
-            { value: 2, label: '남자' },
-            { value: 3, label: '여자' },
-          ]}
-          isRequired={false}
-          className="profile-radio-field"
-        />
+      <div className="mb-2 flex items-center">
+        <label className="profile-inline-label mr-4">성별</label>
+        <div className="profile-inline-group flex-grow">
+          <RadioField
+            selectedValue={gender}
+            onChange={setGender}
+            options={[
+              { value: 1, label: '선택하지 않음' },
+              { value: 2, label: '남자' },
+              { value: 3, label: '여자' },
+            ]}
+            isRequired={false}
+            className="profile-radio-field"
+          />
+        </div>
       </div>
-      <div className="profile-region-group">
-        <div className="profile-region-select-container">
-          <label>지역</label>
-          <select
-            value={sidoCode}
-            onChange={(e) => setSidoCode(e.target.value)}
-            required={false}
-            className="profile-region-select"
-          >
-            <option value="0">시/도 선택</option>
-            {sidoOptions.map(sidoOption => (
-              <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
-            ))}
-          </select>
-          <select
-            value={gugunCode}
-            onChange={(e) => setGugunCode(e.target.value)}
-            required={false}
-            className="profile-region-select"
-          >
-            <option value="0">구/군 선택</option>
-            {gugunOptions
-              .filter(option => option.sidoCode === Number(sidoCode))
-              .map(filteredGugunOption => (
+
+
+      <div className="mb-2">
+        <label>지역</label>
+        <div className="profile-region-group mt-2">
+          <div className="profile-region-select-container">
+            <select
+              value={sidoCode}
+              onChange={(e) => setSidoCode(e.target.value)}
+              required={false}
+              className="profile-region-select"
+            >
+              <option value="0">시/도 선택</option>
+              {sidoOptions.map(sidoOption => (
+                <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
+              ))}
+            </select>
+            <select
+              value={gugunCode}
+              onChange={(e) => setGugunCode(e.target.value)}
+              required={false}
+              className="profile-region-select"
+            >
+              <option value="0">구/군 선택</option>
+              {filteredGugunOptions.map(filteredGugunOption => (
                 <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
                   {filteredGugunOption.gugunName}
                 </option>
               ))}
-          </select>
+            </select>
+          </div>
         </div>
       </div>
       <div>
