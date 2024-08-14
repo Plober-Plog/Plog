@@ -274,7 +274,7 @@ return (
             const value = e.target.value
             setSearchID(value)
             if (!/^[a-z0-9]{5,15}$/.test(value)) {
-              setSearchIdCheckMsg('아이디는 영문, 숫자 포함 5글자 이상 15이하여야 합니다.');
+              setSearchIdCheckMsg('아이디는 5~15자의 영문 소문자, 숫자만 사용 가능합니다.');
             } else {
               setSearchIdCheckMsg('');
             }
@@ -331,7 +331,7 @@ return (
           />
           <span className="password-toggle">
             <span>{formatTime(timer)}</span>
-            <span onClick={handleVerifyEmailCode}>인증확인</span>
+            <span onClick={handleVerifyEmailCode}> 인증확인</span>
           </span>
           {emailVerificationMsg && <p className="account-error">{emailVerificationMsg}</p>}
         </div>
@@ -406,7 +406,7 @@ return (
         {nicknameCheckMsg && <p className="account-error">{nicknameCheckMsg}</p>}
       </div>
       <div>
-        <div className='mb-2'>
+        <div className='mb-3'>
           <h2>생년월일</h2>
         </div>
         <InputField
@@ -418,49 +418,51 @@ return (
           className="account-input"
         />
       </div>
-      <div className="profile-inline-group">
-        <label className="profile-inline-label">성별</label>
-        <RadioField
-          selectedValue={gender}
-          onChange={setGender}
-          options={[
-            { value: 1, label: '선택하지 않음' },
-            { value: 2, label: '남자' },
-            { value: 3, label: '여자' },
-          ]}
-          isRequired={false}
-          className="profile-radio-field"
-        />
+      <div className="profile-radio-field-container">
+        <label className='mb-3'>성별</label>
+        <div>
+          <RadioField
+            selectedValue={gender}
+            onChange={setGender}
+            options={[
+              { value: 1, label: '선택하지 않음' },
+              { value: 2, label: '남자' },
+              { value: 3, label: '여자' },
+            ]}
+            isRequired={false}
+            className="profile-radio-field"
+          />
+        </div>
       </div>
-      <div className="profile-region-group">
-        <div className="profile-region-select-container">
-          <label>지역</label>
-          <select
-            value={sidoCode}
-            onChange={(e) => setSidoCode(e.target.value)}
-            required={false}
-            className="profile-region-select"
-          >
-            <option value="0">시/도 선택</option>
-            {sidoOptions.map(sidoOption => (
-              <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
-            ))}
-          </select>
-          <select
-            value={gugunCode}
-            onChange={(e) => setGugunCode(e.target.value)}
-            required={false}
-            className="profile-region-select"
-          >
-            <option value="0">구/군 선택</option>
-            {gugunOptions
-              .filter(option => option.sidoCode === Number(sidoCode))
-              .map(filteredGugunOption => (
+      <div>
+        <label>지역</label>
+        <div className="profile-region-group mt-2">
+          <div className="profile-region-select-container">
+            <select
+              value={sidoCode}
+              onChange={(e) => setSidoCode(e.target.value)}
+              required={false}
+              className="profile-region-select"
+            >
+              <option value="0">시/도 선택</option>
+              {sidoOptions.map(sidoOption => (
+                <option key={sidoOption.sidoCode} value={sidoOption.sidoCode}>{sidoOption.sidoName}</option>
+              ))}
+            </select>
+            <select
+              value={gugunCode}
+              onChange={(e) => setGugunCode(e.target.value)}
+              required={false}
+              className="profile-region-select"
+            >
+              <option value="0">구/군 선택</option>
+              {filteredGugunOptions.map(filteredGugunOption => (
                 <option key={filteredGugunOption.gugunCode} value={filteredGugunOption.gugunCode}>
                   {filteredGugunOption.gugunName}
                 </option>
               ))}
-          </select>
+            </select>
+          </div>
         </div>
       </div>
       <div>

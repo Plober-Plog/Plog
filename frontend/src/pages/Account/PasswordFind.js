@@ -139,7 +139,7 @@ const PasswordFind = () => {
             />
             <span className="password-toggle">
               <span>{formatTime(timer)}</span>
-              <span onClick={handleCodeVerification}>인증확인</span>
+              <span onClick={handleCodeVerification}> 인증확인</span>
             </span>
             {emailVerificationMsg && <p className="account-error">{emailVerificationMsg}</p>}
           </div>

@@ -50,11 +50,7 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 5px;
-  margin-bottom: 10px; 
-}
-
-.profile-inline-label {
-  margin-right: 10px; 
+  margin-bottom: 5px; 
 }
 
 .profile-radio-field {
@@ -62,12 +58,23 @@
   gap: 10px; 
 }
 
+.profile-radio-field-container {
+  text-align: left; 
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%; 
+  padding: 0; 
+  margin-bottom: 0;
+}
+
 .profile-region-group {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .profile-region-select-container {
@@ -79,7 +86,7 @@
 
 .profile-region-select {
   width: 167px;
-  height: 40px;
+  height: 50px;
   padding: 5px;
   border-radius: 5px;
   border: 1px solid #E3E3E3;
@@ -89,4 +96,12 @@
 .profile-error {
   margin-top: 10px; /* 오류 메시지와 폼 간격 조정 */
   color: red;
+}
+
+.profile-region {
+  margin-right: 10px;
+}
+
+.profile-inline-label {
+  text-align: left;
 }
