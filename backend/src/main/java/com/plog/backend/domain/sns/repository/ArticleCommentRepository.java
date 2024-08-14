@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArticleCommentRepository extends JpaRepository<ArticleComment, Long> {
     int countByArticleArticleId(Long articleId);
+    int countByArticleArticleIdAndState(Long articleId, int state);
 }
