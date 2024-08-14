@@ -93,15 +93,18 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
     private BooleanExpression filterByNeighborType(long userId, int neighborType) {
         logger.debug("Filtering by neighborType: {}", neighborType);
         QNeighbor neighbor = QNeighbor.neighbor;
+        QArticle article = QArticle.article;
 
         if (neighborType == 1) {
             return null; // 이웃 관계 없이 모든 게시글 조회
         } else if (neighborType == 2) {
             return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(1))
-                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(1)));
+                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(1)))
+                    .or(article.user.userId.eq(userId));
         } else if (neighborType == 3) {
             return neighbor.neighborFrom.userId.eq(userId).and(neighbor.neighborType.in(2))
-                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(2)));
+                    .or(neighbor.neighborTo.userId.eq(userId).and(neighbor.neighborType.in(2)))
+                    .or(article.user.userId.eq(userId));
         } else {
             return null; // 잘못된 neighborType인 경우 모든 게시글 조회
         }
@@ -123,8 +126,7 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
             BooleanExpression neighborCondition = neighbor.neighborFrom.user.userId.eq(userId)
                     .and(neighbor.neighborTo.user.userId.eq(article.user.userId))
                     .and(neighbor.neighborType.eq(1));
-            visibilityCondition = article.visibility.eq(1)
-                    .or(article.visibility.eq(2).and(neighborCondition));
+            visibilityCondition = article.visibility.eq(2).and(neighborCondition);
         }
 
         // visibilityCondition이 null일 경우 기본값으로 true를 반환하여 필터링이 적용되지 않도록 처리
