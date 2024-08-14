@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './ChatListItem.css'; // Import the CSS file
@@ -6,12 +6,12 @@ import './ChatListItem.css'; // Import the CSS file
 const ChatListItem = ({ chatRoom, token }) => {
   const navigate = useNavigate();
   const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
+  const [isSlid, setIsSlid] = useState(false);
 
   const handleEnterChatRoom = async (chatRoomId, chatRoomName) => {
-
     // 읽음 표시
     const chatRead = async () => {
-      console.log('채팅 읽기 토큰:', token)
+      console.log('채팅 읽기 토큰:', token);
       try {
         const response = await axios.post(`${API_REALTIME_URL}/chat/room/${chatRoomId}/read`, 
           { params: {chatRoomId} },
@@ -38,9 +38,9 @@ const ChatListItem = ({ chatRoom, token }) => {
     });
   };
 
-
   // 채팅방 삭제
-  const handleChatDelete = async (chatRoomId) => {
+  const handleChatDelete = async (e, chatRoomId) => {
+    e.stopPropagation(); // 이벤트 버블링을 막아 클릭이 chat-list-item으로 전달되지 않도록 함
     console.log('삭제 토큰:', token);
     try {
       const response = await axios.delete(`${API_REALTIME_URL}/chat/room`, {
@@ -52,11 +52,28 @@ const ChatListItem = ({ chatRoom, token }) => {
         },
       });
       console.log('채팅방 삭제 성공:', response.data);
+      window.location.reload(); // 삭제 후 페이지 새로고침
     } catch (error) {
       console.error('채팅방 삭제 오류:', error);
     }
   };
-  
+
+  // 슬라이드 동작 처리
+  const handleTouchStart = (e) => {
+    setIsSlid(false); // 초기 상태로 설정
+    e.target.startX = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    const deltaX = e.touches[0].clientX - e.target.startX;
+    if (deltaX < -30) {
+      setIsSlid(true);
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    // 필요한 경우 추가 처리
+  };
 
   // 시간을 포맷팅하는 함수 (날짜는 제거하고 시간만)
   const formatTime = (timestamp) => {
@@ -74,7 +91,12 @@ const ChatListItem = ({ chatRoom, token }) => {
   };
 
   return (
-    <div>
+    <div 
+      className={`chat-list-item-container ${isSlid ? 'slide-left' : ''}`} 
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div className="chat-list-item" onClick={() => handleEnterChatRoom(chatRoom.chatRoom.chatRoomId, chatRoom.chatRoom.chatRoomName)}>
         <div className="chat-list-item-avatar">
           <img src={chatRoom.users[0].image.imageUrl} alt="Avatar" />
@@ -90,10 +112,12 @@ const ChatListItem = ({ chatRoom, token }) => {
           )}
         </div>
       </div>
-      <button onClick={(event) => handleChatDelete(chatRoom.chatRoom.chatRoomId)}>
+      <button 
+        className="chat-delete-button"
+        onClick={(e) => handleChatDelete(e, chatRoom.chatRoom.chatRoomId)}
+      >
         채팅삭제
       </button>
-
     </div>
   );
 };
