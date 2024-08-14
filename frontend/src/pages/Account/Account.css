@@ -2,9 +2,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   height: 100vh;
   padding: 20px; /* 전체 레이아웃에 여백 추가 */
+  box-sizing: border-box;
 }
 
 .account-title {
@@ -18,6 +19,7 @@
   flex-direction: column;
   align-items: center;
   gap: 20px; /* 입력 필드와 버튼 사이의 간격 증가 */
+  padding-bottom: 100px;
 }
 
 .account-input {
