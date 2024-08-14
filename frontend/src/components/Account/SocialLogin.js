@@ -8,7 +8,8 @@ const SocialLogin = () => {
   const googleClientId = '1044248850028-csgv8o025t0cf5u68kgfolvespii9j7b.apps.googleusercontent.com';
   const kakaoClientId = 'YOUR_KAKAO_CLIENT_ID';
   const naverClientId = 'YOUR_NAVER_CLIENT_ID';
-  const redirectUri = 'http://localhost:8080/api/user/login/oauth2/code/';
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const redirectUri = `${API_BASE_URL}/user/login/oauth2/code/`;
 
   const handleGoogleLogin = () => {
     

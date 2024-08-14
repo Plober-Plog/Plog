@@ -5,13 +5,12 @@ import axios from 'axios';
 import sha256 from 'js-sha256';
 import useAuthStore from '../../stores/member';
 import { requestForToken } from '../../firebase'; // FCM 관련 코드 추가
-
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
-import ATag from '../Common/ATag';
 
 
 const LoginForm = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +35,8 @@ const LoginForm = () => {
     };
 
     try {
-      const response = await axios.post('https://i11b308.p.ssafy.io/api/user/login', userInfo);
+      console.log(API_BASE_URL)
+      const response = await axios.post(`${API_BASE_URL}/user/login`, userInfo);
       const { accessToken, refreshToken } = response.data;
 
       if (accessToken && refreshToken) {
