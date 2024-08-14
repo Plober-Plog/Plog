@@ -21,14 +21,14 @@ public class SchedulerConfig {
     private final WeatherService weatherService;
 
     // @Scheduled(cron = "0 0 16 * * ?")
-    @Scheduled(cron = "0 0 17 * * ?")
-    @Retryable(value = Exception.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 60000))
+    @Scheduled(cron = "0 17 17 * * ?")
+    // @Retryable(value = Exception.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 60000))
     public void scheduleWeatherDataUpdate16() {
         try {
             log.info("오전 1시 날씨 데이터 가져오기기");
             weatherService.updateWeatherData();
         } catch (Exception e) {
-            log.error("날씨 데이터 업데이트중 에러 발생, 1분 뒤 재시작", e);
+            log.error("날씨 데이터 업데이트중 에러 발생", e);
         }
     }
 }

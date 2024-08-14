@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -339,12 +341,14 @@ public class WeatherServiceImpl implements WeatherService {
 
 //    @PostConstruct
     @Override
+    @Retryable(value = WeatherUpdateException.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 60000))
     public void updateWeatherData() {
         try{
             if (!isExistedWeatherDataInRedis())
                 updateAllWeatherForecast();
         }catch(Exception e){
-            throw e;
+            log.error("날씨 데이터 조회 중 에러 발생", e);
+            throw new WeatherUpdateException("날씨 데이터 조회 중 에러 발생, 1분 뒤 재실행행", e);
         }
     }
 
