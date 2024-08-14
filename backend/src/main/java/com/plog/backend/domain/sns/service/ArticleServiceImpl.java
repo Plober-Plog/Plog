@@ -16,7 +16,7 @@ import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;  
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -138,7 +138,7 @@ public class ArticleServiceImpl implements ArticleService {
         for (Article article : articleList) {
             List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
             int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
-            int commentCnt = articleCommentRepository.countByArticleArticleId(article.getArticleId());
+            int commentCnt = articleCommentRepository.countByArticleArticleIdAndState(article.getArticleId(), 1);
             boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, article.getArticleId());
             boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(userId, article.getArticleId());
 
