@@ -12,6 +12,7 @@ const BtnChat = ({ userData }) => {
   const handleChat = async () => {
     console.log(API_REALTIME_URL)
     try {
+      console.log(API_REALTIME_URL)
       const response = await axios.post(`${API_REALTIME_URL}/chat/room`, {
         targetSearchId: userData.searchId,
         chatRoomType: 1,
