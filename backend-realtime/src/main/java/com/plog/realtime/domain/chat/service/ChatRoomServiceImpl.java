@@ -259,14 +259,21 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
+
+
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomIdAndUser(chatRoomId, user)
                 .orElseThrow(() -> {
                     log.error(">>> 권한이 없거나, 없는 방, chatRoomId: {}, userId: {}", chatRoomId, userId);
                     return new EntityNotFoundException("권한이 없거나, 없는 방입니다.");
                 });
 
-        chatRoom.setDeleted(true);
-        chatRoomRepository.save(chatRoom);
+        List<Chat> chatList = chatRepository.findAllByChatRoom(chatRoom);
+        chatRepository.deleteAll(chatList);
+
+        List<ChatUser> chatUserList = chatUserRepository.findAllByChatRoom(chatRoom);
+        chatUserRepository.deleteAll(chatUserList);
+
+        chatRoomRepository.delete(chatRoom);
         log.info(">>> 채팅방 삭제 완료: {}", chatRoom);
 
         return BaseResponseBody.of(200, "방을 성공적으로 삭제했습니다.");
