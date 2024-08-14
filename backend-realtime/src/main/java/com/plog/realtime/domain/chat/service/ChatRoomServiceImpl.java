@@ -174,14 +174,18 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
         if(lastChat == null) {
             log.info(">>> 최근 채팅이 없음 - 메소드 종료됨");
-            return ;
+            lastChat = new Chat();
+            lastChat.setChatRoom(chatRoom);
+            lastChat.setUser(userRepository.findByUserId(userId));
+            lastChat.setMessage("채팅이 시작 되었습니다.");
+            chatRepository.save(lastChat);
         }
 
-        // 그 채팅이 현재 사용자가 작성한 것이 아니라면 메소드 종료
-        if (!lastChat.getUser().getUserId().equals(userId)) {
-            log.info(">>> 최근 채팅이 사용자가 작성한 것이 아님 - 메소드 종료됨");
-            return;
-        }
+//        // 그 채팅이 현재 사용자가 작성한 것이 아니라면 메소드 종료
+//        if (!lastChat.getUser().getUserId().equals(userId)) {
+//            log.info(">>> 최근 채팅이 사용자가 작성한 것이 아님 - 메소드 종료됨");
+//            return;
+//        }
 
         chatUser.setLastReadAt(LocalDateTime.now());
         chatUserRepository.save(chatUser);
