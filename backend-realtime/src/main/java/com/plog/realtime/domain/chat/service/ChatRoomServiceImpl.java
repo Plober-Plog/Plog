@@ -9,6 +9,7 @@ import com.plog.realtime.domain.chat.entity.ChatUser;
 import com.plog.realtime.domain.chat.repository.*;
 import com.plog.realtime.domain.user.entity.User;
 import com.plog.realtime.domain.user.repository.UserRepository;
+import com.plog.realtime.global.exception.DuplicateEntityException;
 import com.plog.realtime.global.exception.EntityNotFoundException;
 import com.plog.realtime.global.exception.NotValidRequestException;
 import com.plog.realtime.global.model.response.BaseResponseBody;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -49,9 +51,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         // token user와 targetSearchId user가 포함된 게 이미 있는지 - 1:1 채팅
-        boolean isExisted = chatUserRepositorySupport.areBothUsersInSameChatRoom(userId, targetUser.getUserId());
-        if (isExisted)
-            throw new NotValidRequestException("이미 존재한 채팅방입니다.");
+        Optional<ChatRoom> isExistedChatroom = chatUserRepositorySupport.findCommonChatRooms(userId, targetUser.getUserId());
+        if (isExistedChatroom.isPresent()) {
+            // 이미 존재하면 채팅방 번호 넘기기
+            throw new DuplicateEntityException(isExistedChatroom.get().getChatRoomId().toString());
+        }
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .user(user)
