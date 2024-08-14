@@ -273,6 +273,7 @@ const PlantRegister = () => {
           />
         )}
       </div>
+
     </div>
   );
 };
