@@ -10,7 +10,7 @@ import TextareaField from '../Common/TextareaField';
 import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
 import ModalComplete from '../Common/ModalComplete';
-import './ProfileUpdateForm.css'; 
+// import './ProfileUpdateForm.css'; 
 
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
@@ -146,7 +146,7 @@ const ProfileUpdateForm = () => {
   };
 
   return (
-    <div className="profile-update-container">
+    <div className="profile-update-container container">
       <form onSubmit={(e) => e.preventDefault()}>
         <div className="profile-image-container mb-3">
           <input
@@ -245,8 +245,8 @@ const ProfileUpdateForm = () => {
             className="account-input"
           />
         </div>
+        <label className="profile-inline-label">성별</label>
         <div className="profile-inline-group">
-          <label className="profile-inline-label">성별</label>
           <RadioField
             selectedValue={gender}
             onChange={setGender}
@@ -259,9 +259,9 @@ const ProfileUpdateForm = () => {
             className="profile-radio-field"
           />
         </div>
-        <div className="profile-region-group">
+        <label>지역</label>
+        <div className="profile-region-group mt-2">
           <div className="profile-region-select-container">
-            <label>지역</label>
             <select
               value={sidoCode}
               onChange={(e) => setSidoCode(e.target.value)}

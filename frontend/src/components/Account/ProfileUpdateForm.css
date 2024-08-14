@@ -48,9 +48,9 @@
 .profile-inline-group {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-top: 15px;
-  margin-bottom: 15px; 
+  justify-content: space-between;
+  margin-top: 5px;
+  margin-bottom: 10px; 
 }
 
 .profile-inline-label {
@@ -78,7 +78,7 @@
 }
 
 .profile-region-select {
-  width: 150px;
+  width: 167px;
   height: 40px;
   padding: 5px;
   border-radius: 5px;
