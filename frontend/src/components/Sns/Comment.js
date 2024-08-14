@@ -6,6 +6,7 @@ import FooterCmt from '../Common/FooterCmt';
 import Btn from '../Common/Btn';
 import CommentItem from './CommentItem';
 import useAuthStore from '../../stores/member';
+import defaultProfile from '../../components/Account/defaultprofile.png';
 
 const Comment = ({ articleId }) => {
   const navigate = useNavigate();
@@ -15,9 +16,10 @@ const Comment = ({ articleId }) => {
   const [selectedParentId, setSelectedParentId] = useState(0);
   const [isFooterCmtActive, setIsFooterCmtActive] = useState(false);
   const [page, setPage] = useState(0);
-  const [hasMoreComments, setHasMoreComments] = useState(true); // 추가 상태
+  const [hasMoreComments, setHasMoreComments] = useState(true);
 
   const { userData } = useAuthStore();
+  console.log('회원정보:', userData);
 
   // 댓글 불러오기
   useEffect(() => {
@@ -83,7 +85,7 @@ const Comment = ({ articleId }) => {
             key={comment.articleCommentId} 
             comment={comment} 
             handleReply={handleReply} 
-            onDelete={handleDeleteComment}  // onDelete prop 전달
+            onDelete={handleDeleteComment}  
           />
         ))}
       </div>
@@ -96,15 +98,28 @@ const Comment = ({ articleId }) => {
           />
         )}
       </div>
-      <FooterCmt
-        articleId={articleId}
-        selectedParentId={selectedParentId}
-        setSelectedParentId={setSelectedParentId}
-        profile={userData.profile}
-        setCommentList={setCommentList}
-        isActive={isFooterCmtActive}
-        setIsActive={setIsFooterCmtActive}
-      />
+      {userData ? (  // userData가 있을 때만 FooterCmt 렌더링
+        <FooterCmt
+          articleId={articleId}
+          selectedParentId={selectedParentId}
+          setSelectedParentId={setSelectedParentId}
+          profile={userData.profile}
+          setCommentList={setCommentList}
+          isActive={isFooterCmtActive}
+          setIsActive={setIsFooterCmtActive}
+        />
+      ) : (
+        <FooterCmt
+          articleId={articleId}
+          profile={defaultProfile}
+          selectedParentId={selectedParentId}
+          setSelectedParentId={setSelectedParentId}
+          setCommentList={setCommentList}
+          setIsActive={setIsFooterCmtActive}
+          disable={true}
+          placeholder={"회원에게만 제공되는 서비스 입니다."}
+        />
+      )}
     </div>
   );
 };
