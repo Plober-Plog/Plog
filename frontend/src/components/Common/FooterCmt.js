@@ -4,7 +4,7 @@ import API from "../../apis/api";
 import send from "../../assets/icon/footer/send.png";
 import './FooterCmt.css';
 
-const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSelectedParentId, isActive, setIsActive }) => {
+const FooterCmt = ({ articleId, profile, disable, placeholder, setCommentList, selectedParentId, setSelectedParentId, isActive, setIsActive }) => {
   const navigate = useNavigate();
   const [content, setContent] = useState('');
   const inputRef = useRef(null);
@@ -57,11 +57,12 @@ const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSe
       <form onSubmit={handleCmtWrite} className="footercmt-form">
         <input
           type="text"
-          placeholder="댓글을 작성하세요"
+          placeholder={placeholder ? placeholder : "댓글을 작성하세요"}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           ref={inputRef}
           className="footercmt-input"
+          disabled={disable}
         />
         <button type="submit" className="footercmt-button">
           <img src={send} alt="send 아이콘" className="footercmt-icon" />
