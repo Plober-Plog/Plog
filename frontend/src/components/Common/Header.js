@@ -15,7 +15,7 @@ const Header = () => {
       <button className="p-4" onClick={() => navigate(-1)}>
         <img src={back} alt="뒤로가기" className="w-6 h-6" />
       </button>
-      <div className="flex-1 flex justify-center">
+      <div className="flex-1 flex justify-center" onClick={() => navigate('/')}>
         <img src={plogLogo} alt="로고" className="h-8" />
       </div>
       <button className="p-4" onClick={() => isLogin ? navigate('/setting') : navigate('/login')}>
