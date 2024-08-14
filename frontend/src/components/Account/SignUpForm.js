@@ -444,6 +444,7 @@ const closeModal = () => {
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
             className="account-input"
+            max={new Date().toISOString().split("T")[0]}
           />
         </div>
 
