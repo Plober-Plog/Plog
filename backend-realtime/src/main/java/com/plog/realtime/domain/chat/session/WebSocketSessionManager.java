@@ -47,6 +47,7 @@ public class WebSocketSessionManager {
     // 특정 채널에 구독된 모든 세션 가져오기
     public Set<String> getSessions(Long userId, String channelId) {
         Map<Long, Set<String>> userSubscriptions = channelSubscriptions.getOrDefault(channelId, new ConcurrentHashMap<>());
+        log.info("해당 채널에 구독한 모든 세션 정보 출력: {}", userSubscriptions.toString());
         return userSubscriptions.getOrDefault(userId, new CopyOnWriteArraySet<>());
     }
 
