@@ -62,7 +62,9 @@ const ProfilePlantCardList = ({ plants, searchId }) => {
             plantTypeName={displayPlantTypeName} // 여기서 처리
             otherPlantTypeName={plant.otherPlantTypeName }
             birthDate={plant.birthDate}
+            deadDate={plant.deadDate}
             isClickable={authSearchId === searchId}
+            isDeleted={plant.isDeleted}
           />
         );
       })}
