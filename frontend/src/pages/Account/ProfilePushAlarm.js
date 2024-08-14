@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../../apis/api";
 import Btn from "../../components/Common/Btn";
 import RadioField from "../../components/Common/RadioField";
 
 const ProfilePushAlarm = () => {
-  const [isPushAlarm, setIsPushAlarm] = useState(true); // 푸시 알림 상태 관리
+  const [isPushAlarm, setIsPushAlarm] = useState(false); // 푸시 알림 상태 관리
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 푸시 알림 상태 조회
     const fetchPushAlarmStatus = async () => {
       try {
         const response = await API.get('user/push');
-        console.log('현재 푸시알림 상태:', response.data.pushNotificationEnabled);
+        console.log('현재 푸시알림 상태:', response.data);
         setIsPushAlarm(response.data.pushNotificationEnabled);
       } catch (error) {
         console.error('푸시알림 조회 중 에러 발생:', error);
@@ -26,9 +28,11 @@ const ProfilePushAlarm = () => {
     e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
 
     try {
-      const data = { pushNotificationEnabled: isPushAlarm };
+      const data = { "pushNotificationEnabled": isPushAlarm };
+      console.log(data)
       const response = await API.patch('user/push', data);
       console.log('푸시알림 설정 성공:', response.data);
+      navigate('/setting');
     } catch (error) {
       console.error('푸시알림 설정 중 에러 발생:', error);
     }
