@@ -60,10 +60,8 @@ public class WebSocketSessionManager {
     public void broadcastMessageToChannel(String channelId, Object message) {
         Map<Long, Set<String>> userSubscriptions = channelSubscriptions.get(channelId);
         if (userSubscriptions != null) {
-            userSubscriptions.forEach((userId, sessions) -> sessions.forEach(sessionId -> {
-                // 세션에 메시지를 전송
-                messagingTemplate.convertAndSend("/topic/" + channelId, message);
-            }));
+            // 채널에 연결된 사용자들에게 한 번만 메시지를 전송
+            messagingTemplate.convertAndSend("/topic/" + channelId, message);
         }
     }
 }
