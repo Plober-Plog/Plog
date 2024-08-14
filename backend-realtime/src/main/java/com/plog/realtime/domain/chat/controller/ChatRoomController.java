@@ -86,7 +86,7 @@ public class ChatRoomController {
     public ResponseEntity<?> getChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
         log.info(">>> getChatRoom 호출됨, chatRoomId: {}", chatRoomId);
         ChatRoom chatRoom = chatRoomService.getChatRoom(chatRoomId);
-        log.info(">>> 조회된 채팅방 정보: {}", chatRoom);
+//        log.info(">>> 조회된 채팅방 정보: {}", chatRoom);
         return ResponseEntity.ok(chatRoom);
     }
 

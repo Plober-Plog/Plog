@@ -70,7 +70,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .user(targetUser)
                 .chatRoom(chatRoom)
                 .build());
-        log.info(">>> 채팅방의 채팅인원 등록 완료: {}", chatUser);
+        log.info(">>> 채팅방의 채팅인원 등록 완료: {} 번 방 {} 번 회원", chatUser.getChatRoom(), chatUser.getChatUserId());
 
         return BaseResponseBody.of(200, "" + chatRoom.getChatRoomId());
     }
