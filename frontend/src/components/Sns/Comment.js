@@ -18,8 +18,7 @@ const Comment = ({ articleId }) => {
   const [page, setPage] = useState(0);
   const [hasMoreComments, setHasMoreComments] = useState(true);
 
-  const { userData } = useAuthStore();
-  console.log('회원정보:', userData);
+  const { isLogin, userData } = useAuthStore();
 
   // 댓글 불러오기
   useEffect(() => {
@@ -98,7 +97,7 @@ const Comment = ({ articleId }) => {
           />
         )}
       </div>
-      {userData ? (  // userData가 있을 때만 FooterCmt 렌더링
+      {isLogin ? (  // userData가 있을 때만 FooterCmt 렌더링
         <FooterCmt
           articleId={articleId}
           selectedParentId={selectedParentId}
