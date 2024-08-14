@@ -97,10 +97,10 @@ public class PlantController {
     @GetMapping
     @Operation(summary = "사용자의 식물 목록 조회", description = "사용자 ID로 사용자의 식물 목록을 조회합니다.")
     public ResponseEntity<List<PlantGetResponseDto>> getPlantList(
-            @Parameter(description = "사용자 검색 ID", required = true) @RequestParam String searchId,
-            @Parameter(description = "식물 종류 ID 목록") @RequestParam(required = false) List<Long> plantTypeId,
-            @Parameter(description = "기타 식물 종류 ID 목록") @RequestParam(required = false) List<Long> otherPlantTypeId,
-            @Parameter(description = "페이지 번호 : 0이 기본") @RequestParam(required = false, defaultValue = "0") String page) {
+            @Parameter(description = "사용자 검색 ID", required = true) @RequestParam("searchId") String searchId,
+            @Parameter(description = "식물 종류 ID 목록") @RequestParam(value="plantTypeId",required = false) List<Long> plantTypeId,
+            @Parameter(description = "기타 식물 종류 ID 목록") @RequestParam(value="otherPlantTypeId", required = false) List<Long> otherPlantTypeId,
+            @Parameter(description = "페이지 번호 : 0이 기본") @RequestParam(value="page",required = false, defaultValue = "0") String page) {
 
         log.info(">>> [GET] /user/plant - 검색 ID: {}, plantTypeId: {}, " +
                         "otherPlantTypeId: {}, page: {}",
