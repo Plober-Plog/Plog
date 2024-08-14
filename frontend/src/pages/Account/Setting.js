@@ -84,7 +84,7 @@ const Setting = () => {
       <ModalConfirm
         open={showSignoutConfirm}
         title="회원탈퇴"
-        content="정말로 탈퇴 하시겠습니까?"
+        content="탈퇴 하시겠습니까?"
         confirmText="탈퇴하기"
         onConfirm={handleSignOut}
         onClose={() => setShowSignoutConfirm(false)}
@@ -92,7 +92,7 @@ const Setting = () => {
       <ModalConfirm
         open={showLogoutConfirm}
         title="로그아웃"
-        content="정말 로그아웃 하시겠습니까?"
+        content="로그아웃 하시겠습니까?"
         confirmText="로그아웃"
         onConfirm={handleLogout}
         onClose={() => setShowLogoutConfirm(false)}

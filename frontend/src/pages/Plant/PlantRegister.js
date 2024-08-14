@@ -311,7 +311,7 @@ const PlantRegister = () => {
         onClose={closeDeleteModal}
         onConfirm={handleDelete} 
         title="식물 삭제하기"
-        content="정말 이 식물을 삭제하시겠습니까?"
+        content="이 식물을 삭제하시겠습니까?"
         confirmText="삭제하기"
       />
 
@@ -321,7 +321,7 @@ const PlantRegister = () => {
         onClose={closeFarewellModal}
         onConfirm={handleFarewell} 
         title="식물과 이별하기"
-        content="정말 이 식물과 이별하시겠습니까?"
+        content="이 식물과 이별하시겠습니까?"
         confirmText="이별하기"
       />
 
