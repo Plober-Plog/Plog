@@ -8,5 +8,5 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserPushRequestDto {
-    private boolean isPushNotificationEnabled;
+    private boolean pushNotificationEnabled;
 }
