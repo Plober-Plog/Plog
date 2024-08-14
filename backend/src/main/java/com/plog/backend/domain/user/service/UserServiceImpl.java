@@ -348,51 +348,6 @@ public class UserServiceImpl implements UserService {
         return responseDto;
     }
 
-    @Transactional
-    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
-        // 이메일로 사용자 조회
-        Optional<User> userOptional = userRepository.findByEmail(email);
-
-        User user;
-        // 사용자가 없으면 회원가입 처리
-        if (userOptional.isEmpty()) {
-            user = User.builder()
-                    .email(email)
-                    .searchId(generateSearchId(email, provider)) // searchId 생성 로직 필요
-                    .nickname(name)
-                    .password("oauth2") // OAuth2.0 사용 시 비밀번호는 의미가 없을 수 있음.
-                    .provider(provider)
-                    .providerId(providerId)
-                    .image(new Image(profileImage))
-                    .role(Role.USER.getValue())
-                    .state(State.ACTIVTE.getValue())
-                    .totalExp(0)
-                    .chatAuth(ChatAuth.PUBLIC.getValue())
-                    .isPushNotificationEnabled(true)
-                    .build();
-            userRepository.save(user);
-            log.info(">>> 회원가입 성공: {}", user);
-        } else {
-            user = userOptional.get();
-            log.info(">>> 로그인 성공: {}", user);
-        }
-
-        // 로그인 또는 회원가입 성공 시 반환
-        return ResponseEntity.ok(BaseResponseBody.of(200, "소셜 로그인이 되었습니다."));
-    }
-
-
-    private String generateSearchId(String email, int providerId) {
-        // searchId를 이메일 기반으로 생성하는 로직 구현
-        if (providerId == 1)
-            return email.split("@")[0] + "G";
-        else if (providerId == 2)
-            return email.split("@")[0] + "K";
-        else if (providerId == 3)
-            return email.split("@")[0] + "N";
-        else
-            return email.split("@")[0] + "S";
-    }
     @Override
     public UserPushResponseDto getPushUser(String token) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
@@ -425,5 +380,50 @@ public class UserServiceImpl implements UserService {
             log.error(">>> updatePushUser - 사용자를 찾을 수 없음: {}", userId);
             throw new EntityNotFoundException("사용자를 찾을 수 없습니다.");
         }
+    }
+
+    @Transactional
+    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
+
+        log.info(">>> 소셜로그인 Google 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}"
+                ,email,name,profileImage,providerId,provider);
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        User user;
+        if (userOptional.isEmpty()) {
+            user = User.builder()
+                    .email(email)
+                    .searchId(generateSearchId(email, provider))
+                    .nickname(name)
+                    .password("oauth2")
+                    .provider(provider)
+                    .providerId(providerId)
+                    .image(new Image(profileImage))
+                    .role(Role.USER.getValue())
+                    .gender(Gender.NA.getValue())
+                    .state(State.ACTIVTE.getValue())
+                    .totalExp(0)
+                    .chatAuth(ChatAuth.PUBLIC.getValue())
+                    .isPushNotificationEnabled(true)
+                    .build();
+            userRepository.save(user);
+            log.info(">>> 회원가입 성공: {}", user);
+        } else {
+            user = userOptional.get();
+            log.info(">>> 로그인 성공: {}", user);
+        }
+
+        return ResponseEntity.ok(BaseResponseBody.of(200, "소셜 로그인이 되었습니다."));
+    }
+
+    private String generateSearchId(String email, int providerId) {
+        if (providerId == 1)
+            return email.split("@")[0] + "G";
+        else if (providerId == 2)
+            return email.split("@")[0] + "K";
+        else if (providerId == 3)
+            return email.split("@")[0] + "N";
+        else
+            return email.split("@")[0] + "S";
     }
 }

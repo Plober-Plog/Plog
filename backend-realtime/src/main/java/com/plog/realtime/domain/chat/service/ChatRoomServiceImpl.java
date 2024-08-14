@@ -74,12 +74,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .user(targetUser)
                 .chatRoom(chatRoom)
                 .build());
+
+        chatRepository.save(Chat.builder()
+                        .user(user)
+                        .chatRoom(chatRoom)
+                        .message("채팅방이 개설되었습니다.")
+                .build());
         log.info(">>> 채팅방의 채팅인원 등록 완료: {} 번 방 {} 번 회원", chatUser.getChatRoom(), chatUser.getChatUserId());
 
         return BaseResponseBody.of(200, "" + chatRoom.getChatRoomId());
     }
 
-    // TODO[장현준] 채팅방 목록 페이지네이션 적용
     @Override
     public List<ChatRoomGetListResponseDto> getAllChatRooms(String token, int page) {
         int pageSize = 15;
@@ -174,18 +179,22 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(userRepository.findById(userId).orElseThrow(), chatRoom)
                 .orElseThrow(() -> new EntityNotFoundException("채팅 참여자를 못 찾았습니다."));
 
-        Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
-
-        if(lastChat == null) {
-            log.info(">>> 최근 채팅이 없음 - 메소드 종료됨");
-            return ;
-        }
-
-        // 그 채팅이 현재 사용자가 작성한 것이 아니라면 메소드 종료
-        if (!lastChat.getUser().getUserId().equals(userId)) {
-            log.info(">>> 최근 채팅이 사용자가 작성한 것이 아님 - 메소드 종료됨");
-            return;
-        }
+//        Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
+//
+//        if(lastChat == null) {
+//            log.info(">>> 최근 채팅이 없음 - 메소드 종료됨");
+//            lastChat = new Chat();
+//            lastChat.setChatRoom(chatRoom);
+//            lastChat.setUser(userRepository.findByUserId(userId));
+//            lastChat.setMessage("채팅이 시작 되었습니다.");
+//            chatRepository.save(lastChat);
+//        }
+//
+//        // 그 채팅이 현재 사용자가 작성한 것이 아니라면 메소드 종료
+//        if (!lastChat.getUser().getUserId().equals(userId)) {
+//            log.info(">>> 최근 채팅이 사용자가 작성한 것이 아님 - 메소드 종료됨");
+//            return;
+//        }
 
         chatUser.setLastReadAt(LocalDateTime.now());
         chatUserRepository.save(chatUser);

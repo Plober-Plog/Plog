@@ -31,7 +31,6 @@ public class PlantDiaryController {
             @RequestHeader(value = "Authorization", required = false) String token,
             @RequestParam String date
     ) {
-
         if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if (date == null)
