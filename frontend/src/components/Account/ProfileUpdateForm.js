@@ -300,7 +300,7 @@ const ProfileUpdateForm = () => {
             </select>
           </div>
         </div>
-        <div className='profile-button'>
+        <div className='mb-20'>
           <Btn
             content="수정하기"
             disabled={!isFormValid}
