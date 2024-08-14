@@ -1,7 +1,9 @@
 .img-slider-container {
-  width: 100%;
+  width: 90%;
+  /* justify-content: center; */
+  /* align-items: center; */
   /* max-width: 500px; */
-  /* margin: 0 auto; */
+  margin: 0 auto;
   /* padding-bottom: 30px; */
 }
 
