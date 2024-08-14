@@ -423,8 +423,8 @@ const closeModal = () => {
             onChange={(e) => {
               const value = e.target.value
               setNickname(value)
-              if (value.length < 3 || value.length > 6) {
-                setNicknameCheckMsg('닉네임은 3~6 글자여야 합니다.');
+              if (value.length < 3 || value.length > 10) {
+                setNicknameCheckMsg('닉네임은 3~10 글자여야 합니다.');
               } else{
                 setNicknameCheckMsg('');
               }
@@ -434,6 +434,8 @@ const closeModal = () => {
           />
           {nicknameCheckMsg && <p className="account-error">{nicknameCheckMsg}</p>}
         </div>
+
+
         <div>
           <InputField
             type="date"

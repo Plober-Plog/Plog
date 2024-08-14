@@ -243,6 +243,7 @@ const ProfileUpdateForm = () => {
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
             className="account-input"
+            max={new Date().toISOString().split("T")[0]}
           />
         </div>
         {/* <SelectField
@@ -296,7 +297,7 @@ const ProfileUpdateForm = () => {
             </select>
           </div>
         </div>
-        <div className='profile-button'>
+        <div className='mb-20'>
           <Btn
             content="수정하기"
             disabled={!isFormValid}
