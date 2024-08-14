@@ -1,3 +1,11 @@
+.profile-update-container {
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 페이지 상단부터 시작 */
+  padding: 20px; /* 기본 패딩 추가 */
+}
+
 .profile-container {
   margin-top: 100px; 
   text-align: center; 
@@ -75,4 +83,9 @@
   border-radius: 5px;
   border: 1px solid #E3E3E3;
   background-color: #FFF;
+}
+
+.profile-button {
+  margin-bottom: 20px;
+  padding-bottom: 50px;
 }

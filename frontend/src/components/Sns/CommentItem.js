@@ -39,7 +39,7 @@ const CommentItem = ({ comment, handleReply }) => {
           )}
           <img 
             src={comment.profile} 
-            className="comment-profile-img" 
+            className="comment-profile-img mt-4" 
             alt="profile" 
             onClick={() => navigate(`/profile/${comment.searchId}`)} 
           />
@@ -74,7 +74,7 @@ const CommentItem = ({ comment, handleReply }) => {
           {comment.parentId !== comment.articleCommentId && (
             <img src={arrow} alt="comment arrow icon" className="comment-arrow-icon" /> 
           )}
-          <p>삭제된 댓글입니다</p>
+          <p className='mb-2'>삭제된 댓글입니다</p>
         </>
       )}
     </div>
