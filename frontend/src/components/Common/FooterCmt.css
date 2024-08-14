@@ -33,7 +33,6 @@
   border-radius: 20px;
   outline: none;
   box-sizing: border-box;
-  min-width: 0;
 }
 
 .footercmt-button {
@@ -41,7 +40,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  margin-left: 10px; /* 오른쪽에 버튼이 붙지 않도록 */
+  margin-left: 10px;
   flex-shrink: 0;
 }
 
