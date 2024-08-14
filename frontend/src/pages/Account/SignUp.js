@@ -9,8 +9,10 @@ const SignUp = () => {
 
   return (
     <div className="account-container mt-20 mb-20">
-      <h1 className="account-title">회원가입</h1>
-      <SignUpForm />
+      <h1 className="account-title mt-10">회원가입</h1>
+      <div className='mb-10'>
+        <SignUpForm />
+      </div>
     </div>
   );
 }
