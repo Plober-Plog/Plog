@@ -219,7 +219,7 @@ const ProfileUpdateForm = () => {
             isRequired={false}
             className="account-input"
           />
-          {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
+          {nicknameCheckMsg && <p className='profile-error'>{nicknameCheckMsg}</p>}
         </div>
         <div>
           <div className='mb-1'>
@@ -290,7 +290,7 @@ const ProfileUpdateForm = () => {
             </select>
           </div>
         </div>
-        <div className='mb-20'>
+        <div className='mt-5 mb-10'>
           <Btn
             content="수정하기"
             disabled={!isFormValid}
