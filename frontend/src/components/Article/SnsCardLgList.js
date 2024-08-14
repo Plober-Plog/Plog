@@ -11,9 +11,11 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [noResults, setNoResults] = useState(false);
 
   const fetchSnsList = async (searchId, page) => {
     setLoading(true);
+    setNoResults(false);
     try {
       const params = {
         searchId,
@@ -31,6 +33,7 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
         setHasMore(false);
         if (page === 0) {
           setSnsList([]);
+          setNoResults(true);
         }
       } else {
         if (page === 0) {
@@ -65,6 +68,7 @@ const SnsCardLgList = ({ searchId, tagTypeList, selectedVisibility }) => {
 
   return (
     <div>
+      {noResults && <p>더 이상 불러올 sns 글이 없습니다.</p>}
       {snslist.map((sns) => (
         <SnsCardLg 
           key={sns.articleId}
