@@ -9,14 +9,12 @@ import InputField from '../Common/InputField';
 import TextareaField from '../Common/TextareaField';
 import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
-import ATag from '../Common/ATag';
 import ModalComplete from '../Common/ModalComplete';
 import './ProfileUpdateForm.css'; 
 
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
   const { userData, setUserData } = useAuthStore();
-  console.log('회원정보:', userData)
   const URI = 'https://i11b308.p.ssafy.io/api';
   
   const [searchId, setSearchId] = useState(userData?.searchId || '');
@@ -41,6 +39,9 @@ const ProfileUpdateForm = () => {
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [dateError, setDateError] = useState(false); // 날짜 오류 상태 추가
+  
+  const today = new Date().toISOString().split("T")[0];
 
   // 이미지 업로드 핸들러
   const handleImageUpload = (e) => {
@@ -73,7 +74,6 @@ const ProfileUpdateForm = () => {
     fetchLocationOptions();
   }, [sidoCode]);
 
-
   // 이미지 삭제 핸들러
   const handleImageRemove = () => {
     setProfile(userData.profile || ''); 
@@ -84,36 +84,18 @@ const ProfileUpdateForm = () => {
   // 폼 유효성 검사
   useEffect(() => {
     setIsFormValid(
-      searchId.length >= 5 && nickname.length >= 3 && nickname.length <= 10 && isSearchIdAvailable
+      searchId.length >= 5 && nickname.length >= 3 && nickname.length <= 6 && isSearchIdAvailable
     );
   }, [searchId, nickname, isSearchIdAvailable]);
 
-  // 아이디 중복 확인 핸들러
-  const handleCheckSearchId = async () => {
-    if (!/^[a-z0-9]{5,15}$/.test(searchId)) {
-      setSearchIdCheckMsg('아이디 형식이 올바르지 않습니다.');
-      setIsSearchIdAvailable(false);
-      return;
-    }
-
-    try {
-      const response = await API.get(`/user/${searchId}`);
-      if (response.status === 200) {
-        setSearchIdCheckMsg('사용 가능한 아이디입니다.');
-        setIsSearchIdAvailable(true);
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
-      } else {
-        setSearchIdCheckMsg('아이디 중복 확인 중 오류가 발생했습니다.');
-      }
-      setIsSearchIdAvailable(false);
-    }
-  };
 
   // 회원 정보 수정 요청 핸들러
   const handleProfileUpdate = async () => {
+    if (birthdate > today) {
+      setDateError(true);
+      return;
+    }
+
     const updatedUserData = {
       nickname,
       searchId,
@@ -157,7 +139,10 @@ const ProfileUpdateForm = () => {
 
   const closeModal = () => {
     setOpenModal(false);
-    navigate('/setting');
+    setDateError(false); // 오류 모달을 닫을 때 오류 상태도 초기화
+    if (!dateError) {
+      navigate('/setting');
+    }
   };
 
   return (
@@ -183,8 +168,11 @@ const ProfileUpdateForm = () => {
             </button>
           )}
         </div>
-        <div>
-          {!isFormValid && <p>아이디를 입력해 주세요.</p>}
+        <div className='mt-10'>
+          {!isFormValid}
+          <div className='mb-2'>
+            <h2>아이디</h2>
+          </div>
           <InputField
             type="text"
             placeholder="아이디"
@@ -195,10 +183,13 @@ const ProfileUpdateForm = () => {
             }}
             isRequired={true}
             disabled={true}
-            className="account-disable-input mt-10"
+            className="account-disable-input"
           />
         </div>
         <div>
+          <div className='mb-2'>
+            <h2>이메일</h2>
+          </div>
           <InputField
             type="email"
             placeholder="이메일"
@@ -209,6 +200,9 @@ const ProfileUpdateForm = () => {
           />
         </div>
         <div>
+          <div className='mb-2'>
+            <h2>닉네임</h2>
+          </div>
           <InputField
             type="text"
             placeholder="닉네임"
@@ -216,8 +210,8 @@ const ProfileUpdateForm = () => {
             onChange={(e) => {
               const value = e.target.value;
               setNickname(value);
-              if (value.length < 3 || value.length > 10) {
-                setNicknameCheckMsg('닉네임은 3~10 글자여야 합니다.');
+              if (value.length < 3 || value.length > 6) {
+                setNicknameCheckMsg('닉네임은 3~6 글자여야 합니다.');
               } else {
                 setNicknameCheckMsg('');
               }
@@ -228,6 +222,9 @@ const ProfileUpdateForm = () => {
           {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
         </div>
         <div>
+          <div className='mb-1'>
+            <h2>자기소개</h2>
+          </div>
           <TextareaField
             placeholder="자기소개를 입력해주세요."
             value={profileInfo}
@@ -236,6 +233,9 @@ const ProfileUpdateForm = () => {
           />
         </div>
         <div>
+          <div className='mb-2'>
+            <h2>생년월일</h2>
+          </div>
           <InputField
             type="date"
             placeholder="생일"
@@ -243,15 +243,8 @@ const ProfileUpdateForm = () => {
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
             className="account-input"
-            max={new Date().toISOString().split("T")[0]}
           />
         </div>
-        {/* <SelectField
-          value={source}
-          options={['가입경로', '지인추천', '인터넷 검색']}
-          isRequired={false}
-          disabled={true}
-        /> */}
         <div className="profile-inline-group">
           <label className="profile-inline-label">성별</label>
           <RadioField
@@ -305,7 +298,9 @@ const ProfileUpdateForm = () => {
           />
         </div>
       </form>
-      <ModalComplete title="회원정보 수정 완료" content="회원정보 수정이 완료되었습니다" open={openModal} onClose={closeModal} />
+      <ModalComplete title="회원정보 수정 완료" content="회원정보 수정이 완료되었습니다" open={openModal && !dateError} onClose={closeModal} />
+      
+      <ModalComplete title="생일 재설정" content="날짜가 올바르지 않습니다." open={dateError} onClose={closeModal} />
     </div>
   );
 };
