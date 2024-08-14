@@ -4,7 +4,6 @@ import { getCookie } from '../../utils/cookieUtils';
 import { useNavigate } from 'react-router-dom';
 import chatIcon from '../../assets/icon/chat-white.png';
 
-
 const BtnChat = ({ userData }) => {
 
   const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
@@ -31,13 +30,23 @@ const BtnChat = ({ userData }) => {
         }
       });
     } catch (error) {
-      console.error('채팅방 개설 중 오류 발생:', error);
+      if (error.response && error.response.status === 409) {
+        console.log('이미 존재하는 채팅방으로 이동합니다:', error.response.data.message);
+        const chatRoomId = error.response.data.message;
+        navigate(`/chat/${chatRoomId}`, {
+          state: {
+            chatRoomId: chatRoomId,
+          }
+        });
+      } else {
+        console.error('채팅방 개설 중 오류 발생:', error);
+      }
     }
   };
 
   return (
     <button className="add-btn" onClick={handleChat}>
-      <img src={chatIcon}/>
+      <img src={chatIcon} alt="채팅 아이콘" />
     </button>
   ) 
 }
