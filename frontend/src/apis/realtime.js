@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getCookie } from '../utils/cookieUtils';
 
-const API_REALTIME_URL = process.env.REACT_APP_API_REALTIME_URL;
+const API_REALTIME_URL = process.env.REACT_APP_REALTIME_BASE_URL;
 const REALTIME_API = axios.create({
     baseURL: API_REALTIME_URL
 });

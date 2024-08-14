@@ -5,11 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import chatIcon from '../../assets/icon/chat-white.png';
 
 const BtnChat = ({ userData }) => {
-  const API_REALTIME_URL = process.env.REACT_APP_API_REALTIME_URL;
-  const token = getCookie('accessToken');  
+  const API_REALTIME_URL = process.env.REACT_APP_REALTIME_BASE_URL;
+  const token = getCookie('accessToken');
   const navigate = useNavigate();
 
   const handleChat = async () => {
+    console.log(API_REALTIME_URL)
     try {
       const response = await axios.post(`${API_REALTIME_URL}/chat/room`, {
         targetSearchId: userData.searchId,
