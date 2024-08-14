@@ -18,6 +18,7 @@ import Login from './pages/Account/Login';
 import PasswordFind from './pages/Account/PasswordFind';
 import PasswordChange from './pages/Account/PasswordChange';
 import ProfileUpdate from './pages/Account/ProfileUpdate';
+import ProfilePushAlarm from './pages/Account/ProfilePushAlarm';
 import PasswordUpdate from './pages/Account/PasswordUpdate';
 import Setting from './pages/Account/Setting';
 // Plant
@@ -91,6 +92,7 @@ function App() {
             <Route path="/password/change" element={<PrivateRoute><PasswordChange /></PrivateRoute>} />
             <Route path="/password/find" element={<PublicRoute><PasswordFind /></PublicRoute>} />
             <Route path="/password/update" element={<PasswordUpdate />} />
+            <Route path="/profile/pushalarm" element={<PrivateRoute><ProfilePushAlarm /></PrivateRoute>} />
             <Route path="/setting" element={<PrivateRoute><Setting /></PrivateRoute>} />
             {/* plant */}
             <Route path="/plant/:plantId/:date/write" element={<PrivateRoute><PlantDiaryWrite /></PrivateRoute>} />
