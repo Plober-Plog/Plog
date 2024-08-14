@@ -16,6 +16,7 @@ import './ProfileUpdateForm.css';
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
   const { userData, setUserData } = useAuthStore();
+  console.log('회원정보:', userData)
   const URI = 'https://i11b308.p.ssafy.io/api';
   
   const [searchId, setSearchId] = useState(userData?.searchId || '');
@@ -72,12 +73,6 @@ const ProfileUpdateForm = () => {
     fetchLocationOptions();
   }, [sidoCode]);
 
-  useEffect(() => {
-    if (sidoCode) {
-      const filtered = gugunOptions.filter(option => option.sidoCode === Number(sidoCode));
-      setGugunCode(filtered.length > 0 ? filtered[0].gugunCode : 0);
-    }
-  }, [sidoCode, gugunOptions]);
 
   // 이미지 삭제 핸들러
   const handleImageRemove = () => {
@@ -125,8 +120,8 @@ const ProfileUpdateForm = () => {
       gender,
       birthData: birthdate,
       source,
-      sidoCode,
-      gugunCode,
+      sidoCode: Number(sidoCode),
+      gugunCode: Number(gugunCode), 
       profileInfo,
       Ad: isAd
     };
@@ -144,6 +139,7 @@ const ProfileUpdateForm = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
+      console.log('새로운 회원정보:', updatedUserData);
       
       // 유저 데이터 갱신
       setUserData({
