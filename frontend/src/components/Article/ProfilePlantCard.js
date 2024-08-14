@@ -3,7 +3,7 @@ import { useNavigate} from 'react-router-dom';
 import defaultImg from '../../assets/icon/default.png';
 import './ProfilePlantCardList.css';
 
-const ProfilePlantCard = ({ plantId, profile, nickname, birthDate, plantTypeName, otherPlantTypeName, isClickable }) => {
+const ProfilePlantCard = ({ plantId, profile, nickname, birthDate, plantTypeName, otherPlantTypeName, isClickable, isDeleted, deadDate }) => {
   
   const navigate = useNavigate();
 
@@ -13,8 +13,15 @@ const ProfilePlantCard = ({ plantId, profile, nickname, birthDate, plantTypeName
     }
   }
   
+  if (isDeleted) {
+    return null;
+  }
+  
   return (
-    <div className="profile-plant-card" onClick={handleClick}>
+    <div
+      className={`profile-plant-card relative ${deadDate ? 'opacity-20' : ''}`}
+      onClick={handleClick}
+    >
       <img
         src={profile || defaultImg}
         alt="thumbnail"
