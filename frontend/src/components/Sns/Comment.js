@@ -87,13 +87,15 @@ const Comment = ({ articleId }) => {
           />
         ))}
       </div>
-      {location.pathname === `/sns/${articleId}` && commentList.length > 3 && (
-        <Btn 
-          content='댓글 자세히 보기'
-          onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId } })}
-          cmtCnt={cmtCnt}
-        />
-      )}
+      <div className='mb-10'>
+        {location.pathname === `/sns/${articleId}` && commentList.length > 3 && (
+          <Btn 
+            content='댓글 자세히 보기'
+            onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId } })}
+            cmtCnt={cmtCnt} 
+          />
+        )}
+      </div>
       <FooterCmt
         articleId={articleId}
         selectedParentId={selectedParentId}
