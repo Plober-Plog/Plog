@@ -62,6 +62,12 @@ const Comment = ({ articleId }) => {
     setIsFooterCmtActive(true);
   };
 
+  // 댓글 삭제 핸들러
+  const handleDeleteComment = (commentId) => {
+    setCommentList(prevComments => prevComments.filter(comment => comment.articleCommentId !== commentId));
+    setCmtCnt(prevCount => prevCount - 1);
+  };
+
   // /sns/${articleId} 페이지에서만 댓글을 3개로 제한
   const displayedComments = location.pathname === `/sns/${articleId}`
     ? commentList.slice(0, 3)
@@ -69,20 +75,27 @@ const Comment = ({ articleId }) => {
 
   return (
     <div>
-      <hr />
+      <br />
       <h3>댓글</h3>
       <div>
         {displayedComments.map((comment) => (
-          <CommentItem key={comment.articleCommentId} comment={comment} handleReply={handleReply} />
+          <CommentItem 
+            key={comment.articleCommentId} 
+            comment={comment} 
+            handleReply={handleReply} 
+            onDelete={handleDeleteComment}  // onDelete prop 전달
+          />
         ))}
       </div>
-      {location.pathname === `/sns/${articleId}` && commentList.length > 3 && (
-        <Btn 
-          content='댓글 자세히 보기'
-          onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId } })}
-          cmtCnt={cmtCnt}
-        />
-      )}
+      <div className='mb-10'>
+        {location.pathname === `/sns/${articleId}` && commentList.length > 3 && (
+          <Btn 
+            content='댓글 자세히 보기'
+            onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId } })}
+            cmtCnt={cmtCnt} 
+          />
+        )}
+      </div>
       <FooterCmt
         articleId={articleId}
         selectedParentId={selectedParentId}
