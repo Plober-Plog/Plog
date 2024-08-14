@@ -26,7 +26,7 @@ const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt,
   const imgStyle = { width: '24px', height: '24px' };
 
   const handleLike = async () => {
-    if (userData.profile) {
+    if (userData) {
       try {
         const response = isLiked
           ? await API.delete(`/user/sns/like/${articleId}`)
@@ -42,7 +42,7 @@ const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt,
   };
 
   const handleBookmark = async () => {
-    if (userData.profile) {
+    if (userData) {
       try {
         const response = isBookmarked
           ? await API.delete(`/user/sns/bookmark/${articleId}`)

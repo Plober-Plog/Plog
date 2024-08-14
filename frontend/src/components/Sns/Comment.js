@@ -98,7 +98,7 @@ const Comment = ({ articleId }) => {
           />
         )}
       </div>
-      {userData.profile ? (  // userData가 있을 때만 FooterCmt 렌더링
+      {userData ? (  // userData가 있을 때만 FooterCmt 렌더링
         <FooterCmt
           articleId={articleId}
           selectedParentId={selectedParentId}
