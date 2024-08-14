@@ -8,6 +8,7 @@ import './PlantReport.css';
 import Btn from '../../components/Common/Btn';
 
 const PlantReport = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const location = useLocation();
   const navigate = useNavigate();
   const { plantId } = location.state;
@@ -43,7 +44,7 @@ const PlantReport = () => {
   const imageUrls = [normalUrl1, normalUrl2];
 
   // 캡처를 위한 프록시 URL
-  const proxyUrl = (s3Url) => `https://i11b308.p.ssafy.io/api/image/proxy?url=${encodeURIComponent(s3Url)}`;
+  const proxyUrl = (s3Url) => `${API_BASE_URL}/image/proxy?url=${encodeURIComponent(s3Url)}`;
   const proxyUrl1 = proxyUrl(normalUrl1);
   const proxyUrl2 = proxyUrl(normalUrl2);
   const proxyImageUrls = [proxyUrl1, proxyUrl2];

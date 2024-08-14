@@ -12,7 +12,7 @@ import './Account.css';
 
 const PasswordUpdate = () => {
   const navigate = useNavigate();
-  const URI = 'https://i11b308.p.ssafy.io/api'
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   // location
   const location = useLocation();
   const { userId } = location.state;
@@ -61,7 +61,7 @@ const PasswordUpdate = () => {
     // 비밀번호 변경 요청
     try {
       console.log('userId: ',userId)
-      const response = await axios.patch(`${URI}/user/password`, {
+      const response = await axios.patch(`${API_BASE_URL}/user/password`, {
         userId,
         password: sha256(password)
       })

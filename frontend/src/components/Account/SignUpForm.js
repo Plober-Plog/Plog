@@ -4,7 +4,6 @@ import axios from 'axios';
 import sha256 from 'js-sha256';
 
 import Btn from '../Common/Btn';
-import ATag from '../Common/ATag';
 import InputField from '../Common/InputField';
 import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
@@ -13,6 +12,8 @@ import defaultProfile from './defaultprofile.png';
 import './ProfileUpdateForm.css';
 
 const SignUpForm = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const navigate = useNavigate();
   // 회원 정보
   const [searchId, setSearchID] = useState('');
   const [email, setEmail] = useState('');
@@ -28,11 +29,9 @@ const SignUpForm = () => {
   const [sidoOptions, setSidoOptions] = useState([]);
   const [gugunOptions, setGugunOptions] = useState([]);
   const [filteredGugunOptions, setFilteredGugunOptions] = useState([]);
-  
   // 회원 동의
   const [agreePersonal, setAgreePersonal] = useState(false);
   const [agreeAdvertisement, setAgreeAdvertisement] = useState(false);
-  
   // 회원가입 조건 만족
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -43,7 +42,6 @@ const SignUpForm = () => {
   const [passwordCheckMsg, setPasswordCheckMsg] = useState('');
   const [passwordConfirmCheckMsg, setPasswordConfirmCheckMsg] = useState('');
   const [dateError, setDateError] = useState(false);
-
   // 이메일 인증
   const [emailVerificationMsg, setEmailVerificationMsg] = useState('');
   const [emailVerificationInput, setEmailVerificationInput] = useState('');
@@ -52,14 +50,12 @@ const SignUpForm = () => {
   const [isSendingEmail, setIsSendingEmail] = useState(false); // 이메일 전송 중 상태
   const [timer, setTimer] = useState(0);
 
-  const URI = 'https://i11b308.p.ssafy.io/api';
-  const navigate = useNavigate();
 
   // 시도 옵션 가져오기
   useEffect(() => {
     const getSidoOptions = async () => {
       try {
-        const response = await axios.get(`${URI}/area/sido`)
+        const response = await axios.get(`${API_BASE_URL}/area/sido`)
         setSidoOptions(response.data);
       } catch (error) {
         console.error(error);
@@ -73,7 +69,7 @@ const SignUpForm = () => {
   useEffect(() => {
     const getGugunOptions = async (sidoCode) => {
       try {
-        const response = await axios.get(`${URI}/area/gugun/${sidoCode}`,
+        const response = await axios.get(`${API_BASE_URL}/area/gugun/${sidoCode}`,
           { params: { sidoCode } }
         )
         setGugunOptions(response.data);
@@ -124,7 +120,7 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await axios.get(`${URI}/user/${searchId}`);
+      const response = await axios.get(`${API_BASE_URL}/user/${searchId}`);
       if (response.status === 200) {
         setSearchIdCheckMsg('사용 가능한 아이디입니다.');
         setIsSearchIdAvailable(true);
@@ -150,7 +146,7 @@ const SignUpForm = () => {
     setIsSendingEmail(true); // 이메일 전송 시작 표시
 
     try {
-      const response = await axios.post(`${URI}/user/email`, { email });
+      const response = await axios.post(`${API_BASE_URL}/user/email`, { email });
       if (response.status === 200) {
         setIsEmailVerificationSent(true);
       }
@@ -163,7 +159,7 @@ const SignUpForm = () => {
     }
 
     try {
-      await axios.post(`${URI}/user/email/send`, { email }, {
+      await axios.post(`${API_BASE_URL}/user/email/send`, { email }, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -199,7 +195,7 @@ const SignUpForm = () => {
   // 이메일 인증 코드 확인
   const handleVerifyEmailCode = async () => {
     try {
-      const response = await axios.post(`${URI}/user/email/check`, { email, verifyCode: emailVerificationInput });
+      const response = await axios.post(`${API_BASE_URL}/user/email/check`, { email, verifyCode: emailVerificationInput });
       setIsEmailVerified(true);
       setIsEmailVerificationSent(false);
     } catch (error) {
@@ -249,7 +245,7 @@ const SignUpForm = () => {
   formData.append('profile', file);
 
   try {
-    await axios.post(`${URI}/user`, formData, {
+    await axios.post(`${API_BASE_URL}/user`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

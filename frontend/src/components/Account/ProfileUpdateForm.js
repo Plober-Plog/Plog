@@ -15,7 +15,7 @@ import './ProfileUpdateForm.css';
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
   const { userData, setUserData } = useAuthStore();
-  const URI = 'https://i11b308.p.ssafy.io/api';
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   
   const [searchId, setSearchId] = useState(userData?.searchId || '');
   const [nickname, setNickname] = useState(userData?.nickname || '');
@@ -61,8 +61,8 @@ const ProfileUpdateForm = () => {
     const fetchLocationOptions = async () => {
       try {
         const [sidoRes, gugunRes] = await Promise.all([
-          axios.get(`${URI}/area/sido`),
-          axios.get(`${URI}/area/gugun/${sidoCode}`)
+          axios.get(`${API_BASE_URL}/area/sido`),
+          axios.get(`${API_BASE_URL}/area/gugun/${sidoCode}`)
         ]);
         setSidoOptions(sidoRes.data);
         setGugunOptions(gugunRes.data);
@@ -219,7 +219,7 @@ const ProfileUpdateForm = () => {
             isRequired={false}
             className="account-input"
           />
-          {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
+          {nicknameCheckMsg && <p className='profile-error'>{nicknameCheckMsg}</p>}
         </div>
         <div>
           <div className='mb-1'>
@@ -290,7 +290,7 @@ const ProfileUpdateForm = () => {
             </select>
           </div>
         </div>
-        <div className='mb-20'>
+        <div className='mt-5 mb-10'>
           <Btn
             content="수정하기"
             disabled={!isFormValid}

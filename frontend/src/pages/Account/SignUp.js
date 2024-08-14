@@ -8,9 +8,9 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="account-container mt-10 mb-20">
-      <h1 className="account-title">회원가입</h1>
-      <div className='mb-20'>
+    <div className="account-signup-container">
+      <h1 className="account-title mt-20">회원가입</h1>
+      <div>
         <SignUpForm />
       </div>
     </div>
