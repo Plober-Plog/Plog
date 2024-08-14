@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
                 .gender(userSignUpRequestDto.getGender())
                 .role(Role.USER.getValue())
                 .state(State.ACTIVTE.getValue())
-                .profileInfo("안녕하세용")
+                .profileInfo("안녕하세요!")
                 .isAd(userSignUpRequestDto.isAd())
                 .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
