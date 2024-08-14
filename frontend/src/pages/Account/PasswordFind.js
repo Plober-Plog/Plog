@@ -20,12 +20,6 @@ const PasswordFind = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false); // 인증완료 여부
   const [userId, setUserId] = useState(null);
 
-<<<<<<< HEAD
-=======
-  const URI = 'https://i11b308.p.ssafy.io/api';
-  const navigate = useNavigate();
->>>>>>> 2a0122f0de4d03ab65589546c04d8f0a21eb9974
-
   // 인증코드 타이머 설정
   useEffect(() => {
     let interval;
