@@ -9,13 +9,14 @@ import Tags from "../../components/Sns/Tags";
 import ImgSlider from "../../components/Common/ImgSlider";
 import BtnList from "../../components/Sns/BtnList";
 import Btn from "../../components/Common/Btn";
-
+import ModalConfirm from "../../components/Common/ModalConfirm"; // 모달 컴포넌트 임포트
 
 const SnsDetail = () => {
   const navigate = useNavigate();
-  const { articleId } = useParams()
+  const { articleId } = useParams();
   const [article, setArticle] = useState({});
   const [writerInfo, setWriterInfo] = useState({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // 삭제 모달 상태 추가
 
   const { userData } = useAuthStore();
 
@@ -52,7 +53,8 @@ const SnsDetail = () => {
 
   const isAuthor = userData && userData.searchId === article.searchId;
 
-  const handleSnsDlelete = async () => {
+  // 게시물 삭제 함수
+  const handleSnsDelete = async () => {
     try {
       const response = await API.delete(`/user/sns/${articleId}`);
       console.log('게시물 삭제 성공:', response.data);
@@ -66,9 +68,18 @@ const SnsDetail = () => {
 
   const handleProfileClick = () => {
     navigate(`/profile/${writerInfo.searchId}`)
-
     console.log(writerInfo)
   }
+
+  // 모달 열기
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+
+  // 모달 닫기
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
 
   return (
     <div className="mt-5">
@@ -98,7 +109,7 @@ const SnsDetail = () => {
             </div>
             
             <div className="col-span-6">
-              <Btn content='삭제하기' onClick={() => handleSnsDlelete()} />
+              <Btn content='삭제하기' onClick={openDeleteModal} /> {/* 모달을 열도록 수정 */}
             </div>
           </div>
         </>
@@ -108,6 +119,16 @@ const SnsDetail = () => {
         <BtnList likeCnt={article.likeCnt} isLiked={article.isLiked} commentCnt={article.commentCnt} isBookmarked={article.isBookmarked} articleId={articleId} />
       </div>
       <Comment articleId={articleId}/>
+
+      {/* 삭제 확인 모달 */}
+      <ModalConfirm
+        open={showDeleteModal}
+        onClose={closeDeleteModal}
+        onConfirm={handleSnsDelete} 
+        title="게시물 삭제"
+        content="정말 이 게시물을 삭제하시겠습니까?"
+        confirmText="삭제하기"
+      />
     </div>
   );
 }

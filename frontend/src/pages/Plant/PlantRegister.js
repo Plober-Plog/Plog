@@ -7,6 +7,7 @@ import defaultImage from '../../assets/icon/default.png';
 import InputField from '../../components/Common/InputField';
 import TextareaField from '../../components/Common/TextareaField';
 import Btn from '../../components/Common/Btn';
+import ModalConfirm from '../../components/Common/ModalConfirm'; // 모달 컴포넌트 임포트
 import './PlantRegister.css'; 
 
 const PlantRegister = () => {
@@ -15,6 +16,9 @@ const PlantRegister = () => {
   const { plantId } = location.state;
   const [plantTypeOptions, setPlantTypeOptions] = useState([]);
   const [searchId, setSearchId] = useState(null);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // 삭제 모달 상태 추가
+  const [showFarewellModal, setShowFarewellModal] = useState(false); // 이별 모달 상태 추가
 
   useEffect(() => {
     const fetchSearchId = useAuthStore.getState().getSearchId;
@@ -143,7 +147,7 @@ const PlantRegister = () => {
     }
   };
 
-  // 식물 삭제하기
+  // 식물 삭제하기 - 실제 삭제는 모달에서 확인 후 진행
   const handleDelete = async () => {
     try {
       const response = await API.delete(`/user/plant/${plantId}`);
@@ -154,7 +158,7 @@ const PlantRegister = () => {
     }
   };
 
-  // 식물 이별하기
+  // 식물 이별하기 - 실제 이별은 모달에서 확인 후 진행
   const handleFarewell = async () => {
     try {
       const response = await API.patch(`/user/plant/${plantId}/farewell`);
@@ -163,6 +167,26 @@ const PlantRegister = () => {
     } catch (err) {
       console.error('식물과 이별 실패 : ', err);
     }
+  };
+
+  // 모달 열기 (삭제)
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+
+  // 모달 닫기 (삭제)
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+
+  // 모달 열기 (이별)
+  const openFarewellModal = () => {
+    setShowFarewellModal(true);
+  };
+
+  // 모달 닫기 (이별)
+  const closeFarewellModal = () => {
+    setShowFarewellModal(false);
   };
 
   return (
@@ -261,7 +285,7 @@ const PlantRegister = () => {
         {plantId !== 0 && (
           <Btn
             content="식물 삭제하기"
-            onClick={handleDelete}
+            onClick={openDeleteModal} // 삭제 모달 열기
           />
         )}
       </div>
@@ -269,11 +293,30 @@ const PlantRegister = () => {
         {plantId !== 0 && !isFarewell && (
           <Btn
             content="식물과 이별하기"
-            onClick={handleFarewell}
+            onClick={openFarewellModal} // 이별 모달 열기
           />
         )}
       </div>
 
+      {/* 삭제 확인 모달 */}
+      <ModalConfirm
+        open={showDeleteModal}
+        onClose={closeDeleteModal}
+        onConfirm={handleDelete} // 삭제 확인 시 실제 삭제 함수 호출
+        title="식물 삭제하기"
+        content="정말 이 식물을 삭제하시겠습니까?"
+        confirmText="삭제하기"
+      />
+
+      {/* 이별 확인 모달 */}
+      <ModalConfirm
+        open={showFarewellModal}
+        onClose={closeFarewellModal}
+        onConfirm={handleFarewell} 
+        title="식물과 이별하기"
+        content="정말 이 식물과 이별하시겠습니까?"
+        confirmText="이별하기"
+      />
     </div>
   );
 };
