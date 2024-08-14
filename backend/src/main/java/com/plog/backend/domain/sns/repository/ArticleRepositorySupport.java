@@ -123,10 +123,7 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
             visibilityCondition = article.visibility.eq(1);
         } else if (neighborType == 2) {
             // neighborType이 2 일 때, visibility 2인 게시글을 이웃 관계에 따라 필터링
-            BooleanExpression neighborCondition = neighbor.neighborFrom.user.userId.eq(userId)
-                    .and(neighbor.neighborTo.user.userId.eq(article.user.userId))
-                    .and(neighbor.neighborType.eq(1));
-            visibilityCondition = article.visibility.eq(2).and(neighborCondition);
+            visibilityCondition = article.visibility.eq(2);
         }
 
         // visibilityCondition이 null일 경우 기본값으로 true를 반환하여 필터링이 적용되지 않도록 처리
