@@ -199,7 +199,7 @@ const PlantRegister = () => {
   return (
     <div className="plant-register-container mt-20 mb-20">
       <form onSubmit={handleSubmit}>
-        <h1 className="cardlist-subtitle">{plantId ? '식물정보 수정' : '식물정보 등록'}</h1>
+        <h1 className="plant-title mr-3">{plantId ? '식물정보 수정' : '식물정보 등록'}</h1>
         <div className="plant-detail-image-container mt-5 mb-3">
           <input
             type="file"
@@ -229,7 +229,7 @@ const PlantRegister = () => {
           <select
             value={plantTypeId}
             onChange={(e) => setPlantTypeId(Number(e.target.value))}
-            className='plant-detail-region-select mt-2 mb-2'
+            className='plant-detail-region-select mt-2 mb-3'
           >
             {plantTypeOptions.map((plantTypeOption) => (
               <option

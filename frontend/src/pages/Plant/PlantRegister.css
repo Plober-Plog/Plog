@@ -60,9 +60,9 @@
 
 .plant-register-input {
   display: flex;
-  width: 340px;
+  width: 100%;
   height: 50px;
-  padding: 12px 20px; /* 패딩을 약간 조정 */
+  padding: 12px 20px; 
   justify-content: center;
   align-items: center;
   border-radius: 10px;
@@ -77,10 +77,17 @@
 }
 
 .plant-detail-region-select {
-  width: 150px;
+  width: 100%;
   height: 40px;
   padding: 5px;
   border-radius: 5px;
   border: 1px solid #E3E3E3;
   background-color: #FFF;
+}
+
+.plant-title {
+  margin-bottom: 30px; /* 제목과 폼 사이의 간격 증가 */
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
 }
