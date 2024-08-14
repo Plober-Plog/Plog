@@ -1,6 +1,7 @@
 package com.plog.backend.global.auth.service;
 
 import com.plog.backend.domain.image.entity.Image;
+import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.user.entity.ChatAuth;
 import com.plog.backend.domain.user.entity.Role;
 import com.plog.backend.domain.user.entity.State;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     @Transactional
@@ -57,7 +59,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .password("oauth2") // OAuth2.0 사용 시 비밀번호는 의미가 없을 수 있음.
                     .provider(attributes.getProvider())
                     .providerId(attributes.getProviderId())
-                    .image(new Image(attributes.getProfileImage()))
+                    .image(new Image(imageRepository.findById(1L).get().getImageUrl()))
                     .role(Role.USER.getValue())
                     .state(State.ACTIVTE.getValue())
                     .totalExp(0)
