@@ -8,7 +8,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="account-container mt-10 mb-10">
+    <div className="account-container mt-20 mb-20">
       <h1 className="account-title">회원가입</h1>
       <SignUpForm />
     </div>
