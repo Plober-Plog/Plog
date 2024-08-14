@@ -18,5 +18,5 @@ public class ChatGetResponseDto {
     String profile;
     String searchId;
     String message;
-    LocalDateTime createdAt;
+    String createdAt;
 }

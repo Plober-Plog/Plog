@@ -22,6 +22,7 @@ public class ChatRepositorySupport extends QuerydslRepositorySupport {
     }
 
     public List<Chat> findChatsByChatRoomId(Long chatRoomId, int page) {
+
         QChat chat = QChat.chat;
 
         // 최신순으로 정렬하고 페이지네이션을 적용하여 쿼리 실행
