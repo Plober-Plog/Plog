@@ -274,7 +274,7 @@ return (
             const value = e.target.value
             setSearchID(value)
             if (!/^[a-z0-9]{5,15}$/.test(value)) {
-              setSearchIdCheckMsg('아이디는 영문, 숫자 포함 5글자 이상 15이하여야 합니다.');
+              setSearchIdCheckMsg('아이디는 5~15자의 영문 소문자, 숫자만 사용 가능합니다.');
             } else {
               setSearchIdCheckMsg('');
             }
@@ -331,7 +331,7 @@ return (
           />
           <span className="password-toggle">
             <span>{formatTime(timer)}</span>
-            <span onClick={handleVerifyEmailCode}>인증확인</span>
+            <span onClick={handleVerifyEmailCode}> 인증확인</span>
           </span>
           {emailVerificationMsg && <p className="account-error">{emailVerificationMsg}</p>}
         </div>
@@ -406,7 +406,7 @@ return (
         {nicknameCheckMsg && <p className="account-error">{nicknameCheckMsg}</p>}
       </div>
       <div>
-        <div className='mb-2'>
+        <div className='mb-3'>
           <h2>생년월일</h2>
         </div>
         <InputField
@@ -418,9 +418,9 @@ return (
           className="account-input"
         />
       </div>
-      <div className="mb-2 flex items-center">
-        <label className="profile-inline-label mr-4">성별</label>
-        <div className="profile-inline-group flex-grow">
+      <div className="profile-radio-field-container">
+        <label className='mb-3'>성별</label>
+        <div>
           <RadioField
             selectedValue={gender}
             onChange={setGender}
@@ -434,9 +434,7 @@ return (
           />
         </div>
       </div>
-
-
-      <div className="mb-2">
+      <div>
         <label>지역</label>
         <div className="profile-region-group mt-2">
           <div className="profile-region-select-container">
