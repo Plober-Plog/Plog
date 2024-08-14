@@ -255,7 +255,7 @@ const PlantRegister = () => {
           />
         </form>
       </div>
-      {plantId && 
+      {plantId !== 0 && 
         <>
           <Btn
             content={'식물 삭제하기'}
@@ -264,7 +264,7 @@ const PlantRegister = () => {
           />
         </>
       }
-      {plantId && !isFarewell && (
+      {plantId !== 0 && !isFarewell && (
         <>
           <Btn
             content={'식물과 이별하기'}

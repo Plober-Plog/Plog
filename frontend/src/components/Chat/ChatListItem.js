@@ -11,6 +11,7 @@ const ChatListItem = ({ chatRoom, token }) => {
 
     // 읽음 표시
     const chatRead = async () => {
+      console.log('채팅 읽기 토큰:', token)
       try {
         const response = await axios.post(`${API_REALTIME_URL}/chat/room/${chatRoomId}/read`, 
           { params: {chatRoomId} },
@@ -37,6 +38,26 @@ const ChatListItem = ({ chatRoom, token }) => {
     });
   };
 
+
+  // 채팅방 삭제
+  const handleChatDelete = async (chatRoomId) => {
+    console.log('삭제 토큰:', token);
+    try {
+      const response = await axios.delete(`${API_REALTIME_URL}/chat/room`, {
+        headers: {
+          Authorization: token,
+        },
+        params: {
+          chatRoomId: chatRoomId,  // params를 객체로 전달
+        },
+      });
+      console.log('채팅방 삭제 성공:', response.data);
+    } catch (error) {
+      console.error('채팅방 삭제 오류:', error);
+    }
+  };
+  
+
   // 시간을 포맷팅하는 함수 (날짜는 제거하고 시간만)
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -53,20 +74,26 @@ const ChatListItem = ({ chatRoom, token }) => {
   };
 
   return (
-    <div className="chat-list-item" onClick={() => handleEnterChatRoom(chatRoom.chatRoom.chatRoomId, chatRoom.chatRoom.chatRoomName)}>
-      <div className="chat-list-item-avatar">
-        <img src={chatRoom.users[0].image.imageUrl} alt="Avatar" />
+    <div>
+      <div className="chat-list-item" onClick={() => handleEnterChatRoom(chatRoom.chatRoom.chatRoomId, chatRoom.chatRoom.chatRoomName)}>
+        <div className="chat-list-item-avatar">
+          <img src={chatRoom.users[0].image.imageUrl} alt="Avatar" />
+        </div>
+        <div className="chat-list-item-content">
+          <span className="chat-list-item-name">{chatRoom.users[0].nickname}</span>
+          <span className="chat-list-item-message">{chatRoom.lastChat.message}</span>
+        </div>
+        <div className="chat-list-item-info">
+          <span className="chat-list-item-date">{formatTime(chatRoom.lastChat.updatedAt)}</span>
+          {chatRoom.read === false && (
+            <span className="chat-list-item-unread">N</span>
+          )}
+        </div>
       </div>
-      <div className="chat-list-item-content">
-        <span className="chat-list-item-name">{chatRoom.chatRoom.chatRoomName}</span>
-        <span className="chat-list-item-message">{chatRoom.lastChat.message}</span>
-      </div>
-      <div className="chat-list-item-info">
-        <span className="chat-list-item-date">{formatTime(chatRoom.lastChat.updatedAt)}</span>
-        {chatRoom.read === false && (
-          <span className="chat-list-item-unread">N</span>
-        )}
-      </div>
+      <button onClick={(event) => handleChatDelete(chatRoom.chatRoom.chatRoomId)}>
+        채팅삭제
+      </button>
+
     </div>
   );
 };

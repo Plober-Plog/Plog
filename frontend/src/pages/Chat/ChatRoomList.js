@@ -37,7 +37,9 @@ const ChatRoomList = () => {
       if (response.data.length === 0) {
         setHasMore(false);
       } else {
-        setChatRooms((prevChatRooms) => [...prevChatRooms, ...response.data]);
+        // chatRoom.chatRoom.deleted가 false인 채팅방만 필터링
+        const filteredChatRooms = response.data.filter(chatRoom => !chatRoom.chatRoom.deleted);
+        setChatRooms((prevChatRooms) => [...prevChatRooms, ...filteredChatRooms]);
         setPage((prevPage) => prevPage + 1);
       }
     } catch (error) {
@@ -73,9 +75,10 @@ const ChatRoomList = () => {
 
   return (
     <div className="chat-room-container" ref={containerRef} style={{ height: '80vh', overflowY: 'auto' }}>
+      {chatRooms.length === 0 && !loading && <p>채팅이 없습니다</p>}
       {chatRooms.map((chatRoom) => (
         <ChatListItem
-          key={chatRoom.chatRoomId}
+          key={chatRoom.chatRoom.chatRoomId}
           chatRoom={chatRoom}
           token={token}
         />
