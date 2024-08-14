@@ -58,7 +58,7 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
                 new EntityNotFoundException("addBookmark - 없는 게시글 입니다.")
         );
 
-        Optional<ArticleBookmark> articleBookmarkOptional = articleBookmarkRepository.findById(articleId);
+        Optional<ArticleBookmark> articleBookmarkOptional = articleBookmarkRepository.findByUserUserIdAndArticleArticleId(userId, articleId);
 
         if (articleBookmarkOptional.isPresent())
             throw new NotValidRequestException("이미 북마크한 게시글입니다.");
