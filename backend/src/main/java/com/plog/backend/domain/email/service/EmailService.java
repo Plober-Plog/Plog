@@ -6,6 +6,8 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -95,6 +97,7 @@ public class EmailService {
     // 인증코드 이메일 발송
     public void sendEmail(String toEmail) throws MessagingException {
         log.info(">>> sendEmail - 인증코드 이메일 발송 시작: {}", toEmail);
+
         if (!isValidEmail(toEmail)) {
             log.warn(">>> sendEmail - 유효하지 않은 이메일 주소입니다: {}", toEmail);
             throw new NotValidRequestException("유효하지 않은 이메일 주소입니다: " + toEmail);
@@ -104,12 +107,29 @@ public class EmailService {
             redisUtil.deleteData(toEmail);
             log.info(">>> sendEmail - 기존 인증코드 삭제: {}", toEmail);
         }
-        // 이메일 폼 생성
-        MimeMessage emailForm = createEmailForm(toEmail);
-        // 이메일 발송
-        javaMailSender.send(emailForm);
-        log.info(">>> sendEmail - 인증코드 이메일 발송 완료: {}", toEmail);
+
+        try {
+            // 이메일 폼 생성
+            MimeMessage emailForm = createEmailForm(toEmail);
+
+            // 이메일 발송
+            javaMailSender.send(emailForm);
+            log.info(">>> sendEmail - 인증코드 이메일 발송 완료: {}", toEmail);
+
+        } catch (MailSendException ex) {
+            log.error(">>> sendEmail - 메일 발송 실패: {}", ex.getMessage());
+            throw new MessagingException("메일 발송에 실패했습니다: " + ex.getMessage(), ex);
+
+        } catch (MailException ex) {
+            log.error(">>> sendEmail - 메일 예외 발생: {}", ex.getMessage());
+            throw new MessagingException("메일 발송 중 오류가 발생했습니다: " + ex.getMessage(), ex);
+
+        } catch (Exception ex) {
+            log.error(">>> sendEmail - 알 수 없는 오류 발생: {}", ex.getMessage());
+            throw new MessagingException("메일 발송 중 알 수 없는 오류가 발생했습니다: " + ex.getMessage(), ex);
+        }
     }
+
 
     // 코드 검증
     public Boolean verifyEmailCode(String email, String code) {

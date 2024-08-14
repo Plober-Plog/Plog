@@ -1,13 +1,12 @@
 package com.plog.backend.global.config;
 
 import com.plog.backend.global.auth.JwtAuthenticationFilter;
+import com.plog.backend.global.auth.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,6 +27,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,14 +45,13 @@ public class SecurityConfig {
                                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
                 )
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.xssProtection(HeadersConfigurer.XXssConfig::disable))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .oauth2Login(oauth2 -> oauth2 // OAuth2 설정 추가
+//                .oauth2Login(oauth2 -> oauth2
 //                        .loginPage("/user/login/oauth2")
 //                        .userInfoEndpoint(userInfo -> userInfo
-//                                .userService(oAuth2UserService()) // OAuth2UserService 설정
-//                        )
-//                        .defaultSuccessUrl("/login/oauth2/code/google", true) // 로그인 성공 후 리다이렉트될 URL
-//                )
+//                                .userService(customOAuth2UserService))
+//                        .defaultSuccessUrl("/login/oauth2/code/google", true))
+                .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.xssProtection(HeadersConfigurer.XXssConfig::disable))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
