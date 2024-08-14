@@ -45,11 +45,11 @@ public class SecurityConfig {
                                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
                 )
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.xssProtection(HeadersConfigurer.XXssConfig::disable))
-//                .oauth2Login(oauth2 -> oauth2
-//                        .loginPage("/user/login/oauth2")
-//                        .userInfoEndpoint(userInfo -> userInfo
-//                                .userService(customOAuth2UserService))
-//                        .defaultSuccessUrl("/login/oauth2/code/google", true))
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/user/login/oauth2")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService))
+                        .defaultSuccessUrl("/login/oauth2/code/google", true))
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.xssProtection(HeadersConfigurer.XXssConfig::disable))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

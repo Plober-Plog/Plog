@@ -112,14 +112,14 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
         QNeighbor neighbor = QNeighbor.neighbor;
 
         // 기본적으로 visibility가 1인 경우는 항상 보이도록 설정
-        BooleanExpression visibilityCondition = article.visibility.eq(1);
+        BooleanExpression visibilityCondition = null;
 
         // visibility가 2인 경우 이웃 관계에 따라 필터링 추가
         if (neighborType == 1) {
             // 이웃 관계 없이 모든 게시글 조회
-            visibilityCondition = visibilityCondition.or(article.visibility.eq(1));
-        } else if (neighborType == 2 || neighborType == 3) {
-            // neighborType이 2 또는 3일 때, visibility가 2인 게시글을 이웃 관계에 따라 필터링
+            visibilityCondition = article.visibility.eq(1);
+        } else if (neighborType == 2) {
+            // neighborType이 2 일 때, visibility가 2인 게시글을 이웃 관계에 따라 필터링
             BooleanExpression neighborCondition = neighbor.neighborFrom.user.userId.eq(userId)
                     .and(neighbor.neighborTo.user.userId.eq(article.user.userId))
                     .and(neighbor.neighborType.eq(neighborType == 2 ? 1 : 2));

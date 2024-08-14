@@ -391,14 +391,19 @@ public class UserServiceImpl implements UserService {
 
         User user;
         if (userOptional.isEmpty()) {
+            // Image 객체를 먼저 저장합니다.
+            Image image = new Image(profileImage);
+            imageRepository.save(image);
+
+            // User 객체를 생성하면서 Image 객체를 설정합니다.
             user = User.builder()
                     .email(email)
                     .searchId(generateSearchId(email, provider))
-                    .nickname(name)
+                    .nickname(generateSearchId(email, provider))
                     .password("oauth2")
                     .provider(provider)
                     .providerId(providerId)
-                    .image(new Image(profileImage))
+                    .image(image) // 저장된 Image 객체를 설정합니다.
                     .role(Role.USER.getValue())
                     .gender(Gender.NA.getValue())
                     .state(State.ACTIVTE.getValue())

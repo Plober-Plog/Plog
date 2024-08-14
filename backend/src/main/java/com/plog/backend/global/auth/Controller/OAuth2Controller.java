@@ -1,15 +1,17 @@
 package com.plog.backend.global.auth.Controller;
 
-import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.service.UserServiceImpl;
 import com.plog.backend.global.auth.entity.OAuth2UserInfo;
-import com.plog.backend.global.model.response.BaseResponseBody;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @RestController
@@ -49,12 +51,13 @@ public class OAuth2Controller {
     }
 
     private String getAccessTokenFromProvider(String code, int provider) {
-        // provider에 따라 구글, 카카오, 네이버에 맞게 토큰 요청을 보냄
-        // 각 플랫폼의 토큰 엔드포인트로 POST 요청을 보내어 액세스 토큰을 받아야 함
+        RestTemplate restTemplate = new RestTemplate();
+
         String tokenEndpoint = "";
         String clientId = "";
         String clientSecret = "";
-        String redirectUri = "http://localhost:8080/user/login/oauth2/code/";
+        String redirectUri = "https://i11b308.p.ssafy.io/api/user/login/oauth2/code/";
+//        String redirectUri = "http://localhost:8080/api/user/login/oauth2/code/";
 
         if (provider == 1) { // 구글
             tokenEndpoint = "https://oauth2.googleapis.com/token";
@@ -73,14 +76,75 @@ public class OAuth2Controller {
             redirectUri += "naver";
         }
 
-        // 토큰 요청 로직 (RestTemplate 또는 WebClient 사용)
-        // 이 부분은 간단히 설명했지만 실제로는 HTTP 요청을 통해 서버에 코드를 보내고, 액세스 토큰을 받아야 합니다.
-        return "FAKE_ACCESS_TOKEN"; // 여기서는 간단히 가짜 토큰을 반환합니다.
+        // 액세스 토큰 요청 파라미터 설정
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(tokenEndpoint)
+                .queryParam("code", code)
+                .queryParam("client_id", clientId)
+                .queryParam("client_secret", clientSecret)
+                .queryParam("redirect_uri", redirectUri)
+                .queryParam("grant_type", "authorization_code");
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.POST,
+                entity,
+                Map.class);
+
+        Map<String, Object> responseBody = response.getBody();
+        return (String) responseBody.get("access_token");
     }
 
     private OAuth2UserInfo getUserInfoFromProvider(String accessToken, int provider) {
-        // provider에 따라 구글, 카카오, 네이버의 사용자 정보 엔드포인트에 접근하여 사용자 정보를 가져옴
-        // 여기서도 실제로는 HTTP 요청을 통해 사용자 정보를 가져와야 합니다.
-        return new OAuth2UserInfo("fakeEmail@example.com", "Fake Name", "https://fakeimage.url/profile.jpg", "1234567890");
+        RestTemplate restTemplate = new RestTemplate();
+        String userInfoEndpoint = "";
+
+        if (provider == 1) { // 구글
+            userInfoEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
+        } else if (provider == 2) { // 카카오
+            userInfoEndpoint = "https://kapi.kakao.com/v2/user/me";
+        } else if (provider == 3) { // 네이버
+            userInfoEndpoint = "https://openapi.naver.com/v1/nid/me";
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+        ResponseEntity<Map> response = restTemplate.exchange(
+                userInfoEndpoint,
+                HttpMethod.GET,
+                entity,
+                Map.class);
+
+        Map<String, Object> responseBody = response.getBody();
+
+        // 각 제공자별로 응답 데이터가 다르므로 이를 처리
+        if (provider == 1) { // 구글
+            return new OAuth2UserInfo(
+                    (String) responseBody.get("email"),
+                    (String) responseBody.get("name"),
+                    (String) responseBody.get("picture"),
+                    (String) responseBody.get("id"));
+        } else if (provider == 2) { // 카카오
+            Map<String, Object> kakaoAccount = (Map<String, Object>) responseBody.get("kakao_account");
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+            return new OAuth2UserInfo(
+                    (String) kakaoAccount.get("email"),
+                    (String) profile.get("nickname"),
+                    (String) profile.get("profile_image_url"),
+                    String.valueOf(responseBody.get("id")));
+        } else if (provider == 3) { // 네이버
+            Map<String, Object> responseMap = (Map<String, Object>) responseBody.get("response");
+            return new OAuth2UserInfo(
+                    (String) responseMap.get("email"),
+                    (String) responseMap.get("name"),
+                    (String) responseMap.get("profile_image"),
+                    (String) responseMap.get("id"));
+        }
+
+        return null; // 에러 처리 필요
     }
 }

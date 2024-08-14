@@ -55,7 +55,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user = User.builder()
                     .email(attributes.getEmail())
                     .searchId(generateSearchId(attributes.getEmail()))  // searchId 생성 로직 필요
-                    .nickname(attributes.getName())
+                    .nickname(attributes.getName() == null?generateSearchId(attributes.getEmail()):attributes.getName())
                     .password("oauth2") // OAuth2.0 사용 시 비밀번호는 의미가 없을 수 있음.
                     .provider(attributes.getProvider())
                     .providerId(attributes.getProviderId())
