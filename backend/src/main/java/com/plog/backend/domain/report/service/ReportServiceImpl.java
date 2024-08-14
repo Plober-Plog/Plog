@@ -2,6 +2,7 @@ package com.plog.backend.domain.report.service;
 
 import com.plog.backend.domain.diary.entity.PlantDiary;
 import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
+import com.plog.backend.domain.image.entity.PlantDiaryImage;
 import com.plog.backend.domain.image.repository.ImageRepository;
 import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
 import com.plog.backend.domain.plant.entity.Plant;
@@ -9,19 +10,17 @@ import com.plog.backend.domain.plant.entity.PlantCheck;
 import com.plog.backend.domain.plant.entity.PlantType;
 import com.plog.backend.domain.plant.repository.PlantCheckRepository;
 import com.plog.backend.domain.plant.repository.PlantRepository;
-import com.plog.backend.domain.plant.repository.PlantTypeRepository;
-import com.plog.backend.domain.report.dto.request.ReportCreateRequestDto;
 import com.plog.backend.domain.report.dto.response.ReportResultResponseDto;
 import com.plog.backend.domain.report.entity.ReportResult;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -67,9 +66,19 @@ public class ReportServiceImpl implements ReportService {
 //                .get(0).getImage().getImageUrl();
         String firstDayImageUrl = plantDiaries.get(0).getPlant().getImage().getImageUrl();
 //        String recentImageUrl = plantDiaries.get(plantDiaries.size() - 1).getPlant().getImage().getImageUrl(); // 제일 최근 사진
-        String recentImageUrl = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndIsThumbnailTrue(
-                plantDiaries.get(plantDiaries.size() - 1).getPlantDiaryId())
-                .get().getImage().getImageUrl(); // 제일 최근 사진
+        Optional<PlantDiaryImage> optionalImage = plantDiaryImageRepository.findByPlantDiaryPlantDiaryIdAndIsThumbnailTrue(
+                plantDiaries.get(plantDiaries.size() - 1).getPlantDiaryId());
+
+        if (optionalImage.isPresent()) {
+            String recentImageUrl = optionalImage.get().getImage().getImageUrl();
+            log.info("최근 이미지 URL: " + recentImageUrl);
+        } else {
+            log.error(">>> 최근 이미지 URL을 찾을 수 없습니다.");
+            throw new EntityNotFoundException("최근 이미지 URL을 찾을 수 없습니다.");
+        }
+
+        String recentImageUrl = optionalImage.get().getImage().getImageUrl();
+
         log.info("첫 번째 날 이미지 URL: " + firstDayImageUrl);
         log.info("최근 이미지 URL: " + recentImageUrl);
 

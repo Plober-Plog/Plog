@@ -30,6 +30,7 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
         this.articleLikeRepositorySupport = articleLikeRepositorySupport;
     }
 
+    // TODO[장현준] : 나의 이웃 공개글이 내가 이웃을 추가했을 때 보이는 문제 발생
     public List<Article> loadArticleList(int page, String searchId, List<Integer> tagTypeList, String keyword, long userId, int neighborType, int orderType) {
         logger.info("Loading article list with page: {}, searchId: {}, userId: {}, neighborType: {}, orderType: {}", page, searchId, userId, neighborType, orderType);
 
