@@ -110,7 +110,7 @@ public class ArticleServiceImpl implements ArticleService {
                     .commentCnt(commentCnt)
                     .isLiked(isLiked)
                     .isBookmarked(isBookmarked)
-                    .createdAt(article.get().getCreatedAt())
+                    .createdAt(article.get().getCreatedAt().plusHours(9))
                     .build();
         } else {
             throw new EntityNotFoundException("게시글을 조회할 수 없습니다.");
@@ -154,7 +154,7 @@ public class ArticleServiceImpl implements ArticleService {
                             .nickname(article.getUser().getNickname())
                             .searchId(article.getUser().getSearchId())
                             .profile(article.getUser().getImage().getImageUrl())
-                            .createdAt(article.getCreatedAt())
+                            .createdAt(article.getCreatedAt().plusHours(9))
                             .commentCnt(commentCnt)
                             .isLiked(isLiked)
                             .isBookmarked(isBookmarked)
