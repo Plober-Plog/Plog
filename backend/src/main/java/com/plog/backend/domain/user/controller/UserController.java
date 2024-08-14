@@ -276,7 +276,7 @@ public class UserController {
     @PatchMapping("/push")
     public ResponseEntity<BaseResponseBody> updatePushUser(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @ModelAttribute UserPushRequestDto userPushRequestDto) {
+            @RequestBody UserPushRequestDto userPushRequestDto) {
         log.info(">>> [PATCH] /user - 회원 푸시 수정 요청 데이터: {}", userPushRequestDto);
 
         if(token == null)
