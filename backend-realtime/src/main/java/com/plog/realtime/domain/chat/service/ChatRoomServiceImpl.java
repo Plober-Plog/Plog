@@ -144,8 +144,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
             log.info(">>> 마지막 메시지 조회 완료 - Message: {}", lastChat != null ? lastChat.getMessage() : "메시지가 없습니다.");
             if (lastChat != null) {
-//                lastChat.getCreatedAt().atZone(ZoneId.of("Asia/Seoul"));
-                lastChat.setCreatedAt(lastChat.getCreatedAt().atZone(ZoneOffset.UTC).toLocalDateTime());
+                lastChat.getCreatedAt().atZone(ZoneId.of("Asia/Seoul"));
             }
 
             // 사용자가 마지막 메시지를 읽었는지 여부를 판단
@@ -155,7 +154,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             boolean isRead = false;
             if (lastChat != null && chatUser.getLastReadAt() != null) {
-                chatUser.setLastReadAt(chatUser.getLastReadAt().atZone(ZoneOffset.UTC).toLocalDateTime());
                 log.info(">>> 채팅방의 마지막 메시지와 사용자의 읽은 시간 비교 - lastChat {}, chatUser {}", lastChat.getCreatedAt(), chatUser.getLastReadAt());
                 isRead = !lastChat.getCreatedAt().isAfter(chatUser.getLastReadAt());
             }
@@ -163,6 +161,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             // DTO를 생성하여 리스트에 추가
             log.info(">>> ChatRoomGetListResponseDto 생성 시작 - ChatRoomId: {}", chatRoom.getChatRoomId());
+            lastChat.setCreatedAt(lastChat.getCreatedAt().plusHours(9));
             ChatRoomGetListResponseDto dto = new ChatRoomGetListResponseDto(chatRoom, users, lastChat, isRead);
             log.info(">>> ChatRoomGetListResponseDto 생성 완료 - DTO: {}", dto);
 
