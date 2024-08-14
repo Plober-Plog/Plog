@@ -2,10 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between; /* 상하단 공간을 균등하게 배분 */
+  justify-content: center;
   height: 100vh;
-  padding: 20px;
-  box-sizing: border-box; /* padding이 height에 포함되도록 설정 */
+  padding: 20px; /* 전체 레이아웃에 여백 추가 */
 }
 
 .account-title {
@@ -18,10 +17,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  width: 100%; /* 폼이 가로로 최대한 늘어나도록 설정 */
-  max-width: 400px; /* 최대 너비를 설정하여 폼이 너무 넓어지지 않도록 함 */
-  padding-bottom: 100px; /* 푸터와 겹치지 않도록 여유 공간 추가 */
+  gap: 20px; /* 입력 필드와 버튼 사이의 간격 증가 */
 }
 
 .account-input {
