@@ -108,20 +108,22 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
     }
 
     private BooleanExpression filterByVisibility(long userId, int neighborType) {
-        logger.debug("Filtering by visibility with neighborType: {}", neighborType);
         QArticle article = QArticle.article;
+        QNeighbor neighbor = QNeighbor.neighbor;
 
-        BooleanExpression visibilityCondition = null;
+        // 기본적으로 visibility가 1인 경우는 항상 보이도록 설정
+        BooleanExpression visibilityCondition = article.visibility.eq(1);
 
+        // visibility가 2인 경우 이웃 관계에 따라 필터링 추가
         if (neighborType == 1) {
-            // neighborType이 1인 경우 visibility가 1인 게시글만 조회
-            visibilityCondition = article.visibility.eq(1);
-        } else if (neighborType == 2) {
-            // neighborType이 2인 경우 visibility가 2인 게시글만 조회
-            visibilityCondition = article.visibility.eq(2);
-        } else if (neighborType == 3) {
-            // neighborType이 3인 경우 visibility가 3인 게시글만 조회
-            visibilityCondition = article.visibility.eq(3);
+            // 이웃 관계 없이 모든 게시글 조회
+            visibilityCondition = visibilityCondition.or(article.visibility.eq(1));
+        } else if (neighborType == 2 || neighborType == 3) {
+            // neighborType이 2 또는 3일 때, visibility가 2인 게시글을 이웃 관계에 따라 필터링
+            BooleanExpression neighborCondition = neighbor.neighborFrom.user.userId.eq(userId)
+                    .and(neighbor.neighborTo.user.userId.eq(article.user.userId))
+                    .and(neighbor.neighborType.eq(neighborType == 2 ? 1 : 2));
+            visibilityCondition = visibilityCondition.or(article.visibility.eq(2).and(neighborCondition));
         }
 
         return visibilityCondition;
