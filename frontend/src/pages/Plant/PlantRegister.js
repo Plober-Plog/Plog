@@ -7,7 +7,8 @@ import defaultImage from '../../assets/icon/default.png';
 import InputField from '../../components/Common/InputField';
 import TextareaField from '../../components/Common/TextareaField';
 import Btn from '../../components/Common/Btn';
-import ModalConfirm from '../../components/Common/ModalConfirm'; // 모달 컴포넌트 임포트
+import ModalConfirm from '../../components/Common/ModalConfirm'; 
+import ModalComplete from '../../components/Common/ModalComplete'; 
 import './PlantRegister.css'; 
 
 const PlantRegister = () => {
@@ -17,8 +18,10 @@ const PlantRegister = () => {
   const [plantTypeOptions, setPlantTypeOptions] = useState([]);
   const [searchId, setSearchId] = useState(null);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // 삭제 모달 상태 추가
-  const [showFarewellModal, setShowFarewellModal] = useState(false); // 이별 모달 상태 추가
+  const [showDeleteModal, setShowDeleteModal] = useState(false); 
+  const [showFarewellModal, setShowFarewellModal] = useState(false); 
+  const [showDateErrorModal, setShowDateErrorModal] = useState(false); 
+  const [showNicknameErrorModal, setShowNicknameErrorModal] = useState(false);
 
   useEffect(() => {
     const fetchSearchId = useAuthStore.getState().getSearchId;
@@ -26,7 +29,6 @@ const PlantRegister = () => {
     setSearchId(searchId);
   }, []);
 
-  // 식물 정보
   const [plantTypeId, setPlantTypeId] = useState(2);
   const [otherPlantName, setOtherPlantName] = useState('');
   const [profile, setProfile] = useState(defaultImage);
@@ -35,7 +37,6 @@ const PlantRegister = () => {
   const [birthDate, setBirthDate] = useState('');
   const [isFarewell, setIsFarewell] = useState(false);
 
-  // 사진 업로드
   const fileInputRef = useRef(null);
   const [uploadedFile, setUploadedFile] = useState(null);
 
@@ -47,18 +48,16 @@ const PlantRegister = () => {
         setProfile(reader.result);
       };
       reader.readAsDataURL(file);
-      setUploadedFile(file); // 업로드된 파일 저장
+      setUploadedFile(file); 
     }
   };
 
-  // 사진 삭제
   const handleImageRemove = () => {
     setProfile(defaultImage);
     setUploadedFile(null);
-    fileInputRef.current.value = null; // input 필드를 초기화하여 동일 파일 업로드 가능하게 함
+    fileInputRef.current.value = null;
   };
 
-  // 식물 종류 불러오기
   useEffect(() => {
     const fetchPlantTypeOptions = async () => {
       try {
@@ -72,7 +71,6 @@ const PlantRegister = () => {
     fetchPlantTypeOptions();
   }, []);
 
-  // 수정일 경우 식물 정보 가져오기
   useEffect(() => {
     if (plantId !== 0) {
       const fetchPlantInfo = async () => {
@@ -80,7 +78,6 @@ const PlantRegister = () => {
           const response = await API.get(`/user/plant/${plantId}/info`);
           console.log('식물 정보:', response.data);
 
-          // 식물 정보 input에 로딩
           setPlantTypeId(response.data.plantTypeId);
           setOtherPlantName(response.data.otherPlantTypeId);
           setProfile(response.data.profile || defaultImage);
@@ -96,9 +93,20 @@ const PlantRegister = () => {
     }
   }, [plantId]);
 
-  // 식물 등록
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const today = new Date().toISOString().split("T")[0];
+
+    if (!nickname) {
+      setShowNicknameErrorModal(true); // 닉네임이 비어 있을 경우 오류 모달 띄우기
+      return;
+    }
+
+    if (birthDate > today) {
+      setShowDateErrorModal(true); // 미래 날짜가 선택된 경우 오류 모달 띄우기
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -123,31 +131,27 @@ const PlantRegister = () => {
 
       let response;
       if (plantId === 0) {
-        // 식물 등록
         response = await API.post('/user/plant', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log('식물 정보:', formData);
+        console.log('식물 등록 성공:', response.data);
       } else {
-        // 식물 수정
         response = await API.patch(`/user/plant/${plantId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log('식물 정보:', formData);
+        console.log('식물 수정 성공:', response.data);
       }
 
-      console.log(plantId === 0 ? '식물 등록 성공:' : '식물 수정 성공:', response.data);
       navigate(`/profile/${searchId}`);
     } catch (err) {
       console.error('식물 등록/수정 실패 : ', err);
     }
   };
 
-  // 식물 삭제하기 - 실제 삭제는 모달에서 확인 후 진행
   const handleDelete = async () => {
     try {
       const response = await API.delete(`/user/plant/${plantId}`);
@@ -158,7 +162,6 @@ const PlantRegister = () => {
     }
   };
 
-  // 식물 이별하기 - 실제 이별은 모달에서 확인 후 진행
   const handleFarewell = async () => {
     try {
       const response = await API.patch(`/user/plant/${plantId}/farewell`);
@@ -169,24 +172,28 @@ const PlantRegister = () => {
     }
   };
 
-  // 모달 열기 (삭제)
   const openDeleteModal = () => {
     setShowDeleteModal(true);
   };
 
-  // 모달 닫기 (삭제)
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
   };
 
-  // 모달 열기 (이별)
   const openFarewellModal = () => {
     setShowFarewellModal(true);
   };
 
-  // 모달 닫기 (이별)
   const closeFarewellModal = () => {
     setShowFarewellModal(false);
+  };
+
+  const closeDateErrorModal = () => {
+    setShowDateErrorModal(false); // 날짜 오류 모달 닫기
+  };
+
+  const closeNicknameErrorModal = () => {
+    setShowNicknameErrorModal(false); // 닉네임 오류 모달 닫기
   };
 
   return (
@@ -285,7 +292,7 @@ const PlantRegister = () => {
         {plantId !== 0 && (
           <Btn
             content="식물 삭제하기"
-            onClick={openDeleteModal} // 삭제 모달 열기
+            onClick={openDeleteModal} 
           />
         )}
       </div>
@@ -293,7 +300,7 @@ const PlantRegister = () => {
         {plantId !== 0 && !isFarewell && (
           <Btn
             content="식물과 이별하기"
-            onClick={openFarewellModal} // 이별 모달 열기
+            onClick={openFarewellModal} 
           />
         )}
       </div>
@@ -302,7 +309,7 @@ const PlantRegister = () => {
       <ModalConfirm
         open={showDeleteModal}
         onClose={closeDeleteModal}
-        onConfirm={handleDelete} // 삭제 확인 시 실제 삭제 함수 호출
+        onConfirm={handleDelete} 
         title="식물 삭제하기"
         content="정말 이 식물을 삭제하시겠습니까?"
         confirmText="삭제하기"
@@ -316,6 +323,22 @@ const PlantRegister = () => {
         title="식물과 이별하기"
         content="정말 이 식물과 이별하시겠습니까?"
         confirmText="이별하기"
+      />
+
+      {/* 미래 날짜 오류 모달 */}
+      <ModalComplete
+        open={showDateErrorModal}
+        onClose={closeDateErrorModal} 
+        title="생일 재설정"
+        content="날짜가 올바르지 않습니다."
+      />
+
+      {/* 닉네임 오류 모달 */}
+      <ModalComplete
+        open={showNicknameErrorModal}
+        onClose={closeNicknameErrorModal} 
+        title="닉네임 입력 필요"
+        content="식물의 닉네임을 입력해주세요."
       />
     </div>
   );

@@ -13,7 +13,6 @@ const InputField = ({ type, placeholder, value, onChange, isrequired, className,
         required={isrequired}
         className={className}
         disabled={disabled}
-        max={type === 'date' ? today : undefined}
       />
     </div>
   );
