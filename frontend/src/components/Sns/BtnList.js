@@ -19,14 +19,14 @@ import './BtnList.css';
 
 const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt, isBookmarked: initialIsBookmarked, articleId }) => {
   const navigate = useNavigate();
-  const { userData } = useAuthStore();
+  const { isLogin } = useAuthStore();
   const [likeCnt, setLikeCnt] = useState(initialLikeCnt);
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const imgStyle = { width: '24px', height: '24px' };
 
   const handleLike = async () => {
-    if (userData) {
+    if (isLogin) {
       try {
         const response = isLiked
           ? await API.delete(`/user/sns/like/${articleId}`)
@@ -42,7 +42,7 @@ const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt,
   };
 
   const handleBookmark = async () => {
-    if (userData) {
+    if (isLogin) {
       try {
         const response = isBookmarked
           ? await API.delete(`/user/sns/bookmark/${articleId}`)

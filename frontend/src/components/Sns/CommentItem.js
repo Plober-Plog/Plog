@@ -9,7 +9,7 @@ import arrow from '../../assets/icon/arrow.png'; // 화살표 아이콘 추가
 
 const CommentItem = ({ comment, handleReply, onDelete }) => {  // onDelete prop 추가
   const navigate = useNavigate();
-  const { userData } = useAuthStore();
+  const { isLogin, userData } = useAuthStore();
   const [showDeleteModal, setShowDeleteModal] = useState(false); // 모달 상태 추가
   const [deleted, setDeleted] = useState(comment.state !== 1); // 삭제된 상태인지 여부
 
@@ -69,7 +69,7 @@ const CommentItem = ({ comment, handleReply, onDelete }) => {  // onDelete prop 
           <div className="comment-content">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h4>{comment.nickname}</h4>
-              {comment.searchId === userData.searchId && (
+              {isLogin && comment.searchId === userData.searchId && (
                 <button 
                   className="comment-delete-button"
                   onClick={openDeleteModal} // 삭제 버튼 클릭 시 모달 열기
