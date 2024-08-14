@@ -123,10 +123,12 @@ public class ArticleRepositorySupport extends QuerydslRepositorySupport {
             BooleanExpression neighborCondition = neighbor.neighborFrom.user.userId.eq(userId)
                     .and(neighbor.neighborTo.user.userId.eq(article.user.userId))
                     .and(neighbor.neighborType.eq(1));
-            visibilityCondition = visibilityCondition.or(article.visibility.eq(2).and(neighborCondition));
+            visibilityCondition = article.visibility.eq(1)
+                    .or(article.visibility.eq(2).and(neighborCondition));
         }
 
-        return visibilityCondition;
+        // visibilityCondition이 null일 경우 기본값으로 true를 반환하여 필터링이 적용되지 않도록 처리
+        return visibilityCondition != null ? visibilityCondition : article.isNotNull();
     }
 
     public List<Article> loadArticleTop5List(List<Integer> tagTypeList, int orderType) {
