@@ -60,23 +60,21 @@ const Setting = () => {
         <div className="settings-box">
           <div className="settings-item" onClick={() => navigate('/password/change')}>비밀번호 변경</div>
           <div className="settings-item" onClick={() => navigate('/profileupdate')}>회원정보 수정</div>
-          <div className="settings-item">서비스 이용 동의</div>
         </div>
       </section>
-      <section className="settings-section">
+      {/* <section className="settings-section">
         <h2>일반 설정</h2>
         <div className="settings-box">
-          <div className="settings-item">푸시 알림 설정</div>
-          <div className="settings-item">뭐시기 설정</div>
+          <div className="settings-item" onClick={() => navigate('/plant/register')}>식물 등록</div>
         </div>
       </section>
       <section className="settings-section">
-        <h2>카테고리</h2>
+        <h2>이웃목록</h2>
         <div className="settings-box">
-          <div className="settings-item">카테고리 목록</div>
-          <div className="settings-item">카테고리 목록</div>
+          <div className="settings-item">팔로우 목록</div>
+          <div className="settings-item">팔로잉 목록</div>
         </div>
-      </section>
+      </section> */}
       <section className="settings-section">
         <h2>로그아웃</h2>
         <div className="settings-box">

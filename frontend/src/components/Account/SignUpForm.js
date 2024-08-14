@@ -423,8 +423,8 @@ const closeModal = () => {
             onChange={(e) => {
               const value = e.target.value
               setNickname(value)
-              if (value.length < 3 || value.length > 6) {
-                setNicknameCheckMsg('닉네임은 3~6 글자여야 합니다.');
+              if (value.length < 3 || value.length > 10) {
+                setNicknameCheckMsg('닉네임은 3~10 글자여야 합니다.');
               } else{
                 setNicknameCheckMsg('');
               }
@@ -434,6 +434,8 @@ const closeModal = () => {
           />
           {nicknameCheckMsg && <p className="account-error">{nicknameCheckMsg}</p>}
         </div>
+
+
         <div>
           <InputField
             type="date"
@@ -442,7 +444,6 @@ const closeModal = () => {
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
             className="account-input"
-            max={new Date().toISOString().split("T")[0]}
           />
         </div>
 
@@ -520,7 +521,7 @@ const closeModal = () => {
           content="회원가입"
           disabled={!isFormValid}
           onClick={handleSignUp}
-          className="account-button "
+          className="account-button"
         />
       </form>
       <ModalComplete title={'회원가입 완료'} content={'회원가입이 완료되었습니다'} open={openModal} onClose={closeModal} />

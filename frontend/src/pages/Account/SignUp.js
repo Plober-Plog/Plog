@@ -9,7 +9,7 @@ const SignUp = () => {
 
   return (
     <div className="account-container mt-20 mb-20">
-      <h1 className="account-title mt-10">회원가입</h1>
+      <h1 className="account-title mt-20">회원가입</h1>
       <div className='mb-10'>
         <SignUpForm />
       </div>
