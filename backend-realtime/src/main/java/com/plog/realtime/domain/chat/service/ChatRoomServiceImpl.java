@@ -145,7 +145,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             log.info(">>> 마지막 메시지 조회 완료 - Message: {}", lastChat != null ? lastChat.getMessage() : "메시지가 없습니다.");
             if (lastChat != null) {
 //                lastChat.getCreatedAt().atZone(ZoneId.of("Asia/Seoul"));
-                lastChat.getCreatedAt().atZone(ZoneOffset.UTC);
+                lastChat.setCreatedAt(lastChat.getCreatedAt().atZone(ZoneOffset.UTC).toLocalDateTime());
             }
 
             // 사용자가 마지막 메시지를 읽었는지 여부를 판단
@@ -155,7 +155,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             boolean isRead = false;
             if (lastChat != null && chatUser.getLastReadAt() != null) {
-                chatUser.getLastReadAt().atZone(ZoneOffset.UTC);
+                chatUser.setLastReadAt(chatUser.getLastReadAt().atZone(ZoneOffset.UTC).toLocalDateTime());
                 log.info(">>> 채팅방의 마지막 메시지와 사용자의 읽은 시간 비교 - lastChat {}, chatUser {}", lastChat.getCreatedAt(), chatUser.getLastReadAt());
                 isRead = !lastChat.getCreatedAt().isAfter(chatUser.getLastReadAt());
             }
