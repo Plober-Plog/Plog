@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -143,7 +144,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             Chat lastChat = chatRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom);
             log.info(">>> 마지막 메시지 조회 완료 - Message: {}", lastChat != null ? lastChat.getMessage() : "메시지가 없습니다.");
             if (lastChat != null) {
-                lastChat.getCreatedAt().atZone(ZoneId.of("Asia/Seoul"));
+//                lastChat.getCreatedAt().atZone(ZoneId.of("Asia/Seoul"));
+                lastChat.getCreatedAt().atZone(ZoneOffset.UTC);
             }
 
             // 사용자가 마지막 메시지를 읽었는지 여부를 판단
@@ -153,6 +155,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             boolean isRead = false;
             if (lastChat != null && chatUser.getLastReadAt() != null) {
+                chatUser.getLastReadAt().atZone(ZoneOffset.UTC);
                 log.info(">>> 채팅방의 마지막 메시지와 사용자의 읽은 시간 비교 - lastChat {}, chatUser {}", lastChat.getCreatedAt(), chatUser.getLastReadAt());
                 isRead = !lastChat.getCreatedAt().isAfter(chatUser.getLastReadAt());
             }
