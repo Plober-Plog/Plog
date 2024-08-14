@@ -106,7 +106,7 @@ const ChatListItem = ({ chatRoom, token }) => {
           <span className="chat-list-item-message">{chatRoom.lastChat.message}</span>
         </div>
         <div className="chat-list-item-info">
-          <span className="chat-list-item-date">{formatTime(chatRoom.lastChat.updatedAt)}</span>
+          <span className="chat-list-item-date">{formatTime(chatRoom.lastChat.createdAt)}</span>
           {chatRoom.read === false && (
             <span className="chat-list-item-unread">N</span>
           )}
