@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,13 +52,6 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     @Override
     public void sendMessage(ChatGetRequestDto chatGetRequestDto) {
-        Chat chat = chatRepository.save(
-                Chat.builder()
-                        .user(userRepository.getReferenceById(chatGetRequestDto.getUserId()))
-                        .chatRoom(chatRoomRepository.getReferenceById(chatGetRequestDto.getChatRoomId()))
-                        .message(chatGetRequestDto.getMessage())
-                        .build()
-        );
         ChatUser chatUser = chatUserRepository.findFirstByUserAndChatRoom(
                 userRepository.getReferenceById(chatGetRequestDto.getUserId()),
                 chatRoomRepository.getReferenceById(chatGetRequestDto.getChatRoomId())
@@ -71,7 +65,13 @@ public class ChatServiceImpl implements ChatService {
         chatGetRequestDto.setNickname(chatUser.getUser().getNickname());
         chatGetRequestDto.setSearchId(chatUser.getUser().getSearchId());
         chatGetRequestDto.setCreatedAt(chatGetRequestDto.getCreatedAt());
-
+        chatRepository.save(
+                Chat.builder()
+                        .user(userRepository.getReferenceById(chatGetRequestDto.getUserId()))
+                        .chatRoom(chatRoomRepository.getReferenceById(chatGetRequestDto.getChatRoomId()))
+                        .message(chatGetRequestDto.getMessage())
+                        .build()
+        );
         log.info(" >>> sendMessage 완료 - DB에 저장: {}", chatGetRequestDto.getUserId());
         String topicName = "chatroom-" + chatGetRequestDto.getChatRoomId();
         redisTemplate.convertAndSend(topicName, chatGetRequestDto);
@@ -102,7 +102,7 @@ public class ChatServiceImpl implements ChatService {
                 chat.getUser().getImage().getImageUrl(),
                 chat.getUser().getSearchId(),
                 chat.getMessage(),
-                chat.getCreatedAt().toString()
+                chat.getCreatedAt().atZone(ZoneOffset.UTC).toString()
         )).collect(Collectors.toList());
     }
 }
