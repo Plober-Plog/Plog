@@ -88,7 +88,7 @@ public class ChatController {
         log.info(" >>> getChatData: " + chatRoomId);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         List<ChatGetResponseDto> chatGetResponseDtoList = chatService.getChatData(userId, chatRoomId, page);
-        log.info(chatGetResponseDtoList.get(0).getMessage());
+        log.info(chatGetResponseDtoList.get(0).toString());
         return ResponseEntity.status(200).body(chatGetResponseDtoList);
     }
 }
