@@ -28,7 +28,6 @@ import PlantDetail from './pages/Plant/PlantDetail';
 import PlantRegister from './pages/Plant/PlantRegister';
 import PlantGuide from './pages/Plant/PlantGuide';
 import PlantReport from './pages/Plant/PlantReport';
-import ApiTest from './pages/Plant/ApiTest';
 // Profile
 import UserProfile from './pages/Profile/UserProfile';
 import Neighbor from './pages/Profile/Neighbor';

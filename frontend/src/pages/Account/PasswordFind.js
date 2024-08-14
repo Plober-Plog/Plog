@@ -5,9 +5,10 @@ import axios from 'axios';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Common/InputField';
-import ATag from '../../components/Common/ATag';
 
 const PasswordFind = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const navigate = useNavigate();
   // input fields
   const [email, setEmail] = useState('');
   const [emailVerificationInput, setEmailVerificationInput] = useState('');
@@ -19,8 +20,6 @@ const PasswordFind = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false); // 인증완료 여부
   const [userId, setUserId] = useState(null);
 
-  const URI = 'https://i11b308.p.ssafy.io/api'
-  const navigate = useNavigate();
 
 
   // 인증코드 타이머 설정
@@ -47,7 +46,7 @@ const PasswordFind = () => {
     }
 
     try {
-      const response = await axios.post(`${URI}/user/password/send`, { email });
+      const response = await axios.post(`${API_BASE_URL}/user/password/send`, { email });
       if (response.data) {
         setIsEmailVerificationSent(true);
         setTimer(300); // 5분 타이머
@@ -66,7 +65,7 @@ const PasswordFind = () => {
   // 이메일 인증 코드 확인
   const handleCodeVerification = async () => {
     try {
-      const response = await axios.post(`${URI}/user/password/check`, { email, verifyCode: emailVerificationInput });
+      const response = await axios.post(`${API_BASE_URL}/user/password/check`, { email, verifyCode: emailVerificationInput });
       console.log(response.data);
       if (response.data.result) {
         setIsEmailVerified(true);

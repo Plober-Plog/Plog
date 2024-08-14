@@ -11,3 +11,4 @@ REACT_APP_WEB_PUSH_CERTIFICATE_KEY=BB8Z8iywxZJWv4nKaKeLLLgmCXc2rXSb6Ps2K8UUytCRv
 
 # api 요청 url
 REACT_APP_API_BASE_URL=https://i11b308.p.ssafy.io/api
+REACT_APP_REALTIME_BASE_URL=https://i11b308.p.ssafy.io/realtime

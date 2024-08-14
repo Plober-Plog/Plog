@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../utils/cookieUtils';
 import ChatListItem from '../../components/Chat/ChatListItem';
 
-const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
+const API_REALTIME_URL = process.env.REACT_APP_REALTIME_BASE_URL;
 
 const ChatRoomList = () => {
   const navigate = useNavigate();

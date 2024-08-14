@@ -5,7 +5,7 @@ import './ChatListItem.css'; // Import the CSS file
 
 const ChatListItem = ({ chatRoom, token }) => {
   const navigate = useNavigate();
-  const API_REALTIME_URL = "https://i11b308.p.ssafy.io/realtime";
+  const API_REALTIME_URL = process.env.REACT_APP_REALTIME_BASE_URL;
   const [isSlid, setIsSlid] = useState(false);
 
   const handleEnterChatRoom = async (chatRoomId, chatRoomName) => {

@@ -10,11 +10,12 @@ const Alarm = () => {
   const [page, setPage] = useState(0);
   const [hasMoreAlarms, setHasMoreAlarms] = useState(true); // 추가된 상태
   const searchId = useAuthStore((state) => state.getSearchId());
+  const API_REALTIME_URL = process.env.REACT_APP_REALTIME_BASE_URL;
 
   useEffect(() => {
     const fetchAlarms = async () => {
       try {
-        const response = await axios.get('https://i11b308.p.ssafy.io/realtime/notification/history', {
+        const response = await axios.get(`${API_REALTIME_URL}/notification/history`, {
           params: { searchId, page },
         });
         console.log(response.data)

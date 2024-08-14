@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { getCookie, setCookie, eraseCookie } from '../utils/cookieUtils';
 import useAuthStore from '../stores/member';
 
-const API = axios.create({
-  baseURL: 'https://i11b308.p.ssafy.io/api',
-});
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+const API = axios.create({
+  baseURL: API_BASE_URL,
+});
 
 // 토큰 인터셉터
 API.interceptors.request.use(
@@ -38,7 +39,7 @@ API.interceptors.response.use(
         // 리프레시 토큰 있으면 엑세스 토큰 다시 저장
         const refreshToken = getCookie('refreshToken');
         console.log(refreshToken);
-        const refreshTokenResponse = await axios.post('https://i11b308.p.ssafy.io/api/auth/refresh', { refreshToken });
+        const refreshTokenResponse = await axios.post(`${API_BASE_URL}/auth/refresh`, { refreshToken });
         console.log('새토큰 발급 완료!')
         const newAccessToken = refreshTokenResponse.data.split(' : ')[1];
         console.log(newAccessToken);
