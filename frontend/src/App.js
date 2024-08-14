@@ -124,7 +124,7 @@ function App() {
 // sns 들어가면 댓글작성 footer 출력
 const FooterWithCondition = () => {
   const location = useLocation();
-  const isSnsDetailPage = location.pathname.startsWith('/sns/');
+  const isSnsDetailPage = location.pathname.startsWith('/sns/') && location.pathname !== '/sns/write';
   const isChatDetailPage = location.pathname.startsWith('/chat/');
 
   return (
@@ -133,6 +133,7 @@ const FooterWithCondition = () => {
     </footer>
   );
 }
+
 
 
 export default App;
