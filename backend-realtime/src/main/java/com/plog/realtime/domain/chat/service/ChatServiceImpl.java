@@ -102,7 +102,7 @@ public class ChatServiceImpl implements ChatService {
                 chat.getUser().getImage().getImageUrl(),
                 chat.getUser().getSearchId(),
                 chat.getMessage(),
-                chat.getCreatedAt()
+                chat.getCreatedAt().toString()
         )).collect(Collectors.toList());
     }
 }
