@@ -55,21 +55,17 @@ const FooterCmt = ({ articleId, profile, setCommentList, selectedParentId, setSe
         {profile && <img src={profile} alt="profile" className="footercmt-img" />}
       </div>
       <form onSubmit={handleCmtWrite} className="footercmt-form">
-        <div>
-          <input
-            type="text"
-            placeholder="댓글을 작성하세요"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            ref={inputRef}
-            className="footercmt-input"
-          />
-        </div>
-        <div>
-          <button type="submit" className="footercmt-button">
-            <img src={send} alt="send 아이콘" className="footercmt-icon" />
-          </button>
-        </div>
+        <input
+          type="text"
+          placeholder="댓글을 작성하세요"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          ref={inputRef}
+          className="footercmt-input"
+        />
+        <button type="submit" className="footercmt-button">
+          <img src={send} alt="send 아이콘" className="footercmt-icon" />
+        </button>
       </form>
     </div>
   );
