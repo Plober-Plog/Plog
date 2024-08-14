@@ -348,7 +348,7 @@ public class WeatherServiceImpl implements WeatherService {
                 updateAllWeatherForecast();
         }catch(Exception e){
             log.error("날씨 데이터 조회 중 에러 발생", e);
-            throw new WeatherUpdateException("날씨 데이터 조회 중 에러 발생, 1분 뒤 재실행행", e);
+            throw new WeatherUpdateException("날씨 데이터 조회 중 에러 발생, 1분 뒤 재실행");
         }
     }
 
