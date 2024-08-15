@@ -378,8 +378,8 @@ useEffect(() => {
             />
             <InputField 
               type="number"
-              value={temperature}
-              onChange={(e) => setIsTemperature(Number(e.target.value))}
+              value={temperature.toFixed(1)}  
+              onChange={(e) => setIsTemperature(Number(parseFloat(e.target.value).toFixed(1)))}  
             />
           </div>
         </div>
