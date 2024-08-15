@@ -27,7 +27,7 @@ const PlantDetail = () => {
       try {
         const response = await API.get(`/user/plant/${plantId}/info`);
 
-        const displayPlantTypeName = response.data.plantTypeName === 'Dummy'
+        const displayPlantTypeName = response.data.plantTypeName === '기타'
           ? response.data.otherPlantTypeName
           : response.data.plantTypeName;
 

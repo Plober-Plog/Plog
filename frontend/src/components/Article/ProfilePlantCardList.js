@@ -50,8 +50,7 @@ const ProfilePlantCardList = ({ plants, searchId }) => {
   return (
     <div className='profile-plant-card-list'>
       {plants.map((plant) => {
-        // "Dummy"인 경우 otherPlantTypeName을 사용
-        const displayPlantTypeName = plant.plantTypeName === 'Dummy' ? plant.otherPlantTypeName : plant.plantTypeName;
+        const displayPlantTypeName = plant.plantTypeName === '기타' ? plant.otherPlantTypeName : plant.plantTypeName;
 
         return (
           <ProfilePlantCard

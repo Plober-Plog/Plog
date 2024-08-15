@@ -6,8 +6,6 @@ const ProfileHeader = ({ data = {}, type }) => {
 
   const profileData = {}
 
-  // const title = data.plantTypeName === 'Dummy' ? data.otherPlantTypeName : data.plantTypeName;
-
   if (type === 'plant') {
     console.log('ProfileHeader Data:', data)
     profileData.imgSrc = data.profile || '';
