@@ -49,7 +49,7 @@ const PlantReport = () => {
   const proxyUrl2 = proxyUrl(normalUrl2);
   const proxyImageUrls = [proxyUrl1, proxyUrl2];
 
-  const reportContent = `기간 동안 물 준 횟수 ${plantData.fertilizeData}번 💧\n 
+  const reportContent = `기간 동안 물 준 횟수 ${plantData.waterData}번 💧\n 
   기간 동안 영양제 준 횟수 ${plantData.fertilizeData}번💊\n
   기간 동안 분갈이 횟수 ${plantData.repotData}번🌱\n
   \n
