@@ -30,14 +30,14 @@ const SocialLogin = () => {
   return (
     <div className="social-login">
       <p>간편로그인</p>
-      <div className="social-buttons">
-        <button className="social-button" onClick={handleGoogleLogin}>
+      <div className="social-buttons flex-col">
+        <button className="social-button justify-center" onClick={handleGoogleLogin}>
           <img src={google} alt="구글" className="social-icon" />
         </button>
-        <button className="social-button" onClick={handleKakaoLogin}>
+        <button className="social-button hidden" onClick={handleKakaoLogin}>
           <img src={kakao} alt="카카오" className="social-icon" />
         </button>
-        <button className="social-button" onClick={handleNaverLogin}>
+        <button className="social-button hidden" onClick={handleNaverLogin}>
           <img src={naver} alt="네이버" className="social-icon" />
         </button>
       </div>
