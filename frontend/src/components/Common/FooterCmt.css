@@ -1,0 +1,67 @@
+.footercmt-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+  border-top: 1px solid #e7e7e7;
+  width: 100%;
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+.footercmt-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.footercmt-form {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.footercmt-input {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.footercmt-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.footercmt-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* 반응형 디자인을 위한 미디어 쿼리 */
+@media screen and (max-width: 600px) {
+  .footercmt-container {
+    padding: 8px;
+  }
+
+  .footercmt-input {
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  .footercmt-icon {
+    width: 20px;
+    height: 20px;
+  }
+}

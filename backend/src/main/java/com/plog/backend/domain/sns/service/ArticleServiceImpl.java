@@ -5,6 +5,7 @@ import com.plog.backend.domain.image.repository.ArticleImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.sns.dto.request.ArticleAddRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleGetListRequestDto;
+import com.plog.backend.domain.sns.dto.request.ArticleGetTop5ListRequestDto;
 import com.plog.backend.domain.sns.dto.request.ArticleUpdateRequestDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
 import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
@@ -15,7 +16,7 @@ import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;  
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,14 +39,11 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepositorySupport articleRepositorySupport;
     private final ArticleImageRepository articleImageRepository;
     private final ArticleBookmarkRepositorySupport articleBookmarkRepositorySupport;
-
-    //TODO [강윤서] - 임시 이미지 url
-    private final String tempImageUrl = "https://plogbucket.s3.ap-northeast-2.amazonaws.com/free-icon-sprout-267205.png";
     private final ArticleLikeRepository articleLikeRepository;
     private final ImageServiceImpl imageService;
     private final ArticleCommentRepository articleCommentRepository;
-    private final ArticleBookmarkRepository articleBookmarkRepository;
     private final ArticleLikeRepositorySupport articleLikeRepositorySupport;
+    private final ArticleCommentRepositorySupport articleCommentRepositorySupport;
 
     @Override
     public List<TagType> getTagTypeList() {
@@ -95,10 +93,13 @@ public class ArticleServiceImpl implements ArticleService {
             List<String> articleImageList = imageService.loadImagUrlsByArticleId(articleId);
             log.info(">>> getArticle - 게시글 조회 완료 : id {}", articleId);
             int likeCnt = articleLikeRepository.countByArticleArticleId(articleId);
+            int commentCnt = articleCommentRepositorySupport.findCommentCountByArticle(article.get());
             boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, articleId);
             boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(userId, articleId);
             return ArticleGetResponseDto.builder()
                     .searchId(article.get().getUser().getSearchId())
+                    .nickname(article.get().getUser().getNickname())
+                    .profile(article.get().getUser().getImage().getImageUrl())
                     .articleId(article.get().getArticleId())
                     .content(article.get().getContent())
                     .view(article.get().getView())
@@ -106,8 +107,10 @@ public class ArticleServiceImpl implements ArticleService {
                     .visibility(article.get().getVisibility())
                     .images(articleImageList)
                     .likeCnt(likeCnt)
+                    .commentCnt(commentCnt)
                     .isLiked(isLiked)
                     .isBookmarked(isBookmarked)
+                    .createdAt(article.get().getCreatedAt().plusHours(9))
                     .build();
         } else {
             throw new EntityNotFoundException("게시글을 조회할 수 없습니다.");
@@ -120,18 +123,79 @@ public class ArticleServiceImpl implements ArticleService {
         String searchId = articleGetListRequestDto.getSearchId();
         List<Integer> tagTypeList = articleGetListRequestDto.getTagType();
         String keyword = articleGetListRequestDto.getKeyword();
+        long userId = articleGetListRequestDto.getUserId(); // 사용자 ID
+        int neighborType = articleGetListRequestDto.getNeighborType() == 0 ? 0 : articleGetListRequestDto.getNeighborType(); // 이웃 타입
+        int orderType = articleGetListRequestDto.getOrderType(); // 정렬 타입 / 0:최신순 / 1:좋아요순
 
-        List<Article> articleList = articleRepositorySupport.loadArticleList(page, searchId, tagTypeList, keyword);
+        log.info(">>> getArticleList - page: {}, searchId: {}, tagTypeList: {}, keyword: {}, userId: {}, neighborType: {}, orderType: {}",
+                page, searchId, tagTypeList, keyword, userId, neighborType, orderType);
+
+        List<Article> articleList = articleRepositorySupport.loadArticleList(page, searchId, tagTypeList, keyword, userId, neighborType, orderType);
+
+        log.info(">>> getArticleList - Retrieved {} articles from the repository", articleList.size());
+
+        List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = new ArrayList<>();
+        for (Article article : articleList) {
+            List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
+            int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
+            int commentCnt = articleCommentRepository.countByArticleArticleIdAndState(article.getArticleId(), 1);
+            boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, article.getArticleId());
+            boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(userId, article.getArticleId());
+
+            log.info(">>> getArticleList - Processing articleId: {}, likeCnt: {}, commentCnt: {}, isBookmarked: {}",
+                    article.getArticleId(), likeCnt, commentCnt, isBookmarked);
+
+            articleGetSimpleResponseDtoList.add(
+                    ArticleGetSimpleResponseDto.builder()
+                            .articleId(article.getArticleId())
+                            .image(articleImageList.isEmpty() ? null : articleImageList.get(0)) // 첫 번째 사진의 url 전달
+                            .likeCnt(likeCnt)
+                            .view(article.getView())
+                            .nickname(article.getUser().getNickname())
+                            .searchId(article.getUser().getSearchId())
+                            .profile(article.getUser().getImage().getImageUrl())
+                            .createdAt(article.getCreatedAt().plusHours(9))
+                            .commentCnt(commentCnt)
+                            .isLiked(isLiked)
+                            .isBookmarked(isBookmarked)
+                            .content(article.getContent())
+                            .build()
+            );
+        }
+
+        log.info(">>> getArticleList - Finished processing articles, total processed: {}", articleGetSimpleResponseDtoList.size());
+
+        return articleGetSimpleResponseDtoList;
+    }
+
+    @Override
+    public List<ArticleGetSimpleResponseDto> getArticleTop5List(ArticleGetTop5ListRequestDto articleGetTop5ListRequestDto) {
+        List<Integer> tagTypeList = articleGetTop5ListRequestDto.getTagType();
+        int orderType = articleGetTop5ListRequestDto.getOrderType(); // 정렬 타입 / 0:최신순 / 1:좋아요순
+
+        log.info(">>> getArticleList - tagTypeList: {}, orderType: {}",
+                tagTypeList, orderType);
+
+
+
+        List<Article> articleList = articleRepositorySupport.loadArticleTop5List(tagTypeList, orderType);
+
+        log.info(">>> getArticleTop5List - Retrieved {} articles from the repository", articleList.size());
+
         List<ArticleGetSimpleResponseDto> articleGetSimpleResponseDtoList = new ArrayList<>();
         for (Article article : articleList) {
             List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
             int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
             int commentCnt = articleCommentRepository.countByArticleArticleId(article.getArticleId());
-            boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(articleGetListRequestDto.getUserId(), article.getArticleId());
+            boolean isBookmarked = articleBookmarkRepositorySupport.isBookmarkedByUser(articleGetTop5ListRequestDto.getUserId(), article.getArticleId());
+
+            log.info(">>> getArticleTop5List - Processing articleId: {}, likeCnt: {}, commentCnt: {}, isBookmarked: {}",
+                    article.getArticleId(), likeCnt, commentCnt, isBookmarked);
+
             articleGetSimpleResponseDtoList.add(
                     ArticleGetSimpleResponseDto.builder()
                             .articleId(article.getArticleId())
-                            .image(articleImageList.size() == 0 ? null : articleImageList.get(0)) // 첫 번째 사진의 url 전달
+                            .image(articleImageList.isEmpty() ? null : articleImageList.get(0)) // 첫 번째 사진의 url 전달
                             .likeCnt(likeCnt)
                             .view(article.getView())
                             .nickname(article.getUser().getNickname())
@@ -141,8 +205,12 @@ public class ArticleServiceImpl implements ArticleService {
                             .build()
             );
         }
+
+        log.info(">>> getArticleTop5List - Finished processing articles, total processed: {}", articleGetSimpleResponseDtoList.size());
+
         return articleGetSimpleResponseDtoList;
     }
+
 
     @Transactional
     @Override

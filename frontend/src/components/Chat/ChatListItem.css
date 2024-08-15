@@ -1,0 +1,94 @@
+.chat-list-item-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-list-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  background-color: #fff;
+}
+
+.chat-list-item:hover {
+  background-color: #f9f9f9;
+}
+
+.chat-list-item-avatar {
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.chat-list-item-avatar img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.chat-list-item-content {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.chat-list-item-name {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-list-item-message {
+  display: block;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-list-item-info {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.chat-list-item-date {
+  display: block;
+  font-size: 10px;
+  color: #aaa;
+  margin-bottom: 5px;
+}
+
+.chat-list-item-unread {
+  display: inline-block;
+  background-color: #FF8C8C;
+  color: #fff;
+  border-radius: 50%;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.chat-delete-button {
+  position: absolute;
+  top: 0;
+  right: -100px; /* 삭제 버튼을 초기에는 화면 밖으로 숨김 */
+  height: 100%;
+  background-color: #FF8C8C;
+  color: white;
+  border: none;
+  padding: 0 20px;
+  cursor: pointer;
+  transition: right 0.3s ease;
+}
+
+.chat-list-item-container.slide-left .chat-list-item {
+  transform: translateX(-100px); /* 슬라이드할 때 아이템을 왼쪽으로 이동 */
+}
+
+.chat-list-item-container.slide-left .chat-delete-button {
+  right: 0; /* 슬라이드 시 삭제 버튼을 보이게 함 */
+}

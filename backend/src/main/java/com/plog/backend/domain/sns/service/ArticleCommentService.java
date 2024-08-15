@@ -11,6 +11,6 @@ import java.util.List;
 public interface ArticleCommentService {
     void addArticleComment(String token, ArticleCommentAddRequestDto articleCommentAddRequestDto);
     void updateArticleComment(String token, ArticleCommentUpdateRequestDto articleCommentUpdateRequestDto);
-    void deleteArticleComment(String token, ArticleCommentDeleteRequestDto articleCommentDeleteRequestDto);
-    List<List<ArticleCommentGetResponse>> getArticleComments(Long articleId);
+    void deleteArticleComment(String token, Long commentId);
+    List<ArticleCommentGetResponse> getArticleComments(Long articleId, int page);
 }

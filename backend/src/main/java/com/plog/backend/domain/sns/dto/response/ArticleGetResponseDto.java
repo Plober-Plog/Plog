@@ -6,6 +6,7 @@ import com.plog.backend.domain.sns.entity.Visibility;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -23,6 +24,10 @@ public class ArticleGetResponseDto {
     @Schema(description = "사용자 searchId", example = "test")
     private String searchId;
 
+    private String nickname;
+
+    private String profile;
+
     @Schema(description = "게시글 내용", example = "오늘은 날씨가 좋네요.")
     private String content;
 
@@ -31,6 +36,9 @@ public class ArticleGetResponseDto {
 
     @Schema(description = "게시글에 달린 좋아요 수", example = "101")
     private int likeCnt;
+
+    @Schema(description = "게시글에 달린 댓글 수", example = "21")
+    private int commentCnt;
 
     @Schema(description = "로그인한 회원이 해당 게시글에 좋아요를 눌렀는가", example = "false")
     @JsonProperty("isLiked")
@@ -48,4 +56,6 @@ public class ArticleGetResponseDto {
 
     @Schema(description = "태그 타입 목록")
     private List<TagType> tagTypeList;
+
+    private LocalDateTime createdAt;
 }

@@ -26,4 +26,16 @@ public class ArticleLikeRepositorySupport extends QuerydslRepositorySupport {
 
         return count > 0;
     }
+
+    // articleId로 해당 게시글의 좋아요 개수를 조회하는 메서드
+    public int countLikesByArticleId(Long articleId) {
+        QArticleLike qArticleLike = QArticleLike.articleLike;
+
+        int count = (int) queryFactory
+                .selectFrom(qArticleLike)
+                .where(qArticleLike.article.articleId.eq(articleId))
+                .fetchCount();
+
+        return count;
+    }
 }

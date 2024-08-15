@@ -6,9 +6,12 @@ import com.plog.backend.domain.user.dto.request.*;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
+import com.plog.backend.domain.user.dto.response.UserPushResponseDto;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.exception.InvalidEmailFormatException;
 import com.plog.backend.domain.user.service.UserServiceImpl;
+import com.plog.backend.global.exception.EntityNotFoundException;
+import com.plog.backend.global.exception.NoTokenRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
@@ -36,6 +39,7 @@ public class UserController {
 
     private static final String EMAIL_PATTERN =
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    private static final int NICKNAME_MAX_LENGTH = 6;
 
     @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping
@@ -65,6 +69,10 @@ public class UserController {
             log.error(">>> [POST] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
         }
+        if(userSignUpRequestDto.getNickname().length() > NICKNAME_MAX_LENGTH) {
+            log.error(">>> [POST] /user - 닉네임은 최대 {}자 입니다.", NICKNAME_MAX_LENGTH);
+            throw new NotValidRequestException("닉네임은 최대 " + NICKNAME_MAX_LENGTH + "자 입니다.");
+        }
 
         // 프로필 이미지를 처리하는 로직 추가
         String[] profileImageUrl = null;
@@ -82,12 +90,21 @@ public class UserController {
 
     @Operation(summary = "회원 수정", description = "회원 정보를 수정합니다.")
     @PatchMapping
-    public ResponseEntity<BaseResponseBody> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+    public ResponseEntity<BaseResponseBody> updateUser(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestPart(value = "userUpdateRequestDto") UserUpdateRequestDto userUpdateRequestDto,
+            @RequestPart(value = "profile", required = false) MultipartFile[] profile) {
         log.info(">>> [PATCH] /user - 회원 수정 요청 데이터: {}", userUpdateRequestDto);
 
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         if(userUpdateRequestDto.getNickname() == null || userUpdateRequestDto.getNickname().trim().isEmpty()) {
             log.error(">>> [PATCH] /user - 닉네임이 필수 필드입니다.");
             throw new NotValidRequestException("닉네임은 필수 입력 값입니다.");
+        }
+        if(userUpdateRequestDto.getNickname().length() > NICKNAME_MAX_LENGTH) {
+            log.error(">>> [PATCH] /user - 닉네임은 최대 {}자 입니다.", NICKNAME_MAX_LENGTH);
+            throw new NotValidRequestException("닉네임은 최대 " + NICKNAME_MAX_LENGTH + "자 입니다.");
         }
 
         if(userUpdateRequestDto.getSearchId() == null || userUpdateRequestDto.getSearchId().trim().isEmpty()) {
@@ -100,7 +117,7 @@ public class UserController {
             log.info(">>> [PATCH] /user - Bearer 제거 후 토큰: {}", token);
         }
 
-        User user = userService.updateUser(token, userUpdateRequestDto);
+        User user = userService.updateUser(token, userUpdateRequestDto, profile);
         log.info(">>> [PATCH] /user - 회원 수정 완료: {}", user);
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 정보 수정이 완료되었습니다."));
@@ -140,7 +157,7 @@ public class UserController {
     public ResponseEntity<?> signIn(@RequestBody UserSignInRequestDto userSignInRequestDto) {
         log.info(">>> [POST] /user/login - 로그인 요청 데이터: {}", userSignInRequestDto);
         try {
-            Map<String, String> tokens = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword());
+            Map<String, String> tokens = userService.userSignIn(userSignInRequestDto.getEmail(), userSignInRequestDto.getPassword(), userSignInRequestDto.getNotificationToken());
             log.info(">>> [POST] /user/login - 로그인 성공, 토큰: {}", tokens);
             return ResponseEntity.status(200).body(tokens);
         } catch (Exception e) {
@@ -151,7 +168,9 @@ public class UserController {
 
     @Operation(summary = "로그아웃", description = "로그아웃을 처리하고 Redis에서 토큰을 삭제합니다.")
     @GetMapping("/logout")
-    public ResponseEntity<BaseResponseBody> logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<BaseResponseBody> logout(@RequestHeader(value = "Authorization", required = false) String token) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [GET] /user/logout - 로그아웃 요청: {}", token);
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
@@ -164,7 +183,10 @@ public class UserController {
 
     @Operation(summary = "회원 정보 조회", description = "회원 정보를 조회합니다.")
     @GetMapping
-    public ResponseEntity<UserGetResponseDto> getUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<UserGetResponseDto> getUser(@RequestHeader(value = "Authorization", required = false) String token) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
+        log.info(">>> [GET] /user/logout - 로그아웃 요청: {}", token);
         log.info(">>> [GET] /user - 회원 정보 조회 요청: {}", token);
         UserGetResponseDto userGetResponseDto = userService.getUser(token);
         log.info(">>> [GET] /user - 회원 정보 조회 완료: {}", userGetResponseDto);
@@ -173,7 +195,9 @@ public class UserController {
 
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 처리합니다.")
     @DeleteMapping
-    public ResponseEntity<BaseResponseBody> deleteUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<BaseResponseBody> deleteUser(@RequestHeader(value = "Authorization", required = false) String token) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [DELETE] /user - 회원 탈퇴 요청: {}", token);
 
         userService.deleteUser(token);
@@ -184,7 +208,9 @@ public class UserController {
 
     @Operation(summary = "현재 비밀번호 확인", description = "현재 비밀번호를 확인합니다.")
     @PostMapping("/password")
-    public ResponseEntity<UserCheckPasswordResponseDto> checkPassword(@RequestHeader("Authorization") String token, @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+    public ResponseEntity<UserCheckPasswordResponseDto> checkPassword(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody UserPasswordCheckRequestDto userPasswordCheckRequestDto) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [POST] /user/password - 현재 비밀번호 확인 요청 : {}", token);
         UserCheckPasswordResponseDto userCheckPasswordResponseDto = userService.checkPassword(token, userPasswordCheckRequestDto);
         log.info(">>> [POST] /user/password - 비밀번호 확인 결과: {}", userCheckPasswordResponseDto);
@@ -210,7 +236,9 @@ public class UserController {
 
     @Operation(summary = "내 프로필 조회", description = "내 프로필을 조회합니다.")
     @GetMapping("/my-profile")
-    public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<UserProfileResponseDto> getMyProfile(@RequestHeader(value = "Authorization", required = false) String token) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         UserProfileResponseDto responseDto = userService.getMyProfile(token);
         log.info(">>> 내 프로필 조회 반환값 : {}",responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -230,5 +258,38 @@ public class UserController {
         UserGetResponseDto responseDto = userService.getUser(email);
         log.info(">>> 상대 프로필 조회, 이메일, 반환값 : {}, {}", email, responseDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @Operation(summary = "회원 푸시 정보 조회", description = "회원 푸시 정보를 조회합니다.")
+    @GetMapping("/push")
+    public ResponseEntity<UserPushResponseDto> getPushUser(@RequestHeader(value = "Authorization", required = false) String token) {
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
+        log.info(">>> [GET] /user/logout - 로그아웃 요청: {}", token);
+        log.info(">>> [GET] /user - 회원 푸시 정보 조회 요청: {}", token);
+        UserPushResponseDto userPushResponseDto = userService.getPushUser(token);
+        log.info(">>> [GET] /user - 회원 푸시 정보 조회 완료: {}", userPushResponseDto);
+        return ResponseEntity.status(200).body(userPushResponseDto);
+    }
+
+    @Operation(summary = "회원 푸시 수정", description = "회원 푸시 정보를 수정합니다.")
+    @PatchMapping("/push")
+    public ResponseEntity<BaseResponseBody> updatePushUser(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody UserPushRequestDto userPushRequestDto) {
+        log.info(">>> [PATCH] /user - 회원 푸시 수정 요청 데이터: {}", userPushRequestDto);
+
+        if(token == null)
+            throw new NoTokenRequestException("Access 토큰이 필요합니다.");
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            log.info(">>> [PATCH] /user - Bearer 제거 후 토큰: {}", token);
+        }
+
+        User user = userService.updatePushUser(token, userPushRequestDto);
+        log.info(">>> [PATCH] /user - 회원 푸시 수정 완료: {}", user);
+
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 푸시 정보 수정이 완료되었습니다."));
     }
 }

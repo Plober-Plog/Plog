@@ -16,4 +16,7 @@ public interface NeighborRepository extends JpaRepository<Neighbor, Long> {
     List<Neighbor> findByNeighborTo(User neighborTo);
     int countByNeighborFrom(User neighborFrom);
     int countByNeighborTo(User neighborTo);
+    List<Neighbor> findByNeighborFromAndNeighborTypeIn(User neighborFrom, List<Integer> neighborTypes);
+    List<Neighbor> findByNeighborToAndNeighborTypeIn(User neighborTo, List<Integer> neighborTypes);
+
 }

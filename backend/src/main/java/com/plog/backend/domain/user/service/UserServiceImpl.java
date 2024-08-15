@@ -2,13 +2,12 @@ package com.plog.backend.domain.user.service;
 
 import com.plog.backend.domain.image.entity.Image;
 import com.plog.backend.domain.image.repository.ImageRepository;
-import com.plog.backend.domain.user.dto.request.UserPasswordCheckRequestDto;
-import com.plog.backend.domain.user.dto.request.UserPasswordUpdateRequestDto;
-import com.plog.backend.domain.user.dto.request.UserUpdateRequestDto;
-import com.plog.backend.domain.user.dto.request.UserSignUpRequestDto;
+import com.plog.backend.domain.image.service.ImageServiceImpl;
+import com.plog.backend.domain.user.dto.request.*;
 import com.plog.backend.domain.user.dto.response.UserCheckPasswordResponseDto;
 import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
+import com.plog.backend.domain.user.dto.response.UserPushResponseDto;
 import com.plog.backend.domain.user.entity.*;
 import com.plog.backend.global.exception.DuplicateEntityException;
 import com.plog.backend.domain.user.repository.UserRepository;
@@ -16,17 +15,20 @@ import com.plog.backend.domain.user.repository.UserRepositorySupport;
 import com.plog.backend.global.auth.JwtTokenProvider;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotValidRequestException;
+import com.plog.backend.global.model.response.BaseResponseBody;
 import com.plog.backend.global.util.JwtTokenUtil;
 import com.plog.backend.global.util.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenUtil jwtTokenUtil;
     private final RedisUtil redisUtil;
     private final ImageRepository imageRepository;
+    private final ImageServiceImpl imageService;
 
     @Override
     public User getUserBySearchId(String searchId) {
@@ -57,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserGetResponseDto getUser(String token) {
-        log.info(">>> getUser - 토큰: {}", token);
+
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> getUser - 추출된 사용자 ID: {}", userId);
         User user = userRepository.findById(userId).orElseThrow(() -> {
@@ -81,7 +84,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    public Map<String, String> userSignIn(String email, String password) {
+    public Map<String, String> userSignIn(String email, String password, String notificationToken) {
         log.info(">>> [USER SIGN IN] - 사용자 로그인 요청: 이메일 = {}", email);
 
         // 이메일로 사용자 찾기
@@ -127,13 +130,24 @@ public class UserServiceImpl implements UserService {
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
 
+        user.setNotificationToken(notificationToken);
+        userRepository.save(user);
+        log.info(">>> [USER SIGN IN] - notification 토큰 DB에 업데이트 완료: {}", notificationToken);
+
         return tokens;
     }
 
     public void userSignOut(String token) {
         log.info(">>> [USER SIGN OUT] - 사용자 로그아웃 요청: 토큰 = {}", token);
 
-        String userId = jwtTokenProvider.getPayload(token, null);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+
+        // FCM 토큰 null로 변경
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setNotificationToken(null); // FCM 토큰을 null로 변경
+        userRepository.save(user); // 변경된 내용을 DB에 저장
 
         redisUtil.deleteData("accessToken:" + userId);
         redisUtil.deleteData("refreshToken:" + userId);
@@ -160,7 +174,7 @@ public class UserServiceImpl implements UserService {
                 .gender(userSignUpRequestDto.getGender())
                 .role(Role.USER.getValue())
                 .state(State.ACTIVTE.getValue())
-                .profileInfo("안녕하세용")
+                .profileInfo("안녕하세요!")
                 .isAd(userSignUpRequestDto.isAd())
                 .nickname(userSignUpRequestDto.getNickname())
                 .totalExp(0)
@@ -168,8 +182,8 @@ public class UserServiceImpl implements UserService {
                 .chatAuth(ChatAuth.PUBLIC.getValue())
                 .searchId(userSignUpRequestDto.getSearchId())
                 .password(passwordEncoder.encode(userSignUpRequestDto.getPassword()))
-                .sidoCode(userSignUpRequestDto.getSidoCode().hashCode())
-                .gugunCode(userSignUpRequestDto.getGugunCode().hashCode())
+                .sidoCode(userSignUpRequestDto.getSidoCode())
+                .gugunCode(userSignUpRequestDto.getGugunCode())
                 .source(userSignUpRequestDto.getSource())
                 .birthDate(userSignUpRequestDto.getBirthDate())
                 .build();
@@ -199,14 +213,24 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User updateUser(String token, UserUpdateRequestDto request) {
+    public User updateUser(String token, UserUpdateRequestDto request, MultipartFile[] profile) {
         log.info(">>> updateUser - 토큰: {}, 요청 데이터: {}", token, request);
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> updateUser - 추출된 사용자 ID: {}", userId);
+
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             log.info(">>> updateUser - 사용자 찾음: {}", user);
+            // 회원 대표 사진 변경
+            if (profile != null) {
+                if (profile.length > 1)
+                    throw new NotValidRequestException("회원 프로필 사진은 한 장만 등록할 수 있습니다.");
+                String[] imageUrl = imageService.uploadImages(profile);
+                Image userImage = imageRepository.findByImageUrl(imageUrl[0])
+                                .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
+                user.setImage(userImage);
+            }
             user.setNickname(request.getNickname());
             user.setProfileInfo(request.getProfileInfo());
             user.setGender(Gender.gender(request.getGender()));
@@ -214,6 +238,7 @@ public class UserServiceImpl implements UserService {
             user.setSource(request.getSource());
             user.setSidoCode(request.getSidoCode());
             user.setGugunCode(request.getGugunCode());
+            user.setSearchId(request.getSearchId());
             User updatedUser = userRepository.save(user);
             log.info(">>> updateUser - 사용자 업데이트됨: {}", updatedUser);
             return updatedUser;
@@ -257,7 +282,7 @@ public class UserServiceImpl implements UserService {
 
         log.info(">>> checkPassword - 비교: {}", result);
         UserCheckPasswordResponseDto responseDto = new UserCheckPasswordResponseDto();
-        if(result)
+        if (result)
             return UserCheckPasswordResponseDto.of(user.getUserId(), 200, "비밀번호가 확인 되었습니다.");
         else
             return UserCheckPasswordResponseDto.of(-1L, 401, "비밀번호가 틀립니다.");
@@ -321,5 +346,89 @@ public class UserServiceImpl implements UserService {
 
         log.info(">>> getProfile - 프로필 정보: {}", responseDto);
         return responseDto;
+    }
+
+    @Override
+    public UserPushResponseDto getPushUser(String token) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> getPushUser - 추출된 사용자 ID: {}", userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.error(">>> getPushUser - 사용자를 찾을 수 없음: {}", userId);
+            return new NotValidRequestException("사용자를 찾을 수 없습니다.");
+        });
+
+        return UserPushResponseDto.builder()
+                .isPushNotificationEnabled(user.isPushNotificationEnabled())
+                .build();
+    }
+
+    @Override
+    public User updatePushUser(String token, UserPushRequestDto userPushRequestDto) {
+        log.info(">>> updatePushUser - 토큰: {}, 요청 데이터: {}", token, userPushRequestDto);
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        log.info(">>> updatePushUser - 추출된 사용자 ID: {}", userId);
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            log.info(">>> updatePushUser - 사용자 찾음: {}", user);
+            user.setPushNotificationEnabled(userPushRequestDto.isPushNotificationEnabled());
+            User updatedUser = userRepository.save(user);
+            log.info(">>> updatePushUser - 사용자 업데이트됨: {}", updatedUser);
+            return updatedUser;
+        } else {
+            log.error(">>> updatePushUser - 사용자를 찾을 수 없음: {}", userId);
+            throw new EntityNotFoundException("사용자를 찾을 수 없습니다.");
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
+
+        log.info(">>> 소셜로그인 Google 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}"
+                ,email,name,profileImage,providerId,provider);
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        User user;
+        if (userOptional.isEmpty()) {
+            // Image 객체를 먼저 저장합니다.
+            Image image = new Image(profileImage);
+            imageRepository.save(image);
+
+            // User 객체를 생성하면서 Image 객체를 설정합니다.
+            user = User.builder()
+                    .email(email)
+                    .searchId(generateSearchId(email, provider))
+                    .nickname(generateSearchId(email, provider))
+                    .password("oauth2")
+                    .provider(provider)
+                    .providerId(providerId)
+                    .image(image) // 저장된 Image 객체를 설정합니다.
+                    .role(Role.USER.getValue())
+                    .gender(Gender.NA.getValue())
+                    .state(State.ACTIVTE.getValue())
+                    .totalExp(0)
+                    .chatAuth(ChatAuth.PUBLIC.getValue())
+                    .isPushNotificationEnabled(true)
+                    .build();
+            userRepository.save(user);
+            log.info(">>> 회원가입 성공: {}", user);
+        } else {
+            user = userOptional.get();
+            log.info(">>> 로그인 성공: {}", user);
+        }
+
+        return ResponseEntity.ok(BaseResponseBody.of(200, "소셜 로그인이 되었습니다."));
+    }
+
+    private String generateSearchId(String email, int providerId) {
+        if (providerId == 1)
+            return email.split("@")[0] + "G";
+        else if (providerId == 2)
+            return email.split("@")[0] + "K";
+        else if (providerId == 3)
+            return email.split("@")[0] + "N";
+        else
+            return email.split("@")[0] + "S";
     }
 }

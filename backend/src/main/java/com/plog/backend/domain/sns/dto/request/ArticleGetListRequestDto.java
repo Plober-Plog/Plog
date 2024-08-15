@@ -17,4 +17,6 @@ public class ArticleGetListRequestDto {
     int page;
     List<Integer> tagType;
     String keyword;
+    int neighborType;
+    int orderType;
 }

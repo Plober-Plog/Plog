@@ -13,9 +13,9 @@ public class ReportResultResponseDto {
     private String plantName;
     private String firstDayImageUrl;
     private String recentImageUrl;
-    private int waterResult;
-    private int fertilizeResult;
-    private int repoResult;
+    private String waterResult;
+    private String fertilizeResult;
+    private String repoResult;
     private int waterData;
     private int fertilizeData;
     private int repotData;

@@ -1,35 +1,42 @@
 package com.plog.backend.domain.diary.service;
 
+import com.plog.backend.domain.area.entity.Gugun;
+import com.plog.backend.domain.area.repository.GugunRepository;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryAddRequestDto;
 import com.plog.backend.domain.diary.dto.request.PlantDiaryUpdateRequestDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetResponseDto;
 import com.plog.backend.domain.diary.dto.response.PlantDiaryGetSimpleResponseDto;
+import com.plog.backend.domain.diary.dto.response.PlantDiaryWeatherGetResponseDto;
 import com.plog.backend.domain.diary.entity.Humidity;
 import com.plog.backend.domain.diary.entity.PlantDiary;
 import com.plog.backend.domain.diary.entity.Weather;
 import com.plog.backend.domain.diary.repository.PlantDiaryRepository;
 import com.plog.backend.domain.image.dto.PlantDiaryImageGetResponseDto;
 import com.plog.backend.domain.image.entity.PlantDiaryImage;
-import com.plog.backend.domain.image.exception.ImageNotFoundException;
 import com.plog.backend.domain.image.repository.PlantDiaryImageRepository;
 import com.plog.backend.domain.image.service.ImageServiceImpl;
 import com.plog.backend.domain.plant.entity.Plant;
 import com.plog.backend.domain.plant.repository.PlantRepository;
+import com.plog.backend.domain.user.entity.User;
+import com.plog.backend.domain.user.repository.UserRepository;
+import com.plog.backend.domain.weather.repository.WeatherRepository;
 import com.plog.backend.global.exception.EntityNotFoundException;
 import com.plog.backend.global.exception.NotAuthorizedRequestException;
 import com.plog.backend.global.exception.NotValidRequestException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
 
 import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 
@@ -38,10 +45,71 @@ import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 @Service("plantDiaryService")
 public class PlantDiaryServiceImpl implements PlantDiaryService {
 
+    private final RedisTemplate<String, Object> redisTemplate;
     private final PlantDiaryRepository plantDiaryRepository;
     private final PlantRepository plantRepository;
     private final ImageServiceImpl imageService;
     private final PlantDiaryImageRepository plantDiaryImageRepository;
+    private final UserRepository userRepository;
+    private final GugunRepository gugunRepository;
+    private final WeatherRepository weatherRepository;
+
+    @Override
+    public PlantDiaryWeatherGetResponseDto getWeatherData(String token, String date) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId).
+                orElseThrow(() -> new EntityNotFoundException("일치하는 회원을 찾을 수 없습니다."));
+
+        Optional<Gugun> gugunOptional = gugunRepository.findBySidoSidoCodeAndGugunCode(
+                user.getSidoCode(), user.getGugunCode()
+        );
+        if (gugunOptional.isEmpty()) {
+            log.info("회원의 시도 구군 정보를 가져올 수 없습니다.");
+            return new PlantDiaryWeatherGetResponseDto(1, 1, 0.0);
+        }
+
+        Gugun gugun = gugunOptional.get();
+
+        LocalDate recordDate = LocalDate.parse(date); // 일지를 작성할 날짜
+        LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+
+        PlantDiaryWeatherGetResponseDto plantDiaryWeatherGetResponseDto = new PlantDiaryWeatherGetResponseDto(1, 1, 0.0);
+
+        if (recordDate.isEqual(currentDate)) { // 현재 일자에 일지를 작성하려고 할 때 -> redis 검색
+            String keyValue = "weather:" + recordDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ":" + gugun.getGugunId();
+            log.info("Weather Data 키: {}", keyValue);
+            Map<Object, Object> todayData = redisTemplate.opsForHash().entries(keyValue);
+
+
+            todayData.forEach((key, value) -> {
+                log.info("Redis에서 제대로 조회하는지 검증 -> Redis key: {}, field: {}, value: {}", keyValue, key, value);
+                switch (key.toString()) {
+                    case "avgTempToday":
+                        plantDiaryWeatherGetResponseDto.setTemperature(Double.parseDouble(value.toString()));
+                        break;
+                    case "humidityToday":
+                        plantDiaryWeatherGetResponseDto.setHumidity(Integer.parseInt(value.toString()));
+                        break;
+                    case "weatherToday":
+                        plantDiaryWeatherGetResponseDto.setWeather(Integer.parseInt(value.toString()));
+                        break;
+                }
+            });
+        } else if (recordDate.isBefore(currentDate)) { // 과거 일자에 일지를 작성하려고 할 때 -> mysql 검색
+            log.info("과거 날짜의 날씨 데이터 요청: {}", recordDate);
+            Optional<com.plog.backend.domain.weather.entity.Weather> weather = weatherRepository.findByDateAndGugun(recordDate, gugun);
+            if (weatherRepository.existsByDateAndGugun(recordDate, gugun)) {
+                plantDiaryWeatherGetResponseDto.setWeather(weather.get().getWeather());
+                plantDiaryWeatherGetResponseDto.setTemperature(weather.get().getAvgTemp());
+                plantDiaryWeatherGetResponseDto.setHumidity(weather.get().getHumidity());
+            } else {
+                log.info("DB에 과거 날씨 기록을 불러올 수 없습니다.");
+            }
+        } else {
+            log.info("미래 날짜의 날씨 데이터 요청: {}", recordDate);
+        }
+        return plantDiaryWeatherGetResponseDto;
+    }
 
     @Transactional
     public void uploadPlantDiaryImages(MultipartFile[] images, int thumbnailIdx, Long plantDiaryId) {

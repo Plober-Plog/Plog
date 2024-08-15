@@ -1,0 +1,106 @@
+.plant-diary-write-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #ffffff;
+  min-height: 100px;
+}
+
+.plant-diary-write-section {
+  background-color: white;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+}
+
+.plant-diary-write-icon select,
+.plant-diary-write-icon input[type="number"] {
+  width: 90px; 
+  max-width: 100%;
+}
+
+.plant-diary-write-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.plant-diary-write-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plant-diary-write-icon-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: nowrap; /* 아이콘들이 줄바꿈 없이 한 줄에 나타나도록 */
+  overflow: hidden; /* 컨테이너를 넘치지 않도록 설정 */
+}
+
+.plant-diary-write-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: 33%; /* 각 아이콘이 컨테이너의 1/3을 차지하도록 설정 */
+  max-width: 33%; /* 각 아이콘의 최대 너비를 컨테이너의 1/3로 설정 */
+  box-sizing: border-box;
+}
+
+.img-upload-container {
+  display: flex;
+  align-items: center;
+  overflow-x: auto; /* 가로 스크롤 허용 */
+  white-space: nowrap; /* 이미지가 한 줄에 나열되도록 설정 */
+}
+
+.img-upload-button {
+  display: inline-block;
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  /* background-color: #f2f2f2; */
+  margin-right: 20px; 
+}
+
+.img-upload-button img {
+  height: auto;
+  max-height: 70px;
+  width: auto;
+  max-width: 70px;
+  object-fit: contain; 
+  border-radius: 8px;
+}
+
+.img-previews {
+  display: flex;
+  gap: 10px;
+}
+
+
+.img-previews img {
+  height: auto;
+  max-height: 70px;
+  width: auto;
+  max-width: 70px;
+  object-fit: contain; 
+  border-radius: 8px;
+}
+
+.plant-diary-write-btn {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.plant-diary-write-textarea {
+  width: 100%;
+}

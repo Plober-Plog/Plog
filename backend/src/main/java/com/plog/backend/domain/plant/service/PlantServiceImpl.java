@@ -39,11 +39,11 @@ public class PlantServiceImpl implements PlantService {
     private final PlantRepositorySupport plantRepositorySupport;
     private final PlantTypeRepository plantTypeRepository;
     private final OtherPlantTypeRepository otherPlantTypeRepository;
-    private final PlantCheckRepository plantCheckRepository;
     private final UserRepository userRepository;
 
     private final ImageService imageService;
     private final ImageRepository imageRepository;
+    private final PlantCheckRepositorySupport plantCheckRepositorySupport;
 
     @Override
     public void addPlant(String token, PlantAddRequestDto plantAddRequestDto) {
@@ -80,6 +80,10 @@ public class PlantServiceImpl implements PlantService {
                         .image(plantImage.get())
                         .birthDate(plantAddRequestDto.getBirthDate())
                         .bio(plantAddRequestDto.getBio())
+                        .notifySetting(7)
+                        .fertilizeDate(plantAddRequestDto.getBirthDate().plusDays(plantType.getFertilizeMid()))
+                        .repotDate(plantAddRequestDto.getBirthDate().plusDays(plantType.getRepotMid()))
+                        .waterDate(plantAddRequestDto.getBirthDate().plusDays(plantType.getWaterMid()))
                         .build());
                 log.info(">>> addPlant - 기본 식물 생성: {}", plantByPlantType.getPlantId());
             } else { // 2. 기타 식물
@@ -121,26 +125,30 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public PlantGetResponseDto getPlant(Long plantId) {
-        Optional<Plant> plant = plantRepository.findById(plantId);
-        if (plant.isPresent()) {
-            Plant p = plant.get();
-            log.info(">>> getPlant - 식물 조회 완료: {}", plantId);
-            return PlantGetResponseDto.builder()
-                    .plantId(p.getPlantId())
-                    .plantTypeId(p.getPlantType().getPlantTypeId())
-                    .nickname(p.getNickname())
-                    .bio(p.getBio())
-                    .profile(p.getImage() != null ? p.getImage().getImageUrl() : null)
-                    .birthDate(p.getBirthDate())
-                    .notifySetting(p.getNotifySetting())
-                    .isFixed(p.isFixed())
-                    .deadDate(p.getDeadDate())
-                    .isDeleted(p.isDeleted())
-                    .build();
-        } else {
-            throw new EntityNotFoundException();
-        }
+    public PlantGetResponseDto getPlant(String token, Long plantId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        Plant plant = plantRepository.findById(plantId).orElseThrow(
+                () -> new EntityNotFoundException("일치하는 식물을 조회할 수 업습니다.")
+        );
+        if (userId != plant.getUser().getUserId())
+            throw new NotAuthorizedRequestException();
+
+        log.info(">>> getPlant - 식물 조회 완료: {}", plantId);
+        return PlantGetResponseDto.builder()
+                .plantId(plant.getPlantId())
+                .plantTypeId(plant.getPlantType().getPlantTypeId())
+                .nickname(plant.getNickname())
+                .bio(plant.getBio())
+                .profile(plant.getImage() != null ? plant.getImage().getImageUrl() : null)
+                .plantTypeName(plant.getPlantType().getPlantName())
+                .otherPlantId(plant.getOtherPlantType().getOtherPlantTypeId())
+                .otherPlantTypeName(plant.getOtherPlantType().getPlantName())
+                .birthDate(plant.getBirthDate())
+                .hasNotification(plant.getNotifySetting() == 7 ? true : false)
+                .isFixed(plant.isFixed())
+                .deadDate(plant.getDeadDate())
+                .isDeleted(plant.isDeleted())
+                .build();
     }
 
     @Override
@@ -164,11 +172,9 @@ public class PlantServiceImpl implements PlantService {
             for (Long plantTypeId : plantGetRequestDto.getPlantTypeId()) {
                 plantGetResponseDtoList.addAll(plantRepositorySupport.findByUserSearchIdAndPlantTypeId(searchId, plantTypeId, plantGetRequestDto.getPage()));
             }
-            log.info(plantGetResponseDtoList.toString() + " "  + plantGetResponseDtoList.size());
             for (Long otherPlantTypeId : plantGetRequestDto.getOtherPlantTypeId()) {
                 plantGetResponseDtoList.addAll(plantRepositorySupport.findByUserSearchIdAndOtherPlantTypeId(searchId, otherPlantTypeId, plantGetRequestDto.getPage()));
             }
-            log.info(plantGetResponseDtoList.toString() + " " + plantGetResponseDtoList.size());
             return plantGetResponseDtoList;
         } else {
             throw new EntityNotFoundException("일치하는 회원이 없습니다.");
@@ -302,4 +308,39 @@ public class PlantServiceImpl implements PlantService {
         }
     }
 
+    @Transactional
+    @Override
+    public void updateNotificationPlant(String token, Long plantId) {
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        Plant plant = plantRepository.findById(plantId).orElseThrow(
+                () -> new EntityNotFoundException("일치하는 식물이 없습니다.")
+        );
+        if (userId != plant.getUser().getUserId())
+            throw new NotAuthorizedRequestException();
+        if (plant.getNotifySetting() == 7)
+            plant.setNotifySetting(0);
+        else
+            plant.setNotifySetting(7);
+        plantRepository.save(plant);
+        log.info(">>> updateNotificationPlant - 식물 알림 수신 여부 수정 완료, ID: {}", plantId);
+    }
+
+//    @Override
+//    public void calculateNextDateToWater(Long plantId) {
+//        Plant plant = plantRepository.findById(plantId).orElseThrow(() -> new EntityNotFoundException("식물 정보가 없습니다."));
+//        // 1. 마지막으로 물을 준 날자 가져오기 (plantCheck 에 값 기록될 때 계산하기,,)
+//        LocalDate lastWateredDate = plantCheckRepositorySupport.findLastWateredDateByPlantId(plantId);
+//        // 2. plant_type에서 물 주기 가져오기
+//        // 3. 마지막으로 물 준 날 + 그 주기 가져와서 더하기 -> plant 테이블의 waterDate 값 채우기
+//    }
+//
+//    @Override
+//    public void calculateNextDateToFertilize(Long plantId) {
+//
+//    }
+//
+//    @Override
+//    public void calculateNextDateToRepot(Long plantId) {
+//
+//    }
 }

@@ -28,6 +28,8 @@ public class Weather {
     private Double avgHumidity;
     @Column
     private int weather;
+    @Column
+    private int humidity;
 
     @ManyToOne
     @JoinColumn(name = "gugun_id")

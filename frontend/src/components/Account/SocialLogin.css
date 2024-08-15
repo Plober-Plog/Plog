@@ -1,0 +1,55 @@
+.social-login {
+  text-align: center;
+  padding: 20px 0; /* 상단과 하단에 여백 추가 */
+}
+
+.social-login p {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 30px 0; /* 간편로그인 텍스트 위아래에 여유 공간 추가 */
+  position: relative;
+}
+
+.social-login p::before,
+.social-login p::after {
+  content: "";
+  display: inline-block;
+  width: 80px; /* 선 길이 축소 */
+  height: 1px;
+  background-color: #000;
+  vertical-align: middle;
+}
+
+.social-login p::before {
+  margin-right: 15px;
+}
+
+.social-login p::after {
+  margin-left: 15px;
+}
+
+.social-buttons {
+  display: flex;
+  justify-content: space-between; /* 버튼 간의 간격을 균등하게 배치 */
+  align-items: center;
+  gap: 50px; /* 버튼 사이 간격을 더 넓게 조정 */
+  margin-top: 40px; /* 버튼 섹션과 간편로그인 텍스트 사이의 간격 조정 */
+}
+
+.social-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.social-icon {
+  width: 70px; /* 아이콘 크기를 약간 축소 */
+  height: 70px;
+  border-radius: 50%; /* 원형으로 만들기 */
+  transition: transform 0.3s; /* 호버 효과를 위한 트랜지션 */
+}
+
+.social-icon:hover {
+  transform: scale(1.1); /* 호버 시 확대 효과 */
+}

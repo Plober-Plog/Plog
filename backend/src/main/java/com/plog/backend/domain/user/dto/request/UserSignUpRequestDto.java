@@ -22,8 +22,8 @@ public class UserSignUpRequestDto {
     private LocalDate birthDate;
     private String source;
     private boolean isAd;
-    private String sidoCode;
-    private String gugunCode;
+    private int sidoCode;
+    private int gugunCode;
 
     private String profileInfo;
 }

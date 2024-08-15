@@ -3,6 +3,7 @@ package com.plog.backend.domain.sns.dto.response;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,9 +16,10 @@ public class ArticleCommentGetResponse {
     Long userId;
     String profile;
     String nickname;
+    String searchId;
     String content;
     Long parentId;
-    LocalDate createDate;
-    LocalDate updateDate;
+    LocalDateTime createDate;
+    LocalDateTime updateDate;
     int state;
 }

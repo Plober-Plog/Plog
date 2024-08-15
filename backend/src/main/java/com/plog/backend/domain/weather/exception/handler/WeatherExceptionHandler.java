@@ -4,14 +4,21 @@ import com.plog.backend.domain.weather.exception.WeatherUpdateException;
 import com.plog.backend.global.exception.model.ExceptionResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Slf4j
-@ControllerAdvice
+@Component
 public class WeatherExceptionHandler {
+
+    @EventListener
+    public void handleWeatherUpdateException(WeatherUpdateException ex) {
+        log.error("스케줄링된 작업에서 WeatherUpdateException 발생 - Message: {}", ex.getMessage());
+    }
 
     @ExceptionHandler(WeatherUpdateException.class)
     public ResponseEntity<ExceptionResponseDto> handleWeatherUpdateException(

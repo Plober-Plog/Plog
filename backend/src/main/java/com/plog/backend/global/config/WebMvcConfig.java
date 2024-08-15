@@ -18,7 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
+//        configuration.addAllowedOrigin("*");
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
@@ -79,10 +79,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         WebMvcConfigurer.super.addCorsMappings(registry);
         registry.addMapping("/**")
-                .allowedOrigins("${server.domain.host}")
-                .allowedOrigins("*")
-                .allowedOrigins("https://i11b308.p.ssafy.io/**")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("*",
+                        "${server.domain.host}",
+                        "https://i11b308.p.ssafy.io/**",
+                        "http://localhost:3000",
+                        "http://localhost:3000/**",
+                        "http://localhost:8080/**",
+                        "https://plogbucket.s3.ap-northeast-2.amazonaws.com/**",
+                        "https://plogbucket.s3.ap-northeast-2.amazonaws.com"
+                        )
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization")
                 .allowedMethods("OPTIONS","GET","POST","PUT","DELETE","PATCH");

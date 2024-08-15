@@ -1,21 +1,25 @@
 package com.plog.backend.global.config;
 
 import com.plog.backend.global.auth.JwtAuthenticationFilter;
+import com.plog.backend.global.auth.service.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -23,28 +27,31 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/user").permitAll() // 회원가입은 JWT 없이 접근 가능
-//                        .requestMatchers("/api/admin/**").authenticated() // JWT 필요
-//                        .requestMatchers(HttpMethod.PATCH, "/api/user/**").authenticated() // 수정 JWT 필요
-//                        .requestMatchers(HttpMethod.DELETE, "/api/user/**").authenticated() // 삭제 JWT 필요
-//                        .requestMatchers(HttpMethod.GET, "/api/user").authenticated() // 회원 정보 조회 JWT 필요
-//                        .requestMatchers(HttpMethod.GET, "/api/user/plant/**/share").authenticated() // 식물 프로필 공유 JWT 필요
-//                        .requestMatchers(HttpMethod.GET, "/api/user/sns/**/comment").authenticated() // 댓글 조회 JWT 필요
-//                        .requestMatchers(HttpMethod.POST, "/api/user/password").authenticated() // 현재 비밀번호 확인 JWT 필요
-//                        .requestMatchers(HttpMethod.POST, "/api/user/plant/**").authenticated() // 식물 등록 JWT 필요
-//                        .requestMatchers(HttpMethod.POST, "/api/user/diary/**").authenticated() // 식물 일지 등록 JWT 필요
-//                        .requestMatchers("/api/user/**").permitAll() // JWT 없이 접근 가능
-//                        .anyRequest().authenticated() // 나머지 요청은 JWT 필요
                 )
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
+                )
+                .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.xssProtection(HeadersConfigurer.XXssConfig::disable))
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/user/login/oauth2")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService))
+                        .defaultSuccessUrl("/login/oauth2/code/google", true))
+                .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.xssProtection(HeadersConfigurer.XXssConfig::disable))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -52,14 +59,27 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
+        config.setAllowCredentials(true);
         config.addAllowedOrigin("https://i11b308.p.ssafy.io");
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("https://plogbucket.s3.ap-northeast-2.amazonaws.com/**");
+        config.addAllowedOrigin("https://plogbucket.s3.ap-northeast-2.amazonaws.com");
+        config.addAllowedOriginPattern("https://plogbucket.s3.ap-northeast-2.amazonaws.com/**");
+        config.addAllowedOriginPattern("https://plogbucket.s3.ap-northeast-2.amazonaws.com/");
+        config.addAllowedOriginPattern("http://localhost:3000");
+        config.addAllowedOriginPattern("https://i11b308.p.ssafy.io");
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        config.addAllowedOrigin("*");
+        config.addAllowedOriginPattern("*");
+
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
+    }
+
+    @Bean
+    public DefaultOAuth2UserService oAuth2UserService() {
+        return new DefaultOAuth2UserService();
     }
 }
