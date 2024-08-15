@@ -105,12 +105,18 @@ const PlantDetail = () => {
       </div>
 
       <div className='grid grid-cols-12 gap-3 mt-10 mb-10'>
-        <div className='col-span-6'>
-          <Btn content ="분석보고서" onClick={handleReportClick}/>
-        </div>
-        <div className='col-span-6'>
-          <Btn content ="가이드" onClick={handleGuideClick}/>
-        </div>
+
+        {!etcPlantType && (
+          <>
+            <div className='col-span-6'>
+              <Btn content ="분석보고서" onClick={handleReportClick}/>
+            </div>
+            <div className='col-span-6'>
+              <Btn content ="가이드" onClick={handleGuideClick}/>
+            </div>
+          </>
+        )}
+        
       </div>
 
     </div>
