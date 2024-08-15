@@ -23,7 +23,6 @@ const PlantReport = () => {
           plantId: plantId,
         });
 
-        console.log(response.data);
         setPlantData(response.data);
         setLoading(false);
       } catch (error) {
@@ -69,7 +68,6 @@ const PlantReport = () => {
             imgElements.forEach((img, index) => {
                 originalUrls.push(img.src); // 원래 URL 저장
                 img.src = proxyImageUrls[index]; // 프록시 URL 적용
-                console.log(`For capture - Image ${index + 1} URL: `, img.src); // 프록시 URL 출력
             });
 
             // 약간의 지연을 두어 이미지가 실제로 로드되도록 함
@@ -95,7 +93,6 @@ const PlantReport = () => {
             // 캡처 후 다시 원래 URL로 복원
             imgElements.forEach((img, index) => {
                 img.src = originalUrls[index];
-                console.log(`After capture - Image ${index + 1} URL restored: `, img.src); // 원래 URL로 복원 후 출력
             });
 
         } catch (error) {

@@ -32,10 +32,6 @@ const ProfilePlantCardList = ({ plants, searchId }) => {
     fetchPlantList(searchId, 0);
   }, [searchId]);
 
-  useEffect(() => {
-    console.log('&&&Plants Data:', plants);
-  }, [plants]);
-
   const handleScroll = () => {
     if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && hasMore && !loading) {
       fetchPlantList(searchId, page);

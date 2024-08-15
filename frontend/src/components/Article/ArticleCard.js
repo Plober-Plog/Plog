@@ -8,7 +8,6 @@ import './ArticleCard.css';
 const ArticleCard = ({ ownerId, id, recordDate, log, thumbnail, type }) => {
 
   const navigate = useNavigate();
-  // console.log('Article Card의 id값 콘솔***', id)
   const handleClick = () => {
     if (type === 'plant') {
       navigate(`/plant/${ownerId}/${recordDate}`, {

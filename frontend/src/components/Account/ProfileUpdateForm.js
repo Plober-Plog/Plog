@@ -116,13 +116,11 @@ const ProfileUpdateForm = () => {
     formData.append('profile', file);
 
     try {
-      console.log('updatedUserData:', formData);
       const response = await API.patch('/user', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log('새로운 회원정보:', updatedUserData);
       
       // 유저 데이터 갱신
       setUserData({
@@ -131,7 +129,6 @@ const ProfileUpdateForm = () => {
         profile: uploadedFile? URL.createObjectURL(uploadedFile) : userData.profile
       });
 
-      console.log('회원 정보 수정 성공:', response.data);
       setOpenModal(true);
     } catch (error) {
       console.error('회원 정보 수정 실패:', error);

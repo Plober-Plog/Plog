@@ -6,14 +6,10 @@ const ProfileHeader = ({ data = {}, type }) => {
 
   const etcPlantType = data.etcPlantType || false;
 
-  console.log('@@@@@@@@@@@@@@@@@Received etcPlantType:', etcPlantType);
-
   const profileData = {}
 
   if (type === 'plant') {
-    console.log('ProfileHeader Data:', data)
     profileData.imgSrc = data.profile || '';
-    // profileData.title = title
     profileData.title = data.plantTypeName || data.otherPlantTypeName
     profileData.nickname = data.nickname || '닉네임 없음';
     profileData.bio = data.bio || '자기소개가 비어 있습니다.';
@@ -22,7 +18,6 @@ const ProfileHeader = ({ data = {}, type }) => {
     profileData.isFixed = data.isFixed;
     profileData.etcPlantType = etcPlantType;
   } else if (type === 'user') {
-    console.log('ProfileHeader Data:', data)
     profileData.imgSrc = data.profile || '';
     profileData.title = data.searchId || '아이디 조회 불가';
     profileData.nickname = data.nickname || '닉네임 없음';
@@ -30,8 +25,6 @@ const ProfileHeader = ({ data = {}, type }) => {
     profileData.ownerId = data.searchId || null;
   } else {
   }
-
-  console.log('ProfileHeader Processed Data:', profileData);
 
   return (
     <div className='grid grid-cols-12 gap-4 mt-5 mb-4'>

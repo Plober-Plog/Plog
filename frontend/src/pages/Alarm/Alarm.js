@@ -18,7 +18,6 @@ const Alarm = () => {
         const response = await axios.get(`${API_REALTIME_URL}/notification/history`, {
           params: { searchId, page },
         });
-        console.log(response.data)
         if (response.data.length === 0) {
           setHasMoreAlarms(false);
         } else {
@@ -41,8 +40,6 @@ const Alarm = () => {
             });
             return mergedAlarms;
           });
-
-          console.log('날짜별로 그룹화된 알림 내역: ', alarmsByDate);
         }
       } catch (error) {
         console.error('알림 받아오기 실패:', error);

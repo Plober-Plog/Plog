@@ -15,7 +15,6 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
       const response = await API.get(`/user/neighbor/${ownerId}`);
       setProfileUserRel(response.data.profileUserRel);
       setRequestUserRel(response.data.requestUserRel);
-      // console.log('@@@ProfileUserRel:@@@', response.data);
     } catch (error) {
       console.error('@@@Rel Error:', error, '@@@');
     }
@@ -31,7 +30,6 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
     try {
       await API.post('/user/neighbor', { neighborSearchId: ownerId });
       await fetchRel();
-      console.log('이웃 추가 성공');
     } catch (error) {
       console.error('이웃 추가 실패:', error);
     }
@@ -46,7 +44,6 @@ const ProfileHeaderUserBtnList = ({ ownerId }) => {
         data: { neighborSearchId: ownerId },
       });
       await fetchRel();
-      console.log('이웃 삭제 성공');
     } catch (error) {
       console.error('이웃 삭제 실패:', error);
     }

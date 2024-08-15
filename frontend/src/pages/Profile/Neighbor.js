@@ -15,7 +15,6 @@ const Neighbor = () => {
     try {
       const response = await API.get(`/user/neighbor/${searchId}/from`)
       setFollowList(response.data);
-      console.log('followList', followList)
     } catch (error) {
       console.error("팔로우 목록 에러", error);
     }
@@ -25,7 +24,6 @@ const Neighbor = () => {
     try {
       const response = await API.get(`/user/neighbor/${searchId}/to`)
       setFollowerList(response.data);
-      console.log('followerList', followerList)
     } catch (error) {
       console.error("팔로워 목록 에러", error);
     }

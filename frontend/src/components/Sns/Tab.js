@@ -4,10 +4,6 @@ import './Tab.css';
 
 const TabVisibilitySelector = ({ selectedVisibility, setSelectedVisibility }) => {
 
-  useEffect(() => {
-    console.log('공개상태:', selectedVisibility);
-  }, [selectedVisibility]);
-
   return (
     <div className="w-screen max-w-none visibility-selector">
       <button

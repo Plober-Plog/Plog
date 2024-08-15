@@ -18,7 +18,6 @@ const Home = () => {
             tagType: 1,
           }
         });
-        console.log("Diary Articles:", diaryResponse.data);
         setDiaryArticles(diaryResponse.data);
       } catch (error) {
         console.error("다이어리 오류", error);
@@ -32,7 +31,6 @@ const Home = () => {
             orderType: 1
           }
         });
-        console.log("SNS Articles:", snsResponse.data);
         setSnsArticles(snsResponse.data);
       } catch (error) {
         console.error("sns 오류:", error);

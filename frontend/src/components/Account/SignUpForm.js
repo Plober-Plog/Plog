@@ -167,7 +167,6 @@ const SignUpForm = () => {
       setIsEmailVerificationSent(true);
       setTimer(300);  // 타이머 시작
     } catch(error) {
-      console.log('이메일 인증번호 전송 실패 : ', error);
       setIsSendingEmail(false); // 전송 실패 시 초기화
     }
   }
@@ -225,17 +224,6 @@ const SignUpForm = () => {
       profileInfo: "",
       isAd: agreeAdvertisement
     };
-
-  console.log('회원정보:',userInfo);
-
-  //// git push 전, 지울부분  -> 이해를 위해 남겨두겠음..!////
-  // 기본 프로필 이미지를 Blob으로 변환하여 추가
-  // 장현준 : 아니 하.. 그냥 defaultProfile로 보낼려 했으나..
-  // 뭔가 네트워크 쪽에서 싹 없애 버려서 null로 도착하는 문제가 있었음.
-  // Blob으로 실제 파일을 만들어서 보내니까 잘 감.
-  // 우려되는 부분은 await의 비동기 방식이라서 좀 느려질꺼같다는 우려..?
-  // 지금은 단순히 사진 하나를 전송하는거지만, 추후 이 부분을 고려해야할꺼같음
-  //// 지울부분 ////
 
   const formData = new FormData();
   formData.append('userSignUpRequestDto', new Blob([JSON.stringify(userInfo)], { type: 'application/json' }));

@@ -60,12 +60,10 @@ const PasswordUpdate = () => {
     
     // 비밀번호 변경 요청
     try {
-      console.log('userId: ',userId)
       const response = await axios.patch(`${API_BASE_URL}/user/password`, {
         userId,
         password: sha256(password)
       })
-      console.log('비밀번호 변경 성공:', response.data);
       setOpenModal(true);
     } catch (error) {
       console.error('비밀번호 변경 실패:', error);

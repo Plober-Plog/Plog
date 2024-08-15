@@ -26,19 +26,15 @@ const PlantDiaryDetail = () => {
   const [plantCheck, setPlantCheck] = useState(null);
   const [plantDiary, setPlantDiary] = useState(null);
 
-  // console.log(location);
-
   // 일지 디테일 불러오기
   useEffect(() => {
     const getPlantDetailDiary = async () => {
       try {
-        console.log(plantId, date);
         const response = await API.get(`/user/plant/${plantId}`, {
           params: { date }
         });
 
         const data = response.data;
-        console.log(data);
         setPlantCheck(data.plantCheck || {});
         setPlantDiary(data.plantDiary || {});
 

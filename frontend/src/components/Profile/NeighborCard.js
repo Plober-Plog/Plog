@@ -8,7 +8,6 @@ const NeighborCard = ({user}) => {
   const handleClickCard = () => {
     navigate(`/profile/${user.searchId}`);
   }
-  console.log('User profile image URL:', user.profile);
 
   return (
     <li className="neighbor-card col-span-4" onClick={handleClickCard}>

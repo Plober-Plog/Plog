@@ -41,7 +41,6 @@ const SnsDetail = () => {
     const fetchArticle = async () => {
       try {
         const response = await API.get(`/user/sns/${articleId}`);
-        console.log('@@@게시글 정보:', response.data);
         setArticle(response.data);
         const writerInfo = {
           profile: response.data.profile,
@@ -50,7 +49,6 @@ const SnsDetail = () => {
           searchId: response.data.searchId,
         }
         setWriterInfo(writerInfo);
-        console.log('작성자 정보:', writerInfo);
       } catch (err) {
         console.error('@@@게시물 불러오기 실패 : ', err);
       }
@@ -68,7 +66,6 @@ const SnsDetail = () => {
   const handleSnsDelete = async () => {
     try {
       const response = await API.delete(`/user/sns/${articleId}`);
-      console.log('게시물 삭제 성공:', response.data);
       navigate('/sns');
     } catch (err) {
       console.error('게시물 삭제 실패 : ', err);
@@ -79,7 +76,6 @@ const SnsDetail = () => {
 
   const handleProfileClick = () => {
     navigate(`/profile/${writerInfo.searchId}`)
-    console.log(writerInfo)
   }
 
 

@@ -35,7 +35,6 @@ const FooterCmt = ({ articleId, profile, disable, placeholder, setCommentList, s
 
     try {
       const response = await API.post(`/user/sns/comment`, commentData);
-      console.log('댓글 작성 성공:', response.data);
       setContent('');
 
       // 댓글 작성 후 댓글 목록 갱신

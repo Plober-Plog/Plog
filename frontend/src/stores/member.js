@@ -13,14 +13,12 @@ const useAuthStore = create((set) => ({
     setCookie('accessToken', accessToken, 60); // 1시간
     setCookie('refreshToken', refreshToken, 7 * 24 * 60); // 일주일
     set({ accessToken, refreshToken, isLogin: true });
-    console.log('토큰 쿠키 저장 완료! : ', accessToken, refreshToken);
   },
 
   // 유저 정보 저장 (localStorage에 저장)
   setUserData: (userData) => {
     localStorage.setItem('userData', JSON.stringify(userData));
     set({ userData });
-    console.log('유저정보 저장 (localStorage):', userData);
   },
 
   // 토큰 및 유저 정보 삭제 (localStorage에서 삭제)
@@ -29,13 +27,11 @@ const useAuthStore = create((set) => ({
     eraseCookie('refreshToken');
     localStorage.removeItem('userData');
     set({ accessToken: null, refreshToken: null, isLogin: false, userData: null });
-    console.log('유저 정보 삭제 완료!');
   },
 
   // 아이디 가져오기
   getSearchId: () => {
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    console.log('아이디:', userData.searchId);
     return userData ? userData.searchId : null;
   },
 
@@ -48,7 +44,6 @@ const useAuthStore = create((set) => ({
         const newAccessToken = response.data.split(' : ')[1];
         setCookie('accessToken', newAccessToken, 60);
         set({ accessToken: newAccessToken, isLogin: true });
-        console.log('자동 로그인 성공!');
       } catch (error) {
         console.error('자동 로그인 실패:', error);
         set({ isLogin: false });

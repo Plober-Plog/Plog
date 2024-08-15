@@ -68,7 +68,6 @@ const PlantDiaryWrite = () => {
       const response = await API.get('/user/diary/get-weather', {
         params: { date }
       });
-      console.log(response.data);
       setIsWeather(response.data.weather);  
       setIsHumidity(response.data.humidity);  
       setIsTemperature(response.data.temperature);  
@@ -79,13 +78,10 @@ const PlantDiaryWrite = () => {
 
   // 해당 날짜에 작성된 식물 일지 기록 및 관리 기록 확인 
   const fetchDiaryAndCheck = async ( plantId, date ) => {
-    console.log(plantId);
-    console.log(date);
     try {
       const response = await API.get(`/user/plant/${plantId}`, {
         params: { date }
       });
-      console.log(response);
       return response.data;
     } catch (error) {
       console.error('작성된 일지 확인 에러:', error);
@@ -100,7 +96,6 @@ const PlantDiaryWrite = () => {
       await fetchWriterInfo(plantId);
       await fetchWeatherInfo();
       const data = await fetchDiaryAndCheck(plantId, date);
-      console.log(data);
       if (data.plantDiary || data.plantCheck) {
         const { plantDiary } = data;
         const { plantCheck } = data;
@@ -126,7 +121,6 @@ const PlantDiaryWrite = () => {
         setIsFertilized(false);
         setIsRepotted(false); 
         setIsEditMode(false);
-        console.log('새로운 일지를 작성');
       }
     } catch (error) {
       console.error('일지 데이터를 불러오는 중 오류 발생:', error);
@@ -134,10 +128,6 @@ const PlantDiaryWrite = () => {
   };
   getDiaryAndPlantCheck();
 }, [date, plantId]);
-
-useEffect(() => {
-  console.log("Updated plantDiaryId:", plantDiaryId);
-}, [plantDiaryId]);
 
   // 이미지 업로드
   const handleImageUpload = (event) => {
@@ -162,19 +152,16 @@ useEffect(() => {
   const toggleWatered = () => {
     const newState = !isWatered;
     setIsWatered(newState);
-    console.log('Watered:', newState);
   };
 
   const toggleFertilized = () => {
     const newState = !isFertilized;
     setIsFertilized(newState);
-    console.log('Fertilized:', newState);
   };
 
   const toggleRepotted = () => {
     const newState = !isRepotted;
     setIsRepotted(newState);
-    console.log('Repotted:', newState);
   };
   
   // 저장 버튼 클릭
@@ -189,7 +176,6 @@ useEffect(() => {
     diaryData.append('temperature',temperature);
     diaryData.append('humidity', humidity);
     diaryData.append('content', content);
-    console.log(imgs);
     diaryData.append('thumbnailIdx', thumbnailIdx);
     diaryData.append('recordDate', formattedDate);
     
@@ -197,9 +183,7 @@ useEffect(() => {
     imgs.forEach((img) => {
       diaryData.append('images', img.file);  // 'images' key를 사용하여 각각의 파일을 추가
     });
-    
-    console.log(diaryData);
-    
+        
     const diaryDataPatch = {
       plantDiaryId,
       plantId,
@@ -217,9 +201,7 @@ useEffect(() => {
       isFertilized,
       isRepotted,
       checkDate: formattedDate,
-    }
-    console.log(plantData);
-    
+    }    
     
     // 일지작성요청 1
     try {
@@ -242,10 +224,6 @@ useEffect(() => {
           throw new Error('식물 정보 수정에 실패했습니다.');
         }
       }
-
-      console.log(plantDiaryId);
-      console.log(plantData);  
-      console.log(diaryDataPatch);
       
       if (!isEditMode) {
         const diaryWriteResponse = await API.post(`user/diary`, diaryData, {

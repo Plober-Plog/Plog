@@ -34,7 +34,6 @@ const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt,
   
         setIsLiked(!isLiked);
         setLikeCnt(prevLikeCnt => isLiked ? prevLikeCnt - 1 : prevLikeCnt + 1);
-        console.log('좋아요 성공:', response.data);
       } catch (error) {
         console.error('좋아요 실패:', error.response);
       }
@@ -49,7 +48,6 @@ const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt,
           : await API.post(`/user/sns/bookmark/${articleId}`);
   
         setIsBookmarked(!isBookmarked);
-        console.log('북마크 성공:', response.data);
       } catch (error) {
         console.error('북마크 실패:', error.response);
       }
@@ -78,27 +76,6 @@ const BtnList = ({ likeCnt: initialLikeCnt, isLiked: initialIsLiked, commentCnt,
         </button>
       </div>
     </div>
-    // <div className="action-container">
-    //   <div>
-    //     <button onClick={handleLike}>
-    //       <img src={isLiked ? likeSelect : likeDefault} alt="like" />
-    //     </button>
-    //     <span>{likeCnt}</span>
-    //   </div>
-    //   <div>
-    //     <img 
-    //       src={comment} 
-    //       alt="comment" 
-    //       onClick={() => navigate(`/sns/${articleId}/comment`, { state: { articleId }})} // navigate를 함수로 감싸기
-    //     />
-    //     <span>{commentCnt}</span>
-    //   </div>
-    //   <div>
-    //     <button onClick={handleBookmark}>
-    //       <img src={isBookmarked ? bookMarkSelect : bookMarkDefault} alt="bookmark" />
-    //     </button>
-    //   </div>
-    // </div>
   );
 }
 

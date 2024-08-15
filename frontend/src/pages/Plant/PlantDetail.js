@@ -29,7 +29,6 @@ const PlantDetail = () => {
     const fetchPlantData = async () => {
       try {
         const response = await API.get(`/user/plant/${plantId}/info`);
-        console.log('************Plant Type Name:', response.data.plantTypeName); // 추가된 로그
 
         const displayPlantTypeName = response.data.plantTypeName === '기타'
           ? response.data.otherPlantTypeName

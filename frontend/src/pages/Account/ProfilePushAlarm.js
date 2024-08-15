@@ -13,7 +13,6 @@ const ProfilePushAlarm = () => {
     const fetchPushAlarmStatus = async () => {
       try {
         const response = await API.get('user/push');
-        console.log('현재 푸시알림 상태:', response.data);
         setIsPushAlarm(response.data.pushNotificationEnabled);
       } catch (error) {
         console.error('푸시알림 조회 중 에러 발생:', error);
@@ -29,9 +28,7 @@ const ProfilePushAlarm = () => {
 
     try {
       const data = { "pushNotificationEnabled": isPushAlarm };
-      console.log(data)
       const response = await API.patch('user/push', data);
-      console.log('푸시알림 설정 성공:', response.data);
       navigate('/setting');
     } catch (error) {
       console.error('푸시알림 설정 중 에러 발생:', error);

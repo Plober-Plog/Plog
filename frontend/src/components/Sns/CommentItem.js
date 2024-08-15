@@ -19,7 +19,6 @@ const CommentItem = ({ comment, handleReply, onDelete }) => {  // onDelete prop 
       const response = await API.delete(`/user/sns/comment`, {
         params: { commentId }
       });
-      console.log('댓글 삭제 성공:', response.data);
       setDeleted(true); // 댓글을 삭제된 상태로 변경
     } catch (error) {
       console.error('댓글 삭제 실패:', error.response);

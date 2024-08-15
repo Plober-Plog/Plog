@@ -13,8 +13,6 @@ import './ProfileHeaderPlantIconList.css';
 
 const ProfileHeaderPlantIconList = ({ etcPlantType, ownerId, hasNotification, isFixed, profileData }) => {
 
-  console.log('**************etcPlantType:', etcPlantType);
-
   const navigate = useNavigate();
   const [nowNotified, setNowNotified] = useState(hasNotification);
   const [nowFixed, setNowFixed] = useState(isFixed);

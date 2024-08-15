@@ -10,7 +10,6 @@ const firebaseConfig = {
   appId: '1:921732690597:web:3fda0b21340a730fcfd34c',
 };
 
-console.log('Firebase Config:', firebaseConfig);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -24,14 +23,11 @@ export const requestForToken = async () => {
     if (permission === 'granted') {
       const currentToken = await getToken(messaging, { vapidKey: process.env.REACT_APP_WEB_PUSH_CERTIFICATE_KEY });
       if (currentToken) {
-        console.log('current token for client: ', currentToken);
         return currentToken;
       } else {
-        console.log('No registration token available. Request permission to generate one.');
         return null;
       }
     } else {
-      console.log('Notification permission was not granted.');
       return null;
     }
   } catch (err) {
@@ -43,13 +39,8 @@ export const requestForToken = async () => {
 // FCM foreground message listener
 export const onForegroundMessage = () => {
   onMessage(messaging, (payload) => {
-    console.log("Received foreground message: ", payload); // 메시지 수신 여부 확인
     if (payload) {
       const { title, body } = payload.notification || payload.data;
-
-            // 콘솔에 제목과 본문을 출력
-      console.log("Notification title:", title);
-      console.log("Notification body:", body);
 
       // 알림 생성
       new Notification(title, { body });

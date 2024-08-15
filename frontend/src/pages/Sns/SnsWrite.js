@@ -66,14 +66,11 @@ const SnsWrite = () => {
     if (reportImgData) {
       setTagTypeList([2]); 
     }
-
-    console.log(articleId);
   
     if (articleId !== 0) {
       const fetchSns = async () => {
         try {
           const response = await API.get(`/user/sns/${articleId}`);
-          console.log('게시물 :', response.data);
   
           // 게시물 정보 input에 로딩
           setContent(response.data.content);
@@ -119,20 +116,15 @@ const SnsWrite = () => {
       tagTypeList,
     }
 
-    // FormData 확인
-    console.log(Array.from(snsData.entries()));
-
     try {
       let response;
       if (articleId === 0) {
-        console.log(articleId)
         // 게시물 작성 요청
         response = await API.post('/user/sns', snsData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log('게시물 작성:', response.data);
       } else if (articleId !== 0) {
         // 게시물 수정 요청
         response = await API.patch(`/user/sns/${articleId}`, snsPatchData, {
@@ -140,7 +132,6 @@ const SnsWrite = () => {
             'Content-Type': 'application/json',
           },
         });
-        console.log('게시물 수정:', response.data);
       }
 
       // 성공적으로 처리된 응답 후 페이지 이동
