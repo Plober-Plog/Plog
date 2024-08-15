@@ -11,7 +11,9 @@ import docsIcon from '../../assets/icon/docs-select.png';
 
 import './ProfileHeaderPlantIconList.css';
 
-const ProfileHeaderPlantIconList = ({ ownerId, hasNotification, isFixed, profileData }) => {
+const ProfileHeaderPlantIconList = ({ etcPlantType, ownerId, hasNotification, isFixed, profileData }) => {
+
+  console.log('**************etcPlantType:', etcPlantType);
 
   const navigate = useNavigate();
   const [nowNotified, setNowNotified] = useState(hasNotification);
@@ -42,6 +44,11 @@ const ProfileHeaderPlantIconList = ({ ownerId, hasNotification, isFixed, profile
 
 
   const handleToggledNotification = async () => {
+
+    if (etcPlantType) {
+      return;
+    }
+
     const updatedNotificationStatus = !nowNotified;
 
     try {
