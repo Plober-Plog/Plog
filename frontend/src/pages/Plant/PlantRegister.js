@@ -135,7 +135,7 @@ const PlantRegister = () => {
       if (uploadedFile) {
         formData.append('profile', uploadedFile);
       } else {
-        const response = await fetch(defaultImage);
+        const response = await fetch(profile);
         const blob = await response.blob();
         const file = new File([blob], "defaultProfile.png", { type: blob.type });
         formData.append('profile', file);

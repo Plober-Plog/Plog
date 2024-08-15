@@ -10,6 +10,7 @@ import TextareaField from '../Common/TextareaField';
 import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
 import ModalComplete from '../Common/ModalComplete';
+import defaultImage from './defaultprofile.png'
 import './ProfileUpdateForm.css'; 
 
 const ProfileUpdateForm = () => {
