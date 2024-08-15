@@ -111,7 +111,7 @@ const SnsDetail = () => {
         <Tags selectedTags={allTagsSelected} tags={article.tagTypeList} />
       </div>
       
-      <p>{article.content}</p>
+      <p style={{ whiteSpace: 'pre-line' }}>{article.content}</p>
 
       {isAuthor && (
         <>
