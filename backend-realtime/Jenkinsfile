@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        TARGET_BRANCH = 'develop-be'  // 목표 브랜치 이름 설정
+        TARGET_BRANCH = 'master'  // 목표 브랜치 이름 설정
     }
 
     stages {
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     checkout([$class: 'GitSCM', 
-                              branches: [[name: '*/develop-be']],
+                              branches: [[name: '*/master']],
                               doGenerateSubmoduleConfigurations: false,
                               extensions: [[$class: 'CleanCheckout']],
                               userRemoteConfigs: [[url: 'https://lab.ssafy.com/s11-webmobile2-sub2/S11P12B308.git',
