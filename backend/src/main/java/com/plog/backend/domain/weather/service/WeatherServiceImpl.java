@@ -59,9 +59,6 @@ public class WeatherServiceImpl implements WeatherService {
         for (Gugun gugun : guguns) {
             WeatherResponseDto weatherResult;
             try {
-                // 일부로 틀리게 하기
-                gugun.setLongitude(-1000000.0);
-                gugun.setLatitude(-1000000.0);
                 weatherResult = getWeatherForecast(gugun.getLatitude(), gugun.getLongitude());
             } catch (Exception e) {
 //                log.error("날씨 데이터 조회 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
