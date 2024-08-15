@@ -100,7 +100,7 @@ const PlantRegister = () => {
 
     const today = new Date().toISOString().split("T")[0];
 
-    if (!nickname) {
+    if (!nickname || nickname.length > 6) {
       setShowNicknameErrorModal(true); 
       return;
     }
@@ -115,7 +115,7 @@ const PlantRegister = () => {
       return;
     }
 
-    if (plantTypeId === 1 && !otherPlantName) {
+    if (plantTypeId === 1 && !otherPlantName || otherPlantName.length > 15) {
       setShowOtherPlantErrorModal(true);
       return;
     }
@@ -366,7 +366,7 @@ const PlantRegister = () => {
         open={showNicknameErrorModal}
         onClose={closeNicknameErrorModal} 
         title="닉네임 입력 필요"
-        content="식물의 닉네임을 입력해주세요."
+        content="식물의 닉네임을 6글자 이하로 입력해주세요."
       />
 
       {/* 기타 식물 종 오류 모달 */}
@@ -374,7 +374,7 @@ const PlantRegister = () => {
         open={showOtherPlantErrorModal}
         onClose={closeOtherPlantErrorModal} 
         title="식물 종 입력 필요"
-        content="식물 종을 입력해주세요."
+        content="식물 종을 15자 이하로 입력해주세요."
       />
     </div>
   );
