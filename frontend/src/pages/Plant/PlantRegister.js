@@ -21,7 +21,9 @@ const PlantRegister = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false); 
   const [showFarewellModal, setShowFarewellModal] = useState(false); 
   const [showDateErrorModal, setShowDateErrorModal] = useState(false); 
+  const [showFutureDateErrorModal, setShowFutureDateErrorModal] = useState(false); 
   const [showNicknameErrorModal, setShowNicknameErrorModal] = useState(false);
+  const [showOtherPlantErrorModal, setShowOtherPlantErrorModal] = useState(false);
 
   useEffect(() => {
     const fetchSearchId = useAuthStore.getState().getSearchId;
@@ -79,7 +81,7 @@ const PlantRegister = () => {
           console.log('식물 정보:', response.data);
 
           setPlantTypeId(response.data.plantTypeId);
-          setOtherPlantName(response.data.otherPlantTypeId);
+          setOtherPlantName(response.data.otherPlantTypeName);
           setProfile(response.data.profile || defaultImage);
           setBio(response.data.bio);
           setNickname(response.data.nickname);
@@ -99,12 +101,22 @@ const PlantRegister = () => {
     const today = new Date().toISOString().split("T")[0];
 
     if (!nickname) {
-      setShowNicknameErrorModal(true); // 닉네임이 비어 있을 경우 오류 모달 띄우기
+      setShowNicknameErrorModal(true); 
+      return;
+    }
+
+    if (!birthDate) {
+      setShowDateErrorModal(true);
       return;
     }
 
     if (birthDate > today) {
-      setShowDateErrorModal(true); // 미래 날짜가 선택된 경우 오류 모달 띄우기
+      setShowFutureDateErrorModal(true); 
+      return;
+    }
+
+    if (plantTypeId === 1 && !otherPlantName) {
+      setShowOtherPlantErrorModal(true);
       return;
     }
 
@@ -189,11 +201,19 @@ const PlantRegister = () => {
   };
 
   const closeDateErrorModal = () => {
-    setShowDateErrorModal(false); // 날짜 오류 모달 닫기
+    setShowDateErrorModal(false); 
+  };
+
+  const closeFutureDateErrorModal = () => {
+    setShowFutureDateErrorModal(false);
   };
 
   const closeNicknameErrorModal = () => {
-    setShowNicknameErrorModal(false); // 닉네임 오류 모달 닫기
+    setShowNicknameErrorModal(false);
+  };
+
+  const closeOtherPlantErrorModal = () => {
+    setShowOtherPlantErrorModal(false); 
   };
 
   return (
@@ -255,7 +275,7 @@ const PlantRegister = () => {
           <p>식물 닉네임</p>
           <InputField
             type="text"
-            placeholder="식물 닉네임을 입력해주세요."
+            placeholder="3~6 글자의 식물 닉네임을 입력해주세요."
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             className="plant-register-input mt-2"
@@ -325,11 +345,19 @@ const PlantRegister = () => {
         confirmText="이별하기"
       />
 
-      {/* 미래 날짜 오류 모달 */}
+      {/* 생일 미입력 오류 모달 */}
       <ModalComplete
         open={showDateErrorModal}
         onClose={closeDateErrorModal} 
-        title="생일 재설정"
+        title="생일 입력 필요"
+        content="식물의 생일을 입력해주세요."
+      />
+
+      {/* 미래 날짜 오류 모달 */}
+      <ModalComplete
+        open={showFutureDateErrorModal}
+        onClose={closeFutureDateErrorModal} 
+        title="생일 재설정 필요"
         content="날짜가 올바르지 않습니다."
       />
 
@@ -339,6 +367,14 @@ const PlantRegister = () => {
         onClose={closeNicknameErrorModal} 
         title="닉네임 입력 필요"
         content="식물의 닉네임을 입력해주세요."
+      />
+
+      {/* 기타 식물 종 오류 모달 */}
+      <ModalComplete
+        open={showOtherPlantErrorModal}
+        onClose={closeOtherPlantErrorModal} 
+        title="식물 종 입력 필요"
+        content="식물 종을 입력해주세요."
       />
     </div>
   );
