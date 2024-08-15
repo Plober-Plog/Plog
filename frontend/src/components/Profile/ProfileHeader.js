@@ -4,6 +4,10 @@ import ProfileBio from './ProfileBio';
 
 const ProfileHeader = ({ data = {}, type }) => {
 
+  const etcPlantType = data.etcPlantType || false;
+
+  console.log('@@@@@@@@@@@@@@@@@Received etcPlantType:', etcPlantType);
+
   const profileData = {}
 
   if (type === 'plant') {
@@ -16,6 +20,7 @@ const ProfileHeader = ({ data = {}, type }) => {
     profileData.ownerId = data.plantId || null;
     profileData.hasNotification = data.hasNotification;
     profileData.isFixed = data.isFixed;
+    profileData.etcPlantType = etcPlantType;
   } else if (type === 'user') {
     console.log('ProfileHeader Data:', data)
     profileData.imgSrc = data.profile || '';
@@ -45,6 +50,7 @@ const ProfileHeader = ({ data = {}, type }) => {
           hasNotification={profileData.hasNotification}
           isFixed={profileData.isFixed}
           profileData={data}
+          etcPlantType={profileData.etcPlantType}
         />
       </div>
     </div>

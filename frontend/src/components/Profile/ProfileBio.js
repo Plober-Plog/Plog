@@ -3,7 +3,7 @@ import ProfileHeaderPlantIconList from './ProfileHeaderPlantIconList';
 import ProfileHeaderUserBtnList from './ProfileHeaderUserBtnList';
 import './ProfileBio.css'
 
-const ProfileBio = ({ bio, type, ownerId, hasNotification, isFixed, profileData }) => {
+const ProfileBio = ({ etcPlantType = false, bio, type, ownerId, hasNotification, isFixed, profileData }) => {
 
   const renderBtnIcon = () => {
     if (type === 'user') {
@@ -15,6 +15,7 @@ const ProfileBio = ({ bio, type, ownerId, hasNotification, isFixed, profileData 
           hasNotification={hasNotification}
           isFixed={isFixed}
           profileData={profileData}
+          etcPlantType={etcPlantType}
         />
       )
     } else {

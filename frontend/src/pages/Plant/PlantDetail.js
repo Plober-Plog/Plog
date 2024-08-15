@@ -22,10 +22,14 @@ const PlantDetail = () => {
   const [plantTypeId, setPlantTypeId] = useState(null); //plantTypeId 받아오기
   // const [otherPlantTypeId, setOtherPlantTypeId] = useState(null);
 
+  //etcPlantType
+  const [etcPlantType, setEtcPlantType] = useState(false);
+
   useEffect(() => {
     const fetchPlantData = async () => {
       try {
         const response = await API.get(`/user/plant/${plantId}/info`);
+        console.log('************Plant Type Name:', response.data.plantTypeName); // 추가된 로그
 
         const displayPlantTypeName = response.data.plantTypeName === '기타'
           ? response.data.otherPlantTypeName
@@ -37,6 +41,8 @@ const PlantDetail = () => {
         });
 
         setPlantTypeId(response.data.plantTypeId);
+
+        setEtcPlantType(response.data.plantTypeName === '기타');
       } catch (error) {
         console.error("PlantData Error:", error.response.data);
       }
@@ -79,7 +85,7 @@ const PlantDetail = () => {
   return (
     <div>
       <ProfileHeader
-        data={{ ...plantData, ownerId:plantId }}
+        data={{ ...plantData, ownerId:plantId, etcPlantType }}
         type="plant"
       />
       
