@@ -291,14 +291,14 @@ public class SnsController {
 
     @GetMapping("/bookmark")
     @Operation(summary = "북마크 목록 조회", description = "사용자의 모든 북마크를 조회합니다.")
-    public ResponseEntity<List<ArticleGetResponseDto>> getBookmark(
+    public ResponseEntity<List<ArticleGetSimpleResponseDto>> getBookmark(
             @RequestHeader(value = "Authorization", required = false) String token,
             @Parameter(description = "페이지 번호", example = "0")
             @RequestParam(value = "page", required = false, defaultValue = "0") int page) {
         if(token == null)
             throw new NoTokenRequestException("Access 토큰이 필요합니다.");
         log.info(">>> [GET] /user/sns/bookmark - 북마크 목록 조회 요청");
-        List<ArticleGetResponseDto> response = articleBookmarkService.getBookmarks(token, page);
+        List<ArticleGetSimpleResponseDto> response = articleBookmarkService.getBookmarks(token, page);
         log.info(">>> [GET] /user/sns/bookmark - 북마크 목록 조회 완료");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
