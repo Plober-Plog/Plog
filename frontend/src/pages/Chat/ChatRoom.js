@@ -101,7 +101,6 @@ const ChatRoom = () => {
       });
     }
     setMessageContent("");
-    console.log('발신한 메세지:', sendData);
 
     setTimeout(scrollToBottom, 100);
   };
@@ -116,7 +115,6 @@ const ChatRoom = () => {
       chatType: message.chatType,
     };
     setMessages(prevMessages => [...prevMessages, messageObj]);
-    console.log('수신한 메세지:', message)
     scrollToBottom();
   };
 
@@ -144,7 +142,6 @@ const ChatRoom = () => {
               },
             }
           );
-          console.log('채팅 입장 성공:', response.data);
         } catch (error) {
           console.error('채팅 읽기 오류:', error);
         }

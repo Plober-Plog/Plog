@@ -65,7 +65,6 @@ const PlantRegister = () => {
       try {
         const response = await API.get('/user/plant-type/all');
         setPlantTypeOptions(response.data);
-        console.log('식물종류:', response.data);
       } catch (error) {
         console.error('식물 종류 불러오기 실패:', error);
       }
@@ -78,7 +77,6 @@ const PlantRegister = () => {
       const fetchPlantInfo = async () => {
         try {
           const response = await API.get(`/user/plant/${plantId}/info`);
-          console.log('식물 정보:', response.data);
 
           setPlantTypeId(response.data.plantTypeId);
           setOtherPlantName(response.data.otherPlantTypeName);
@@ -122,7 +120,6 @@ const PlantRegister = () => {
 
     try {
       const formData = new FormData();
-      console.log(otherPlantName);
 
       formData.append('plantTypeId', plantTypeId);
       if (plantTypeId === 1) {
@@ -148,14 +145,12 @@ const PlantRegister = () => {
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log('식물 등록 성공:', response.data);
       } else {
         response = await API.patch(`/user/plant/${plantId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log('식물 수정 성공:', response.data);
       }
 
       navigate(`/profile/${searchId}`);
@@ -167,7 +162,6 @@ const PlantRegister = () => {
   const handleDelete = async () => {
     try {
       const response = await API.delete(`/user/plant/${plantId}`);
-      console.log('식물 삭제 성공:', response.data);
       navigate(`/profile/${searchId}`);
     } catch (err) {
       console.error('식물 삭제 실패 : ', err);
@@ -177,7 +171,6 @@ const PlantRegister = () => {
   const handleFarewell = async () => {
     try {
       const response = await API.patch(`/user/plant/${plantId}/farewell`);
-      console.log('식물과 이별 성공:', response.data);
       navigate(`/profile/${searchId}`);
     } catch (err) {
       console.error('식물과 이별 실패 : ', err);

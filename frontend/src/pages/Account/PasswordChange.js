@@ -24,16 +24,13 @@ const PasswordChange = () => {
       });
 
       if (response.status === 200) {
-        console.log('비밀번호 확인 성공!')
         const userId = response.data.userId;
         navigate('/password/update', { state: { userId } });
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        console.log('비밀번호 불일치!')
         setPasswordConfirmMsg('비밀번호가 일치하지 않습니다.');
       } else {
-        console.log('비밀번호 확인 실패!')
         setPasswordConfirmMsg('비밀번호 확인에 실패했습니다. 다시 시도해주세요.');
       }
     }

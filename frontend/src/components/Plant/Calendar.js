@@ -25,8 +25,6 @@ const CustomCalendar = ({ plantId }) => {
         params: { year, month },
       });
 
-      console.log('@@@checkRecords:@@##@', checkRecords);
-      console.log('@@@diaryRecords:@@##@', diaryRecords);
       return { checkData: checkResponse.data, diaryData: diaryResponse.data };
     } catch (error) {
       console.error('Error fetching month data:', error.response.data);

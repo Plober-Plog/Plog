@@ -13,11 +13,9 @@ const API = axios.create({
 API.interceptors.request.use(
   (config) => {
     const accessToken = getCookie('accessToken');
-    console.log('현재 토큰 :', accessToken);
 
     if (accessToken) {
       config.headers.Authorization = accessToken;
-      console.log('headers에 토큰 추가 :', config.headers.Authorization);
     }
     return config;
   },
@@ -38,17 +36,13 @@ API.interceptors.response.use(
       try {
         // 리프레시 토큰 있으면 엑세스 토큰 다시 저장
         const refreshToken = getCookie('refreshToken');
-        console.log(refreshToken);
         const refreshTokenResponse = await axios.post(`${API_BASE_URL}/auth/refresh`, { refreshToken });
-        console.log('새토큰 발급 완료!')
         const newAccessToken = refreshTokenResponse.data.split(' : ')[1];
-        console.log(newAccessToken);
         setCookie('accessToken', newAccessToken, 60); // 새로운 엑세스 토큰 1시간 유효
         originalRequest.headers.Authorization = newAccessToken;
         return axios(originalRequest);
       } catch (refreshError) {
         // 만료됐으면 로그인 페이지로 이동
-        console.log('토큰 만료')
         eraseCookie('accessToken');
         eraseCookie('refreshToken');
         useAuthStore.getState().clearToken();

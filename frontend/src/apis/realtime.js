@@ -9,11 +9,9 @@ const REALTIME_API = axios.create({
 REALTIME_API.interceptors.request.use(
     (config) => {
       const accessToken = getCookie('accessToken');
-      console.log('현재 토큰 :', accessToken);
   
       if (accessToken) {
         config.headers.Authorization = accessToken;
-        console.log('headers에 토큰 추가 :', config.headers.Authorization);
       }
       return config;
     },

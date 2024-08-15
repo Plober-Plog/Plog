@@ -21,7 +21,6 @@ const AlarmItem = ({ alarm }) => {
 
   // 관련 페이지로 이동
   const handleMove = () => {
-    console.log('관련 페이지로 이동:', alarm.clickUrl);
     window.location.href = alarm.clickUrl;
   };
 

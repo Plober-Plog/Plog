@@ -37,7 +37,6 @@ const PasswordFind = () => {
   // 이메일 인증 코드 전송
   const handleEmailVerification = async () => {
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-      console.log('이메일 형식이 올바르지 않습니다.');
       setEmailCheckMsg('올바른 이메일 형식이 아닙니다.');
       return;
     }
@@ -50,10 +49,8 @@ const PasswordFind = () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/user/password/send`, { email });
       if (response.data) {
-        console.log('인증 코드 전송 성공!');
       } else {
         setEmailCheckMsg('이메일 인증에 실패했습니다. 다시 시도해주세요.');
-        console.log('인증 코드 전송 실패! : ', response);
         setIsSendingEmail(false); // 실패 시 다시 버튼 텍스트를 변경할 수 있도록 상태 업데이트
       }
     } catch (error) {
@@ -67,14 +64,12 @@ const PasswordFind = () => {
   const handleCodeVerification = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/user/password/check`, { email, verifyCode: emailVerificationInput });
-      console.log(response.data);
       if (response.data.result) {
         setIsEmailVerified(true);
         setUserId(response.data.userId); // 유저 pk
         setEmailVerificationMsg('이메일 인증 성공!');
       } else {
         setEmailVerificationMsg('인증 코드가 올바르지 않습니다.');
-        console.log(response.data.result);
       }
     } catch (error) {
       if (error.response && error.response.status === 408) {

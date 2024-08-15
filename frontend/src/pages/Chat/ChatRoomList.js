@@ -13,7 +13,6 @@ const ChatRoomList = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const token = getCookie('accessToken');  
-  console.log('채팅방 토큰 : ', token);
   const containerRef = useRef(null);
 
   // 채팅방 불러오기 
@@ -32,7 +31,6 @@ const ChatRoomList = () => {
           size: 10, // 한 번에 가져올 채팅방 수 (필요에 따라 조정)
         }
       });
-      console.log('채팅방 불러오기 성공:', response.data);
 
       if (response.data.length === 0) {
         setHasMore(false);

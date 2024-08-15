@@ -4,10 +4,6 @@ import './Tab.css';
 
 const NeighborTypeTab = ({ activeTab, setActiveTab }) => {
 
-  useEffect(() => {
-    console.log('Active Tab:', activeTab);
-  }, [activeTab]);
-
   return (
     <div className="w-screen max-w-none visibility-selector">
       <button

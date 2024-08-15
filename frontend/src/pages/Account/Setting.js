@@ -20,14 +20,12 @@ const Setting = () => {
       const refreshToken = getrefreshToken();
       if (!refreshToken) {
         clearToken();
-        console.log('이미 로그아웃된 상태입니다.');
         navigate('/login');
         return;
       }
 
       const response = await API.get('/user/logout');
       clearToken();
-      console.log('로그아웃 성공:', response.data);
       navigate('/login');
     } catch (error) {
       console.error('로그아웃 실패:', error);
@@ -38,14 +36,12 @@ const Setting = () => {
     try {
       const accessToken = getAccessToken();
       if (!accessToken) {
-        console.log('로그인되지 않은 상태입니다.');
         clearToken();
         navigate('/login');
         return;
       }
 
       const response = await API.delete('/user');
-      console.log('회원 탈퇴 성공:', response.data);
 
       clearToken();
       navigate('/login');

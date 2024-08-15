@@ -11,7 +11,6 @@ const ChatListItem = ({ chatRoom, token }) => {
   const handleEnterChatRoom = async (chatRoomId, chatRoomName) => {
     // 읽음 표시
     const chatRead = async () => {
-      console.log('채팅 읽기 토큰:', token);
       try {
         const response = await axios.post(`${API_REALTIME_URL}/chat/room/${chatRoomId}/read`, 
           { params: {chatRoomId} },
@@ -22,7 +21,6 @@ const ChatListItem = ({ chatRoom, token }) => {
             },
           }
         );
-        console.log('채팅 입장 성공:', response.data);
       } catch (error) {
         console.error('채팅 읽기 오류:', error);
       }
@@ -41,7 +39,6 @@ const ChatListItem = ({ chatRoom, token }) => {
   // 채팅방 삭제
   const handleChatDelete = async (e, chatRoomId) => {
     e.stopPropagation(); // 이벤트 버블링을 막아 클릭이 chat-list-item으로 전달되지 않도록 함
-    console.log('삭제 토큰:', token);
     try {
       const response = await axios.delete(`${API_REALTIME_URL}/chat/room`, {
         headers: {
@@ -51,7 +48,6 @@ const ChatListItem = ({ chatRoom, token }) => {
           chatRoomId: chatRoomId,  // params를 객체로 전달
         },
       });
-      console.log('채팅방 삭제 성공:', response.data);
       window.location.reload(); // 삭제 후 페이지 새로고침
     } catch (error) {
       console.error('채팅방 삭제 오류:', error);

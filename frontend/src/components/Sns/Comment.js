@@ -33,7 +33,6 @@ const Comment = ({ articleId }) => {
           setCommentList(prevComments => [...prevComments, ...response.data]);
           setCmtCnt(prevCount => prevCount + response.data.length);
         }
-        console.log('댓글 불러오기 성공:', response.data);
       } catch (err) {
         console.error('댓글 불러오기 실패 : ', err);
       }

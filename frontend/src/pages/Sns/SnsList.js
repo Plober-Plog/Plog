@@ -24,8 +24,6 @@ const SnsList = () => {
     );
   };
 
-  console.log('Selected tagTypeList:', tagTypeList);  // tagTypeList가 제대로 업데이트되고 있는지 확인
-
   return (
     <div>
       <div className='pb-5'>

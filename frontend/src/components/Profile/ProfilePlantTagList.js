@@ -73,10 +73,6 @@ const ProfilePlantTagList = ({ searchId, onFilterUpdate }) => {
     }
   };
 
-  useEffect(() => {
-    console.log('###selected tags####', selectedTags)
-  }, [selectedTags]);
-  
   return (
     <div className="plant-tag-list">
       {plantTags.map((plant) => (

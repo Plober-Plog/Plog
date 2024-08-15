@@ -18,7 +18,6 @@ const PlantGuide = () => {
       try {
         const response = await API.get(`/user/plant-type/${plantTypeId}`);
         setPlantData(response.data);
-        console.log(response.data);
         setLoading(false);
       } catch (error) {
         setLoading(false);

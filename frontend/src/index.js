@@ -25,11 +25,8 @@ serviceWorkerRegistration.register();
 
 // FCM 메시지 리스너 추가
 // onMessageListener().then(payload => {
-//   console.log('Received foreground message: ', payload);
 //   // 여기에 알림을 표시하는 코드를 추가할 수 있습니다.
-// }).catch(err => console.log('failed: ', err));
 
 // If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
