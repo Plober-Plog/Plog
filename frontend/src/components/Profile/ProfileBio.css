@@ -1,0 +1,21 @@
+.profile-bio-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+  
+  .profile-bio {
+    background-color: #F5F5F5;
+    padding: 15px;
+    border-radius: 10px;
+    width: 100%;
+    align-items: center;
+    flex-grow: 1;
+  }
+  
+  .profile-bio-btn {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+  }

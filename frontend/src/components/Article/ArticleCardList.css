@@ -1,0 +1,20 @@
+.article-card-list {
+    display: flex;
+    overflow-x: scroll; /* 가로 스크롤 */
+    gap: 10px;
+    height: 160px;
+    padding-top: 20px;
+  }
+  
+  .article-card-list::-webkit-scrollbar {
+    display: none; /* 스크롤바 숨기기 */
+  }
+  
+  .article-card-list > div {
+    flex: 0 0 30%; /* 각 카드가 한 화면에 3개씩 보이게 하기 */
+    max-width: 30%;
+    box-sizing: border-box;
+    border-radius: 10px;
+    height: 140px;
+    overflow: hidden; /* 자식 요소가 부모 요소 넘으면 가림 */
+  }

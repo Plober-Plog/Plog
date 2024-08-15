@@ -5,6 +5,16 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+#### Build 폴더 제외 ###
+#build/
+#**/build/
+#
+#### Out 폴더 제외 ###
+#out/
+#**/ogit ut/
+#### genereated 폴더 제외
+**/src/main/generated
+
 ### STS ###
 .apt_generated
 .classpath
@@ -37,4 +47,4 @@ out/
 .vscode/
 
 ### properties ###
-/src/main/resources/application.properties
+/src/main/resources/**

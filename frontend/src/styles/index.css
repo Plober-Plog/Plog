@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'SUIT-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'SUIT-Regular', sans-serif;
+}
+
+.container {
+  @apply max-w-custom mx-auto flex flex-col items-center;
+  padding-top: 57px;
+  padding-bottom: 57px;
+}
+
+.content {
+  width: 90%;
+  @apply mx-auto;
+}
+
+.full-width {
+  @apply w-full;
+}
+
+.cardlist-subtitle {
+  font-weight: bold;
+  font-size: 20px;
+}

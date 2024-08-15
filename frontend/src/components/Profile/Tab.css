@@ -1,0 +1,29 @@
+.visibility-selector {
+    width: 100%;
+    left:0;
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    height: 50px;
+    position: absolute;
+    }
+  
+  .visibility-selector button {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    border-right: 1px solid #e5e7eb;
+    cursor: pointer;
+    text-align: center;
+    background-color: white;
+    color: black;
+  }
+  
+  .visibility-selector button:last-child {
+    border-right: none;
+  }
+  
+  .visibility-selector button.active {
+    background-color: #87B989;
+    color: white;
+    border-right: 1px solid white;
+  }
