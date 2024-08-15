@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +87,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+
     public List<ChatGetResponseDto> getChatData(Long userId, Long chatRoomId, int page) {
         ChatUser chatUser = chatUserRepository.findByUserUserIdAndChatRoomChatRoomId(userId, chatRoomId)
                 .orElseThrow(() -> new NotAuthorizedRequestException("채팅창에 입장할 권한이 없습니다."));
@@ -94,6 +96,12 @@ public class ChatServiceImpl implements ChatService {
 //        for (Chat chat : chats) {
 //            log.info(">>> getChatDate - chat : {}", chat.);
 //        }
+
+        if (chats.isEmpty()) {
+            log.info(" >>> 채팅방에 채팅 내역이 없습니다: chatRoomId - {}, page - {}", chatRoomId, page);
+            return new ArrayList<>(); // 빈 리스트 반환
+        }
+
         log.info(" >>> getChatData 완료: chatRoomId - {}, page - {}, size - {}", chatRoomId, page, chats.size());
         return chats.stream().map(chat -> new ChatGetResponseDto(
                 chat.getUser().getUserId(),
