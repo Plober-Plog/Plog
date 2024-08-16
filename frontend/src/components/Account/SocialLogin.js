@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import kakao from '../../assets/image/kakao.png';
 import naver from '../../assets/image/naver.png';
 import google from '../../assets/image/google.png';
 import './SocialLogin.css';
+import { requestForToken } from '../../firebase'; // FCM 관련 코드 추가
 import useAuthStore from '../../stores/member';
 import axios from 'axios';
 
@@ -18,7 +19,39 @@ const SocialLogin = () => {
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
-  const handleSocialLogin = (provider) => {
+  // 리디렉션 후 쿼리 파라미터에서 토큰을 받아 처리
+  useEffect(async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const accessToken = urlParams.get('accessToken');
+    const refreshToken = urlParams.get('refreshToken');
+
+    if (accessToken && refreshToken) {
+      setToken(accessToken, refreshToken);
+
+      // FCM 토큰 요청
+      const fcmToken = await requestForToken();
+      
+      const tokenInfo = {
+        "accessToken": accessToken,
+        "notificationToken": fcmToken
+      }
+
+      const response = await axios.post(`${API_BASE_URL}/user/login/social`, fcmToken);
+
+      API.get('/user')
+        .then((userResponse) => {
+          setUserData(userResponse.data);
+          navigate('/');
+        })
+        .catch(() => {
+          setLoginError('사용자 정보를 가져오는데 실패했습니다.');
+        });
+    }
+  }, [setToken, setUserData, navigate]);
+
+  const handleSocialLogin = async (provider) => {
+
     let authUrl = '';
 
     if (provider === 'google') {
@@ -29,6 +62,7 @@ const SocialLogin = () => {
       authUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${naverClientId}&redirect_uri=${redirectUri}naver&response_type=code`;
     }
 
+    // OAuth 인증 페이지로 리디렉션
     window.location.href = authUrl;
   };
 

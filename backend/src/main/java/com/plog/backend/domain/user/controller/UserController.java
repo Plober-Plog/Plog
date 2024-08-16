@@ -292,4 +292,13 @@ public class UserController {
 
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 푸시 정보 수정이 완료되었습니다."));
     }
+
+    @Operation(summary = "회원 푸시 수정", description = "회원 푸시 정보를 수정합니다.")
+    @PostMapping("/login/social")
+    public ResponseEntity<BaseResponseBody> notificationUpdate(
+            @RequestBody UserNotificationRequestDto userNotificationRequestDto) {
+        log.info(">>> [PATCH] /user - 회원 푸시 수정 요청 데이터: {}", userNotificationRequestDto);
+        userService.notificationUpdate(userNotificationRequestDto);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원 푸시 정보 수정이 완료되었습니다."));
+    }
 }

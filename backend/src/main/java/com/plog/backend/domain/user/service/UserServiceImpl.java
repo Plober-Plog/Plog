@@ -27,6 +27,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -382,8 +383,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void notificationUpdate(UserNotificationRequestDto userNotificationRequestDto) {
+        JwtTokenUtil jwtTokenUtil = JwtTokenUtil.getInstance();
+
+        Long userId = jwtTokenUtil.getUserIdFromToken(userNotificationRequestDto.getAccessToken());
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotValidRequestException("없는 회원입니다."));
+
+        user.setNotificationToken(userNotificationRequestDto.getNotificationToken());
+    }
+
     @Transactional
-    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider, String notificationToken) {
+    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
 
         log.info(">>> 소셜로그인 Google 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}"
                 ,email,name,profileImage,providerId,provider);
@@ -410,7 +422,7 @@ public class UserServiceImpl implements UserService {
                     .totalExp(0)
                     .chatAuth(ChatAuth.PUBLIC.getValue())
                     .isPushNotificationEnabled(true)
-                    .notificationToken(notificationToken)
+                    .profileInfo("안녕하세요")
                     .build();
             userRepository.save(user);
             log.info(">>> 회원가입 성공: {}", user);
