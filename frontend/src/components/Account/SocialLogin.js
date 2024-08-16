@@ -7,6 +7,7 @@ import './SocialLogin.css';
 import { requestForToken } from '../../firebase'; // FCM 관련 코드 추가
 import useAuthStore from '../../stores/member';
 import axios from 'axios';
+import API from '../../apis/api';
 
 const SocialLogin = () => {
   const googleClientId = '1044248850028-csgv8o025t0cf5u68kgfolvespii9j7b.apps.googleusercontent.com';
@@ -37,7 +38,7 @@ const SocialLogin = () => {
         "notificationToken": fcmToken
       }
 
-      const response = await axios.post(`${API_BASE_URL}/user/login/social`, fcmToken);
+      const response = await axios.get(`${API_BASE_URL}/user/login/social`, tokenInfo);
 
       API.get('/user')
         .then((userResponse) => {
