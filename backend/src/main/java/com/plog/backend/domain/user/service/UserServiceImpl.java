@@ -228,7 +228,7 @@ public class UserServiceImpl implements UserService {
                     throw new NotValidRequestException("회원 프로필 사진은 한 장만 등록할 수 있습니다.");
                 String[] imageUrl = imageService.uploadImages(profile);
                 Image userImage = imageRepository.findByImageUrl(imageUrl[0])
-                                .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
+                        .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
                 user.setImage(userImage);
             }
             user.setNickname(request.getNickname());

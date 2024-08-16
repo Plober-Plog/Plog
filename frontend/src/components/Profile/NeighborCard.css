@@ -1,0 +1,54 @@
+/* General card layout */
+.neighbor-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+/* Profile image container */
+.neighbor-card-image-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 24px; /* Added space for the nickname below */
+}
+
+/* Profile image styling */
+.neighbor-card-image {
+  border-radius: 50%;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.neighbor-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Search ID styling */
+.neighbor-card-id {
+  position: absolute;
+  bottom: -15px; /* Position slightly overlapping the image */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #87B989;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+/* Nickname styling */
+.neighbor-card-nickname {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 8px;
+}

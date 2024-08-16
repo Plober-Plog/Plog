@@ -2,7 +2,11 @@ pipeline {
     agent any
 
     environment {
+<<<<<<< HEAD
         TARGET_BRANCH = 'develop-fe'  // 목표 브랜치 이름 설정
+=======
+        TARGET_BRANCH = 'master'  // 목표 브랜치 이름 설정
+>>>>>>> master
     }
 
     stages {
@@ -25,7 +29,11 @@ pipeline {
             steps {
                 script {
                     checkout([$class: 'GitSCM',
+<<<<<<< HEAD
                               branches: [[name: '*/develop-fe']],
+=======
+                              branches: [[name: '*/master']],
+>>>>>>> master
                               doGenerateSubmoduleConfigurations: false,
                               extensions: [[$class: 'CleanCheckout']],
                               userRemoteConfigs: [[url: 'https://lab.ssafy.com/s11-webmobile2-sub2/S11P12B308.git',
@@ -34,6 +42,22 @@ pipeline {
                 }
             }
         }
+<<<<<<< HEAD
+=======
+        stage('Copy .env') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'firebase-env', variable: 'ENV_FILE')]) {
+                        // .env 파일 복사
+                        sh 'cp $ENV_FILE frontend/.env'
+
+                        // 복사된 파일 내용 확인
+                        sh 'cat frontend/.env'
+                    }
+                }
+            }
+        }
+>>>>>>> master
         stage('Build with npm') {
             steps {
                 dir('frontend') {

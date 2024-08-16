@@ -1,6 +1,11 @@
 import React from 'react';
 
 const InputField = ({ type, placeholder, value, onChange, isrequired, className, disabled }) => {
+<<<<<<< HEAD
+=======
+  const today = new Date().toISOString().split("T")[0];
+
+>>>>>>> master
   return (
     <div>
       <input 

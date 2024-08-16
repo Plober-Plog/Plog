@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Btn from '../../components/Common/Btn';
+<<<<<<< HEAD
 
 const TabVisibilitySelector = ({ selectedVisibility, setSelectedVisibility }) => {
   // 변경 값 확인
@@ -34,6 +35,26 @@ const TabVisibilitySelector = ({ selectedVisibility, setSelectedVisibility }) =>
         onClick={() => setSelectedVisibility(3)}
         style={buttonStyle(selectedVisibility === 3)}
       />
+=======
+import './Tab.css';
+
+const TabVisibilitySelector = ({ selectedVisibility, setSelectedVisibility }) => {
+
+  return (
+    <div className="w-screen max-w-none visibility-selector">
+      <button
+        onClick={() => setSelectedVisibility(1)}
+        className={selectedVisibility === 1 ? 'active' : ''}
+      >
+        전체 공개
+      </button>
+      <button
+        onClick={() => setSelectedVisibility(2)}
+        className={selectedVisibility === 2 ? 'active' : ''}
+      >
+        이웃 공개
+      </button>
+>>>>>>> master
     </div>
   );
 };

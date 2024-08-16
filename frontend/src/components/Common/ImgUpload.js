@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
+<<<<<<< HEAD
 import DiaryTodoIcon from '../../components/Diary/DiaryTodoIcon'; 
 import ImgPreview from '../../components/Common/ImgPreview'; 
 import Btn from '../../components/Common/Btn'; 
@@ -26,12 +27,33 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage, isD
         }}
         disabled={isDisabled}
       />
+=======
+import ImgPreview from './ImgPreview'; 
+import DiaryTodoIcon from '../Diary/DiaryTodoIcon';
+
+const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage }) => {
+  const fileInputRef = useRef(null);
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
+  return (
+    <div className="img-upload-container">
+      <button 
+        onClick={handleClick}
+        className="img-upload-button"
+      >
+        <DiaryTodoIcon src={cameraIcon} alt="upload" />
+      </button>
+>>>>>>> master
       <input
         type="file"
         ref={fileInputRef}
         style={{ display: 'none' }}
         multiple
         accept="image/*"
+<<<<<<< HEAD
         capture="environment"
         onChange={(e) => {
           if (!isDisabled) {
@@ -48,6 +70,19 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage, isD
             src={img.src} 
             onDelete={() => handleDeleteImage(index)} 
             isDisabled={isDisabled} // 비활성화 상태 전달
+=======
+        onChange={(e) => {
+          handleImageUpload(e);
+          e.target.value = ''; // Reset the input so that the same file can be uploaded again if needed
+        }}
+      />
+      <div className="img-previews">
+        {imgs.map((img, index) => (
+          <ImgPreview 
+            key={index} 
+            src={img.url} 
+            onDelete={() => handleDeleteImage(index)} 
+>>>>>>> master
           />
         ))}
       </div>
@@ -58,6 +93,7 @@ const ImgUpload = ({ cameraIcon, imgs, handleImageUpload, handleDeleteImage, isD
 ImgUpload.propTypes = {
   cameraIcon: PropTypes.string.isRequired,
   imgs: PropTypes.arrayOf(PropTypes.shape({
+<<<<<<< HEAD
     src: PropTypes.string.isRequired,
   })).isRequired,
   handleImageUpload: PropTypes.func.isRequired,
@@ -68,6 +104,12 @@ ImgUpload.propTypes = {
 
 ImgUpload.defaultProps = {
   isDisabled: false, // 기본값은 false로 설정
+=======
+    url: PropTypes.string.isRequired,
+  })).isRequired,
+  handleImageUpload: PropTypes.func.isRequired,
+  handleDeleteImage: PropTypes.func.isRequired,
+>>>>>>> master
 };
 
 export default ImgUpload;

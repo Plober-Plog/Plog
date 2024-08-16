@@ -1,7 +1,13 @@
 import React from 'react';
 import ArticleCard from './ArticleCard';
+<<<<<<< HEAD
 
 const ArticleCardList = ({ plantId, articles = [], type }) => {
+=======
+import './ArticleCardList.css';
+
+const ArticleCardList = ({ ownerId, articles = [], type }) => {
+>>>>>>> master
 
   if (!Array.isArray(articles)) {
     return (
@@ -19,6 +25,7 @@ const ArticleCardList = ({ plantId, articles = [], type }) => {
     )
   };
 
+<<<<<<< HEAD
   /* TODO: BE에서 SNS 관련 api 명세를 작성한 후에 추가 및 수정할 것
     1. plantId
     2. props
@@ -38,6 +45,41 @@ const ArticleCardList = ({ plantId, articles = [], type }) => {
           type={type}
         />
       ))}
+=======
+  return (
+    <div className='article-card-list'>
+      {articles.map(article => {
+        if (type === 'plant') {
+
+          const monthDay = article.recordDate ? article.recordDate.slice(5) : '';
+          
+          return (
+            <ArticleCard 
+              key={article.plantDiaryId}
+              ownerId={ownerId}
+              id={article.plantDiaryId}
+              log={monthDay}
+              recordDate={article.recordDate}
+              thumbnail={article.thumbnail}
+              type={type}
+            />
+          );
+        } else if (type === 'sns') {
+          return (
+            <ArticleCard 
+              key={article.articleId}  
+              ownerId={ownerId}
+              id={article.articleId}    
+              log={article.nickname}     
+              thumbnail={article.image} 
+              type={type}
+            />
+          );
+        } else {
+          return <p>잘못된 타입: {type}</p>;
+        }
+      })}
+>>>>>>> master
     </div>
   )
 }

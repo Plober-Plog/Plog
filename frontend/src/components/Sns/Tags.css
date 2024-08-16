@@ -1,0 +1,28 @@
+.tags-container {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+
+.tags-container::-webkit-scrollbar {
+  display: none;
+}
+
+.tag {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 20px;
+  background-color: #F5F5F5;
+  color: black;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.tag.active {
+  background-color: #87B989;
+  color: white;
+}
+
+.tag:last-child {
+  margin-right: 0;
+}

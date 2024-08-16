@@ -9,6 +9,7 @@ const Login = () => {
 
   return (
     <div className="account-container">
+<<<<<<< HEAD
       <h1 className="title">로그인</h1>
       <LoginForm />
       <ATag 
@@ -19,6 +20,23 @@ const Login = () => {
         content={'비밀번호 찾기'}
         onClick={() => navigate('/password/find')}
       />
+=======
+      <h1 className="account-title">로그인</h1>
+      <LoginForm />
+      <div className="account-a">
+        <ATag 
+          content={'회원가입 하기'}
+          onClick={() => navigate('/signup')}
+          className="account-link"
+        />
+        <span>|</span>
+        <ATag 
+          content={'비밀번호 찾기'}
+          onClick={() => navigate('/password/find')}
+          className="account-link"
+        />
+      </div>
+>>>>>>> master
       <SocialLogin />
     </div>
   );

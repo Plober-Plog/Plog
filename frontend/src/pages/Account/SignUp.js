@@ -8,6 +8,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   return (
+<<<<<<< HEAD
     <div className="account-container">
       <h1 className="title">회원가입</h1>
       <ATag
@@ -15,6 +16,13 @@ const SignUp = () => {
         onClick={() => navigate('/login')}
       />
       <SignUpForm />
+=======
+    <div className="account-signup-container">
+      <h1 className="account-title mt-20">회원가입</h1>
+      <div>
+        <SignUpForm />
+      </div>
+>>>>>>> master
     </div>
   );
 }

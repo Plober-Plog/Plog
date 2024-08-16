@@ -1,0 +1,44 @@
+.plant-report-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.plant-report-title {
+  margin-bottom: 20px;
+}
+
+.plant-report-slider {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.plant-report-name {
+  margin-bottom: 20px;
+}
+
+.plant-report-details {
+  margin-bottom: 20px;
+}
+
+.plant-report-details {
+  background-color: #f9f9f9; 
+  padding: 20px; 
+  border-radius: 10px; 
+  border: 1px solid #ddd; 
+  color: #333; 
+  margin-top: 20px; 
+  text-align: center;
+}
+
+.plant-report-button {
+  margin-bottom: 20px;
+}
+
+.plant-report-sns-btn {
+  display: flex;
+  justify-content: center;
+  margin-top:10px ; 
+}

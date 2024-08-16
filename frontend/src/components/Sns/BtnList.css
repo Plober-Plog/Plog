@@ -1,0 +1,24 @@
+.action-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+
+.action-container div {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+}
+
+.action-container img {
+  width: 24px; /* 이미지 크기를 조정 */
+  height: 24px;
+  cursor: pointer;
+}
+
+.action-container span {
+  margin-left: 5px;
+  font-size: 16px;
+  /* color: #888; */
+}

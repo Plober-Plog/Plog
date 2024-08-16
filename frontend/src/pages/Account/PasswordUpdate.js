@@ -12,7 +12,11 @@ import './Account.css';
 
 const PasswordUpdate = () => {
   const navigate = useNavigate();
+<<<<<<< HEAD
   const URI = 'https://i11b308.p.ssafy.io/api'
+=======
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+>>>>>>> master
   // location
   const location = useLocation();
   const { userId } = location.state;
@@ -60,12 +64,19 @@ const PasswordUpdate = () => {
     
     // 비밀번호 변경 요청
     try {
+<<<<<<< HEAD
       console.log('userId: ',userId)
       const response = await axios.patch(`${URI}/user/password`, {
         userId,
         password: sha256(password)
       })
       console.log('비밀번호 변경 성공:', response.data);
+=======
+      const response = await axios.patch(`${API_BASE_URL}/user/password`, {
+        userId,
+        password: sha256(password)
+      })
+>>>>>>> master
       setOpenModal(true);
     } catch (error) {
       console.error('비밀번호 변경 실패:', error);
@@ -81,15 +92,22 @@ const PasswordUpdate = () => {
 
   return (
     <div className="account-container">
+<<<<<<< HEAD
       <h2 className="title">비밀번호 변경</h2>
       <form onSubmit={e => e.preventDefault()} className="form">
         <div>
+=======
+      <h2 className="account-title">비밀번호 변경</h2>
+      <form onSubmit={e => e.preventDefault()} className="account-form">
+        <div className="password-container">
+>>>>>>> master
           <InputField
             type={showPassword ? "text" : "password"}
             placeholder="비밀번호" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)}
             isRequired={true} 
+<<<<<<< HEAD
             className="input"
           />
           <ATag
@@ -99,12 +117,26 @@ const PasswordUpdate = () => {
           {passwordError && <p className="error">{passwordError}</p>}
         </div>
         <div>
+=======
+            className="account-input"
+          />
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            className="password-toggle"
+          >
+            {showPassword ? '숨기기' : '보기'}
+          </span>
+          {passwordError && <p className="account-error">{passwordError}</p>}
+        </div>
+        <div className="password-container">
+>>>>>>> master
           <InputField
             type={showPassword ? "text" : "password"}
             placeholder="비밀번호 확인" 
             value={passwordConfirm} 
             onChange={(e) => setPasswordConfirm(e.target.value)}
             isRequired={true} 
+<<<<<<< HEAD
             className="input"
           />
           <ATag
@@ -112,12 +144,27 @@ const PasswordUpdate = () => {
             content={showPassword ? '숨기기' : '보기'}
           />
           {passwordConfirmError && <p className="error">{passwordConfirmError}</p>}
+=======
+            className="account-input"
+          />
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            className="password-toggle"
+          >
+            {showPassword ? '숨기기' : '보기'}
+          </span>
+          {passwordConfirmError && <p className="account-error">{passwordConfirmError}</p>}
+>>>>>>> master
         </div>
         <Btn
           content="비밀번호 변경"
           disabled={!isFormValid}
           onClick={handlePasswordUpdate}
+<<<<<<< HEAD
           className="button"
+=======
+          className="account-button"
+>>>>>>> master
         />
       </form>
       <ModalComplete
@@ -127,6 +174,10 @@ const PasswordUpdate = () => {
         onClose={closeModal}
       />
     </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
   )
 }
 
