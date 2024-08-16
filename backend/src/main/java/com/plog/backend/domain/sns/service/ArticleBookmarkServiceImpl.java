@@ -1,11 +1,9 @@
 package com.plog.backend.domain.sns.service;
 
 import com.plog.backend.domain.image.service.ImageService;
-import com.plog.backend.domain.sns.dto.response.ArticleBookmarkGetResponseDto;
-import com.plog.backend.domain.sns.dto.response.ArticleGetResponseDto;
+import com.plog.backend.domain.sns.dto.response.ArticleGetSimpleResponseDto;
 import com.plog.backend.domain.sns.entity.Article;
 import com.plog.backend.domain.sns.entity.ArticleBookmark;
-import com.plog.backend.domain.sns.entity.TagType;
 import com.plog.backend.domain.sns.repository.*;
 import com.plog.backend.domain.user.entity.User;
 import com.plog.backend.domain.user.repository.UserRepository;
@@ -22,7 +20,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.plog.backend.global.util.JwtTokenUtil.jwtTokenUtil;
 
@@ -39,7 +36,7 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
     private final ArticleRepository articleRepository;
     private final ArticleBookmarkRepositorySupport articleBookmarkRepositorySupport;
     private final ImageService imageService;
-    private final ArticleTagRepositorySupport articleTagRepositorySupport;
+    private final ArticleCommentRepository articleCommentRepository;
     private final ArticleLikeRepository articleLikeRepository;
     private final ArticleLikeRepositorySupport articleLikeRepositorySupport;
 
@@ -118,7 +115,7 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
     }
 
     @Override
-    public List<ArticleGetResponseDto> getBookmarks(String token, int page) {
+    public List<ArticleGetSimpleResponseDto> getBookmarks(String token, int page) {
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
         log.info(">>> [getBookmarks] - 사용자 ID: {}", userId);
 
@@ -128,24 +125,26 @@ public class ArticleBookmarkServiceImpl implements ArticleBookmarkService {
                 );
 
         List<Article> articleList = articleBookmarkRepositorySupport.loadBookmarkedArticleList(userId, page);
-        List<ArticleGetResponseDto> articleGetResponseDtoList = new ArrayList<>();
+        List<ArticleGetSimpleResponseDto> articleGetResponseDtoList = new ArrayList<>();
 
         for (Article article : articleList) {
-            List<TagType> tagTypeList = articleTagRepositorySupport.findTagTypeByArticleId(article.getArticleId());
             List<String> articleImageList = imageService.loadImagUrlsByArticleId(article.getArticleId());
             int likeCnt = articleLikeRepository.countByArticleArticleId(article.getArticleId());
             boolean isLiked = articleLikeRepositorySupport.isLikedByUser(userId, article.getArticleId());
-            articleGetResponseDtoList.add(ArticleGetResponseDto.builder()
+            int commentCnt = articleCommentRepository.countByArticleArticleIdAndState(article.getArticleId(), 1);
+            articleGetResponseDtoList.add(ArticleGetSimpleResponseDto.builder()
                     .searchId(article.getUser().getSearchId())
                     .articleId(article.getArticleId())
+                    .nickname(article.getUser().getNickname())
+                    .profile(article.getUser().getImage().getImageUrl())
+                    .createdAt(article.getCreatedAt().plusHours(9))
                     .content(article.getContent())
                     .view(article.getView())
-                    .tagTypeList(tagTypeList)
-                    .visibility(article.getVisibility())
-                    .images(articleImageList)
+                    .image(articleImageList.isEmpty() ? null : articleImageList.get(0))
                     .likeCnt(likeCnt)
                     .isLiked(isLiked)
                     .isBookmarked(true)
+                    .commentCnt(commentCnt)
                     .build());
         }
         log.info(">>> [getBookmarks] - 북마크 목록 조회 완료, 사용자 ID: {}", userId);

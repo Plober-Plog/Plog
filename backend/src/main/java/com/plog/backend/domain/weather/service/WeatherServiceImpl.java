@@ -13,9 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -48,6 +51,7 @@ public class WeatherServiceImpl implements WeatherService {
     private final WeatherRepository weatherRepository;
     private final GugunRepository gugunRepository;
     private final LatXLngY latXLngY;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void updateAllWeatherForecast() {
@@ -57,7 +61,8 @@ public class WeatherServiceImpl implements WeatherService {
             try {
                 weatherResult = getWeatherForecast(gugun.getLatitude(), gugun.getLongitude());
             } catch (Exception e) {
-                log.error("날씨 데이터 조회 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
+//                log.error("날씨 데이터 조회 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
+                eventPublisher.publishEvent(e);
                 throw new WeatherUpdateException("날씨 데이터 조회 중 에러 발생 - Gugun: " + gugun.getGugunId());
             }
 
@@ -87,6 +92,7 @@ public class WeatherServiceImpl implements WeatherService {
 
                 } catch (Exception e) {
 //                    log.error("Redis 처리 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
+                    eventPublisher.publishEvent(e);
                     throw new WeatherUpdateException("Redis 처리 중 에러 발생 - Gugun: " + gugun.getGugunId());
                 }
 
@@ -120,6 +126,7 @@ public class WeatherServiceImpl implements WeatherService {
                     }
                 } catch (Exception e) {
 //                    log.error("Redis에서 데이터 가져오기 중 에러 발생 - Gugun: {}", gugun.getGugunId(), e);
+                    eventPublisher.publishEvent(e);
                     throw new WeatherUpdateException("Redis에서 데이터 가져오기 중 에러 발생 - Gugun: " + gugun.getGugunId());
                 }
 
@@ -224,6 +231,7 @@ public class WeatherServiceImpl implements WeatherService {
             return processWeatherData(allItems);
         } catch (Exception e) {
 //            log.error("날씨 데이터 조회 중 에러 발생", e);
+            eventPublisher.publishEvent(e);
             throw new WeatherUpdateException("날씨 데이터 조회 중 에러 발생");
         }
     }
@@ -339,12 +347,15 @@ public class WeatherServiceImpl implements WeatherService {
 
 //    @PostConstruct
     @Override
+    @Retryable(value = WeatherUpdateException.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 60000))
     public void updateWeatherData() {
         try{
             if (!isExistedWeatherDataInRedis())
                 updateAllWeatherForecast();
         }catch(Exception e){
-            throw e;
+//            log.error("날씨 데이터 조회 중 에러 발생", e);
+            eventPublisher.publishEvent(e);
+            throw new WeatherUpdateException("날씨 데이터 조회 중 에러 발생, 1분 뒤 재실행");
         }
     }
 
