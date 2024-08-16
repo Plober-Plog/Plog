@@ -418,7 +418,33 @@ public class UserServiceImpl implements UserService {
             log.info(">>> 로그인 성공: {}", user);
         }
 
-        return ResponseEntity.ok(BaseResponseBody.of(200, "소셜 로그인이 되었습니다."));
+        log.info(">>> login - 사용자 찾음: {}", user);
+        // 인증 객체 생성
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword())
+        );
+
+        log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+        // 토큰 생성
+        String accessToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+
+        // Redis에 토큰 저장 (Access 토큰: 1시간, Refresh 토큰: 7일)
+        redisUtil.setDataExpire("accessToken:" + user.getUserId(), accessToken, 3600);
+        redisUtil.setDataExpire("refreshToken:" + user.getUserId(), refreshToken, 604800);
+
+        log.info(">>> [USER SIGN IN] - 사용자 로그인 성공: 유저 ID = {}", user.getUserId());
+        log.info(">>> [USER SIGN IN] - Access 토큰: {}", accessToken);
+        log.info(">>> [USER SIGN IN] - Refresh 토큰: {}", refreshToken);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return ResponseEntity.ok(tokens);
     }
 
     private String generateSearchId(String email, int providerId) {

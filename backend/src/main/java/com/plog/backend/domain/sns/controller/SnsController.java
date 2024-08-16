@@ -153,6 +153,7 @@ public class SnsController {
         return ResponseEntity.status(200).body(articleGetSimpleResponseDtoList);
     }
 
+
     @GetMapping("/top5")
     @Operation(summary = "게시글 목록 조회 Top5", description = "Top5 게시글 목록을 조회합니다.")
     public ResponseEntity<List<ArticleGetSimpleResponseDto>> getArticleTop5List(
