@@ -25,21 +25,21 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/google")
-    public ResponseEntity<?> handleGoogleCallback(@RequestParam("code") String code) {
-        return handleOAuth2Callback(code, 1);
+    public ResponseEntity<?> handleGoogleCallback(@RequestParam("code") String code, @RequestParam("notificationToken") String notificationToken) {
+        return handleOAuth2Callback(code, 1, notificationToken);
     }
 
     @GetMapping("/kakao")
-    public ResponseEntity<?> handleKakaoCallback(@RequestParam("code") String code) {
-        return handleOAuth2Callback(code, 2);
+    public ResponseEntity<?> handleKakaoCallback(@RequestParam("code") String code, @RequestParam("notificationToken") String notificationToken) {
+        return handleOAuth2Callback(code, 2, notificationToken);
     }
 
     @GetMapping("/naver")
-    public ResponseEntity<?> handleNaverCallback(@RequestParam("code") String code) {
-        return handleOAuth2Callback(code, 3);
+    public ResponseEntity<?> handleNaverCallback(@RequestParam("code") String code, @RequestParam("notificationToken") String notificationToken) {
+        return handleOAuth2Callback(code, 3, notificationToken);
     }
 
-    private ResponseEntity<?> handleOAuth2Callback(String code, int provider) {
+    private ResponseEntity<?> handleOAuth2Callback(String code, int provider, String notificationToken) {
         String accessToken = getAccessTokenFromProvider(code, provider);
         OAuth2UserInfo userInfo = getUserInfoFromProvider(accessToken, provider);
         return userService.loginOrRegister(
@@ -47,7 +47,8 @@ public class OAuth2Controller {
                 userInfo.getName(),
                 userInfo.getProfileImage(),
                 userInfo.getProviderId(),
-                provider);
+                provider,
+                notificationToken);
     }
 
     private String getAccessTokenFromProvider(String code, int provider) {
@@ -66,13 +67,13 @@ public class OAuth2Controller {
             redirectUri += "google";
         } else if (provider == 2) { // 카카오
             tokenEndpoint = "https://kauth.kakao.com/oauth/token";
-            clientId = "YOUR_KAKAO_CLIENT_ID";
-            clientSecret = "YOUR_KAKAO_CLIENT_SECRET";
+            clientId = "0b74706441a714cf08af98a8d8121147";
+            clientSecret = "mQfvjBeziGpcjRCwGNopPFgSLa2uVYkh";
             redirectUri += "kakao";
         } else if (provider == 3) { // 네이버
             tokenEndpoint = "https://nid.naver.com/oauth2.0/token";
-            clientId = "YOUR_NAVER_CLIENT_ID";
-            clientSecret = "YOUR_NAVER_CLIENT_SECRET";
+            clientId = "jqR7BnKBxSlcPNDnGrTs";
+            clientSecret = "N8BXiA9KuS";
             redirectUri += "naver";
         }
 

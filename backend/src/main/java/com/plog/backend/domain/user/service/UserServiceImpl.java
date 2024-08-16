@@ -228,7 +228,7 @@ public class UserServiceImpl implements UserService {
                     throw new NotValidRequestException("회원 프로필 사진은 한 장만 등록할 수 있습니다.");
                 String[] imageUrl = imageService.uploadImages(profile);
                 Image userImage = imageRepository.findByImageUrl(imageUrl[0])
-                                .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
+                        .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
                 user.setImage(userImage);
             }
             user.setNickname(request.getNickname());
@@ -383,7 +383,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
+    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider, String notificationToken) {
 
         log.info(">>> 소셜로그인 Google 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}"
                 ,email,name,profileImage,providerId,provider);
@@ -400,7 +400,7 @@ public class UserServiceImpl implements UserService {
                     .email(email)
                     .searchId(generateSearchId(email, provider))
                     .nickname(generateSearchId(email, provider))
-                    .password("oauth2")
+                    .password(passwordEncoder.encode("oauth2"))
                     .provider(provider)
                     .providerId(providerId)
                     .image(image) // 저장된 Image 객체를 설정합니다.
@@ -410,6 +410,7 @@ public class UserServiceImpl implements UserService {
                     .totalExp(0)
                     .chatAuth(ChatAuth.PUBLIC.getValue())
                     .isPushNotificationEnabled(true)
+                    .notificationToken(notificationToken)
                     .build();
             userRepository.save(user);
             log.info(">>> 회원가입 성공: {}", user);
@@ -418,7 +419,33 @@ public class UserServiceImpl implements UserService {
             log.info(">>> 로그인 성공: {}", user);
         }
 
-        return ResponseEntity.ok(BaseResponseBody.of(200, "소셜 로그인이 되었습니다."));
+        log.info(">>> login - 사용자 찾음: {}", user);
+        // 인증 객체 생성
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword())
+        );
+
+        log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+        // 토큰 생성
+        String accessToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+
+        // Redis에 토큰 저장 (Access 토큰: 1시간, Refresh 토큰: 7일)
+        redisUtil.setDataExpire("accessToken:" + user.getUserId(), accessToken, 3600);
+        redisUtil.setDataExpire("refreshToken:" + user.getUserId(), refreshToken, 604800);
+
+        log.info(">>> [USER SIGN IN] - 사용자 로그인 성공: 유저 ID = {}", user.getUserId());
+        log.info(">>> [USER SIGN IN] - Access 토큰: {}", accessToken);
+        log.info(">>> [USER SIGN IN] - Refresh 토큰: {}", refreshToken);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return ResponseEntity.ok(tokens);
     }
 
     private String generateSearchId(String email, int providerId) {
