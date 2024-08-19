@@ -437,7 +437,7 @@ public class UserServiceImpl implements UserService {
 
         // 인증 객체 생성 시, userId 대신 userDetails 사용
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
+                new UsernamePasswordAuthenticationToken(userDetails.getUser().getUserId(), null, userDetails.getAuthorities())
         );
 
         // 토큰 생성
