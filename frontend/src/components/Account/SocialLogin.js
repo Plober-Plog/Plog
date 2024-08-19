@@ -21,38 +21,43 @@ const SocialLogin = () => {
   const navigate = useNavigate();
 
   // 리디렉션 후 쿼리 파라미터에서 토큰을 받아 처리
-  useEffect(async () => {
-    const urlParams = new URLSearchParams(window.location.search);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get('accessToken');
+        const refreshToken = urlParams.get('refreshToken');
 
-    const accessToken = urlParams.get('accessToken');
-    const refreshToken = urlParams.get('refreshToken');
+        if (accessToken && refreshToken) {
+          setToken(accessToken, refreshToken);
 
-    if (accessToken && refreshToken) {
-      setToken(accessToken, refreshToken);
+          // FCM 토큰 요청
+          const fcmToken = await requestForToken();
 
-      // FCM 토큰 요청
-      const fcmToken = await requestForToken();
-      
-      const tokenInfo = {
-        "accessToken": accessToken,
-        "notificationToken": fcmToken
+          const tokenInfo = {
+            accessToken: accessToken,
+            notificationToken: fcmToken
+          };
+
+          const response = await axios.post(`${API_BASE_URL}/user/login/social`, tokenInfo);
+
+          if (response.status === 200) {
+            const userResponse = await API.get('/user');
+            setUserData(userResponse.data);
+            navigate('/'); // 메인 화면으로 이동
+          } else {
+            setLoginError('로그인에 실패했습니다.');
+          }
+        }
+      } catch (error) {
+        setLoginError('사용자 정보를 가져오는데 실패했습니다.');
       }
+    };
 
-      const response = await axios.get(`${API_BASE_URL}/user/login/social`, tokenInfo);
-
-      API.get('/user')
-        .then((userResponse) => {
-          setUserData(userResponse.data);
-          navigate('/');
-        })
-        .catch(() => {
-          setLoginError('사용자 정보를 가져오는데 실패했습니다.');
-        });
-    }
+    fetchUserData();
   }, [setToken, setUserData, navigate]);
 
-  const handleSocialLogin = async (provider) => {
-
+  const handleSocialLogin = (provider) => {
     let authUrl = '';
 
     if (provider === 'google') {
@@ -84,6 +89,6 @@ const SocialLogin = () => {
       {loginError && <p className="error-message">{loginError}</p>}
     </div>
   );
-}
+};
 
 export default SocialLogin;
