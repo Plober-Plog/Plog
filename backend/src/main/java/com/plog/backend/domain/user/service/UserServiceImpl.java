@@ -412,7 +412,7 @@ public class UserServiceImpl implements UserService {
                     .email(email)
                     .searchId(generateSearchId(email, provider))
                     .nickname(generateSearchId(email, provider))
-//                    .password(passwordEncoder.encode(providerId))
+                    .password(passwordEncoder.encode(providerId))
                     .provider(provider)
                     .providerId(providerId)
                     .image(image) // 저장된 Image 객체를 설정합니다.
