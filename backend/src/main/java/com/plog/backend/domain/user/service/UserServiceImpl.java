@@ -412,7 +412,7 @@ public class UserServiceImpl implements UserService {
                     .email(email)
                     .searchId(generateSearchId(email, provider))
                     .nickname(generateSearchId(email, provider))
-                    .password(passwordEncoder.encode(providerId))
+//                    .password(passwordEncoder.encode(providerId))
                     .provider(provider)
                     .providerId(providerId)
                     .image(image) // 저장된 Image 객체를 설정합니다.
@@ -434,7 +434,7 @@ public class UserServiceImpl implements UserService {
         log.info(">>> login - 사용자 찾음: {}", user);
         // 인증 객체 생성
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword())
+                new UsernamePasswordAuthenticationToken(user.getUserId(), null)
         );
 
         log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
