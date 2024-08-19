@@ -14,29 +14,30 @@ const SocialLogin = () => {
   const kakaoClientId = '0b74706441a714cf08af98a8d8121147';
   const naverClientId = 'jqR7BnKBxSlcPNDnGrTs';
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-  const redirectUri = `${API_BASE_URL}/user/login/oauth2/code/`;
   const setToken = useAuthStore((state) => state.setToken);
   const setUserData = useAuthStore((state) => state.setUserData);
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
-  // 리디렉션 후 쿼리 파라미터에서 토큰을 받아 처리
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        // JSON 응답이 화면에 나타나지 않도록 URL에서 토큰을 가져옵니다.
         const urlParams = new URLSearchParams(window.location.search);
         const accessToken = urlParams.get('accessToken');
         const refreshToken = urlParams.get('refreshToken');
 
         if (accessToken && refreshToken) {
+          // 상태에 토큰 저장
           setToken(accessToken, refreshToken);
 
           // FCM 토큰 요청
           const fcmToken = await requestForToken();
 
+          // 서버에 추가 정보 요청
           const tokenInfo = {
             accessToken: accessToken,
-            notificationToken: fcmToken
+            notificationToken: fcmToken,
           };
 
           const response = await axios.post(`${API_BASE_URL}/user/login/social`, tokenInfo);
