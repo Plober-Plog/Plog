@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -396,26 +397,24 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
-
-        log.info(">>> 소셜로그인 Google 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}"
-                ,email,name,profileImage,providerId,provider);
+        log.info(">>> 소셜로그인 Google 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}",
+                email, name, profileImage, providerId, provider);
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         User user;
         if (userOptional.isEmpty()) {
-            // Image 객체를 먼저 저장합니다.
+            // 회원가입 로직
             Image image = new Image(profileImage);
             imageRepository.save(image);
 
-            // User 객체를 생성하면서 Image 객체를 설정합니다.
             user = User.builder()
                     .email(email)
                     .searchId(generateSearchId(email, provider))
                     .nickname(generateSearchId(email, provider))
-                    .password(passwordEncoder.encode(providerId))
+                    .password(passwordEncoder.encode(providerId))  // OAuth2 로그인의 경우 실제 비밀번호는 사용되지 않음
                     .provider(provider)
                     .providerId(providerId)
-                    .image(image) // 저장된 Image 객체를 설정합니다.
+                    .image(image)
                     .role(Role.USER.getValue())
                     .gender(Gender.NA.getValue())
                     .state(State.ACTIVTE.getValue())
@@ -432,14 +431,9 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info(">>> login - 사용자 찾음: {}", user);
-        // 인증 객체 생성
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUserId(), null)
-        );
-
-        log.info(">>> login - 인증된 사용자: {}", authentication.getPrincipal());
+        // OAuth2 소셜 로그인인 경우 비밀번호 없이 인증 수행
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUserId(), null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
 
         // 토큰 생성
         String accessToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
@@ -459,6 +453,7 @@ public class UserServiceImpl implements UserService {
 
         return ResponseEntity.ok(tokens);
     }
+
 
     private String generateSearchId(String email, int providerId) {
         if (providerId == 1)
