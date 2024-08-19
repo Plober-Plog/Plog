@@ -9,6 +9,7 @@ import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.dto.response.UserPushResponseDto;
 import com.plog.backend.domain.user.entity.*;
+import com.plog.backend.global.auth.PloberUserDetails;
 import com.plog.backend.global.exception.DuplicateEntityException;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
@@ -432,8 +433,12 @@ public class UserServiceImpl implements UserService {
 
         log.info(">>> login - 사용자 찾음: {}", user);
         // OAuth2 소셜 로그인인 경우 비밀번호 없이 인증 수행
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUserId(), null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        PloberUserDetails userDetails = new PloberUserDetails(user);  // user는 User 엔티티 객체
+
+        // 인증 객체 생성 시, userId 대신 userDetails 사용
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
+        );
 
         // 토큰 생성
         String accessToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
