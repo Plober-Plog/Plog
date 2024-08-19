@@ -397,12 +397,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
-        log.info(">>> 소셜로그인 Google 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}",
-                email, name, profileImage, providerId, provider);
-        Optional<User> userOptional = userRepository.findByEmail(email);
+    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider, String accessToken) {
+        log.info(">>> 소셜로그인 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}, accessToken {}",
+                email, name, profileImage, providerId, provider, accessToken);
 
+        Optional<User> userOptional = userRepository.findByEmail(email);
         User user;
+
         if (userOptional.isEmpty()) {
             // 회원가입 로직
             Image image = new Image(profileImage);
@@ -432,29 +433,31 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info(">>> login - 사용자 찾음: {}", user);
-        // OAuth2 소셜 로그인인 경우 비밀번호 없이 인증 수행
-        PloberUserDetails userDetails = new PloberUserDetails(user);  // user는 User 엔티티 객체
 
-        // 인증 객체 생성 시, userId 대신 userDetails 사용
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUserId(), user.getPassword(), userDetails.getAuthorities())
+        // OAuth2 Access Token을 Authentication 객체에 추가
+        PloberUserDetails userDetails = new PloberUserDetails(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                accessToken,  // credentials로 accessToken을 넣습니다.
+                userDetails.getAuthorities()  // 사용자의 권한 설정
         );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 토큰 생성
-        String accessToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+        // JWT 토큰 생성
+        String jwtAccessToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
+        String jwtRefreshToken = jwtTokenProvider.generateRefreshToken(authentication);
 
-        // Redis에 토큰 저장 (Access 토큰: 1시간, Refresh 토큰: 7일)
-        redisUtil.setDataExpire("accessToken:" + user.getUserId(), accessToken, 3600);
-        redisUtil.setDataExpire("refreshToken:" + user.getUserId(), refreshToken, 604800);
+        // Redis에 JWT 토큰 저장
+        redisUtil.setDataExpire("accessToken:" + user.getUserId(), jwtAccessToken, 3600);
+        redisUtil.setDataExpire("refreshToken:" + user.getUserId(), jwtRefreshToken, 604800);
 
         log.info(">>> [USER SIGN IN] - 사용자 로그인 성공: 유저 ID = {}", user.getUserId());
-        log.info(">>> [USER SIGN IN] - Access 토큰: {}", accessToken);
-        log.info(">>> [USER SIGN IN] - Refresh 토큰: {}", refreshToken);
+        log.info(">>> [USER SIGN IN] - Access 토큰: {}", jwtAccessToken);
+        log.info(">>> [USER SIGN IN] - Refresh 토큰: {}", jwtRefreshToken);
 
         Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
+        tokens.put("accessToken", jwtAccessToken);
+        tokens.put("refreshToken", jwtRefreshToken);
 
         return ResponseEntity.ok(tokens);
     }

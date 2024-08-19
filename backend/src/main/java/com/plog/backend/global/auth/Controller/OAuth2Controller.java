@@ -42,13 +42,18 @@ public class OAuth2Controller {
     private ResponseEntity<?> handleOAuth2Callback(String code, int provider) {
         String accessToken = getAccessTokenFromProvider(code, provider);
         OAuth2UserInfo userInfo = getUserInfoFromProvider(accessToken, provider);
+
+        // accessToken을 함께 loginOrRegister 메서드로 전달
         return userService.loginOrRegister(
                 userInfo.getEmail(),
                 userInfo.getName(),
                 userInfo.getProfileImage(),
                 userInfo.getProviderId(),
-                provider);
+                provider,
+                accessToken  // accessToken 전달
+        );
     }
+
 
     private String getAccessTokenFromProvider(String code, int provider) {
         RestTemplate restTemplate = new RestTemplate();
