@@ -73,12 +73,16 @@ const SocialLogin = () => {
     // 새 창으로 소셜 로그인 페이지 열기
     const popup = window.open(authUrl, '_blank', 'width=500,height=600');
 
-    // 자식 창에서 메시지 받기
-    const interval = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(interval);
+    // 자식 창에서 인증이 완료되면 메시지를 받기 위해 이벤트 리스너 등록
+    window.addEventListener('message', (event) => {
+      if (event.origin === window.location.origin) { // 동일 출처인지 확인
+        const { accessToken, refreshToken } = event.data;
+        if (accessToken && refreshToken) {
+          fetchUserData(accessToken, refreshToken);
+          popup.close(); // 인증 완료 후 창 닫기
+        }
       }
-    }, 1000);
+    });
   };
 
   return (
