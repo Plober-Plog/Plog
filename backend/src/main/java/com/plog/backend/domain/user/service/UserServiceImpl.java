@@ -32,6 +32,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +52,7 @@ public class UserServiceImpl implements UserService {
     private final RedisUtil redisUtil;
     private final ImageRepository imageRepository;
     private final ImageServiceImpl imageService;
+    private final String CLIENT_REDIRECT_URL = "https://i11b308.p.ssafy.io/login";
 
     @Override
     public User getUserBySearchId(String searchId) {
@@ -397,7 +400,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider, String accessToken) {
+    public RedirectView loginOrRegister(String email, String name, String profileImage, String providerId, int provider, String accessToken) {
         log.info(">>> 소셜로그인 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}, accessToken {}",
                 email, name, profileImage, providerId, provider, accessToken);
 
@@ -455,11 +458,13 @@ public class UserServiceImpl implements UserService {
         log.info(">>> [USER SIGN IN] - Access 토큰: {}", jwtAccessToken);
         log.info(">>> [USER SIGN IN] - Refresh 토큰: {}", jwtRefreshToken);
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", jwtAccessToken);
-        tokens.put("refreshToken", jwtRefreshToken);
+        String redirectUrl = UriComponentsBuilder.fromUriString(CLIENT_REDIRECT_URL)
+                .queryParam("accessToken", jwtAccessToken)
+                .queryParam("refreshToken", jwtRefreshToken)
+                .build()
+                .toUriString();
 
-        return ResponseEntity.ok(tokens);
+        return new RedirectView(redirectUrl);
     }
 
 

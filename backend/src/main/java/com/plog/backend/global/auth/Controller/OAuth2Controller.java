@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
@@ -25,21 +27,21 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/google")
-    public ResponseEntity<?> handleGoogleCallback(@RequestParam("code") String code) {
+    public RedirectView handleGoogleCallback(@RequestParam("code") String code) {
         return handleOAuth2Callback(code, 1);
     }
 
     @GetMapping("/kakao")
-    public ResponseEntity<?> handleKakaoCallback(@RequestParam("code") String code) {
+    public RedirectView handleKakaoCallback(@RequestParam("code") String code) {
         return handleOAuth2Callback(code, 2);
     }
 
     @GetMapping("/naver")
-    public ResponseEntity<?> handleNaverCallback(@RequestParam("code") String code) {
+    public RedirectView handleNaverCallback(@RequestParam("code") String code) {
         return handleOAuth2Callback(code, 3);
     }
 
-    private ResponseEntity<?> handleOAuth2Callback(String code, int provider) {
+    private RedirectView handleOAuth2Callback(String code, int provider) {
         String accessToken = getAccessTokenFromProvider(code, provider);
         OAuth2UserInfo userInfo = getUserInfoFromProvider(accessToken, provider);
 

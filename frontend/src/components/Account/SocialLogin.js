@@ -14,13 +14,13 @@ const SocialLogin = () => {
   const kakaoClientId = '0b74706441a714cf08af98a8d8121147';
   const naverClientId = 'jqR7BnKBxSlcPNDnGrTs';
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-  const redirectUri = `${window.location.origin}/popup-callback`;
+  const redirectUri = `${API_BASE_URL}/user/login/oauth2/code`; // 백엔드의 리디렉션 URI
   const setToken = useAuthStore((state) => state.setToken);
   const setUserData = useAuthStore((state) => state.setUserData);
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
-  // 팝업 창 열기 및 소셜 로그인 처리
+  // 소셜 로그인 URL 생성 및 리디렉션
   const handleSocialLogin = (provider) => {
     let authUrl = '';
 
@@ -32,61 +32,37 @@ const SocialLogin = () => {
       authUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${naverClientId}&redirect_uri=${redirectUri}/naver&response_type=code`;
     }
 
-    // 팝업 창 열기
-    const popup = window.open(authUrl, '_blank', 'width=500,height=600');
-    
-    const interval = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(interval);
-      }
-    }, 1000);
+    // 소셜 로그인 페이지로 리디렉션
+    window.location.href = authUrl;
   };
 
-  // 팝업 창에서 인증 코드 수신
+  // 서버에서 리디렉션된 URL에서 토큰을 처리
   useEffect(() => {
-    const handlePopupMessage = (event) => {
-      if (event.origin !== window.location.origin) return;
-
-      const { code, provider } = event.data;
-      if (code && provider) {
-        fetchUserData(code, provider); // 인증 코드로 토큰 요청 및 유저 데이터 가져오기
+    const fetchUserData = async () => {
+      try {
+        const response = await API.get('/user');
+        if (response.status === 200) {
+          setUserData(response.data);
+          navigate('/'); // 메인 화면으로 이동
+        } else {
+          setLoginError('로그인에 실패했습니다.');
+        }
+      } catch (error) {
+        setLoginError('사용자 정보를 가져오는데 실패했습니다.');
       }
     };
 
-    window.addEventListener('message', handlePopupMessage);
+    // URL에서 서버로부터 전달된 토큰 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('accessToken');
+    const refreshToken = urlParams.get('refreshToken');
 
-    return () => {
-      window.removeEventListener('message', handlePopupMessage);
-    };
-  }, []);
-
-  // 사용자 데이터를 가져오는 함수
-  const fetchUserData = async (code, provider) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/user/login/social/${provider}`, { code });
-
-      if (response.status === 200) {
-        const { accessToken, refreshToken } = response.data;
-        setToken(accessToken, refreshToken);
-
-        // FCM 토큰 요청
-        const fcmToken = await requestForToken();
-
-        const tokenInfo = {
-          accessToken: accessToken,
-          notificationToken: fcmToken,
-        };
-
-        const userResponse = await API.get('/user');
-        setUserData(userResponse.data);
-        navigate('/'); // 메인 화면으로 이동
-      } else {
-        setLoginError('로그인에 실패했습니다.');
-      }
-    } catch (error) {
-      setLoginError('사용자 정보를 가져오는데 실패했습니다.');
+    if (accessToken && refreshToken) {
+      // 토큰을 상태에 저장하고 사용자 데이터 가져오기
+      setToken(accessToken, refreshToken);
+      fetchUserData();
     }
-  };
+  }, [setToken, setUserData, navigate]);
 
   return (
     <div className="social-login">
@@ -105,23 +81,6 @@ const SocialLogin = () => {
       {loginError && <p className="error-message">{loginError}</p>}
     </div>
   );
-};
-
-// 팝업 콜백 처리 컴포넌트
-export const PopupCallback = () => {
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    const provider = window.location.pathname.split('/').pop(); // 경로에서 provider 추출
-
-    if (code) {
-      // 메인 페이지에 메시지 전달
-      window.opener.postMessage({ code, provider }, window.location.origin);
-      window.close(); // 팝업 닫기
-    }
-  }, []);
-
-  return null;
 };
 
 export default SocialLogin;
