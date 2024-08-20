@@ -48,14 +48,15 @@ const SocialLogin = () => {
     }
   };
 
-  // 부모 창으로부터 전달받은 메시지 처리
+  // 리디렉션된 URL에서 토큰을 처리
   useEffect(() => {
-    window.addEventListener('message', (event) => {
-      const { accessToken, refreshToken } = event.data;
-      if (accessToken && refreshToken) {
-        fetchUserData(accessToken, refreshToken);
-      }
-    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('accessToken');
+    const refreshToken = urlParams.get('refreshToken');
+
+    if (accessToken && refreshToken) {
+      fetchUserData(accessToken, refreshToken);
+    }
   }, [setToken, setUserData, navigate]);
 
   const handleSocialLogin = (provider) => {
@@ -69,19 +70,8 @@ const SocialLogin = () => {
       authUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${naverClientId}&redirect_uri=${redirectUri}naver&response_type=code`;
     }
 
-    // 새 창으로 소셜 로그인 페이지 열기
-    const popup = window.open(authUrl, '_blank', 'width=500,height=600');
-
-    // 자식 창에서 인증이 완료되면 메시지를 받기 위해 이벤트 리스너 등록
-    window.addEventListener('message', (event) => {
-      if (event.origin === window.location.origin) { // 동일 출처인지 확인
-        const { accessToken, refreshToken } = event.data;
-        if (accessToken && refreshToken) {
-          fetchUserData(accessToken, refreshToken);
-          popup.close(); // 인증 완료 후 창 닫기
-        }
-      }
-    });
+    // 소셜 로그인 페이지로 리디렉션
+    window.location.href = authUrl;
   };
 
   return (
