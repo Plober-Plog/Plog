@@ -14,6 +14,7 @@ const SocialLogin = () => {
   const kakaoClientId = '0b74706441a714cf08af98a8d8121147';
   const naverClientId = 'jqR7BnKBxSlcPNDnGrTs';
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const redirectUri = `${API_BASE_URL}/user/login/oauth2/code/`;
   const setToken = useAuthStore((state) => state.setToken);
   const setUserData = useAuthStore((state) => state.setUserData);
   const [loginError, setLoginError] = useState('');
