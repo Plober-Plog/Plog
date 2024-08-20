@@ -20,43 +20,43 @@ const SocialLogin = () => {
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
+  // 로그인 후 새 창에서 전달된 토큰을 받아 처리
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserData = async (accessToken, refreshToken) => {
       try {
-        // JSON 응답이 화면에 나타나지 않도록 URL에서 토큰을 가져옵니다.
-        const urlParams = new URLSearchParams(window.location.search);
-        const accessToken = urlParams.get('accessToken');
-        const refreshToken = urlParams.get('refreshToken');
+        // 상태에 토큰 저장
+        setToken(accessToken, refreshToken);
 
-        if (accessToken && refreshToken) {
-          // 상태에 토큰 저장
-          setToken(accessToken, refreshToken);
+        // FCM 토큰 요청
+        const fcmToken = await requestForToken();
 
-          // FCM 토큰 요청
-          const fcmToken = await requestForToken();
+        // 서버에 추가 정보 요청
+        const tokenInfo = {
+          accessToken: accessToken,
+          notificationToken: fcmToken,
+        };
 
-          // 서버에 추가 정보 요청
-          const tokenInfo = {
-            accessToken: accessToken,
-            notificationToken: fcmToken,
-          };
+        const response = await axios.post(`${API_BASE_URL}/user/login/social`, tokenInfo);
 
-          const response = await axios.post(`${API_BASE_URL}/user/login/social`, tokenInfo);
-
-          if (response.status === 200) {
-            const userResponse = await API.get('/user');
-            setUserData(userResponse.data);
-            navigate('/'); // 메인 화면으로 이동
-          } else {
-            setLoginError('로그인에 실패했습니다.');
-          }
+        if (response.status === 200) {
+          const userResponse = await API.get('/user');
+          setUserData(userResponse.data);
+          navigate('/'); // 메인 화면으로 이동
+        } else {
+          setLoginError('로그인에 실패했습니다.');
         }
       } catch (error) {
         setLoginError('사용자 정보를 가져오는데 실패했습니다.');
       }
     };
 
-    fetchUserData();
+    // 부모 창으로부터 전달받은 메시지 처리
+    window.addEventListener('message', (event) => {
+      const { accessToken, refreshToken } = event.data;
+      if (accessToken && refreshToken) {
+        fetchUserData(accessToken, refreshToken);
+      }
+    });
   }, [setToken, setUserData, navigate]);
 
   const handleSocialLogin = (provider) => {
@@ -70,8 +70,15 @@ const SocialLogin = () => {
       authUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${naverClientId}&redirect_uri=${redirectUri}naver&response_type=code`;
     }
 
-    // OAuth 인증 페이지로 리디렉션
-    window.location.href = authUrl;
+    // 새 창으로 소셜 로그인 페이지 열기
+    const popup = window.open(authUrl, '_blank', 'width=500,height=600');
+
+    // 자식 창에서 메시지 받기
+    const interval = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(interval);
+      }
+    }, 1000);
   };
 
   return (
