@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
+import { useParams } from 'react-router-dom';
+=======
 import { useParams, useNavigate } from 'react-router-dom';
+>>>>>>> master
 
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import CustomCalendar from "../../components/Plant/Calendar";
@@ -7,6 +11,10 @@ import ArticleCardList from "../../components/Article/ArticleCardList";
 import ReportBanner from "../../components/Plant/ReportBanner";
 import Btn from "../../components/Common/Btn";
 // import './PlantDetail.css';
+<<<<<<< HEAD
+import axios from 'axios';
+=======
+>>>>>>> master
 import defaultImg from '../../assets/icon/default.png';
 
 import API from '../../apis/api';
@@ -15,6 +23,13 @@ import useAuthStore from '../../stores/member';
 const PlantDetail = () => {
 
   const { plantId } = useParams();
+<<<<<<< HEAD
+
+  const URI = 'https://i11b308.p.ssafy.io/api'
+
+  const [plantData, setPlantData] = useState(null);
+  const [articles, setArticles] = useState([]);
+=======
   const navigate = useNavigate();
 
   const [plantData, setPlantData] = useState(null);
@@ -24,10 +39,15 @@ const PlantDetail = () => {
 
   //etcPlantType
   const [etcPlantType, setEtcPlantType] = useState(false);
+>>>>>>> master
 
   useEffect(() => {
     const fetchPlantData = async () => {
       try {
+<<<<<<< HEAD
+        const response = await axios.get(`${URI}/user/plant/${plantId}/info`);
+        setPlantData(response.data);
+=======
         const response = await API.get(`/user/plant/${plantId}/info`);
 
         const displayPlantTypeName = response.data.plantTypeName === '기타'
@@ -42,6 +62,7 @@ const PlantDetail = () => {
         setPlantTypeId(response.data.plantTypeId);
 
         setEtcPlantType(response.data.plantTypeName === '기타');
+>>>>>>> master
       } catch (error) {
         console.error("PlantData Error:", error.response.data);
       }
@@ -49,7 +70,11 @@ const PlantDetail = () => {
 
     const fetchArticles = async () => {
       try {
+<<<<<<< HEAD
+        const response = await axios.get(`${URI}/user/plant/${plantId}/diary`);
+=======
         const response = await API.get(`/user/plant/${plantId}/diary`);
+>>>>>>> master
         setArticles(response.data);
       } catch (error) {
         console.error("CardList Error:", error.response.data);
@@ -64,6 +89,25 @@ const PlantDetail = () => {
     return <div>Loading</div>
   };
 
+<<<<<<< HEAD
+  return (
+    <div>
+      <ProfileHeader
+        data={{ ...plantData, ownerId:plantId }}
+        type="plant"
+      />
+      <CustomCalendar 
+        plantId={plantId}
+      />
+      <ArticleCardList 
+        ownerId={plantId}
+        articles={articles}
+        type="plant"
+      />
+      <ReportBanner />
+      <Btn content ="성장과정 보기"/>
+      <Btn content ="가이드"/>
+=======
   const handleReportClick = () => {
     if (plantId) {
       navigate(`/plant/${plantId}/report`, { state: { plantId } });
@@ -118,6 +162,7 @@ const PlantDetail = () => {
         
       </div>
 
+>>>>>>> master
     </div>
   )
 };

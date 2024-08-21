@@ -18,8 +18,12 @@
       "sizes": "512x512"
     }
   ],
+<<<<<<< HEAD
+  "start_url": "https://i11b308.p.ssafy.io/",
+=======
   "start_url": "/",
   "scope": "/",
+>>>>>>> master
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"

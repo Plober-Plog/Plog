@@ -1,25 +1,46 @@
+<<<<<<< HEAD
+import React from 'react';
+import { useState, useEffect } from 'react';
+=======
 import React, { useState, useEffect } from 'react';
+>>>>>>> master
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import Btn from '../../components/Common/Btn';
 import InputField from '../../components/Common/InputField';
+<<<<<<< HEAD
+import ATag from '../../components/Common/ATag';
+
+const PasswordFind = () => {
+=======
 
 const PasswordFind = () => {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const navigate = useNavigate();
+>>>>>>> master
   // input fields
   const [email, setEmail] = useState('');
   const [emailVerificationInput, setEmailVerificationInput] = useState('');
   // 인증 코드 전송
   const [timer, setTimer] = useState(0);
+<<<<<<< HEAD
+=======
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+>>>>>>> master
   const [emailCheckMsg, setEmailCheckMsg] = useState('');
   const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
   const [emailVerificationMsg, setEmailVerificationMsg] = useState('');
   const [isEmailVerified, setIsEmailVerified] = useState(false); // 인증완료 여부
   const [userId, setUserId] = useState(null);
 
+<<<<<<< HEAD
+  const URI = 'https://i11b308.p.ssafy.io/api'
+  const navigate = useNavigate();
+
+
+=======
+>>>>>>> master
   // 인증코드 타이머 설정
   useEffect(() => {
     let interval;
@@ -34,6 +55,26 @@ const PasswordFind = () => {
     return () => clearInterval(interval);
   }, [isEmailVerificationSent, timer]);
 
+<<<<<<< HEAD
+
+  // 이메일 인증 코드 전송
+  const handleEmailVerification = async () => {
+  
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      console.log('이메일 형식이 올바르지 않습니다.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${URI}/user/password/send`, { email });
+      if (response.data) {
+        setIsEmailVerificationSent(true);
+        setTimer(300); // 5분 타이머
+        console.log('인증 코드 전송 성공!');
+      } else {
+        setEmailCheckMsg('이메일 인증에 실패했습니다. 다시 시도해주세요.');
+        console.log('인증 코드 전송 실패! : ',response);
+=======
   // 이메일 인증 코드 전송
   const handleEmailVerification = async () => {
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
@@ -52,10 +93,22 @@ const PasswordFind = () => {
       } else {
         setEmailCheckMsg('이메일 인증에 실패했습니다. 다시 시도해주세요.');
         setIsSendingEmail(false); // 실패 시 다시 버튼 텍스트를 변경할 수 있도록 상태 업데이트
+>>>>>>> master
       }
     } catch (error) {
       setEmailCheckMsg('이메일 인증에 실패했습니다. 다시 시도해주세요.');
       console.log('인증 코드 전송 실패! : ', error);
+<<<<<<< HEAD
+    }
+  };
+
+
+  // 이메일 인증 코드 확인
+  const handleCodeVerification = async () => {
+    try {
+      const response = await axios.post(`${URI}/user/password/check`, { email, verifyCode: emailVerificationInput });
+      console.log(response.data);
+=======
       setIsSendingEmail(false); // 실패 시 다시 버튼 텍스트를 변경할 수 있도록 상태 업데이트
     }
   };
@@ -64,12 +117,17 @@ const PasswordFind = () => {
   const handleCodeVerification = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/user/password/check`, { email, verifyCode: emailVerificationInput });
+>>>>>>> master
       if (response.data.result) {
         setIsEmailVerified(true);
         setUserId(response.data.userId); // 유저 pk
         setEmailVerificationMsg('이메일 인증 성공!');
       } else {
         setEmailVerificationMsg('인증 코드가 올바르지 않습니다.');
+<<<<<<< HEAD
+        console.log(response.data.result);
+=======
+>>>>>>> master
       }
     } catch (error) {
       if (error.response && error.response.status === 408) {
@@ -84,6 +142,10 @@ const PasswordFind = () => {
     }
   };
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
   // 타이머 설정
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -91,18 +153,32 @@ const PasswordFind = () => {
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
+<<<<<<< HEAD
+
+  return (
+    <div className="account-container">
+      <h1 className="title">비밀번호 찾기</h1>
+      <form onSubmit={e => e.preventDefault()} className="form">
+        <div>
+=======
   return (
     <div className="account-container">
       <h1 className="account-title">비밀번호 찾기</h1>
       <form onSubmit={e => e.preventDefault()} className="account-form">
         <div className="password-container">
+>>>>>>> master
           <InputField
             type="email"
             placeholder="이메일"
             value={email}
             onChange={(e) => {
+<<<<<<< HEAD
+              const value = e.target.value
+              setEmail(value)
+=======
               const value = e.target.value;
               setEmail(value);
+>>>>>>> master
               if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
                 setEmailCheckMsg('올바른 이메일 형식이 아닙니다.');
               } else {
@@ -111,6 +187,17 @@ const PasswordFind = () => {
             }}
             isRequired={true}
             disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+<<<<<<< HEAD
+            className="input"
+          />
+          <ATag
+            content="인증하기" onClick={handleEmailVerification}
+          />
+          {emailCheckMsg && <p>{emailCheckMsg}</p>}
+        </div>
+        {isEmailVerificationSent && (
+          <div>
+=======
             className="account-input"
           />
           <span
@@ -123,6 +210,7 @@ const PasswordFind = () => {
         </div>
         {isEmailVerificationSent && (
           <div className="password-container">
+>>>>>>> master
             <InputField
               type="text"
               placeholder="이메일 인증 코드"
@@ -130,6 +218,27 @@ const PasswordFind = () => {
               onChange={(e) => setEmailVerificationInput(e.target.value)}
               isRequired={true}
               disabled={isEmailVerified} // 이메일 인증 완료 후 비활성화
+<<<<<<< HEAD
+              className="input"
+            />
+            <p>{formatTime(timer)}</p>
+            <ATag content="인증 확인" onClick={handleCodeVerification} />
+            {emailVerificationMsg && <p className="error">{emailVerificationMsg}</p>}
+          </div>
+        )}
+          <Btn
+            content="비밀번호 찾기"
+            disabled={!isEmailVerified}
+            onClick={() => navigate('/password/update', { state: { userId } })}
+            className="button"
+          />
+      </form>
+    </div>
+  )
+}
+
+export default PasswordFind;
+=======
               className="account-input"
             />
             <span className="password-toggle">
@@ -151,3 +260,4 @@ const PasswordFind = () => {
 };
 
 export default PasswordFind;
+>>>>>>> master

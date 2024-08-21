@@ -20,6 +20,8 @@ root.render(
 // serviceWorkerRegistration.unregister();
 serviceWorkerRegistration.register();
 
+<<<<<<< HEAD
+=======
 // FCM 토큰 요청 추가
 // requestForToken();
 
@@ -27,6 +29,7 @@ serviceWorkerRegistration.register();
 // onMessageListener().then(payload => {
 //   // 여기에 알림을 표시하는 코드를 추가할 수 있습니다.
 
+>>>>>>> master
 // If you want to start measuring performance in your app, pass a function
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

@@ -19,7 +19,6 @@ const LoginForm = () => {
   const setUserData = useAuthStore((state) => state.setUserData);
   const navigate = useNavigate();
 
-
   const handleLogin = async (event) => {
     event.preventDefault();
 

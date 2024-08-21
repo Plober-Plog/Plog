@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+<<<<<<< HEAD
+const Img = ({ src, alt, style }) => {
+    return (
+      <div>
+        <img src={src} alt={alt} style={style} />
+      </div>
+    )
+=======
 const Img = ({ src, alt }) => {
     const imgStyle = {
         width: '100%',
@@ -32,6 +40,7 @@ const Img = ({ src, alt }) => {
             </div>
         </div>
     );
+>>>>>>> master
 };
 
 Img.propTypes = {
@@ -39,4 +48,8 @@ Img.propTypes = {
   alt: PropTypes.string.isRequired,
 };
 
+<<<<<<< HEAD
 export default Img;
+=======
+export default Img;
+>>>>>>> master
