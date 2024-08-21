@@ -11,7 +11,7 @@ import API from '../../apis/api';
 
 const SocialLogin = () => {
   const googleClientId = '1044248850028-csgv8o025t0cf5u68kgfolvespii9j7b.apps.googleusercontent.com';
-  const kakaoClientId = '0b74706441a714cf08af98a8d8121147';
+  const kakaoClientId = '658c3365a30ae2f284e07a4129d8ecf2';
   const naverClientId = 'jqR7BnKBxSlcPNDnGrTs';
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const redirectUri = `${API_BASE_URL}/user/login/oauth2/code`; // 백엔드의 리디렉션 URI
