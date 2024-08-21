@@ -59,36 +59,37 @@
 * **기술 문서**
    * 시스템 아키텍처, API 문서, 기술 명세서, JIRA 관리 기록 등
 * **서비스 화면**
-   1. 홈화면
-      <br><img src="./img/pages/홈화면/홈화면.jpg" width=300 height=650><br>
-   2. 비회원 화면
-      <br><img src="./img/pages/비회원/비회원1.jpg" width=300 height=650>
-      <img src="./img/pages/비회원/비회원2.jpg" width=300 height=650>
-      <img src="./img/pages/비회원/비회원3.jpg" width=300 height=650><br>
-   3. 프로필
-      <br><img src="./img/pages/프로필/프로필1.jpg" width=300 height=650>
-      <img src="./img/pages/프로필/프로필2.jpg" width=300 height=650>
-      <img src="./img/pages/프로필/프로필3.jpg" width=300 height=650>
-      <img src="./img/pages/프로필/프로필4.jpg" width=300 height=650>
-      <img src="./img/pages/프로필/프로필5.jpg" width=300 height=650>
-      <img src="./img/pages/프로필/프로필6.jpg" width=300 height=650><br>
-   4. 식물 디테일
-      <br><img src="./img/pages/식물디테일/식물디테일1.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일2.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일3.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일4.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일5.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일6.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일7.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일8.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일9.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일10.jpg" width=300 height=650>
-      <img src="./img/pages/식물디테일/식물디테일11.jpg" width=300 height=650><br>
-   5. 채팅
-      <br><img src="./img/pages/채팅/채팅1.jpg" width=300 height=650>
-      <img src="./img/pages/채팅/채팅2.jpg" width=300 height=650><br>
-   6. 알림창
-      <br><img src="./img/pages/알림창/알림창1.jpg" width=300 height=650><br>
+1. 홈화면
+   <br><img src="./img/pages/홈화면/홈화면.jpg" width=300 height=650 style="border: 2px solid #000;"><br>
+2. 비회원 화면
+   <br><img src="./img/pages/비회원/비회원1.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/비회원/비회원2.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/비회원/비회원3.jpg" width=300 height=650 style="border: 2px solid #000;"><br>
+3. 프로필
+   <br><img src="./img/pages/프로필/프로필1.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/프로필/프로필2.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/프로필/프로필3.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/프로필/프로필4.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/프로필/프로필5.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/프로필/프로필6.jpg" width=300 height=650 style="border: 2px solid #000;"><br>
+4. 식물 디테일
+   <br><img src="./img/pages/식물디테일/식물디테일1.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일2.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일3.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일4.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일5.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일6.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일7.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일8.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일9.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일10.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/식물디테일/식물디테일11.jpg" width=300 height=650 style="border: 2px solid #000;"><br>
+5. 채팅
+   <br><img src="./img/pages/채팅/채팅1.jpg" width=300 height=650 style="border: 2px solid #000;">
+   <img src="./img/pages/채팅/채팅2.jpg" width=300 height=650 style="border: 2px solid #000;"><br>
+6. 알림창
+   <br><img src="./img/pages/알림창/알림창1.jpg" width=300 height=650 style="border: 2px solid #000;"><br>
+
 
 ## 8. 서비스 데모 영상
 <iframe width="866" height="487" src="https://www.youtube.com/embed/PJzseIhlXmQ" title="Plog" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
