@@ -91,7 +91,9 @@
       <br><img src="./img/pages/알림창/알림창1.jpg" width=300 height=650><br>
 
 ## 8. 서비스 데모 영상
-<iframe width="866" height="487" src="https://www.youtube.com/embed/PJzseIhlXmQ" title="Plog" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+https://github.com/user-attachments/assets/85b78db6-b4c8-4a3b-858d-6eacf9c7a32e
+
+
 
 
 ## 9. 개발 일정
