@@ -66,8 +66,8 @@ public class OAuth2Controller {
             redirectUri += "google";
         } else if (provider == 2) { // 카카오
             tokenEndpoint = "https://kauth.kakao.com/oauth/token";
-            clientId = "0b74706441a714cf08af98a8d8121147";
-            clientSecret = "mQfvjBeziGpcjRCwGNopPFgSLa2uVYkh";
+            clientId = "658c3365a30ae2f284e07a4129d8ecf2";
+            clientSecret = "VN9LzhuBWjsuAgm3wWgEXauogJg5zVqw";
             redirectUri += "kakao";
         } else if (provider == 3) { // 네이버
             tokenEndpoint = "https://nid.naver.com/oauth2.0/token";
