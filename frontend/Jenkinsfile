@@ -2,15 +2,7 @@ pipeline {
     agent any
 
     environment {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        TARGET_BRANCH = 'develop-fe'  // 목표 브랜치 이름 설정
-=======
         TARGET_BRANCH = 'master'  // 목표 브랜치 이름 설정
->>>>>>> master
-=======
-        TARGET_BRANCH = 'develop'  // 목표 브랜치 이름 설정
->>>>>>> develop
     }
 
     stages {
@@ -33,15 +25,7 @@ pipeline {
             steps {
                 script {
                     checkout([$class: 'GitSCM',
-<<<<<<< HEAD
-<<<<<<< HEAD
-                              branches: [[name: '*/develop-fe']],
-=======
                               branches: [[name: '*/master']],
->>>>>>> master
-=======
-                              branches: [[name: '*/develop']],
->>>>>>> develop
                               doGenerateSubmoduleConfigurations: false,
                               extensions: [[$class: 'CleanCheckout']],
                               userRemoteConfigs: [[url: 'https://lab.ssafy.com/s11-webmobile2-sub2/S11P12B308.git',
@@ -50,8 +34,6 @@ pipeline {
                 }
             }
         }
-<<<<<<< HEAD
-=======
         stage('Copy .env') {
             steps {
                 script {
@@ -65,7 +47,6 @@ pipeline {
                 }
             }
         }
->>>>>>> master
         stage('Build with npm') {
             steps {
                 dir('frontend') {
