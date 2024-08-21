@@ -57,56 +57,56 @@ https://github.com/user-attachments/assets/85b78db6-b4c8-4a3b-858d-6eacf9c7a32e
 
 ## 8. 프로젝트 결과물(서비스 화면)
    1. 홈화면
-   <br><img src="./img/pages/홈화면/홈화면.jpg" width=300 height=650 ><br>
+      <br><img src="./img/pages/홈화면/홈화면.jpg" width=300 height=650 ><br>
    
    2. 비회원 화면
-   <br><img src="./img/pages/비회원/비회원1.jpg" width=300 height=650>
-   <img src="./img/pages/비회원/비회원2.jpg" width=300 height=650>
-   <img src="./img/pages/비회원/비회원3.jpg" width=300 height=650><br>
+      <br><img src="./img/pages/비회원/비회원1.jpg" width=300 height=650>
+      <img src="./img/pages/비회원/비회원2.jpg" width=300 height=650>
+      <img src="./img/pages/비회원/비회원3.jpg" width=300 height=650><br>
 
    3. 로그인 화면
-   <br><img src="./img/pages/로그인/로그인1.jpg" width=300 height=650><br>
+      <br><img src="./img/pages/로그인/로그인1.jpg" width=300 height=650><br>
 
    4. 회원가입 화면
-   <br><img src="./img/pages/회원가입/회원가입1.jpg" width=300 height=650>
-   <img src="./img/pages/회원가입/회원가입2.jpg" width=300 height=650>
-   <img src="./img/pages/회원가입/회원가입3.jpg" width=300 height=650><br>
+      <br><img src="./img/pages/회원가입/회원가입1.jpg" width=300 height=650>
+      <img src="./img/pages/회원가입/회원가입2.jpg" width=300 height=650>
+      <img src="./img/pages/회원가입/회원가입3.jpg" width=300 height=650><br>
    
    5. 소셜 로그인
-   <br><img src="./img/pages/로그인/로그인1.jpg" width=300 height=650>
-   <img src="./img/pages/소셜로그인/소셜로그인1.jpg" width=300 height=650>
-   <img src="./img/pages/소셜로그인/소셜로그인2.jpg" width=300 height=650>
-   <img src="./img/pages/로그인/로그인1.jpg" width=300 height=650>
-   <img src="./img/pages/소셜로그인/소셜로그인3.jpg" width=300 height=650>
-   <img src="./img/pages/소셜로그인/소셜로그인4.jpg" width=300 height=650><br>
+      <br><img src="./img/pages/로그인/로그인1.jpg" width=300 height=650>
+      <img src="./img/pages/소셜로그인/소셜로그인1.jpg" width=300 height=650>
+      <img src="./img/pages/소셜로그인/소셜로그인2.jpg" width=300 height=650>
+      <img src="./img/pages/로그인/로그인1.jpg" width=300 height=650>
+      <img src="./img/pages/소셜로그인/소셜로그인3.jpg" width=300 height=650>
+      <img src="./img/pages/소셜로그인/소셜로그인4.jpg" width=300 height=650><br>
    
    6. 프로필
-   <br><img src="./img/pages/프로필/프로필1.jpg" width=300 height=650>
-   <img src="./img/pages/프로필/프로필2.jpg" width=300 height=650>
-   <img src="./img/pages/프로필/프로필3.jpg" width=300 height=650>
-   <img src="./img/pages/프로필/프로필4.jpg" width=300 height=650>
-   <img src="./img/pages/프로필/프로필5.jpg" width=300 height=650>
-   <img src="./img/pages/프로필/프로필6.jpg" width=300 height=650><br>
+      <br><img src="./img/pages/프로필/프로필1.jpg" width=300 height=650>
+      <img src="./img/pages/프로필/프로필2.jpg" width=300 height=650>
+      <img src="./img/pages/프로필/프로필3.jpg" width=300 height=650>
+      <img src="./img/pages/프로필/프로필4.jpg" width=300 height=650>
+      <img src="./img/pages/프로필/프로필5.jpg" width=300 height=650>
+      <img src="./img/pages/프로필/프로필6.jpg" width=300 height=650><br>
    
    7. 식물 디테일
-   <br><img src="./img/pages/식물디테일/식물디테일1.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일2.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일3.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일4.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일5.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일6.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일7.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일8.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일9.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일10.jpg" width=300 height=650>
-   <img src="./img/pages/식물디테일/식물디테일11.jpg" width=300 height=650><br>
+      <br><img src="./img/pages/식물디테일/식물디테일1.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일2.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일3.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일4.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일5.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일6.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일7.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일8.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일9.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일10.jpg" width=300 height=650>
+      <img src="./img/pages/식물디테일/식물디테일11.jpg" width=300 height=650><br>
    
    8. 채팅
-   <br><img src="./img/pages/채팅/채팅1.jpg" width=300 height=650>
-   <img src="./img/pages/채팅/채팅2.jpg" width=300 height=650><br>
+      <br><img src="./img/pages/채팅/채팅1.jpg" width=300 height=650>
+      <img src="./img/pages/채팅/채팅2.jpg" width=300 height=650><br>
    
    9. 알림창
-   <br><img src="./img/pages/알림창/알림창1.jpg" width=300 height=650><br>
+      <br><img src="./img/pages/알림창/알림창1.jpg" width=300 height=650><br>
 
 ## 9. 개발 일정
 1. **1주차**: 기획 및 요구사항 분석, 역할 분담
