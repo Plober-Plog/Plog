@@ -24,7 +24,7 @@ public class PloberUserDetails implements UserDetails {
     boolean enabled = true; // 기본값을 true로 설정
     List<GrantedAuthority> roles = new ArrayList<>();
 
-    PloberUserDetails(User user) {
+    public PloberUserDetails(User user) {
         super();
         this.user = user;
     }
