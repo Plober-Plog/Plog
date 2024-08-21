@@ -39,4 +39,6 @@ public interface UserService {
     UserPushResponseDto getPushUser(String token);
 
     User updatePushUser(String token, UserPushRequestDto userPushRequestDto);
+
+    void notificationUpdate(UserNotificationRequestDto userNotificationRequestDto);
 }

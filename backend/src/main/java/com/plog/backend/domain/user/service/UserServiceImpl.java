@@ -9,6 +9,7 @@ import com.plog.backend.domain.user.dto.response.UserGetResponseDto;
 import com.plog.backend.domain.user.dto.response.UserProfileResponseDto;
 import com.plog.backend.domain.user.dto.response.UserPushResponseDto;
 import com.plog.backend.domain.user.entity.*;
+import com.plog.backend.global.auth.PloberUserDetails;
 import com.plog.backend.global.exception.DuplicateEntityException;
 import com.plog.backend.domain.user.repository.UserRepository;
 import com.plog.backend.domain.user.repository.UserRepositorySupport;
@@ -25,10 +26,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +52,7 @@ public class UserServiceImpl implements UserService {
     private final RedisUtil redisUtil;
     private final ImageRepository imageRepository;
     private final ImageServiceImpl imageService;
+    private final String CLIENT_REDIRECT_URL = "https://i11b308.p.ssafy.io/login";
 
     @Override
     public User getUserBySearchId(String searchId) {
@@ -228,7 +234,7 @@ public class UserServiceImpl implements UserService {
                     throw new NotValidRequestException("회원 프로필 사진은 한 장만 등록할 수 있습니다.");
                 String[] imageUrl = imageService.uploadImages(profile);
                 Image userImage = imageRepository.findByImageUrl(imageUrl[0])
-                                .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
+                        .orElseThrow(() -> new EntityNotFoundException("회원의 수정한 대표 사진을 불러오는 데 실패하였습니다."));
                 user.setImage(userImage);
             }
             user.setNickname(request.getNickname());
@@ -382,34 +388,45 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void notificationUpdate(UserNotificationRequestDto userNotificationRequestDto) {
+        JwtTokenUtil jwtTokenUtil = JwtTokenUtil.getInstance();
+
+        Long userId = jwtTokenUtil.getUserIdFromToken(userNotificationRequestDto.getAccessToken());
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotValidRequestException("없는 회원입니다."));
+
+        user.setNotificationToken(userNotificationRequestDto.getNotificationToken());
+    }
+
     @Transactional
-    public ResponseEntity<?> loginOrRegister(String email, String name, String profileImage, String providerId, int provider) {
+    public RedirectView loginOrRegister(String email, String name, String profileImage, String providerId, int provider, String accessToken) {
+        log.info(">>> 소셜로그인 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}, accessToken {}",
+                email, name, profileImage, providerId, provider, accessToken);
 
-        log.info(">>> 소셜로그인 Google 정보 - email {}, name {}, profileImage {}, providerId {}, provider {}"
-                ,email,name,profileImage,providerId,provider);
         Optional<User> userOptional = userRepository.findByEmail(email);
-
         User user;
+
         if (userOptional.isEmpty()) {
-            // Image 객체를 먼저 저장합니다.
+            // 회원가입 로직
             Image image = new Image(profileImage);
             imageRepository.save(image);
 
-            // User 객체를 생성하면서 Image 객체를 설정합니다.
             user = User.builder()
                     .email(email)
                     .searchId(generateSearchId(email, provider))
                     .nickname(generateSearchId(email, provider))
-                    .password("oauth2")
+                    .password(passwordEncoder.encode(providerId))  // OAuth2 로그인의 경우 실제 비밀번호는 사용되지 않음
                     .provider(provider)
                     .providerId(providerId)
-                    .image(image) // 저장된 Image 객체를 설정합니다.
+                    .image(image)
                     .role(Role.USER.getValue())
                     .gender(Gender.NA.getValue())
                     .state(State.ACTIVTE.getValue())
                     .totalExp(0)
                     .chatAuth(ChatAuth.PUBLIC.getValue())
                     .isPushNotificationEnabled(true)
+                    .profileInfo("안녕하세요")
                     .build();
             userRepository.save(user);
             log.info(">>> 회원가입 성공: {}", user);
@@ -418,8 +435,38 @@ public class UserServiceImpl implements UserService {
             log.info(">>> 로그인 성공: {}", user);
         }
 
-        return ResponseEntity.ok(BaseResponseBody.of(200, "소셜 로그인이 되었습니다."));
+        log.info(">>> login - 사용자 찾음: {}", user);
+
+        // OAuth2 Access Token을 Authentication 객체에 추가
+        PloberUserDetails userDetails = new PloberUserDetails(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                accessToken,  // credentials로 accessToken을 넣습니다.
+                userDetails.getAuthorities()  // 사용자의 권한 설정
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // JWT 토큰 생성
+        String jwtAccessToken = "Bearer " + jwtTokenProvider.generateAccessToken(authentication);
+        String jwtRefreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+
+        // Redis에 JWT 토큰 저장
+        redisUtil.setDataExpire("accessToken:" + user.getUserId(), jwtAccessToken, 3600);
+        redisUtil.setDataExpire("refreshToken:" + user.getUserId(), jwtRefreshToken, 604800);
+
+        log.info(">>> [USER SIGN IN] - 사용자 로그인 성공: 유저 ID = {}", user.getUserId());
+        log.info(">>> [USER SIGN IN] - Access 토큰: {}", jwtAccessToken);
+        log.info(">>> [USER SIGN IN] - Refresh 토큰: {}", jwtRefreshToken);
+
+        String redirectUrl = UriComponentsBuilder.fromUriString(CLIENT_REDIRECT_URL)
+                .queryParam("accessToken", jwtAccessToken)
+                .queryParam("refreshToken", jwtRefreshToken)
+                .build()
+                .toUriString();
+
+        return new RedirectView(redirectUrl);
     }
+
 
     private String generateSearchId(String email, int providerId) {
         if (providerId == 1)

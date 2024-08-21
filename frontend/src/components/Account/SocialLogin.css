@@ -53,3 +53,7 @@
 .social-icon:hover {
   transform: scale(1.1); /* 호버 시 확대 효과 */
 }
+
+.social-none {
+  display: none;
+}

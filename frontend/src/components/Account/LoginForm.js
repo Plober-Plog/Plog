@@ -19,14 +19,13 @@ const LoginForm = () => {
   const setUserData = useAuthStore((state) => state.setUserData);
   const navigate = useNavigate();
 
-
   const handleLogin = async (event) => {
     event.preventDefault();
 
     // FCM 토큰 요청
     const fcmToken = await requestForToken();
 
-    console.log(fcmToken);
+    // console.log(fcmToken);
 
     const userInfo = {
       email,

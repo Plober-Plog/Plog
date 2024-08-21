@@ -7,9 +7,12 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
+<<<<<<< HEAD
+=======
 # .env 파일 복사
 COPY .env .env
 
+>>>>>>> master
 # 소스 코드 복사 및 빌드
 COPY . .
 RUN npm run build
@@ -27,4 +30,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 3000
 
 # Nginx 실행
+<<<<<<< HEAD
 CMD ["nginx", "-g", "daemon off;"]
+=======
+CMD ["nginx", "-g", "daemon off;"]
+>>>>>>> master

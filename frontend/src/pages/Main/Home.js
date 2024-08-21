@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+import React from "react";
+
+const Home = () => {
+
+  return (
+    <div>
+      Home
+      {/* <ArticleCardList 
+        data={{ ownerId:userId }}
+        type="sns"
+      /> */}
+=======
 import React, { useEffect, useState } from "react";
 import ArticleCardList from "../../components/Article/ArticleCardList";
 import Img from "../../components/Common/Img";
@@ -57,8 +70,13 @@ const Home = () => {
         <ArticleCardList articles={snsArticles} type="sns" />
       </div>
 
+>>>>>>> master
     </div>
   )
 }
 
+<<<<<<< HEAD
 export default Home;
+=======
+export default Home;
+>>>>>>> master
