@@ -1,21 +1,4 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
-import axios from 'axios';
-
-const ProfilePlantTagList = ({ searchId }) => {
-  const [plantTags, setPlantTags] = useState([]);
-
-  useEffect(() => {
-    const fetchPlantTags = async () => {
-      try {
-        const response = await axios.get(`https://i11b308.p.ssafy.io/api/user/plant-type`, {
-          params: { searchId }
-        });
-
-        const allPlants = [...response.data.plantTypes, ...response.data.otherPlantTypes];
-        const uniquePlants = allPlants.reduce((acc, plant) => {
-          if (!acc.some(item => item.plantTypeId === plant.plantTypeId)) {
-=======
 import API from '../../apis/api';
 import './ProfilePlantTagList.css';
 
@@ -45,20 +28,16 @@ const ProfilePlantTagList = ({ searchId, onFilterUpdate }) => {
         const allPlants = [...plantTypeTags, ...otherPlantTypeTags];
         const uniquePlants = allPlants.reduce((acc, plant) => {
           if (!acc.some(item => item.id === plant.id && item.type === plant.type)) {
->>>>>>> master
             acc.push(plant);
           }
           return acc;
         }, []);
 
         setPlantTags(uniquePlants);
-<<<<<<< HEAD
-=======
         // 전체 목록을 초기 상태로 설정
         const initialParams = { searchId, page: 0 };
         const initialResponse = await API.get(`/user/plant`, { params: initialParams });
         onFilterUpdate(initialResponse.data);
->>>>>>> master
       } catch (error) {
         console.error('Error fetching plant tags:', error);
       }
@@ -67,12 +46,6 @@ const ProfilePlantTagList = ({ searchId, onFilterUpdate }) => {
     fetchPlantTags();
   }, [searchId]);
 
-<<<<<<< HEAD
-  return (
-    <div className="plant-tag-list">
-      {plantTags.map((plant) => (
-        <button key={plant.plantTypeId} className="plant-tag" style={{ marginRight: '10px' }}>
-=======
   const handleTagSelect = async (id, type) => {
     const isSelected = selectedTags.some(tag => tag.id === id && tag.type === type);
     const newSelectedTags = isSelected
@@ -108,7 +81,6 @@ const ProfilePlantTagList = ({ searchId, onFilterUpdate }) => {
           className={`plant-tag ${selectedTags.some(tag => tag.id === plant.id && tag.type === plant.type) ? 'active' : ''}`}
           onClick={() => handleTagSelect(plant.id, plant.type)}
         >
->>>>>>> master
           {plant.plantName}
         </button>
       ))}

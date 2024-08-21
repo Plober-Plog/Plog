@@ -4,18 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import './Calendar.css';
 import API from '../../apis/api';
 
-<<<<<<< HEAD
-
-const CustomCalendar = ({ plantId }) => {
-
-=======
 import waterIcon from '../../assets/icon/water-select.png';
 import repottedIcon from '../../assets/icon/repotted-select.png';
 import fertilizedIcon from '../../assets/icon/fertilized-select.png';
 import calendarIcon from '../../assets/icon/calendar-select.png';
 
 const CustomCalendar = ({ plantId }) => {
->>>>>>> master
   const [value, setValue] = useState(new Date());
   const [checkRecords, setCheckRecords] = useState([]);
   const [diaryRecords, setDiaryRecords] = useState([]);
@@ -62,10 +56,7 @@ const CustomCalendar = ({ plantId }) => {
 
   useEffect(() => {
     fetchRecords(value);
-<<<<<<< HEAD
-=======
     
->>>>>>> master
   }, [value, plantId]);
 
   const formatDate = (date) => {
@@ -105,25 +96,16 @@ const CustomCalendar = ({ plantId }) => {
 
     return (
       <div className="color-box">
-<<<<<<< HEAD
-        <div className={`indicator ${checkRecord?.watered ? 'watered' : ''}`}></div>
-        <div className={`indicator ${checkRecord?.fertilized ? 'fertilized' : ''}`}></div>
-        <div className={`indicator ${checkRecord?.repotted ? 'repotted' : ''}`}></div>
-        <div className={`indicator ${diaryRecord ? 'diary' : ''}`}></div>
-=======
         {checkRecord?.isWatered && <div className="indicator watered"></div>}
         {checkRecord?.isFertilized && <div className="indicator fertilized"></div>}
         {checkRecord?.isRepotted && <div className="indicator repotted"></div>}
         {diaryRecord && <div className="indicator diary"></div>}
->>>>>>> master
       </div>
     );
   };
 
   return (
     <div>
-<<<<<<< HEAD
-=======
       <div className='calendar-icon-container mb-2'>
         <div className='calendar-icon-box'>
           <img className='calendar-icon' src={waterIcon} />
@@ -139,7 +121,6 @@ const CustomCalendar = ({ plantId }) => {
         </div>
         
       </div>
->>>>>>> master
       <Calendar
         onChange={(date) => {
           setValue(date);

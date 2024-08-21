@@ -1,50 +1,21 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
-import API from '../../apis/api';
-=======
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../apis/api';
 import axios from 'axios';
->>>>>>> master
 import useAuthStore from '../../stores/member';
 
 import Btn from '../Common/Btn';
 import InputField from '../Common/InputField';
-<<<<<<< HEAD
-import RadioField from '../Common/RadioField';
-import SelectField from '../Common/SelectField';
-import ATag from '../Common/ATag';
-import ModalComplete from '../Common/ModalComplete';
-=======
 import TextareaField from '../Common/TextareaField';
 import RadioField from '../Common/RadioField';
 import SelectField from '../Common/SelectField';
 import ModalComplete from '../Common/ModalComplete';
 import defaultImage from './defaultprofile.png'
 import './ProfileUpdateForm.css'; 
->>>>>>> master
 
 const ProfileUpdateForm = () => {
   const navigate = useNavigate();
   const { userData, setUserData } = useAuthStore();
-<<<<<<< HEAD
-  console.log(userData)
-  console.log(userData.searchId)
-  
-  // 상태 초기화
-  const [searchId, setSearchId] = useState(userData?.searchId || '');
-  const [nickname, setNickname] = useState(userData?.nickname || '');
-  const [email, setEmail] = useState(userData?.email || '');
-  const [birthdate, setBirthdate] = useState(userData?.birthdate || '');
-  const [gender, setGender] = useState(userData?.gender || '');
-  const [source, setSource] = useState(userData?.source || '');
-  const [sido, setSido] = useState(userData?.sido || '');
-  const [gugun, setGugun] = useState(userData?.gugun || '');
-  const [profileInfo, setProfileInfo] = useState(userData?.profileInfo || '');
-  const [isAd, setIsAd] = useState(userData?.isAd || false);
-=======
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   
   const [searchId, setSearchId] = useState(userData?.searchId || '');
@@ -64,14 +35,11 @@ const ProfileUpdateForm = () => {
   const [profile, setProfile] = useState(userData?.profile || ''); 
   const [uploadedFile, setUploadedFile] = useState(null);
 
->>>>>>> master
   const [searchIdCheckMsg, setSearchIdCheckMsg] = useState('');
   const [isSearchIdAvailable, setIsSearchIdAvailable] = useState(true);
   const [nicknameCheckMsg, setNicknameCheckMsg] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-<<<<<<< HEAD
-=======
   const [dateError, setDateError] = useState(false); // 날짜 오류 상태 추가
   
   const today = new Date().toISOString().split("T")[0];
@@ -113,64 +81,10 @@ const ProfileUpdateForm = () => {
     setUploadedFile(null);
     if (fileInputRef.current) fileInputRef.current.value = null;
   };
->>>>>>> master
 
   // 폼 유효성 검사
   useEffect(() => {
     setIsFormValid(
-<<<<<<< HEAD
-      searchId &&
-      nickname &&
-      isSearchIdAvailable
-    );
-  }, [searchId, nickname, isSearchIdAvailable]);
-
-  // 아이디 중복 확인
-  const handleCheckSearchId = async () => {
-    if (!/^[a-z0-9]{5,15}$/.test(searchId)) {
-      console.log('아이디 형식이 올바르지 않습니다.');
-      return;
-    }
-
-    try {
-      const response = await API.get(`/user/${searchId}`);
-      if (response.status === 200) {
-        setSearchIdCheckMsg('사용 가능한 아이디입니다.');
-        setIsSearchIdAvailable(true);
-        console.log('아이디 중복확인 성공!');
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        setSearchIdCheckMsg('이미 사용 중인 아이디입니다.');
-        setIsSearchIdAvailable(false);
-        console.error('아이디 중복 확인: 이미 사용 중인 아이디입니다.');
-      } else {
-        setSearchIdCheckMsg('아이디 중복확인 중 오류가 발생했습니다.');
-        setIsSearchIdAvailable(false);
-        console.error('아이디 중복확인 실패: ', error);
-      }
-    }
-  };
-
-  const handleProfileUpdate = async () => {
-    const updatedUserData = {
-      nickname,
-      searchId,
-      email,
-      profileInfo,
-      gender,
-      birthdate,
-      source,
-      sido,
-      gugun,
-      isAd
-    };
-
-    try {
-      const response = await API.patch('/user', updatedUserData);
-      console.log('회원 정보 수정 성공:', response);
-      setUserData(updatedUserData);
-=======
       searchId.length >= 5 && nickname.length >= 3 && nickname.length <= 6 && isSearchIdAvailable
     );
   }, [searchId, nickname, isSearchIdAvailable]);
@@ -215,7 +129,6 @@ const ProfileUpdateForm = () => {
         profile: uploadedFile? URL.createObjectURL(uploadedFile) : userData.profile
       });
 
->>>>>>> master
       setOpenModal(true);
     } catch (error) {
       console.error('회원 정보 수정 실패:', error);
@@ -224,19 +137,6 @@ const ProfileUpdateForm = () => {
 
   const closeModal = () => {
     setOpenModal(false);
-<<<<<<< HEAD
-    navigate('/setting');
-  };
-
-  return (
-    <div>
-      <form onSubmit={(e) => e.preventDefault()} className="form">
-        <div>
-          {/* TODO 이미지 수정 컴포넌트 추가 */}
-        </div>
-        <div>
-          {!isFormValid && <p>아이디를 입력해 주세요.</p>}
-=======
     setDateError(false); // 오류 모달을 닫을 때 오류 상태도 초기화
     if (!dateError) {
       navigate('/setting');
@@ -271,7 +171,6 @@ const ProfileUpdateForm = () => {
           <div className='mb-2'>
             <h2>아이디</h2>
           </div>
->>>>>>> master
           <InputField
             type="text"
             placeholder="아이디"
@@ -281,16 +180,6 @@ const ProfileUpdateForm = () => {
               setIsSearchIdAvailable(false);
             }}
             isRequired={true}
-<<<<<<< HEAD
-            className="input"
-          />
-          <ATag 
-            content='중복확인' onClick={handleCheckSearchId}
-          />
-          {searchIdCheckMsg && <p>{searchIdCheckMsg}</p>}
-        </div>
-        <div>
-=======
             disabled={true}
             className="account-disable-input"
           />
@@ -299,19 +188,12 @@ const ProfileUpdateForm = () => {
           <div className='mb-2'>
             <h2>이메일</h2>
           </div>
->>>>>>> master
           <InputField
             type="email"
             placeholder="이메일"
             value={email}
             isRequired={true}
             disabled={true}
-<<<<<<< HEAD
-            className="input"
-          />
-        </div>
-        <div>
-=======
             className="account-disable-input"
           />
         </div>
@@ -319,7 +201,6 @@ const ProfileUpdateForm = () => {
           <div className='mb-2'>
             <h2>닉네임</h2>
           </div>
->>>>>>> master
           <InputField
             type="text"
             placeholder="닉네임"
@@ -327,25 +208,13 @@ const ProfileUpdateForm = () => {
             onChange={(e) => {
               const value = e.target.value;
               setNickname(value);
-<<<<<<< HEAD
-              if (value.length < 3 || value.length > 10) {
-                setNicknameCheckMsg('닉네임은 3~10 글자여야 합니다.');
-=======
               if (value.length < 3 || value.length > 6) {
                 setNicknameCheckMsg('닉네임은 3~6 글자여야 합니다.');
->>>>>>> master
               } else {
                 setNicknameCheckMsg('');
               }
             }}
             isRequired={false}
-<<<<<<< HEAD
-            className="input"
-          />
-          {nicknameCheckMsg && <p>{nicknameCheckMsg}</p>}
-        </div>
-        <div>
-=======
             className="account-input"
           />
           {nicknameCheckMsg && <p className='profile-error'>{nicknameCheckMsg}</p>}
@@ -365,57 +234,12 @@ const ProfileUpdateForm = () => {
           <div className='mb-2'>
             <h2>생년월일</h2>
           </div>
->>>>>>> master
           <InputField
             type="date"
             placeholder="생일"
             value={birthdate}
             onChange={(e) => setBirthdate(e.target.value)}
             isRequired={false}
-<<<<<<< HEAD
-            className="input"
-          />
-        </div>
-        <SelectField
-          value={source}
-          options={['가입경로', '지인추천', '인터넷 검색']}
-          isRequired={false}
-          disabled={true}
-        />
-        <RadioField
-          selectedValue={gender}
-          onChange={setGender}
-          options={[
-            { value: 1, label: '선택하지 않음' },
-            { value: 2, label: '남자' },
-            { value: 3, label: '여자' },
-          ]}
-          isRequired={false}
-        />
-        <div>
-          <label>지역</label>
-          <SelectField
-            value={sido}
-            onChange={(e) => setSido(e.target.value)}
-            options={['시/도']}
-            isRequired={false}
-          />
-          <SelectField
-            value={gugun}
-            onChange={(e) => setGugun(e.target.value)}
-            options={['구/군']}
-            isRequired={false}
-          />
-        </div>
-        <Btn
-          content="수정하기"
-          disabled={!isFormValid}
-          onClick={handleProfileUpdate}
-          className="button"
-        />
-      </form>
-      <ModalComplete title={'회원정보 수정 완료'} content={'회원정보 수정이 완료되었습니다'} open={openModal} onClose={closeModal} />
-=======
             className="account-input"
           />
         </div>
@@ -475,7 +299,6 @@ const ProfileUpdateForm = () => {
       <ModalComplete title="회원정보 수정 완료" content="회원정보 수정이 완료되었습니다" open={openModal && !dateError} onClose={closeModal} />
       
       <ModalComplete title="생일 재설정" content="날짜가 올바르지 않습니다." open={dateError} onClose={closeModal} />
->>>>>>> master
     </div>
   );
 };

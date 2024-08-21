@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
-import { useNavigate } from 'react-router-dom';
-=======
 import { useNavigate, useLocation } from 'react-router-dom';
->>>>>>> master
 import API from '../../apis/api';
 
 import ImgUpload from '../../components/Common/ImgUpload';
@@ -11,37 +7,18 @@ import Btn from '../../components/Common/Btn';
 import Tab from '../../components/Sns/Tab';
 import TextareaField from '../../components/Common/TextareaField';
 import Tags from '../../components/Sns/Tags';
-<<<<<<< HEAD
-=======
 import ModalComplete from '../../components/Common/ModalComplete';
->>>>>>> master
 
 import cameraIcon from '../../assets/icon/camera.png';
 
 const SnsWrite = () => {
-<<<<<<< HEAD
-=======
   const location = useLocation();
   const navigate = useNavigate();
   const { articleId, reportImgData } = location.state;  // articleId가 없을 때 0으로 초기화
->>>>>>> master
   const [imgs, setImgs] = useState([]);
   const [content, setContent] = useState('');
   const [selectedVisibility, setSelectedVisibility] = useState(1); // 공개 상태 관리
   const [tagTypeList, setTagTypeList] = useState([]); // 선택된 태그 리스트 상태
-<<<<<<< HEAD
-  const tags = [
-    { id: 1, label: '일지' },
-    { id: 2, label: '분석 레포트' },
-    { id: 3, label: '질문' },
-    { id: 4, label: '일기' },
-    { id: 5, label: '식물' },
-    { id: 6, label: '정보' },
-    { id: 7, label: '룸꾸미기' }
-  ];
-
-  
-=======
   const [isModalOpen, setIsModalOpen] = useState(false); 
   
   const tags = [
@@ -53,36 +30,12 @@ const SnsWrite = () => {
     { tagTypeId: 6, tagName: '정보' },
   ];
 
->>>>>>> master
   // 태그 선택
   const handleTagSelect = (id) => {
     setTagTypeList(prevTags =>
       prevTags.includes(id) ? prevTags.filter(tag => tag !== id) : [...prevTags, id]
     );
   };
-<<<<<<< HEAD
-  // 태그 변경 확인
-  useEffect(() => {
-    console.log(tagTypeList);
-  }, [tagTypeList]);
-
-
-  // 이미지 업로드
-  const handleImageUpload = (event) => {
-    console.log(event.target.files);
-    setImgs(Array.from(event.target.files)); // 파일 입력에서 파일 배열을 만들기
-  };
-
-
-  // 이미지 삭제
-  const handleDeleteImage = (index) => {
-    setImgs(prevImgs => prevImgs.filter((_, i) => i !== index));
-  };
-
-
-  // 게시물 작성
-  const handleSave = async () => {
-=======
 
   // 이미지 업로드
   const handleImageUpload = (event) => {
@@ -143,53 +96,18 @@ const SnsWrite = () => {
       setIsModalOpen(true);
       return;
     }
->>>>>>> master
 
     // FormData 생성
     const snsData = new FormData();
     snsData.append('content', content);
     snsData.append('visibility', selectedVisibility);
-<<<<<<< HEAD
-    
-    // 이미지 넣기
-    imgs.forEach((img, index) => {
-      snsData.append('images', img);  // 'images' key를 사용하여 각각의 파일을 추가
-    });
-    
-=======
     imgs.forEach((img, index) => {
       snsData.append('images', img.file);  // 'images' key를 사용하여 각각의 파일을 추가
     });
->>>>>>> master
     // 태그 넣기
     tagTypeList.forEach((tagType, index) => {
       snsData.append(`tagTypeList[${index}]`, tagType);  // 'tagTypeList' key를 사용하여 각각의 태그를 추가
     });
-<<<<<<< HEAD
-  
-    // FormData 확인
-    console.log(Array.from(snsData.entries()));
-  
-    try {
-      // 게시물 작성 요청
-      const response = await API.post('/user/sns', snsData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      // 응답 처리
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  
-
-  return (
-    <div>
-      <div>
-=======
     
     const snsPatchData = {
       articleId,
@@ -226,24 +144,11 @@ const SnsWrite = () => {
   return (
     <div>
       <div className='pb-16'>
->>>>>>> master
         <Tab
           selectedVisibility={selectedVisibility}
           setSelectedVisibility={setSelectedVisibility}
         />
       </div>
-<<<<<<< HEAD
-      <div>
-        <Tags selectedTags={tagTypeList} onTagSelect={handleTagSelect} tags={tags} />
-      </div>
-      <div>
-        <ImgUpload 
-          cameraIcon={cameraIcon} 
-          imgs={imgs} 
-          handleImageUpload={handleImageUpload} 
-          handleDeleteImage={handleDeleteImage} 
-        />
-=======
       <div className='pt-1'>
         <Tags selectedTags={tagTypeList} onTagSelect={handleTagSelect} tags={tags} />
       </div>
@@ -258,20 +163,12 @@ const SnsWrite = () => {
         ) : (
           <p>사진은 수정할 수 없습니다.</p>
         )}
->>>>>>> master
       </div>
       <div>
         <TextareaField
           value={content}
           onChange={e => setContent(e.target.value)}
           placeholder='내용을 입력해주세요.'
-<<<<<<< HEAD
-        />
-      </div>
-      <div>
-        <Btn content="작성하기" onClick={handleSave} />
-      </div>
-=======
           className="textarea-field-sns"
         />
       </div>
@@ -284,7 +181,6 @@ const SnsWrite = () => {
         title="태그 선택 필요" 
         content="태그를 선택해주세요." 
       />
->>>>>>> master
     </div>
   );
 };

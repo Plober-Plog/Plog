@@ -1,25 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-<<<<<<< HEAD
-import Btn from './Btn';
-
-const ImgPreview = ({ src, onDelete, isDisabled }) => {
-  return (
-    <div style={{ display: 'inline-block', margin: '10px' }}>
-      <img src={src} alt="preview" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-      <div>
-        <Btn 
-          content="X" 
-          type="button" 
-          onClick={onDelete} 
-          style={{ 
-            background: isDisabled ? 'gray' : null,
-            cursor: isDisabled ? 'not-allowed' : 'pointer'
-          }}
-          disabled={isDisabled}
-        />
-      </div>
-=======
 
 const ImgPreview = ({ src, onDelete }) => {
   return (
@@ -55,7 +35,6 @@ const ImgPreview = ({ src, onDelete }) => {
       >
         X
       </button>
->>>>>>> master
     </div>
   );
 };
@@ -63,14 +42,6 @@ const ImgPreview = ({ src, onDelete }) => {
 ImgPreview.propTypes = {
   src: PropTypes.string.isRequired,
   onDelete: PropTypes.func.isRequired,
-<<<<<<< HEAD
-  isDisabled: PropTypes.bool,
-};
-
-ImgPreview.defaultProps = {
-  isDisabled: false,
-=======
->>>>>>> master
 };
 
 export default ImgPreview;
