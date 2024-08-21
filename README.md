@@ -60,35 +60,35 @@
    * 시스템 아키텍처, API 문서, 기술 명세서, JIRA 관리 기록 등
 * **서비스 화면**
    1. 홈화면
-      <img src="./img/pages/홈화면/홈화면.jpg">
+      <br><img src="./img/pages/홈화면/홈화면.jpg" width=300 height=650>
    2. 비회원 화면
-      <img src="./img/pages/비회원/비회원1.jpg">
-      <img src="./img/pages/비회원/비회원2.jpg">
-      <img src="./img/pages/비회원/비회원3.jpg">
+      <br><img src="./img/pages/비회원/비회원1.jpg" width=300 height=650>
+      <br><img src="./img/pages/비회원/비회원2.jpg" width=300 height=650>
+      <br><img src="./img/pages/비회원/비회원3.jpg" width=300 height=650>
    3. 프로필
-      <img src="./img/pages/프로필/프로필1.jpg">
-      <img src="./img/pages/프로필/프로필2.jpg">
-      <img src="./img/pages/프로필/프로필3.jpg">
-      <img src="./img/pages/프로필/프로필4.jpg">
-      <img src="./img/pages/프로필/프로필5.jpg">
-      <img src="./img/pages/프로필/프로필6.jpg">
+      <br><img src="./img/pages/프로필/프로필1.jpg" width=300 height=650>
+      <br><img src="./img/pages/프로필/프로필2.jpg" width=300 height=650>
+      <br><img src="./img/pages/프로필/프로필3.jpg" width=300 height=650>
+      <br><img src="./img/pages/프로필/프로필4.jpg" width=300 height=650>
+      <br><img src="./img/pages/프로필/프로필5.jpg" width=300 height=650>
+      <br><img src="./img/pages/프로필/프로필6.jpg" width=300 height=650>
    4. 식물 디테일
-      <img src="./img/pages/식물디테일/식물디테일1.jpg">
-      <img src="./img/pages/식물디테일/식물디테일2.jpg">
-      <img src="./img/pages/식물디테일/식물디테일3.jpg">
-      <img src="./img/pages/식물디테일/식물디테일4.jpg">
-      <img src="./img/pages/식물디테일/식물디테일5.jpg">
-      <img src="./img/pages/식물디테일/식물디테일6.jpg">
-      <img src="./img/pages/식물디테일/식물디테일7.jpg">
-      <img src="./img/pages/식물디테일/식물디테일8.jpg">
-      <img src="./img/pages/식물디테일/식물디테일9.jpg">
-      <img src="./img/pages/식물디테일/식물디테일10.jpg">
-      <img src="./img/pages/식물디테일/식물디테일11.jpg">
+      <br><img src="./img/pages/식물디테일/식물디테일1.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일2.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일3.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일4.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일5.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일6.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일7.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일8.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일9.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일10.jpg" width=300 height=650>
+      <br><img src="./img/pages/식물디테일/식물디테일11.jpg" width=300 height=650>
    5. 채팅
-      <img src="./img/pages/채팅/채팅1.jpg">
-      <img src="./img/pages/채팅/채팅2.jpg">
+      <br><img src="./img/pages/채팅/채팅1.jpg" width=300 height=650>
+      <br><img src="./img/pages/채팅/채팅2.jpg" width=300 height=650>
    6. 알림창
-      <img src="./img/pages/알림창/알림창1.jpg">
+      <br><img src="./img/pages/알림창/알림창1.jpg" width=300 height=650>
 
 ## 8. 서비스 데모 영상
 <iframe width="866" height="487" src="https://www.youtube.com/embed/PJzseIhlXmQ" title="Plog" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
