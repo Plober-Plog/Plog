@@ -14,8 +14,8 @@
 ## 2. 기획 배경
 <p>최근 집에서 식물을 키우는 사람들이 증가하면서, 식물 관련 정보를 교환하고 자신의 식물 키우기 경험을 공유할 수 있는 플랫폼에 대한 필요성이 커지고 있습니다.</p>
 <p>특히, 30-40대 주부들 사이에서 식물 가꾸기가 힐링의 방법으로 인기를 끌고 있지만, 초보 식집사들은 적절한 정보를 얻기 어려워하는 경우가 많습니다.</p>
-<br>![식물키우기_성별_검색_비율](./img/식물키우기_성별_검색_비율.png)
-<br>![식물키우기_키워드_분석](./img/식물키우기_키워드_분석.png)
+<br><img src="./img/식물키우기_성별_검색_비율.png" />
+<br><img src="./img/식물키우기_키워드_분석.png" />
 <p>이러한 배경으로 초보 식집사들이 서로 정보를 나누고 경험을 기록하며, 식물 키우기에 대한 자신감을 얻을 수 있는 SNS 플랫폼을 기획하게 되었습니다.</p>
 
 
@@ -54,13 +54,44 @@
 
 
 ## 7. 프로젝트 결과물
-1. **PWA 웹 애플리케이션**: 식물 키우기를 위한 SNS 서비스 "PLOG"의 최종 완성본
-2. **기술 문서**: 시스템 아키텍처, API 문서, 기술 명세서, JIRA 관리 기록 등
-
+* **PWA 웹 애플리케이션**
+   * 식물 키우기를 위한 SNS 서비스 "Plog"의 최종 완성본
+* **기술 문서**
+   * 시스템 아키텍처, API 문서, 기술 명세서, JIRA 관리 기록 등
+* **서비스 화면**
+   1. 홈화면
+      <img src="./img/pages/홈화면/홈화면.jpg">
+   2. 비회원 화면
+      <img src="./img/pages/비회원/비회원1.jpg">
+      <img src="./img/pages/비회원/비회원2.jpg">
+      <img src="./img/pages/비회원/비회원3.jpg">
+   3. 프로필
+      <img src="./img/pages/프로필/프로필1.jpg">
+      <img src="./img/pages/프로필/프로필2.jpg">
+      <img src="./img/pages/프로필/프로필3.jpg">
+      <img src="./img/pages/프로필/프로필4.jpg">
+      <img src="./img/pages/프로필/프로필5.jpg">
+      <img src="./img/pages/프로필/프로필6.jpg">
+   4. 식물 디테일
+      <img src="./img/pages/식물디테일/식물디테일1.jpg">
+      <img src="./img/pages/식물디테일/식물디테일2.jpg">
+      <img src="./img/pages/식물디테일/식물디테일3.jpg">
+      <img src="./img/pages/식물디테일/식물디테일4.jpg">
+      <img src="./img/pages/식물디테일/식물디테일5.jpg">
+      <img src="./img/pages/식물디테일/식물디테일6.jpg">
+      <img src="./img/pages/식물디테일/식물디테일7.jpg">
+      <img src="./img/pages/식물디테일/식물디테일8.jpg">
+      <img src="./img/pages/식물디테일/식물디테일9.jpg">
+      <img src="./img/pages/식물디테일/식물디테일10.jpg">
+      <img src="./img/pages/식물디테일/식물디테일11.jpg">
+   5. 채팅
+      <img src="./img/pages/채팅/채팅1.jpg">
+      <img src="./img/pages/채팅/채팅2.jpg">
+   6. 알림창
+      <img src="./img/pages/알림창/알림창1.jpg">
 
 ## 8. 서비스 데모 영상
-프로젝트의 전 과정을 담은 데모 영상을 제작하였으며, 서비스의 주요 기능 시연과 팀원들의 역할 분담, 개발 과정 등을 포함하고 있습니다. 영상은 최종 발표에서 사용되었으며, 프로젝트의 이해를 돕기 위해 제작되었습니다.
-<br>[영상자리]
+<iframe width="866" height="487" src="https://www.youtube.com/embed/PJzseIhlXmQ" title="Plog" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 ## 9. 개발 일정
