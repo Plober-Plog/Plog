@@ -72,7 +72,7 @@ const SocialLogin = () => {
           <img src={google} alt="구글" className="social-icon" />
         </button>
         <button className="social-button justify-center" onClick={() => handleSocialLogin('kakao')}>
-          <img src={kakao} alt="카카오" className="social-icon" />
+          <img src={kakao} alt="카카오" className="social-icon social-none" />
         </button>
         <button className="social-button justify-center" onClick={() => handleSocialLogin('naver')}>
           <img src={naver} alt="네이버" className="social-icon" />
