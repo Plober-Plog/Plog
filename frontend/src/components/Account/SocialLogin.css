@@ -1,19 +1,12 @@
 .social-login {
   text-align: center;
-<<<<<<< HEAD
-=======
   padding: 20px 0; /* 상단과 하단에 여백 추가 */
->>>>>>> master
 }
 
 .social-login p {
   font-size: 16px;
   font-weight: bold;
-<<<<<<< HEAD
-  margin: 20px 0;
-=======
   margin: 30px 0; /* 간편로그인 텍스트 위아래에 여유 공간 추가 */
->>>>>>> master
   position: relative;
 }
 
@@ -21,45 +14,26 @@
 .social-login p::after {
   content: "";
   display: inline-block;
-<<<<<<< HEAD
-  width: 100px;
-=======
   width: 80px; /* 선 길이 축소 */
->>>>>>> master
   height: 1px;
   background-color: #000;
   vertical-align: middle;
 }
 
 .social-login p::before {
-<<<<<<< HEAD
-  margin-right: 10px;
-}
-
-.social-login p::after {
-  margin-left: 10px;
-=======
   margin-right: 15px;
 }
 
 .social-login p::after {
   margin-left: 15px;
->>>>>>> master
 }
 
 .social-buttons {
   display: flex;
-<<<<<<< HEAD
-  justify-content: center;
-  align-items: center;
-  gap: 30px; /* 버튼 사이 간격 조정 */
-  margin-top: 20px;
-=======
   justify-content: space-between; /* 버튼 간의 간격을 균등하게 배치 */
   align-items: center;
   gap: 50px; /* 버튼 사이 간격을 더 넓게 조정 */
   margin-top: 40px; /* 버튼 섹션과 간편로그인 텍스트 사이의 간격 조정 */
->>>>>>> master
 }
 
 .social-button {
@@ -70,17 +44,16 @@
 }
 
 .social-icon {
-<<<<<<< HEAD
-  width: 80px; /* 아이콘 크기 조정 */
-  height: 80px;
-=======
   width: 70px; /* 아이콘 크기를 약간 축소 */
   height: 70px;
->>>>>>> master
   border-radius: 50%; /* 원형으로 만들기 */
   transition: transform 0.3s; /* 호버 효과를 위한 트랜지션 */
 }
 
 .social-icon:hover {
   transform: scale(1.1); /* 호버 시 확대 효과 */
+}
+
+.social-none {
+  display: none;
 }
