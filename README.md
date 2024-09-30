@@ -115,4 +115,12 @@ https://github.com/user-attachments/assets/85b78db6-b4c8-4a3b-858d-6eacf9c7a32e
 3. **3-4주차**: 프론트엔드 및 백엔드 기본 기능 개발
 4. **5주차**: API 연동
 5. **6주차**: 기능 통합 및 최종 테스트
-6. **7주차**: 버그 수정 및 최종 발표 준비 
+6. **7주차**: 버그 수정 및 최종 발표 준비
+
+## 10. 서비스 설계
+1. 기술 스택
+![image](https://github.com/user-attachments/assets/d81d593a-26d9-407d-bd76-19a22ac1977c)
+
+2. ERD
+![image](https://github.com/user-attachments/assets/2499bdec-5e8a-44a3-b155-da1ec4a811df)
+
