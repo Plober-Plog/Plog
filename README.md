@@ -107,6 +107,7 @@ https://github.com/user-attachments/assets/85b78db6-b4c8-4a3b-858d-6eacf9c7a32e
    
    9. 알림창
       <br><img src="./img/pages/알림창/알림창1.jpg" width=300 height=650><br>
+      
 
 ## 9. 개발 일정
 1. **1주차**: 기획 및 요구사항 분석, 역할 분담
